@@ -145,11 +145,13 @@ Critère de fin : sitemap.xml généré, balises meta et hreflang présentes, l'
 de visualisation restent utilisables au clavier.
 ```
 
-## 7. Retrait du contenu de test
+## ✅ 7. Retrait du contenu de test
 
 Retire la catégorie et la visualisation de test de l'étape 2 : le site en squelette reste fonctionnel (accueil à l'état vide, voir `home-page.md`), prêt pour l'ajout d'une première vraie visualisation.
 
 **Critère :** l'accueil affiche l'état vide documenté dans `home-page.md`, sans erreur ni référence au contenu de test.
+
+**Statut :** fait.
 
 **Prompt :**
 ```
