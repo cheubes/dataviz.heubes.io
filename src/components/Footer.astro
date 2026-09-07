@@ -1,0 +1,55 @@
+---
+interface Props {
+  lang?: 'fr' | 'en';
+}
+
+const { lang = 'en' } = Astro.props;
+
+const licenseUrl = lang === 'fr'
+  ? 'https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr'
+  : 'https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en';
+
+const creditLabel = lang === 'fr' ? 'Réalisée par' : 'Created by';
+---
+
+<footer class="dv-footer">
+  <div class="dv-footer__inner dv-container dv-text-secondary">
+    <p class="dv-footer__license">
+      <a href={licenseUrl}>CC BY-NC-SA 4.0</a>
+    </p>
+    <p class="dv-footer__credit">
+      {creditLabel} <a href="https://christophe.heubes.org">Christophe Heubès</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .dv-footer {
+    background-color: var(--dv-page);
+    color: var(--dv-ink-secondary);
+    border-top: 1px solid var(--dv-gridline);
+  }
+
+  .dv-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--dv-space-2);
+    padding-block: var(--dv-space-4);
+  }
+
+  .dv-footer__license,
+  .dv-footer__credit {
+    margin: 0;
+  }
+
+  .dv-footer a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  .dv-footer a:hover {
+    color: var(--dv-accent);
+  }
+</style>

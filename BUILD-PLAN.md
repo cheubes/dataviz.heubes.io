@@ -4,11 +4,13 @@ Huit étapes, chacune démontrable dans un navigateur avant de passer à la suiv
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 8 retire ce contenu de test.
 
-## 1. Squelette Astro + chrome commun
+## ✅ 1. Squelette Astro + chrome commun
 
 `astro.config.mjs`, `package.json`, `BaseLayout.astro` avec en-tête collant et pied de page (couleurs, typographie, sélecteur de langue en emoji, pas encore fonctionnel) sur une page vide. Voir "Structure des fichiers" dans `technical-specifications.md` et `style-guide.md` ("En-tête", "Pied de page", "Couleurs", "Typographie").
 
 **Critère :** `astro dev` tourne, l'en-tête et le pied de page respectent la charte graphique, sans rien de dynamique encore.
+
+**Statut :** fait.
 
 **Prompt :**
 ```

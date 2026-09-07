@@ -1,0 +1,59 @@
+---
+---
+
+<header class="dv-header">
+  <div class="dv-header__inner dv-container">
+    <a href="/" class="dv-header__site-name">dataviz.heubes.io</a>
+    <div class="dv-lang-selector" role="group" aria-label="Langue / Language">
+      <button type="button" class="dv-lang-selector__flag" aria-label="Français">🇫🇷</button>
+      <button type="button" class="dv-lang-selector__flag" aria-label="English">🇬🇧</button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .dv-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--dv-surface);
+    color: var(--dv-ink-primary);
+    border-bottom: 1px solid var(--dv-gridline);
+  }
+
+  .dv-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: var(--dv-space-3);
+  }
+
+  .dv-header__site-name {
+    color: var(--dv-ink-primary);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .dv-header__site-name:hover {
+    color: var(--dv-accent);
+  }
+
+  .dv-lang-selector {
+    display: flex;
+    gap: var(--dv-space-2);
+  }
+
+  .dv-lang-selector__flag {
+    border: none;
+    background: none;
+    padding: var(--dv-space-1);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .dv-lang-selector__flag:hover {
+    background-color: var(--dv-page);
+  }
+</style>
