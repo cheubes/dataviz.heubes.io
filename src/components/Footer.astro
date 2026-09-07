@@ -13,9 +13,17 @@ const creditLabel = lang === 'fr' ? 'Réalisée par' : 'Created by';
 ---
 
 <footer class="dv-footer">
-  <div class="dv-footer__inner dv-container dv-text-secondary">
+  <div class="dv-footer__inner">
     <p class="dv-footer__license">
-      <a href={licenseUrl}>CC BY-NC-SA 4.0</a>
+      <a href={licenseUrl} target="_blank" rel="license noopener" class="dv-footer__cc-link">
+        <span class="dv-footer__cc-icons">
+          <i class="fa-brands fa-creative-commons" aria-hidden="true"></i>
+          <i class="fa-brands fa-creative-commons-by" aria-hidden="true"></i>
+          <i class="fa-brands fa-creative-commons-nc-eu" aria-hidden="true"></i>
+          <i class="fa-brands fa-creative-commons-sa" aria-hidden="true"></i>
+        </span>
+        <span>CC BY-NC-SA 4.0</span>
+      </a>
     </p>
     <p class="dv-footer__credit">
       {creditLabel} <a href="https://christophe.heubes.org">Christophe Heubès</a>
@@ -25,9 +33,15 @@ const creditLabel = lang === 'fr' ? 'Réalisée par' : 'Created by';
 
 <style>
   .dv-footer {
-    background-color: var(--dv-page);
-    color: var(--dv-ink-secondary);
-    border-top: 1px solid var(--dv-gridline);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    background-color: var(--dv-footer-bg);
+    color: #ffffff;
+    border-top: 2px solid var(--dv-gridline);
+    font-size: 0.8rem;
   }
 
   .dv-footer__inner {
@@ -36,7 +50,7 @@ const creditLabel = lang === 'fr' ? 'Réalisée par' : 'Created by';
     align-items: center;
     justify-content: space-between;
     gap: var(--dv-space-2);
-    padding-block: var(--dv-space-4);
+    padding: var(--dv-space-2) var(--dv-gutter);
   }
 
   .dv-footer__license,
@@ -46,10 +60,19 @@ const creditLabel = lang === 'fr' ? 'Réalisée par' : 'Created by';
 
   .dv-footer a {
     color: inherit;
-    text-decoration: underline;
   }
 
   .dv-footer a:hover {
-    color: var(--dv-accent);
+    color: var(--dv-gold);
+  }
+
+  .dv-footer__cc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--dv-space-2);
+  }
+
+  .dv-footer__cc-icons {
+    display: inline-flex;
   }
 </style>

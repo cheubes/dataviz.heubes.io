@@ -2,8 +2,11 @@
 ---
 
 <header class="dv-header">
-  <div class="dv-header__inner dv-container">
-    <a href="/" class="dv-header__site-name">dataviz.heubes.io</a>
+  <div class="dv-header__inner">
+    <a href="/" class="dv-header__brand">
+      <img src="/logo.png" alt="" class="dv-header__logo" />
+      <span class="dv-header__site-name">dataviz.heubes.io</span>
+    </a>
     <div class="dv-lang-selector" role="group" aria-label="Langue / Language">
       <button type="button" class="dv-lang-selector__flag" aria-label="Français">🇫🇷</button>
       <button type="button" class="dv-lang-selector__flag" aria-label="English">🇬🇧</button>
@@ -16,9 +19,9 @@
     position: sticky;
     top: 0;
     z-index: 10;
-    background-color: var(--dv-surface);
-    color: var(--dv-ink-primary);
-    border-bottom: 1px solid var(--dv-gridline);
+    background-color: var(--dv-header-bg);
+    color: #ffffff;
+    border-bottom: 2px solid var(--dv-gold);
   }
 
   .dv-header__inner {
@@ -26,34 +29,47 @@
     align-items: center;
     justify-content: space-between;
     padding-block: var(--dv-space-3);
+    padding-inline: var(--dv-gutter);
+  }
+
+  .dv-header__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--dv-space-2);
+    color: #ffffff;
+  }
+
+  .dv-header__brand:hover {
+    color: var(--dv-gold);
+  }
+
+  .dv-header__logo {
+    height: 48px;
+    width: auto;
   }
 
   .dv-header__site-name {
-    color: var(--dv-ink-primary);
-    font-weight: 500;
-    text-decoration: none;
-  }
-
-  .dv-header__site-name:hover {
-    color: var(--dv-accent);
+    font-weight: 700;
+    font-size: 1.25rem;
   }
 
   .dv-lang-selector {
     display: flex;
+    flex-direction: column;
     gap: var(--dv-space-2);
   }
 
   .dv-lang-selector__flag {
     border: none;
     background: none;
-    padding: var(--dv-space-1);
-    font-size: 1.25rem;
+    padding: 0;
+    font-size: 1rem;
     line-height: 1;
     cursor: pointer;
     border-radius: 4px;
   }
 
   .dv-lang-selector__flag:hover {
-    background-color: var(--dv-page);
+    background-color: rgba(255, 255, 255, 0.15);
   }
 </style>

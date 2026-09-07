@@ -85,7 +85,8 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 - `astro` (dernière version stable 5.x)
 - `@astrojs/sitemap` (voir "SEO")
 - `typescript` (vérification de types, pas un framework UI)
-- Pas de dépendance CSS, pas de dépendance JS de chrome au-delà de vanilla.
+- Font Awesome Free 7.3.1 (CDN, `cdn.jsdelivr.net`, sous-ensemble brands) : seule exception à "pas de dépendance CSS", pour les icônes Creative Commons du pied de page (voir "Iconographie" dans `style-guide.md`). Pas de dépendance npm : chargée en `<link>` dans `BaseLayout.astro`, comme les polices Google Fonts.
+- Pas d'autre dépendance CSS, pas de dépendance JS de chrome au-delà de vanilla.
 - Dépendances propres à une visualisation : ajoutées et documentées au cas par cas, discutées avant ajout (voir "Règles communes à toutes les visualisations" et les règles globales de sécurité du projet).
 
 ---
@@ -98,17 +99,16 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 ├── package.json
 ├── public/
 │   ├── CNAME
-│   ├── favicon.svg
+│   ├── logo.png                       # favicon et logo de l'en-tête, voir style-guide.md
+│   ├── cover-placeholder.svg          # couverture de repli, voir "Images" dans style-guide.md
 │   └── covers/
 │       └── <viz-slug>.jpg            # ou .png, voir data-model.md
 ├── src/
 │   ├── content/
 │   │   ├── config.ts                  # schémas des content collections
-│   │   ├── visualizations/
-│   │   │   ├── <viz-slug>.fr.md
-│   │   │   └── <viz-slug>.en.md
-│   │   └── categories/
-│   │       └── <category-slug>.yml
+│   │   └── visualizations/
+│   │       ├── <viz-slug>.fr.md
+│   │       └── <viz-slug>.en.md
 │   ├── i18n/
 │   │   ├── fr.ts                      # textes d'interface (labels, message d'indisponibilité)
 │   │   └── en.ts
@@ -151,7 +151,6 @@ const visualizations = defineCollection({
     lang: z.enum(['fr', 'en']),
     title: z.string(),
     summary: z.string(),
-    category: z.string(),
     datasets: z.array(z.object({
       name: z.string(),
       publisher: z.string(),
@@ -159,22 +158,14 @@ const visualizations = defineCollection({
       license: z.string().optional(),
       retrieved: z.string().optional(),
     })),
-    'cover-source': z.union([z.literal('ai-generated'), z.string().url()]).optional(),
     'publication-date': z.string(),
   }),
 });
 
-const categories = defineCollection({
-  type: 'data',
-  schema: z.object({
-    label: z.object({ fr: z.string(), en: z.string() }),
-  }),
-});
-
-export const collections = { visualizations, categories };
+export const collections = { visualizations };
 ```
 
-La correspondance exacte entre le nom de fichier (`<viz-slug>.<lang>.md`) et le `slug`/`lang` exposés par la collection (extraction, `getStaticPaths`) est un détail d'implémentation à confirmer à l'étape 2 du plan de construction (voir `BUILD-PLAN.md`), en suivant la documentation Astro en vigueur à ce moment-là plutôt que la lettre de cette esquisse.
+La correspondance exacte entre le nom de fichier (`<viz-slug>.<lang>.md`) et le `slug`/`lang` exposés par la collection (extraction, `getStaticPaths`) est un détail d'implémentation confirmé à l'étape 3 du plan de construction (voir `BUILD-PLAN.md`) : le `generateId` par défaut du loader `glob` concatène le nom de base et le suffixe de langue sans séparateur (ex : `test-viz.fr.md` → `test-vizfr`), impropre à en extraire le `slug`. La collection `visualizations` déclare donc un `generateId` propre qui ne retire que l'extension `.md` (ex : `test-viz.fr.md` → id `test-viz.fr`), et une fonction `getVisualizationSlug` (exportée depuis `src/content/config.ts`) retire le suffixe `.<lang>` de cet id pour obtenir le `slug` utilisé dans les URLs.
 
 ---
 
@@ -227,7 +218,7 @@ Au premier accès, la langue est déterminée côté client par celle du navigat
 ## Validation des données
 
 - La validation de structure (présence et type des champs) est native aux content collections d'Astro via le schéma Zod (`src/content/config.ts`) : `astro build` échoue si un fichier de contenu ne respecte pas le schéma, sans script dédié.
-- Les règles qui dépassent un schéma de champ (ex : `category` doit référencer un slug existant de `src/content/categories/`, voir "Contraintes et règles de validation" dans `data-model.md`) sont vérifiées manuellement avant publication à ce stade, faute de validation croisée native entre collections. Si le nombre de visualisations le justifie plus tard, un script de validation dédié pourra être introduit, à discuter avant ajout.
+- Les règles qui dépassent un schéma de champ (ex : les valeurs des attributs non localisés doivent être identiques entre `<viz-slug>.fr.md` et `<viz-slug>.en.md`, voir "Contraintes et règles de validation" dans `data-model.md`) sont vérifiées manuellement avant publication à ce stade, faute de validation croisée native entre fichiers d'une même collection. Si le nombre de visualisations le justifie plus tard, un script de validation dédié pourra être introduit, à discuter avant ajout.
 
 ---
 

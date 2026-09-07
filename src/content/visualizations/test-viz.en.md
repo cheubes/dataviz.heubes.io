@@ -3,14 +3,12 @@
 lang: en
 title: "Test visualization"
 summary: "A fake visualization used to validate the content collections schema."
-category: test
 datasets:
   - name: "Fake dataset"
     publisher: "Fake publisher"
     url: "https://example.com/dataset"
     license: "Open License 2.0"
     retrieved: "2026-09-07"
-cover-source: ai-generated
 publication-date: "2026-09-07"
 ---
 

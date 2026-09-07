@@ -3,14 +3,12 @@
 lang: fr
 title: "Visualisation de test"
 summary: "Une visualisation factice pour valider le schéma des content collections."
-category: test
 datasets:
   - name: "Jeu de données factice"
     publisher: "Organisme factice"
     url: "https://example.com/dataset"
     license: "Licence Ouverte 2.0"
     retrieved: "2026-09-07"
-cover-source: ai-generated
 publication-date: "2026-09-07"
 ---
 

@@ -1,10 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import VizCard from '../components/VizCard.astro';
-import en from '../i18n/en';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import VizCard from '../../components/VizCard.astro';
+import fr from '../../i18n/fr';
 
-const LANG = 'en';
+const LANG = 'fr';
 
 const visualizations = await getCollection('visualizations', (viz) => viz.data.lang === LANG);
 ---
@@ -12,7 +12,7 @@ const visualizations = await getCollection('visualizations', (viz) => viz.data.l
 <BaseLayout title="dataviz.heubes.io" lang={LANG}>
   {
     visualizations.length === 0 ? (
-      <p>{en.home.empty}</p>
+      <p>{fr.home.empty}</p>
     ) : (
       <div class="dv-catalog-grid">
         {visualizations.map((viz) => (

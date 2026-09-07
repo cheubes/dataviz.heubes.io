@@ -1,0 +1,93 @@
+---
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import type { CollectionEntry } from 'astro:content';
+import { getVisualizationSlug } from '../content/config';
+
+interface Props {
+  viz: CollectionEntry<'visualizations'>;
+}
+
+const { viz } = Astro.props;
+const { lang, title, summary } = viz.data;
+
+const slug = getVisualizationSlug(viz.id, lang);
+const href = lang === 'fr' ? `/fr/${slug}/` : `/${slug}/`;
+
+const coverExtension = ['jpg', 'png'].find((ext) =>
+  existsSync(fileURLToPath(new URL(`../../public/covers/${slug}.${ext}`, import.meta.url)))
+);
+const coverPath = coverExtension ? `/covers/${slug}.${coverExtension}` : '/cover-placeholder.svg';
+---
+
+<article class="dv-viz-card">
+  <a href={href} class="dv-viz-card__cover-link">
+    <img src={coverPath} alt={title} loading="lazy" width="1200" height="675" class="dv-viz-card__cover" />
+  </a>
+  <div class="dv-viz-card__body">
+    <h3 class="dv-viz-card__title">
+      <a href={href} class="dv-viz-card__title-link">{title}</a>
+    </h3>
+    <div class="dv-viz-card__scroll">
+      <p class="dv-viz-card__summary">{summary}</p>
+    </div>
+  </div>
+</article>
+
+<style>
+  .dv-viz-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--dv-surface);
+    border: 1px solid var(--dv-gridline);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+
+  .dv-viz-card:hover {
+    box-shadow: 0 4px 12px rgba(11, 11, 11, 0.08);
+    border-color: var(--dv-header-bg);
+  }
+
+  .dv-viz-card__cover-link {
+    display: block;
+  }
+
+  .dv-viz-card__cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .dv-viz-card__body {
+    display: flex;
+    flex-direction: column;
+    height: calc(9rem + 10px);
+    padding: var(--dv-space-3);
+  }
+
+  .dv-viz-card__title {
+    flex: 0 0 auto;
+  }
+
+  .dv-viz-card__title-link {
+    color: inherit;
+  }
+
+  .dv-viz-card__scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    margin-top: var(--dv-space-2);
+    padding-right: var(--dv-space-2);
+  }
+
+  .dv-viz-card__summary {
+    margin: 0;
+    color: var(--dv-ink-secondary);
+    text-align: justify;
+  }
+</style>

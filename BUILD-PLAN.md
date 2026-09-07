@@ -30,47 +30,50 @@ Critère de fin : astro dev tourne, l'en-tête et le pied de page s'affichent co
 couleurs de la charte sur cette page de test.
 ```
 
-## 2. Content collections + visualisation de test
+## ✅ 2. Content collections + visualisation de test
 
-`src/content/config.ts` (schéma des collections `visualizations` et `categories`, voir "Structure des fichiers" dans `technical-specifications.md`), une catégorie de test et une visualisation de test (contenu jetable, sans rapport avec une vraie visualisation à venir), pour valider le schéma dans les deux langues.
+`src/content/config.ts` (schéma de la collection `visualizations`, voir "Structure des fichiers" dans `technical-specifications.md`), une visualisation de test (contenu jetable, sans rapport avec une vraie visualisation à venir), pour valider le schéma dans les deux langues.
 
 **Critère :** le build Astro passe avec ce contenu ; introduire un champ manquant ou mal typé dans le frontmatter le fait échouer.
+
+**Statut :** fait.
 
 **Prompt :**
 ```
 Implémente l'étape 2 du plan de construction (BUILD-PLAN.md) : content collections et
 visualisation de test.
 
-Crée src/content/config.ts avec le schéma des collections visualizations et categories, en
-suivant "Schéma des content collections" dans technical-specifications.md et les attributs
-de data-model.md ("Visualisation", "Catégorie", "Dataset source").
+Crée src/content/config.ts avec le schéma de la collection visualizations, en suivant
+"Schéma des content collections" dans technical-specifications.md et les attributs de
+data-model.md ("Visualisation", "Dataset source").
 
-Ajoute une catégorie de test (src/content/categories/test.yml) et une visualisation de test
-(src/content/visualizations/test-viz.fr.md et .en.md), avec un frontmatter complet et un
-dataset factice, explicitement marqués comme contenu jetable à retirer à l'étape 8.
+Ajoute une visualisation de test (src/content/visualizations/test-viz.fr.md et .en.md), avec
+un frontmatter complet et un dataset factice, explicitement marquée comme contenu jetable à
+retirer à l'étape 8.
 
 Critère de fin : astro build passe avec ce contenu ; retire volontairement un champ requis du
 frontmatter et vérifie que le build échoue, puis remets-le.
 ```
 
-## 3. Page d'accueil (catalogue)
+## ✅ 3. Page d'accueil (catalogue)
 
-Grille de tuiles groupées par catégorie, lazy loading, états vide. Voir `home-page.md` et "Catégorie" dans `data-model.md`.
+Grille de tuiles, lazy loading, état vide. Voir `home-page.md`.
 
-**Critère :** la tuile de la visualisation de test s'affiche, groupée sous sa catégorie, et mène à sa page.
+**Critère :** la tuile de la visualisation de test s'affiche et mène à sa page.
+
+**Statut :** fait.
 
 **Prompt :**
 ```
 Implémente l'étape 3 du plan de construction (BUILD-PLAN.md) : page d'accueil.
 
 Construis src/pages/index.astro, src/pages/fr/index.astro et src/components/VizCard.astro, en
-suivant home-page.md : une section par catégorie (ordre de déclaration, pas alphabétique),
-grille de tuiles (couverture en lazy loading, titre, résumé, badge de catégorie), état vide
+suivant home-page.md : grille de tuiles (couverture en lazy loading, titre, résumé), état vide
 (aucune visualisation publiée).
 
 Critère de fin : la tuile de la visualisation de test (étape 2) s'affiche à l'accueil, dans les
-deux langues, groupée sous sa catégorie, et mène à sa page (même si cette page n'existe pas
-encore : le lien peut être cassé à ce stade).
+deux langues, et mène à sa page (même si cette page n'existe pas encore : le lien peut être
+cassé à ce stade).
 ```
 
 ## 4. Page de visualisation (gabarit générique)

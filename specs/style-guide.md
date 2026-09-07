@@ -6,29 +6,22 @@ Valable pour l'ensemble du site, y compris les visualisations : les couleurs, la
 
 ### Palette de l'interface (surfaces et texte)
 
+En-tête et pied de page en couleurs de marque fixes (bleu marine, doré), reste de l'interface en gris neutre sur fond blanc.
+
 ```css
 :root {
-  --dv-surface: #fcfcfb;
-  --dv-page: #f9f9f7;
-  --dv-ink-primary: #0b0b0b;
-  --dv-ink-secondary: #52514e;
-  --dv-ink-muted: #898781;
-  --dv-gridline: #e1e0d9;
-  --dv-border: rgba(11, 11, 11, 0.10);
-  --dv-accent: #2a78d6;
-}
+  /* Identité de marque (en-tête, pied de page) : fixes, pas de variante sombre
+     (déjà des surfaces sombres par construction, voir note ci-dessous). */
+  --dv-header-bg: #2c374c;
+  --dv-footer-bg: #444444;
+  --dv-gold: #c7b299;
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --dv-surface: #1a1a19;
-    --dv-page: #0d0d0d;
-    --dv-ink-primary: #ffffff;
-    --dv-ink-secondary: #c3c2b7;
-    --dv-ink-muted: #898781;
-    --dv-gridline: #2c2c2a;
-    --dv-border: rgba(255, 255, 255, 0.10);
-    --dv-accent: #3987e5;
-  }
+  --dv-surface: #ffffff;
+  --dv-page: #ffffff;
+  --dv-ink-primary: #444444;
+  --dv-ink-secondary: #666666;
+  --dv-gridline: #acb2b8;
+  --dv-accent: #2a78d6;
 }
 
 :root[data-theme="dark"] {
@@ -36,15 +29,14 @@ Valable pour l'ensemble du site, y compris les visualisations : les couleurs, la
   --dv-page: #0d0d0d;
   --dv-ink-primary: #ffffff;
   --dv-ink-secondary: #c3c2b7;
-  --dv-ink-muted: #898781;
   --dv-gridline: #2c2c2a;
-  --dv-border: rgba(255, 255, 255, 0.10);
   --dv-accent: #3987e5;
 }
 ```
 
-- `--dv-accent` (bleu, identique au slot 1 de la palette catégorielle ci-dessous) porte les liens, les états de survol/focus et les éléments interactifs du chrome d'interface. Il n'est jamais réutilisé pour coder une catégorie de données dans une visualisation qui affiche plusieurs séries en même temps : l'identité d'une série vient toujours de la palette catégorielle ci-dessous, jamais du bleu d'accent seul.
-- Mode sombre sélectionné (pas un simple flip automatique) : mêmes rôles, valeurs propres validées pour la surface sombre (voir palette catégorielle).
+- `--dv-header-bg`, `--dv-footer-bg` et `--dv-gold` sont l'identité de marque de l'en-tête et du pied de page (voir "En-tête" et "Pied de page" ci-dessous) : des valeurs fixes, non redéfinies en mode sombre, car l'en-tête et le pied de page sont déjà des surfaces sombres par construction, quel que soit le thème du reste de la page. `--dv-gold` y sert d'état de survol/focus (texte, bordures), jamais comme couleur de catégorie de données. `--dv-header-bg` sert aussi de couleur de survol des tuiles du catalogue (voir "Tuiles (catalogue)" ci-dessous), pour rattacher cet état à l'identité de marque plutôt qu'à une couleur neutre.
+- `--dv-accent` (bleu, identique au slot 1 de la palette catégorielle ci-dessous) porte les liens et les éléments interactifs sur fond clair (corps de page). Il n'est jamais réutilisé pour coder une catégorie de données dans une visualisation qui affiche plusieurs séries en même temps : l'identité d'une série vient toujours de la palette catégorielle ci-dessous, jamais du bleu d'accent seul. `--dv-gold`, plus clair, n'est pas utilisé comme couleur de survol sur fond clair : son contraste y est insuffisant (voir "Accessibilité" dans `technical-specifications.md`), il reste réservé aux surfaces sombres de l'en-tête et du pied de page.
+- Le site reste toujours en thème clair, quel que soit le thème système du visiteur : pas de mode sombre pour l'instant. Les valeurs sombres restent définies (`:root[data-theme="dark"]`) mais ne s'activent plus automatiquement via `prefers-color-scheme` : elles ne sont atteignables que si une future bascule manuelle pose l'attribut `data-theme="dark"`, non implémentée à ce stade.
 
 ### Palette dataviz (pour les visualisations)
 
@@ -95,10 +87,12 @@ Une visualisation qui a besoin d'une palette différente de ce défaut (ex : une
 | `h1` | 2rem | 700 | `--dv-ink-primary` |
 | `h2` | 1.5rem | 700 | `--dv-ink-primary` |
 | `h3` | 1.125rem | 500 | `--dv-ink-primary` |
-| Corps de texte | 1rem | 400 | `--dv-ink-primary` |
+| Corps de texte | 1rem | 400 | `--dv-ink-secondary` |
 | Texte secondaire, légendes, métadonnées | 0.875rem | 300 | `--dv-ink-secondary` |
 
 `line-height` : 1.2 pour les titres, 1.5 pour le corps de texte.
+
+Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble du site) ; l'affordance vient de la couleur (`--dv-accent` ou `--dv-gold` selon la surface, voir "Couleurs") et de son changement au survol/focus, pas du soulignement.
 
 ## Espacements, grille et responsive
 
@@ -112,39 +106,43 @@ Une visualisation qui a besoin d'une palette différente de ce défaut (ex : une
   --dv-space-4: 24px;
   --dv-space-5: 32px;
   --dv-space-6: 48px;
+
+  --dv-header-height: 5.5rem;
+  --dv-footer-height: 2.5rem;
+  --dv-gutter: 12px;
 }
 ```
 
-- Conteneur de page : largeur maximale 1200px, centré, marge horizontale `--dv-space-3` sur petit écran.
-- Grille du catalogue (voir "Tuiles (catalogue)" ci-dessous) : CSS Grid fluide (`repeat(auto-fill, minmax(260px, 1fr))`, `gap: var(--dv-space-4)`), pas de point de rupture fixe à maintenir.
+- `--dv-gutter` : espacement horizontal minimal au bord de la fenêtre, partagé par le conteneur de page, l'en-tête et le pied de page (voir ci-dessous) ; hors échelle `--dv-space-*`.
+- Conteneur de page (contenu principal) : largeur maximale 1320px, centré, marge horizontale `--dv-gutter`. Ne s'applique pas à l'en-tête ni au pied de page, en pleine largeur (voir "En-tête" et "Pied de page" ci-dessous).
+- Grille du catalogue (voir "Tuiles (catalogue)" ci-dessous) : CSS Grid fluide (`repeat(auto-fill, minmax(340px, 1fr))`, `gap: var(--dv-space-4)`), pas de point de rupture fixe à maintenir ; ce minimum de tuile large plafonne naturellement à trois colonnes sur desktop (largeur du conteneur), deux puis une seule en dessous.
+- `--dv-header-height` et `--dv-footer-height` dimensionnent l'en-tête collant et le pied de page fixe (voir "En-tête" et "Pied de page" ci-dessous) ; le contenu principal réserve un espacement bas égal à `--dv-footer-height` pour ne pas passer sous le pied de page fixe.
 
 ## Composants UI de base
 
 ### En-tête
 
-- **Gauche** : nom du site (`dataviz.heubes.io`), en lien vers l'accueil.
-- **Droite** : sélecteur de langue, deux drapeaux 🇫🇷 / 🇬🇧 avec `aria-label` explicite ("Français" / "English").
-- Fond `--dv-surface`, texte `--dv-ink-primary`, bordure basse `--dv-gridline`.
-- En-tête collant (`position: sticky`) en haut de page.
+- **Gauche** : logo (`public/logo.png`) suivi du nom du site (`dataviz.heubes.io`), l'ensemble en lien vers l'accueil.
+- **Droite** : sélecteur de langue, deux drapeaux 🇫🇷 / 🇬🇧 empilés verticalement (l'un au-dessus de l'autre), avec `aria-label` explicite ("Français" / "English").
+- Fond `--dv-header-bg` (bleu marine), texte blanc, bordure basse `--dv-gold`.
+- Survol/focus des éléments interactifs (nom du site, drapeaux) : `--dv-gold`.
+- En-tête collant (`position: sticky`) en haut de page, hauteur indicative `--dv-header-height` (voir "Espacements, grille et responsive").
+- Largeur pleine, sans le conteneur de page (pas de largeur maximale ni de centrage) : ses éléments (logo/nom du site, sélecteur de langue) sont au plus près du bord de la fenêtre, avec seulement `--dv-gutter` d'espacement horizontal.
 - Pas de contenu propre à une visualisation dans l'en-tête (pas de sous-titre, pas de switcher) : pas de notion d'univers ni de vue alternative ici. Le titre de la page courante s'affiche dans le contenu principal, pas dans le chrome.
 
 ### Pied de page
 
-- **Gauche** : mention de licence, "CC BY-NC-SA 4.0", lien vers `https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr` ou `.../deed.en` selon la langue courante, appliquée à la présentation et au code originaux du site ; la licence propre à chaque dataset source reste celle de sa source (voir "Dataset source" dans `data-model.md`), non affectée par celle-ci. Texte seul, sans icône : pas de bibliothèque d'icônes ici (voir "Iconographie").
+- **Gauche** : mention de licence, quatre icônes Creative Commons (voir "Iconographie") suivies du texte "CC BY-NC-SA 4.0", lien vers `https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr` ou `.../deed.en` selon la langue courante, appliquée à la présentation et au code originaux du site ; la licence propre à chaque dataset source reste celle de sa source (voir "Dataset source" dans `data-model.md`), non affectée par celle-ci.
 - **Droite** : mention "Réalisée par Christophe Heubès" (FR) / "Created by Christophe Heubès" (EN), le nom en lien vers `https://christophe.heubes.org`.
-- Fond `--dv-page`, texte `--dv-ink-secondary`, bordure haute `--dv-gridline`, liens en `--dv-accent` au survol.
-
-### Titre de section (accueil)
-
-- Un titre par section de l'accueil (une par catégorie, voir "Catégorie" dans `data-model.md` et `home-page.md`), au-dessus de la grille de tuiles de la catégorie correspondante.
-- `h2`, style repris de l'échelle typographique standard, sans surcharge propre.
+- Fond `--dv-footer-bg` (gris foncé), texte blanc, bordure haute `--dv-gridline`, liens en `--dv-gold` au survol.
+- Pied de page fixe (`position: fixed`, ancré en bas de viewport) sur toute la largeur, hauteur indicative `--dv-footer-height` ; le contenu principal réserve cet espace en bas de page pour ne jamais passer dessous. Padding vertical `--dv-space-2` et espacement `--dv-space-2` entre les icônes et le texte de la mention de licence.
+- Comme l'en-tête, largeur pleine sans le conteneur de page : ses éléments sont au plus près du bord de la fenêtre, avec seulement `--dv-gutter` d'espacement horizontal.
 
 ### Tuiles (catalogue)
 
-- Couverture (ratio et dimensions : voir "Images" ci-dessous), en lazy loading, `title` en titre, `summary` en corps (tronqué à une limite de mot si nécessaire), badge de catégorie (texte `--dv-ink-secondary`, fond `--dv-page`, bordure `--dv-gridline`, pas de couleur propre à la catégorie).
-- Fond `--dv-surface`, titre `--dv-ink-primary`, texte `--dv-ink-secondary`, bordure `--dv-border`.
-- Survol : légère élévation (ombre) et bordure `--dv-accent`.
-- Mention de crédit de la couverture (`cover-source`, si renseigné, voir `data-model.md`) : texte secondaire, taille `--dv-ink-muted`, en fin de tuile ; si c'est une URL, lien `--dv-accent` ; si `ai-generated`, texte simple sans lien.
+- Couverture (ratio et dimensions : voir "Images" ci-dessous), en lazy loading, `title` en titre, `summary` en corps, aligné en justifié. Zone de texte (titre + résumé) à hauteur fixe, résumé défilant verticalement au-delà de cette hauteur plutôt que tronqué : chaque tuile garde la même hauteur quelle que soit la longueur du résumé.
+- Fond `--dv-surface`, titre `--dv-ink-primary`, texte `--dv-ink-secondary`, bordure `--dv-gridline`.
+- Survol : légère élévation (ombre) et bordure `--dv-header-bg` (identité de marque).
 
 ### Page de visualisation
 
@@ -161,6 +159,10 @@ Une visualisation qui a besoin d'une palette différente de ce défaut (ex : une
 
 Format `.jpg` (photo) ou `.png` (illustration, capture d'écran), selon la nature de la visualisation ; pas de contrainte de format imposée au-delà du ratio et des dimensions minimales. `object-fit: cover` en CSS pour absorber les écarts plutôt que d'imposer un recadrage strict.
 
+Tant que la couverture propre d'une visualisation (`public/covers/<viz-slug>.jpg`/`.png`, voir `data-model.md`) n'existe pas, un placeholder partagé (`public/cover-placeholder.svg`) s'affiche à sa place sur sa tuile et sa page.
+
 ## Iconographie
 
 Pas de bibliothèque d'icônes par défaut (pas de nouvelle dépendance sans discussion, voir les règles globales de sécurité du projet). Les rares besoins d'icône (ex : lien externe) utilisent un caractère Unicode ou un SVG inline minimal.
+
+Exception : les quatre icônes de la mention de licence en pied de page (voir "Pied de page" ci-dessus) utilisent Font Awesome Free (sous-ensemble `brands`, voir "Dépendances" dans `technical-specifications.md`) — `fa-creative-commons`, `fa-creative-commons-by`, `fa-creative-commons-nc-eu`, `fa-creative-commons-sa`, dans cet ordre, taille `1rem`, couleur héritée du pied de page (blanc, doré au survol).

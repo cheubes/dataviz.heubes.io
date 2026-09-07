@@ -1,11 +1,14 @@
 :root {
-  --dv-surface: #fcfcfb;
-  --dv-page: #f9f9f7;
-  --dv-ink-primary: #0b0b0b;
-  --dv-ink-secondary: #52514e;
-  --dv-ink-muted: #898781;
-  --dv-gridline: #e1e0d9;
-  --dv-border: rgba(11, 11, 11, 0.10);
+  /* Brand identity (header, footer): fixed, no dark variant, see style-guide.md */
+  --dv-header-bg: #2c374c;
+  --dv-footer-bg: #444444;
+  --dv-gold: #c7b299;
+
+  --dv-surface: #ffffff;
+  --dv-page: #ffffff;
+  --dv-ink-primary: #444444;
+  --dv-ink-secondary: #666666;
+  --dv-gridline: #acb2b8;
   --dv-accent: #2a78d6;
 
   --dv-space-1: 4px;
@@ -14,29 +17,21 @@
   --dv-space-4: 24px;
   --dv-space-5: 32px;
   --dv-space-6: 48px;
+
+  --dv-header-height: 5.5rem;
+  --dv-footer-height: 2.5rem;
+  --dv-gutter: 12px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --dv-surface: #1a1a19;
-    --dv-page: #0d0d0d;
-    --dv-ink-primary: #ffffff;
-    --dv-ink-secondary: #c3c2b7;
-    --dv-ink-muted: #898781;
-    --dv-gridline: #2c2c2a;
-    --dv-border: rgba(255, 255, 255, 0.10);
-    --dv-accent: #3987e5;
-  }
-}
-
+/* No automatic switch on prefers-color-scheme: the site stays light
+   regardless of system theme. Kept as an opt-in only, reachable by setting
+   data-theme explicitly (unused until a manual toggle exists). */
 :root[data-theme="dark"] {
   --dv-surface: #1a1a19;
   --dv-page: #0d0d0d;
   --dv-ink-primary: #ffffff;
   --dv-ink-secondary: #c3c2b7;
-  --dv-ink-muted: #898781;
   --dv-gridline: #2c2c2a;
-  --dv-border: rgba(255, 255, 255, 0.10);
   --dv-accent: #3987e5;
 }
 
@@ -46,20 +41,14 @@
   box-sizing: border-box;
 }
 
-html,
 body {
-  height: 100%;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
   margin: 0;
+  padding-bottom: var(--dv-footer-height);
   font-family: "Ubuntu", sans-serif;
   font-weight: 400;
   font-size: 1rem;
   line-height: 1.5;
-  color: var(--dv-ink-primary);
+  color: var(--dv-ink-secondary);
   background-color: var(--dv-page);
 }
 
@@ -86,6 +75,10 @@ h3 {
   font-weight: 500;
 }
 
+a {
+  text-decoration: none;
+}
+
 .dv-text-secondary {
   font-size: 0.875rem;
   font-weight: 300;
@@ -94,9 +87,9 @@ h3 {
 }
 
 .dv-container {
-  max-width: 1200px;
+  max-width: 1320px;
   margin-inline: auto;
-  padding-inline: var(--dv-space-3);
+  padding-inline: var(--dv-gutter);
 }
 
 :focus-visible {
