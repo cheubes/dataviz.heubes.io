@@ -1,0 +1,130 @@
+---
+import { getCollection, render } from 'astro:content';
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getVisualizationSlug } from '../../content/config';
+import fr from '../../i18n/fr';
+
+const LANG = 'fr';
+
+export async function getStaticPaths() {
+  const visualizations = await getCollection('visualizations', (viz) => viz.data.lang === 'fr');
+  return visualizations.map((viz) => ({
+    params: { viz: getVisualizationSlug(viz.id, viz.data.lang) },
+    props: { viz },
+  }));
+}
+
+const { viz } = Astro.props;
+const { lang, title, summary, datasets } = viz.data;
+const slug = getVisualizationSlug(viz.id, lang);
+const { Content } = await render(viz);
+
+const coverExtension = ['jpg', 'png'].find((ext) =>
+  existsSync(fileURLToPath(new URL(`../../../public/covers/${slug}.${ext}`, import.meta.url)))
+);
+const coverPath = coverExtension ? `/covers/${slug}.${coverExtension}` : '/cover-placeholder.svg';
+---
+
+<BaseLayout title={`${title} · dataviz.heubes.io`} lang={LANG}>
+  <article class="dv-viz-page">
+    <img src={coverPath} alt={title} width="1200" height="675" class="dv-viz-page__cover" />
+
+    <h1>{title}</h1>
+    <p class="dv-viz-page__summary">{summary}</p>
+
+    <div class="dv-viz-page__body">
+      <Content />
+    </div>
+
+    <section class="dv-viz-page__credits">
+      <h2>{fr.viz.sourcesHeading}</h2>
+      <ul class="dv-viz-page__dataset-list">
+        {
+          datasets.map((dataset) => (
+            <li class="dv-viz-page__dataset">
+              <a href={dataset.url} target="_blank" rel="noopener" class="dv-viz-page__dataset-name">
+                {dataset.name}
+              </a>
+              <span class="dv-viz-page__dataset-meta">
+                {[
+                  dataset.publisher,
+                  dataset.license,
+                  dataset.retrieved && `${fr.viz.retrievedLabel} ${dataset.retrieved}`,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <div class="dv-viz-page__mount"></div>
+
+    <a href="/fr/" class="dv-viz-page__back">{fr.viz.backToCatalog}</a>
+  </article>
+</BaseLayout>
+
+<style>
+  .dv-viz-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dv-space-4);
+  }
+
+  .dv-viz-page__cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .dv-viz-page__summary {
+    margin: 0;
+    font-size: 1.125rem;
+  }
+
+  .dv-viz-page__credits h2 {
+    margin-bottom: var(--dv-space-2);
+  }
+
+  .dv-viz-page__dataset-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--dv-space-1);
+  }
+
+  .dv-viz-page__dataset {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--dv-space-2);
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: var(--dv-ink-secondary);
+  }
+
+  .dv-viz-page__dataset-name {
+    color: var(--dv-accent);
+  }
+
+  .dv-viz-page__mount {
+    width: 100%;
+    min-height: 480px;
+    border: 1px solid var(--dv-gridline);
+    border-radius: 4px;
+    background-color: var(--dv-surface);
+  }
+
+  .dv-viz-page__back {
+    align-self: flex-start;
+    color: var(--dv-accent);
+  }
+</style>

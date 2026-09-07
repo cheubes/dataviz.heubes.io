@@ -76,11 +76,13 @@ deux langues, et mène à sa page (même si cette page n'existe pas encore : le 
 cassé à ce stade).
 ```
 
-## 4. Page de visualisation (gabarit générique)
+## ✅ 4. Page de visualisation (gabarit générique)
 
 Couverture, titre, résumé, présentation longue, bloc de crédit des sources, zone de montage réservée (encore vide), lien retour. Voir "Page de visualisation" dans `style-guide.md`.
 
 **Critère :** la page de la visualisation de test s'affiche avec tout son contenu de présentation ; la zone de montage réserve sa hauteur sans contenu.
+
+**Statut :** fait.
 
 **Prompt :**
 ```
