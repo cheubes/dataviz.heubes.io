@@ -9,7 +9,12 @@ const LANG = 'fr';
 const visualizations = await getCollection('visualizations', (viz) => viz.data.lang === LANG);
 ---
 
-<BaseLayout title="dataviz.heubes.io" lang={LANG}>
+<BaseLayout
+  title="dataviz.heubes.io"
+  description={fr.home.description}
+  lang={LANG}
+  alternatePath="/"
+>
   {
     visualizations.length === 0 ? (
       <p>{fr.home.empty}</p>

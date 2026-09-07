@@ -123,11 +123,13 @@ visiter une URL de visualisation qui n'existe pas dans une langue affiche le mes
 d'indisponibilité dans cette langue plutôt que la 404 générique.
 ```
 
-## 6. SEO et accessibilité
+## ✅ 6. SEO et accessibilité
 
 `@astrojs/sitemap`, hreflang, meta/Open Graph dans `BaseLayout.astro`, puis vérification manuelle (clavier, contraste réel à l'écran). Voir "SEO" et "Accessibilité" dans `technical-specifications.md`.
 
 **Critère :** `sitemap.xml` généré, balises meta présentes, navigation clavier fonctionnelle sur l'accueil et la page de visualisation.
+
+**Statut :** fait.
 
 **Prompt :**
 ```

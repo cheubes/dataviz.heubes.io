@@ -5,10 +5,24 @@ import '../styles/global.css';
 
 interface Props {
   title: string;
+  description: string;
   lang?: 'fr' | 'en';
+  cover?: string;
+  alternatePath?: string;
 }
 
-const { title, lang = 'en' } = Astro.props;
+const {
+  title,
+  description,
+  lang = 'en',
+  cover = '/cover-placeholder.svg',
+  alternatePath,
+} = Astro.props;
+
+const otherLang = lang === 'fr' ? 'en' : 'fr';
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const ogImageUrl = new URL(cover, Astro.site);
+const alternateUrl = alternatePath ? new URL(alternatePath, Astro.site) : undefined;
 ---
 
 <!doctype html>
@@ -17,6 +31,23 @@ const { title, lang = 'en' } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:url" content={canonicalUrl} />
+
+    {
+      alternateUrl && (
+        <>
+          <link rel="alternate" hreflang={lang} href={canonicalUrl} />
+          <link rel="alternate" hreflang={otherLang} href={alternateUrl} />
+        </>
+      )
+    }
+
     <link rel="icon" type="image/png" href="/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

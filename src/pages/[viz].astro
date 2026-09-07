@@ -9,14 +9,23 @@ import en from '../i18n/en';
 const LANG = 'en';
 
 export async function getStaticPaths() {
-  const visualizations = await getCollection('visualizations', (viz) => viz.data.lang === 'en');
-  return visualizations.map((viz) => ({
-    params: { viz: getVisualizationSlug(viz.id, viz.data.lang) },
-    props: { viz },
-  }));
+  const [visualizations, frVisualizations] = await Promise.all([
+    getCollection('visualizations', (viz) => viz.data.lang === 'en'),
+    getCollection('visualizations', (viz) => viz.data.lang === 'fr'),
+  ]);
+  const frSlugs = new Set(
+    frVisualizations.map((viz) => getVisualizationSlug(viz.id, viz.data.lang))
+  );
+  return visualizations.map((viz) => {
+    const slug = getVisualizationSlug(viz.id, viz.data.lang);
+    return {
+      params: { viz: slug },
+      props: { viz, hasTranslation: frSlugs.has(slug) },
+    };
+  });
 }
 
-const { viz } = Astro.props;
+const { viz, hasTranslation } = Astro.props;
 const { lang, title, summary, datasets } = viz.data;
 const slug = getVisualizationSlug(viz.id, lang);
 const { Content } = await render(viz);
@@ -25,9 +34,16 @@ const coverExtension = ['jpg', 'png'].find((ext) =>
   existsSync(fileURLToPath(new URL(`../../public/covers/${slug}.${ext}`, import.meta.url)))
 );
 const coverPath = coverExtension ? `/covers/${slug}.${coverExtension}` : '/cover-placeholder.svg';
+const alternatePath = hasTranslation ? `/fr/${slug}/` : undefined;
 ---
 
-<BaseLayout title={`${title} · dataviz.heubes.io`} lang={LANG}>
+<BaseLayout
+  title={`${title} · dataviz.heubes.io`}
+  description={summary}
+  lang={LANG}
+  cover={coverPath}
+  alternatePath={alternatePath}
+>
   <article class="dv-viz-page">
     <img src={coverPath} alt={title} width="1200" height="675" class="dv-viz-page__cover" />
 

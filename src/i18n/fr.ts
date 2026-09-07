@@ -1,6 +1,8 @@
 export default {
   home: {
     empty: "Aucune visualisation n'est encore publiée.",
+    description:
+      "Catalogue de visualisations de données interactives et originales, chacune explorant un dataset open data avec une mise en forme qui lui est propre.",
   },
   viz: {
     sourcesHeading: 'Sources des données',

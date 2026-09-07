@@ -4,7 +4,11 @@ import en from '../i18n/en';
 import fr from '../i18n/fr';
 ---
 
-<BaseLayout title={`${en.notFound.title} · dataviz.heubes.io`} lang="en">
+<BaseLayout
+  title={`${en.notFound.title} · dataviz.heubes.io`}
+  description={en.notFound.message}
+  lang="en"
+>
   <div class="dv-not-found">
     <section id="dv-not-found-en" class="dv-not-found__message">
       <h1>{en.notFound.title}</h1>
@@ -44,6 +48,9 @@ import fr from '../i18n/fr';
 
   document.documentElement.lang = lang;
   document.title = `${texts.notFound.title} · dataviz.heubes.io`;
+  document
+    .querySelector('meta[name="description"]')
+    ?.setAttribute('content', texts.notFound.message);
   document.getElementById(activeId)?.removeAttribute('hidden');
   document.getElementById(inactiveId)?.setAttribute('hidden', '');
 </script>
