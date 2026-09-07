@@ -1,8 +1,8 @@
 # Plan de construction incrémental
 
-Huit étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Neuf étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
-Chaque étape a un prompt prêt à l'emploi pour la démarrer. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 8 retire ce contenu de test.
+Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
 ## ✅ 1. Squelette Astro + chrome commun
 
@@ -49,7 +49,7 @@ data-model.md ("Visualisation", "Dataset source").
 
 Ajoute une visualisation de test (src/content/visualizations/test-viz.fr.md et .en.md), avec
 un frontmatter complet et un dataset factice, explicitement marquée comme contenu jetable à
-retirer à l'étape 8.
+retirer à l'étape 7.
 
 Critère de fin : astro build passe avec ce contenu ; retire volontairement un champ requis du
 frontmatter et vérifie que le build échoue, puis remets-le.
@@ -141,25 +141,7 @@ Critère de fin : sitemap.xml généré, balises meta et hreflang présentes, l'
 de visualisation restent utilisables au clavier.
 ```
 
-## 7. Déploiement
-
-`.github/workflows/deploy.yml`, `public/CNAME`, source GitHub Pages réglée sur "GitHub Actions". Voir "Hébergement et déploiement" dans `technical-specifications.md`.
-
-**Critère :** le site est accessible sur `dataviz.heubes.io` après un push sur `main`.
-
-**Prompt :**
-```
-Implémente l'étape 7 du plan de construction (BUILD-PLAN.md) : déploiement.
-
-Crée .github/workflows/deploy.yml et public/CNAME, en suivant "Hébergement et déploiement"
-dans technical-specifications.md. Indique-moi de régler manuellement la source GitHub Pages du
-repository sur "GitHub Actions" (paramètre du repository, pas modifiable depuis le code).
-
-Critère de fin : après un push sur main, le site est accessible sur https://dataviz.heubes.io
-avec le contenu de test des étapes précédentes.
-```
-
-## 8. Retrait du contenu de test
+## 7. Retrait du contenu de test
 
 Retire la catégorie et la visualisation de test de l'étape 2 : le site en squelette reste fonctionnel (accueil à l'état vide, voir `home-page.md`), prêt pour l'ajout d'une première vraie visualisation.
 
@@ -167,7 +149,7 @@ Retire la catégorie et la visualisation de test de l'étape 2 : le site en sque
 
 **Prompt :**
 ```
-Implémente l'étape 8 du plan de construction (BUILD-PLAN.md) : retrait du contenu de test.
+Implémente l'étape 7 du plan de construction (BUILD-PLAN.md) : retrait du contenu de test.
 
 Retire la catégorie et la visualisation de test créées à l'étape 2 (contenu, couverture),
 sans modifier le code des étapes précédentes.
@@ -177,8 +159,52 @@ visualisation publiée dans la langue courante"), sans erreur de build ni réfé
 de test.
 ```
 
+## 8. Première visualisation réelle
+
+Choix d'un premier dataset open data et d'un premier angle de visualisation, documentation de `specs/<viz-slug>/` (voir "Structure de `specs/`" dans `CLAUDE.md`), puis implémentation : contenu réel dans la collection `visualizations`, rendu interactif dans la zone de montage du gabarit générique (étape 4).
+
+**Critère :** la tuile de la vraie visualisation s'affiche à l'accueil dans les deux langues ; sa page affiche le rendu interactif réel, pas un espace réservé vide.
+
+**Prompt :**
+```
+Implémente l'étape 8 du plan de construction (BUILD-PLAN.md) : première visualisation réelle.
+
+Avant d'écrire du code, choisis (ou confirme avec moi si pas déjà fait) un dataset open data et
+un angle de visualisation, puis documente specs/<viz-slug>/data-model.md,
+specs/<viz-slug>/functional-specifications.md et specs/<viz-slug>/technical-specifications.md
+(voir "Structure de specs/" dans CLAUDE.md) : schéma du dataset, écran de la visualisation
+(objectif, contenu, interactions, états, responsive), choix techniques propres (librairie de
+rendu, technique d'interaction) au-delà des règles communes de technical-specifications.md.
+
+Ajoute la visualisation à la collection content (src/content/visualizations/<viz-slug>.fr.md et
+.en.md, voir étape 2), avec son vrai frontmatter et sa vraie couverture, et implémente son rendu
+dans la zone de montage du gabarit générique (étape 4), en suivant les specs propres à cette
+visualisation.
+
+Critère de fin : la tuile de la visualisation s'affiche à l'accueil dans les deux langues, et
+sa page affiche le rendu interactif réel, pas un espace réservé vide.
+```
+
+## 9. Déploiement
+
+`.github/workflows/deploy.yml`, `public/CNAME`, source GitHub Pages réglée sur "GitHub Actions". Voir "Hébergement et déploiement" dans `technical-specifications.md`.
+
+**Critère :** le site est accessible sur `dataviz.heubes.io` après un push sur `main`.
+
+**Prompt :**
+```
+Implémente l'étape 9 du plan de construction (BUILD-PLAN.md) : déploiement.
+
+Crée .github/workflows/deploy.yml et public/CNAME, en suivant "Hébergement et déploiement"
+dans technical-specifications.md. Indique-moi de régler manuellement la source GitHub Pages du
+repository sur "GitHub Actions" (paramètre du repository, pas modifiable depuis le code).
+
+Critère de fin : après un push sur main, le site est accessible sur https://dataviz.heubes.io
+avec la première visualisation réelle de l'étape 8.
+```
+
 ---
 
-**Après l'étape 8**, le site est un squelette générique fonctionnel sans aucune visualisation réelle. L'étape suivante n'est pas encore définie : elle dépend du choix d'un premier dataset et d'un premier angle de visualisation, à documenter dans un nouveau dossier `specs/<viz-slug>/` (voir `CLAUDE.md`) avant de l'implémenter.
+Le choix du dataset et de l'angle de la première visualisation (étape 8) reste à faire ; il conditionne la rédaction de `specs/<viz-slug>/` (voir `CLAUDE.md`) avant l'implémentation.
 
 Chaque étape est un point de commit naturel. Avant de committer, vérifier que l'ensemble de `specs/` reste cohérent avec ce qui vient d'être implémenté (voir "Avant chaque commit" dans `CLAUDE.md`) ; si l'implémentation révèle qu'une spec doit changer, le signaler avant d'appliquer la mise à jour.
