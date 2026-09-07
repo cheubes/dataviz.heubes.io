@@ -9,7 +9,7 @@ L'implémentation suit `BUILD-PLAN.md`, qui définit l'ordre en étapes incréme
 ## Structure de `specs/`
 
 - **`functional-specifications.md`** : périmètre du projet, utilisateurs cibles, parcours utilisateurs, règles transverses (multilingue, navigation), hors périmètre.
-- **`data-model.md`** : modèle de données général (entités Visualisation, Catégorie, Dataset source), organisation des fichiers de contenu (content collections Astro), conventions de nommage, contraintes de validation.
+- **`data-model.md`** : modèle de données général (entités Visualisation, Dataset source), organisation des fichiers de contenu (content collections Astro), conventions de nommage, contraintes de validation.
 - **`technical-specifications.md`** : stack technique, hébergement/déploiement, architecture (routage, content collections), performance, accessibilité, SEO, et règles communes à toutes les visualisations (chargement des librairies, gestion des données, états communs).
 - **`style-guide.md`** : charte graphique (couleurs, typographie, espacements), composants UI de base (en-tête, pied de page, tuiles), palette dataviz — valable pour l'ensemble du site, y compris les visualisations.
 - **`home-page.md`** : spécification fonctionnelle de la page d'accueil (catalogue).
@@ -18,7 +18,7 @@ L'implémentation suit `BUILD-PLAN.md`, qui définit l'ordre en étapes incréme
   - `functional-specifications.md` : spécification fonctionnelle de la visualisation, y compris son écran (objectif, contenu, interactions, états, responsive).
   - `technical-specifications.md` : règles techniques propres à cette visualisation (librairie de rendu, technique d'interaction, contraintes de performance ou d'accessibilité spécifiques) qui vont au-delà des règles communes du fichier général. Presque systématique plutôt qu'exceptionnel : chaque visualisation étant une pièce de code originale (pas un gabarit générique rejoué), elle a presque toujours un choix technique propre à documenter.
 
-Aucun dossier `<viz-slug>/` n'existe encore : la première visualisation n'est pas encore choisie.
+Trois dossiers `<viz-slug>/` existent à ce stade, adaptés de drafts externes : `biodiversity/`, `bird-migrations/`, `flower-phenology/`. Ce sont des candidates pour la première visualisation réelle (étape 8 de `BUILD-PLAN.md`) ; laquelle implémenter en premier, et dans quel ordre suivre pour les autres, reste à choisir.
 
 ## Quand et comment utiliser ces specs
 

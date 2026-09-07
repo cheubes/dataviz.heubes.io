@@ -8,7 +8,7 @@ Donner au visiteur un aperçu du catalogue de visualisations disponibles et lui 
 
 - En-tête du site (voir "En-tête" dans `style-guide.md`).
 - Une grille de tuiles de toutes les visualisations disponibles dans la langue courante (voir "Tuiles (catalogue)" dans `style-guide.md`).
-- Tuile de visualisation (voir "Tuiles (catalogue)" dans `style-guide.md`) : couverture, titre, résumé, mention de crédit de la couverture si renseignée.
+- Tuile de visualisation (voir "Tuiles (catalogue)" dans `style-guide.md`) : couverture, titre, résumé.
 - Pied de page (voir "Pied de page" dans `style-guide.md`).
 
 ## Interactions

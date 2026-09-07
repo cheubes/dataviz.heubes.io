@@ -101,8 +101,12 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   ├── CNAME
 │   ├── logo.png                       # favicon et logo de l'en-tête, voir style-guide.md
 │   ├── cover-placeholder.svg          # couverture de repli, voir "Images" dans style-guide.md
-│   └── covers/
-│       └── <viz-slug>.jpg            # ou .png, voir data-model.md
+│   ├── covers/
+│   │   └── <viz-slug>.jpg            # ou .png, voir data-model.md
+│   └── data/
+│       └── <viz-slug>/
+│           └── ...                    # données statifiées consommées par la visualisation,
+│                                       # voir specs/<viz-slug>/data-model.md
 ├── src/
 │   ├── content/
 │   │   ├── config.ts                  # schémas des content collections
@@ -207,7 +211,7 @@ Au premier accès, la langue est déterminée côté client par celle du navigat
 
 - Chaque visualisation vit dans son propre composant Astro (et, si besoin, sous-composants) sous `src/components/visualizations/<viz-slug>/`, monté sur la page générique de visualisation (voir "Structure des URLs"). Rien de commun n'est imposé au-delà de ce montage : la technique de rendu (SVG, Canvas, WebGL, DOM), la ou les librairies utilisées, et l'organisation interne du composant sont propres à chaque visualisation et documentées dans son propre `technical-specifications.md`.
 - Toute librairie JS spécifique à une visualisation est une dépendance npm scopée à cette visualisation : ajoutée à `package.json`, chargée uniquement sur la page de cette visualisation (île Astro, directive d'hydratation `client:load` / `client:visible` / `client:idle` selon le besoin, à documenter dans le `technical-specifications.md` de la visualisation), jamais globalement. Toute nouvelle dépendance reste soumise à discussion avant ajout.
-- Les données consommées par une visualisation sont récupérées et figées au moment du build (fichier JSON/CSV committé ou généré par un script), sauf besoin explicite documenté et justifié dans le `technical-specifications.md` de la visualisation : cohérent avec un site entièrement statique, sans dépendance à la disponibilité d'une API tierce en production.
+- Les données consommées par une visualisation sont récupérées et figées au moment du build (fichier JSON/CSV committé sous `public/data/<viz-slug>/`, voir "Structure des fichiers" ci-dessus, généré par un script de prétraitement propre à la visualisation), sauf besoin explicite documenté et justifié dans le `technical-specifications.md` de la visualisation : cohérent avec un site entièrement statique, sans dépendance à la disponibilité d'une API tierce en production.
 - La palette dataviz générale (voir `style-guide.md`) s'applique par défaut ; une visualisation qui a besoin d'une palette différente (ex : une teinte séquentielle propre à son sujet) la documente et la valide (script du skill dataviz) dans son propre `technical-specifications.md` plutôt que d'improviser des couleurs.
 - États communs attendus sur la page de chaque visualisation, sauf raison contraire documentée : chargement (le temps que les données et la visualisation s'initialisent), erreur (échec de chargement des données), vide (dataset filtré ou vide selon le contexte). Le traitement visuel précis de chaque état est propre à la visualisation.
 - Une visualisation dont le mode d'interaction principal n'est pas nativement accessible au clavier ou au lecteur d'écran (ex : un rendu Canvas ou WebGL) le documente comme limite connue dans son propre `technical-specifications.md`, plutôt que de le passer sous silence.

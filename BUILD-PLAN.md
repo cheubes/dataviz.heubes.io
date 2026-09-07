@@ -211,6 +211,6 @@ avec la première visualisation réelle de l'étape 8.
 
 ---
 
-Le choix du dataset et de l'angle de la première visualisation (étape 8) reste à faire ; il conditionne la rédaction de `specs/<viz-slug>/` (voir `CLAUDE.md`) avant l'implémentation.
+Trois candidates sont déjà spécifiées (`specs/biodiversity/`, `specs/bird-migrations/`, `specs/flower-phenology/`, voir `CLAUDE.md`) ; laquelle implémenter en premier à l'étape 8, et dans quel ordre suivre pour les deux autres ensuite, reste à choisir.
 
 Chaque étape est un point de commit naturel. Avant de committer, vérifier que l'ensemble de `specs/` reste cohérent avec ce qui vient d'être implémenté (voir "Avant chaque commit" dans `CLAUDE.md`) ; si l'implémentation révèle qu'une spec doit changer, le signaler avant d'appliquer la mise à jour.
