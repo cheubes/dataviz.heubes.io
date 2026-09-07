@@ -7,4 +7,8 @@ export default {
     retrievedLabel: 'Récupéré le',
     backToCatalog: 'Retour au catalogue',
   },
+  notFound: {
+    title: 'Contenu indisponible',
+    message: "Cette page n'existe pas, ou cette visualisation n'est pas encore disponible en français.",
+  },
 };

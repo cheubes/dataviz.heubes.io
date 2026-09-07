@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import en from '../i18n/en';
+import fr from '../i18n/fr';
+---
+
+<BaseLayout title={`${en.notFound.title} · dataviz.heubes.io`} lang="en">
+  <div class="dv-not-found">
+    <section id="dv-not-found-en" class="dv-not-found__message">
+      <h1>{en.notFound.title}</h1>
+      <p>{en.notFound.message}</p>
+      <a href="/" class="dv-not-found__back">{en.viz.backToCatalog}</a>
+    </section>
+    <section id="dv-not-found-fr" class="dv-not-found__message" hidden>
+      <h1>{fr.notFound.title}</h1>
+      <p>{fr.notFound.message}</p>
+      <a href="/fr/" class="dv-not-found__back">{fr.viz.backToCatalog}</a>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .dv-not-found {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dv-space-3);
+  }
+
+  .dv-not-found__back {
+    align-self: flex-start;
+    color: var(--dv-accent);
+  }
+</style>
+
+<script>
+  import { getLangFromPathname } from '../scripts/language';
+  import en from '../i18n/en';
+  import fr from '../i18n/fr';
+
+  const lang = getLangFromPathname(window.location.pathname);
+  const texts = lang === 'fr' ? fr : en;
+  const [activeId, inactiveId] =
+    lang === 'fr' ? ['dv-not-found-fr', 'dv-not-found-en'] : ['dv-not-found-en', 'dv-not-found-fr'];
+
+  document.documentElement.lang = lang;
+  document.title = `${texts.notFound.title} · dataviz.heubes.io`;
+  document.getElementById(activeId)?.removeAttribute('hidden');
+  document.getElementById(inactiveId)?.setAttribute('hidden', '');
+</script>

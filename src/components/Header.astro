@@ -1,16 +1,17 @@
 ---
+import LanguageSelector from './LanguageSelector.astro';
+import { getLangFromPathname } from '../scripts/language';
+
+const homeHref = getLangFromPathname(Astro.url.pathname) === 'fr' ? '/fr/' : '/';
 ---
 
 <header class="dv-header">
   <div class="dv-header__inner">
-    <a href="/" class="dv-header__brand">
+    <a href={homeHref} class="dv-header__brand">
       <img src="/logo.png" alt="" class="dv-header__logo" />
       <span class="dv-header__site-name">dataviz.heubes.io</span>
     </a>
-    <div class="dv-lang-selector" role="group" aria-label="Langue / Language">
-      <button type="button" class="dv-lang-selector__flag" aria-label="Français">🇫🇷</button>
-      <button type="button" class="dv-lang-selector__flag" aria-label="English">🇬🇧</button>
-    </div>
+    <LanguageSelector />
   </div>
 </header>
 
@@ -51,25 +52,5 @@
   .dv-header__site-name {
     font-weight: 700;
     font-size: 1.25rem;
-  }
-
-  .dv-lang-selector {
-    display: flex;
-    flex-direction: column;
-    gap: var(--dv-space-2);
-  }
-
-  .dv-lang-selector__flag {
-    border: none;
-    background: none;
-    padding: 0;
-    font-size: 1rem;
-    line-height: 1;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-
-  .dv-lang-selector__flag:hover {
-    background-color: rgba(255, 255, 255, 0.15);
   }
 </style>

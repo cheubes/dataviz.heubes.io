@@ -100,11 +100,13 @@ Critère de fin : cliquer sur la tuile de test depuis l'accueil (étape 3) ouvre
 tout son contenu de présentation affiché correctement dans les deux langues.
 ```
 
-## 5. Multilingue complet
+## ✅ 5. Multilingue complet
 
 Détection de langue au premier accès, mémorisation `localStorage`, préfixe `/fr/`, message d'indisponibilité (`404.astro`). Voir "Multilingue" dans `functional-specifications.md` et "Architecture" dans `technical-specifications.md`.
 
 **Critère :** changer de langue conserve le contexte de navigation ; visiter une URL non traduite affiche le message d'indisponibilité dans la bonne langue.
+
+**Statut :** fait.
 
 **Prompt :**
 ```

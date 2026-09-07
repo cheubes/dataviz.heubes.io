@@ -1,0 +1,63 @@
+---
+import { getAlternatePathname } from '../scripts/language';
+
+const pathname = Astro.url.pathname;
+const frHref = getAlternatePathname(pathname, 'fr');
+const enHref = getAlternatePathname(pathname, 'en');
+---
+
+<div class="dv-lang-selector" role="group" aria-label="Langue / Language">
+  <a href={frHref} class="dv-lang-selector__flag" aria-label="Français" data-lang="fr">🇫🇷</a>
+  <a href={enHref} class="dv-lang-selector__flag" aria-label="English" data-lang="en">🇬🇧</a>
+</div>
+
+<style>
+  .dv-lang-selector {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dv-space-2);
+  }
+
+  .dv-lang-selector__flag {
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .dv-lang-selector__flag:hover,
+  .dv-lang-selector__flag:focus-visible {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+</style>
+
+<script>
+  import {
+    LANG_STORAGE_KEY,
+    detectBrowserLang,
+    getAlternatePathname,
+    getLangFromPathname,
+  } from '../scripts/language';
+
+  const { pathname } = window.location;
+  const currentLang = getLangFromPathname(pathname);
+
+  const stored = localStorage.getItem(LANG_STORAGE_KEY);
+  const preferredLang = stored === 'fr' || stored === 'en' ? stored : detectBrowserLang();
+
+  if (preferredLang !== currentLang) {
+    window.location.replace(getAlternatePathname(pathname, preferredLang));
+  }
+
+  document.querySelectorAll<HTMLAnchorElement>('.dv-lang-selector__flag').forEach((link) => {
+    link.addEventListener('click', () => {
+      const lang = link.dataset.lang;
+      if (lang === 'fr' || lang === 'en') {
+        localStorage.setItem(LANG_STORAGE_KEY, lang);
+      }
+    });
+  });
+</script>
