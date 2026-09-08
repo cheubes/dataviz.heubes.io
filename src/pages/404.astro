@@ -5,7 +5,7 @@ import fr from '../i18n/fr';
 ---
 
 <BaseLayout
-  title={`${en.notFound.title} · dataviz.heubes.io`}
+  title={`${en.notFound.title} · ${en.site.name}`}
   description={en.notFound.message}
   lang="en"
 >
@@ -47,7 +47,7 @@ import fr from '../i18n/fr';
     lang === 'fr' ? ['dv-not-found-fr', 'dv-not-found-en'] : ['dv-not-found-en', 'dv-not-found-fr'];
 
   document.documentElement.lang = lang;
-  document.title = `${texts.notFound.title} · dataviz.heubes.io`;
+  document.title = `${texts.notFound.title} · ${texts.site.name}`;
   document
     .querySelector('meta[name="description"]')
     ?.setAttribute('content', texts.notFound.message);

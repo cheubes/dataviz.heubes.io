@@ -1,4 +1,8 @@
 export default {
+  site: {
+    name: 'Données Vivantes',
+    tagline: 'Explorations visuelles de données ouvertes',
+  },
   home: {
     empty: "Aucune visualisation n'est encore publiée.",
     description:

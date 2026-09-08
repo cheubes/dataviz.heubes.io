@@ -1,4 +1,8 @@
 export default {
+  site: {
+    name: 'Living Data',
+    tagline: 'Visual explorations of open data',
+  },
   home: {
     empty: 'No visualization has been published yet.',
     description:

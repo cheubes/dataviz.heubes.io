@@ -122,7 +122,7 @@ Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble d
 
 ### En-tête
 
-- **Gauche** : logo (`public/logo.png`) suivi du nom du site (`dataviz.heubes.io`), l'ensemble en lien vers l'accueil.
+- **Gauche** : logo (`public/logo.png`) suivi du nom du site ("Données Vivantes" / "Living Data" selon la langue, voir `i18n/fr.ts` et `i18n/en.ts`) puis, en dessous, son tagline ("Explorations visuelles de données ouvertes" / "Visual explorations of open data"), l'ensemble en lien vers l'accueil.
 - **Droite** : sélecteur de langue, deux drapeaux 🇫🇷 / 🇬🇧 empilés verticalement (l'un au-dessus de l'autre), avec `aria-label` explicite ("Français" / "English").
 - Fond `--dv-header-bg` (bleu marine), texte blanc, bordure basse `--dv-gold`.
 - Survol/focus des éléments interactifs (nom du site, drapeaux) : `--dv-gold`.
