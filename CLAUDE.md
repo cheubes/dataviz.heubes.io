@@ -18,7 +18,7 @@ L'implémentation suit `BUILD-PLAN.md`, qui définit l'ordre en étapes incréme
   - `functional-specifications.md` : spécification fonctionnelle de la visualisation, y compris son écran (objectif, contenu, interactions, états, responsive).
   - `technical-specifications.md` : règles techniques propres à cette visualisation (librairie de rendu, technique d'interaction, contraintes de performance ou d'accessibilité spécifiques) qui vont au-delà des règles communes du fichier général. Presque systématique plutôt qu'exceptionnel : chaque visualisation étant une pièce de code originale (pas un gabarit générique rejoué), elle a presque toujours un choix technique propre à documenter.
 
-Trois dossiers `<viz-slug>/` existent à ce stade, adaptés de drafts externes : `biodiversity/`, `bird-migrations/`, `flower-phenology/`. `bird-migrations` et `flower-phenology` sont implémentées (étape 8 de `BUILD-PLAN.md`, fait) ; `biodiversity` reste une spec non implémentée, candidate pour une prochaine visualisation.
+Trois dossiers `<viz-slug>/` existent à ce stade, adaptés de drafts externes : `biodiversity/`, `bird-migrations/`, `flower-phenology/`. Les trois sont implémentées (étape 8 de `BUILD-PLAN.md`, fait).
 
 ## Quand et comment utiliser ces specs
 

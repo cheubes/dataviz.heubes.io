@@ -34,8 +34,8 @@ Donner à voir la répartition géographique du vivant observé en France métro
 - **Filtre saison :** sélection unique, "Toutes saisons" par défaut. Se combine avec le filtre groupe (ex : "Oiseaux" + "Hiver").
 - **Bascule "Données en direct" :** interroge l'API de recherche GBIF pour la combinaison de filtres courante (voir `data-model.md`) et affiche les occurrences individuelles en points bruts par-dessus (ou à la place de) la grille hexagonale. Un changement de filtre pendant que ce mode est actif relance automatiquement la requête. Revenir au mode par défaut réaffiche instantanément l'instantané précalculé (pas de rechargement de page).
 - **Survol / tap d'une cellule :** tooltip avec le nombre d'observations (pour le filtre courant), le groupe dominant si "Tous les groupes" est actif, un exemple d'espèce.
-- **Zoom / pan :** sur la silhouette de la France uniquement (pas de panoramique libre vers d'autres régions du monde, voir "Périmètre carte" dans `technical-specifications.md`).
-- **Vue initiale :** France métropolitaine entière visible, aucun filtre actif au-delà des valeurs par défaut ("Tous les groupes", "Toutes saisons"), mode par défaut (pas "données en direct").
+- **Pas de zoom ni de panoramique** (écart à l'intention initiale, demande explicite à l'implémentation) : la carte reste fixe, toujours cadrée sur la totalité de la silhouette de la France (voir "Vue initiale" ci-dessous, qui décrit donc l'unique vue plutôt qu'un simple état de départ). Simplifie l'interaction au profit des seuls filtres et du tooltip ; voir "Accessibilité" ci-dessous pour l'effet sur la limite déjà documentée.
+- **Vue initiale (et unique) :** France métropolitaine entière visible, aucun filtre actif au-delà des valeurs par défaut ("Tous les groupes", "Toutes saisons"), mode par défaut (pas "données en direct").
 
 ## États
 
@@ -50,14 +50,13 @@ Donner à voir la répartition géographique du vivant observé en France métro
 
 Version tactile adaptée (voir "Responsive" dans `technical-specifications.md` général, appliquée ici) :
 
-- Pan/zoom de la carte au geste tactile (pincer pour zoomer, glisser pour déplacer).
 - Tooltip au tap plutôt qu'au survol ; un second tap ailleurs sur la carte le referme.
 - Filtres (groupe, saison) en boutons empilés/à la ligne selon la largeur disponible, plutôt qu'une rangée horizontale unique forcée.
 - Légende repliable sous un certain seuil de largeur, pour ne pas rogner l'espace de la carte.
 
 ## Accessibilité (limite connue)
 
-L'interaction principale (carte, zoom/pan, survol des cellules) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général).
+L'interaction principale (carte, survol des cellules) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général).
 
 ## Contenu non traduit
 

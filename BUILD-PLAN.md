@@ -171,11 +171,10 @@ Choix d'un premier dataset open data et d'un premier angle de visualisation, doc
 
 **Critère :** la tuile de la vraie visualisation s'affiche à l'accueil dans les deux langues ; sa page affiche le rendu interactif réel, pas un espace réservé vide.
 
-**Statut :** fait, deux visualisations réelles à ce stade :
+**Statut :** fait, trois visualisations réelles à ce stade :
 - `bird-migrations` (Les routes de migration), données GPS/Argos réelles (quatre espèces, voir `specs/bird-migrations/data-model.md`), rendu D3 + Canvas, couverture réelle (`public/covers/bird-migrations.jpg`).
 - `flower-phenology` (Le calendrier des fleurs), données d'occurrence GBIF réelles (douze espèces sauvages, voir `specs/flower-phenology/data-model.md`), rendu D3 SVG (arcs), couverture en placeholder partagé (`public/cover-placeholder.svg`) en attendant une image propre.
-
-`biodiversity` reste une spec non implémentée, candidate pour une prochaine visualisation.
+- `biodiversity` (La biodiversité française), grille hexagonale H3 (résolution 4, 395 cellules) sur silhouette de la France métropolitaine, données GBIF agrégées via l'API SQL Downloads (voir `specs/biodiversity/data-model.md`), rendu D3 SVG statique (pas de zoom/pan, retiré à la relecture), mode "données en direct" optionnel interrogeant l'API GBIF depuis le navigateur, couverture réelle (`public/covers/biodiversity.jpg`).
 
 **Prompt :**
 ```
@@ -217,6 +216,6 @@ avec la première visualisation réelle de l'étape 8.
 
 ---
 
-Trois candidates sont déjà spécifiées (`specs/biodiversity/`, `specs/bird-migrations/`, `specs/flower-phenology/`, voir `CLAUDE.md`) ; laquelle implémenter en premier à l'étape 8, et dans quel ordre suivre pour les deux autres ensuite, reste à choisir.
+Les trois candidates spécifiées (`specs/biodiversity/`, `specs/bird-migrations/`, `specs/flower-phenology/`, voir `CLAUDE.md`) sont désormais toutes implémentées (étape 8, dans l'ordre `bird-migrations` → `flower-phenology` → `biodiversity`).
 
 Chaque étape est un point de commit naturel. Avant de committer, vérifier que l'ensemble de `specs/` reste cohérent avec ce qui vient d'être implémenté (voir "Avant chaque commit" dans `CLAUDE.md`) ; si l'implémentation révèle qu'une spec doit changer, le signaler avant d'appliquer la mise à jour.

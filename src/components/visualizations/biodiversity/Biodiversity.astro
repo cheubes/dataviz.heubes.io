@@ -1,0 +1,182 @@
+---
+interface Props {
+  lang: 'fr' | 'en';
+}
+
+const { lang } = Astro.props;
+---
+
+<div id="dv-biodiversity-root" data-lang={lang}></div>
+
+<script>
+  import { mountBiodiversity } from './render';
+  import en from '../../../i18n/en';
+  import fr from '../../../i18n/fr';
+
+  const root = document.getElementById('dv-biodiversity-root');
+  if (root) {
+    const lang = root.dataset.lang === 'fr' ? 'fr' : 'en';
+    const labels = (lang === 'fr' ? fr : en).biodiversity;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          observer.disconnect();
+          mountBiodiversity(root, lang, labels);
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(root);
+  }
+</script>
+
+<style is:global>
+  .dv-biodiversity {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dv-space-3);
+    padding: var(--dv-space-3);
+  }
+
+  .dv-biodiversity__status {
+    margin: 0;
+    text-align: center;
+    color: var(--dv-ink-secondary);
+    padding: var(--dv-space-5) 0;
+  }
+
+  .dv-biodiversity__controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dv-space-2);
+  }
+
+  .dv-biodiversity__controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dv-space-4);
+    align-items: flex-start;
+  }
+
+  .dv-biodiversity__legend {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dv-biodiversity__legend summary {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--dv-ink-primary);
+    cursor: pointer;
+    margin-bottom: var(--dv-space-1);
+  }
+
+  .dv-biodiversity__control-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dv-space-1) var(--dv-space-3);
+  }
+
+  .dv-biodiversity__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--dv-space-1);
+    font-size: 0.875rem;
+    color: var(--dv-ink-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .dv-biodiversity__swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--dv-gridline);
+  }
+
+  .dv-biodiversity__live-status {
+    font-size: 0.875rem;
+    color: var(--dv-ink-secondary);
+  }
+
+  .dv-biodiversity__stage {
+    position: relative;
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .dv-biodiversity__svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .dv-biodiversity__basemap {
+    fill: #e4e2da;
+    stroke: none;
+  }
+
+  .dv-biodiversity__hex {
+    cursor: pointer;
+  }
+
+  .dv-biodiversity__live-point {
+    fill: var(--dv-header-bg);
+    fill-opacity: 0.85;
+    stroke: #ffffff;
+    stroke-width: 0.75;
+    pointer-events: none;
+  }
+
+  .dv-biodiversity__tooltip {
+    position: absolute;
+    z-index: 2;
+    max-width: 240px;
+    padding: var(--dv-space-2);
+    background-color: var(--dv-header-bg);
+    color: #ffffff;
+    border-radius: 4px;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    pointer-events: none;
+  }
+
+  .dv-biodiversity__live-disclaimer {
+    position: absolute;
+    left: var(--dv-space-2);
+    bottom: var(--dv-space-2);
+    margin: 0;
+    max-width: 280px;
+    padding: var(--dv-space-1) var(--dv-space-2);
+    background-color: var(--dv-surface);
+    border: 1px solid var(--dv-gridline);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--dv-ink-secondary);
+  }
+
+  .dv-biodiversity__stage .dv-biodiversity__status {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .dv-biodiversity__stage .dv-biodiversity__status[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .dv-biodiversity__controls-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
