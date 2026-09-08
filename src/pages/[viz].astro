@@ -43,6 +43,13 @@ const coverExtension = ['jpg', 'png'].find((ext) =>
 const coverPath = coverExtension ? `/covers/${slug}.${coverExtension}` : '/cover-placeholder.svg';
 const alternatePath = hasTranslation ? `/fr/${slug}/` : undefined;
 const VizComponent = VIZ_COMPONENTS[slug];
+
+const retrievedDateFormatter = new Intl.DateTimeFormat(LANG, {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
 ---
 
 <BaseLayout
@@ -77,7 +84,8 @@ const VizComponent = VIZ_COMPONENTS[slug];
                 {[
                   dataset.publisher,
                   dataset.license,
-                  dataset.retrieved && `${en.viz.retrievedLabel} ${dataset.retrieved}`,
+                  dataset.retrieved &&
+                    `${en.viz.retrievedLabel} ${retrievedDateFormatter.format(new Date(dataset.retrieved))}`,
                 ]
                   .filter(Boolean)
                   .join(' · ')}
