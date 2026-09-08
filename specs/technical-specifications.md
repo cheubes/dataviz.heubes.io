@@ -67,8 +67,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: withastro/action@v3
+      - uses: actions/checkout@v5
+      - uses: withastro/action@v6
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -77,10 +77,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 ```
 
-`withastro/action@v3` installe les dépendances, build et publie déjà l'artefact Pages en interne (`actions/upload-pages-artifact@v3`) : y ajouter cette étape en double provoque un conflit ("an artifact with this name already exists on the workflow run").
+`withastro/action@v6` installe les dépendances, build et publie déjà l'artefact Pages en interne (`actions/upload-pages-artifact`) : y ajouter cette étape en double provoque un conflit ("an artifact with this name already exists on the workflow run"). Les versions majeures ci-dessus sont celles qui tournent sur Node.js 24 (évite l'avertissement de dépréciation de Node.js 20 sur les runners GitHub Actions) ; à réajuster si de nouvelles versions majeures sortent entre-temps.
 
 ---
 
