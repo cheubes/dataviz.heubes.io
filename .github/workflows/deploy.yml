@@ -18,9 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: withastro/action@v3
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
   deploy:
     needs: build
     runs-on: ubuntu-latest

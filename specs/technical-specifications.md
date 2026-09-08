@@ -48,26 +48,30 @@
 - **Générateur :** Astro (`astro build`), sortie statique dans `dist/`.
 
 ```yaml
-# .github/workflows/deploy.yml (indicatif, à reconfirmer au moment de l'implémentation)
+# .github/workflows/deploy.yml
 name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: withastro/action@v3
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -75,6 +79,8 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v4
 ```
+
+`withastro/action@v3` installe les dépendances, build et publie déjà l'artefact Pages en interne (`actions/upload-pages-artifact@v3`) : y ajouter cette étape en double provoque un conflit ("an artifact with this name already exists on the workflow run").
 
 ---
 
