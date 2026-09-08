@@ -171,7 +171,11 @@ Choix d'un premier dataset open data et d'un premier angle de visualisation, doc
 
 **Critère :** la tuile de la vraie visualisation s'affiche à l'accueil dans les deux langues ; sa page affiche le rendu interactif réel, pas un espace réservé vide.
 
-**Statut :** fait — visualisation `bird-migrations` (Les routes de migration), données GPS/Argos réelles (quatre espèces, voir `specs/bird-migrations/data-model.md`), rendu D3 + Canvas, couverture réelle (`public/covers/bird-migrations.jpg`). `biodiversity` et `flower-phenology` restent des specs non implémentées, candidates pour une prochaine visualisation.
+**Statut :** fait, deux visualisations réelles à ce stade :
+- `bird-migrations` (Les routes de migration), données GPS/Argos réelles (quatre espèces, voir `specs/bird-migrations/data-model.md`), rendu D3 + Canvas, couverture réelle (`public/covers/bird-migrations.jpg`).
+- `flower-phenology` (Le calendrier des fleurs), données d'occurrence GBIF réelles (douze espèces sauvages, voir `specs/flower-phenology/data-model.md`), rendu D3 SVG (arcs), couverture en placeholder partagé (`public/cover-placeholder.svg`) en attendant une image propre.
+
+`biodiversity` reste une spec non implémentée, candidate pour une prochaine visualisation.
 
 **Prompt :**
 ```

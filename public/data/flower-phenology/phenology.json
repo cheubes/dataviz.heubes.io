@@ -1,0 +1,542 @@
+[
+  {
+    "species": "Prunus spinosa",
+    "nameFr": "Prunellier",
+    "nameEn": "Blackthorn",
+    "family": "Rosaceae",
+    "flowerColor": "#F4F1EA",
+    "phenology": {
+      "1970s": {
+        "medianDoy": 91,
+        "p10": 69,
+        "p90": 99,
+        "observationCount": 9055
+      },
+      "1980s": {
+        "medianDoy": 96,
+        "p10": 69,
+        "p90": 102,
+        "observationCount": 13125
+      },
+      "1990s": {
+        "medianDoy": 63,
+        "p10": 45,
+        "p90": 88,
+        "observationCount": 38065
+      },
+      "2000s": {
+        "medianDoy": 64,
+        "p10": 48,
+        "p90": 65,
+        "observationCount": 140680
+      },
+      "2010s": {
+        "medianDoy": 70,
+        "p10": 63,
+        "p90": 81,
+        "observationCount": 105580
+      },
+      "2020s": {
+        "medianDoy": 65,
+        "p10": 59,
+        "p90": 71,
+        "observationCount": 49372
+      }
+    }
+  },
+  {
+    "species": "Narcissus pseudonarcissus",
+    "nameFr": "Jonquille sauvage",
+    "nameEn": "Wild Daffodil",
+    "family": "Amaryllidaceae",
+    "flowerColor": "#C97A0A",
+    "phenology": {
+      "1970s": {
+        "medianDoy": 80,
+        "p10": 60,
+        "p90": 87,
+        "observationCount": 597
+      },
+      "1980s": {
+        "medianDoy": 73,
+        "p10": 37,
+        "p90": 91,
+        "observationCount": 1052
+      },
+      "1990s": {
+        "medianDoy": 62,
+        "p10": 56,
+        "p90": 74,
+        "observationCount": 3813
+      },
+      "2000s": {
+        "medianDoy": 57,
+        "p10": 52,
+        "p90": 63,
+        "observationCount": 7136
+      },
+      "2010s": {
+        "medianDoy": 56,
+        "p10": 50,
+        "p90": 65,
+        "observationCount": 5585
+      },
+      "2020s": {
+        "medianDoy": 48,
+        "p10": 39,
+        "p90": 50,
+        "observationCount": 2461
+      }
+    }
+  },
+  {
+    "species": "Taraxacum officinale",
+    "nameFr": "Pissenlit",
+    "nameEn": "Dandelion",
+    "family": "Asteraceae",
+    "flowerColor": "#F0C040",
+    "phenology": {
+      "1970s": {
+        "medianDoy": 122,
+        "p10": 107,
+        "p90": 187,
+        "observationCount": 1029
+      },
+      "1980s": {
+        "medianDoy": 123,
+        "p10": 110,
+        "p90": 158,
+        "observationCount": 1283
+      },
+      "1990s": {
+        "medianDoy": 107,
+        "p10": 94,
+        "p90": 124,
+        "observationCount": 4447
+      },
+      "2000s": {
+        "medianDoy": 91,
+        "p10": 76,
+        "p90": 104,
+        "observationCount": 24147
+      },
+      "2010s": {
+        "medianDoy": 82,
+        "p10": 75,
+        "p90": 88,
+        "observationCount": 17180
+      },
+      "2020s": {
+        "medianDoy": 66,
+        "p10": 51,
+        "p90": 71,
+        "observationCount": 5584
+      }
+    }
+  },
+  {
+    "species": "Papaver rhoeas",
+    "nameFr": "Coquelicot",
+    "nameEn": "Poppy",
+    "family": "Papaveraceae",
+    "flowerColor": "#D94035",
+    "phenology": {
+      "1970s": {
+        "medianDoy": 98,
+        "p10": 80,
+        "p90": 126,
+        "observationCount": 3445
+      },
+      "1980s": {
+        "medianDoy": 112,
+        "p10": 98,
+        "p90": 129,
+        "observationCount": 5278
+      },
+      "1990s": {
+        "medianDoy": 96,
+        "p10": 68,
+        "p90": 115,
+        "observationCount": 15459
+      },
+      "2000s": {
+        "medianDoy": 84,
+        "p10": 66,
+        "p90": 96,
+        "observationCount": 87417
+      },
+      "2010s": {
+        "medianDoy": 101,
+        "p10": 66,
+        "p90": 119,
+        "observationCount": 50379
+      },
+      "2020s": {
+        "medianDoy": 106,
+        "p10": 84,
+        "p90": 114,
+        "observationCount": 12446
+      }
+    }
+  },
+  {
+    "species": "Digitalis purpurea",
+    "nameFr": "Digitale",
+    "nameEn": "Foxglove",
+    "family": "Plantaginaceae",
+    "flowerColor": "#C87BA0",
+    "phenology": {
+      "1970s": {
+        "medianDoy": 88,
+        "p10": 39,
+        "p90": 99,
+        "observationCount": 3262
+      },
+      "1980s": {
+        "medianDoy": 95,
+        "p10": 77,
+        "p90": 118,
+        "observationCount": 4650
+      },
+      "1990s": {
+        "medianDoy": 65,
+        "p10": 60,
+        "p90": 70,
+        "observationCount": 12439
+      },
+      "2000s": {
+        "medianDoy": 55,
+        "p10": 39,
+        "p90": 63,
+        "observationCount": 29034
+      },
+      "2010s": {
+        "medianDoy": 66,
+        "p10": 40,
+        "p90": 95,
+        "observationCount": 18521
+      },
+      "2020s": {
+        "medianDoy": 89,
+        "p10": 82,
+        "p90": 98,
+        "observationCount": 11391
+      }
+    }
+  },
+  {
+    "species": "Lavandula angustifolia",
+    "nameFr": "Lavande",
+    "nameEn": "Lavender",
+    "family": "Lamiaceae",
+    "flowerColor": "#9B72CF",
+    "phenology": {
+      "1970s": {
+        "medianDoy": 97,
+        "p10": 39,
+        "p90": 177,
+        "observationCount": 1446
+      },
+      "1980s": {
+        "medianDoy": 88,
+        "p10": 37,
+        "p90": 151,
+        "observationCount": 2690
+      },
+      "1990s": {
+        "medianDoy": 54,
+        "p10": 38,
+        "p90": 75,
+        "observationCount": 6589
+      },
+      "2000s": {
+        "medianDoy": 55,
+        "p10": 38,
+        "p90": 66,
+        "observationCount": 13118
+      },
+      "2010s": {
+        "medianDoy": 62,
+        "p10": 40,
+        "p90": 88,
+        "observationCount": 7158
+      },
+      "2020s": {
+        "medianDoy": 90,
+        "p10": 74,
+        "p90": 104,
+        "observationCount": 2093
+      }
+    }
+  },
+  {
+    "species": "Centaurea cyanus",
+    "nameFr": "Bleuet",
+    "nameEn": "Cornflower",
+    "family": "Asteraceae",
+    "flowerColor": "#3C5CC4",
+    "phenology": {
+      "1970s": {
+        "medianDoy": 133,
+        "p10": 69,
+        "p90": 156,
+        "observationCount": 1072
+      },
+      "1980s": {
+        "medianDoy": 112,
+        "p10": 66,
+        "p90": 149,
+        "observationCount": 993
+      },
+      "1990s": {
+        "medianDoy": 109,
+        "p10": 65,
+        "p90": 128,
+        "observationCount": 3655
+      },
+      "2000s": {
+        "medianDoy": 92,
+        "p10": 66,
+        "p90": 107,
+        "observationCount": 17756
+      },
+      "2010s": {
+        "medianDoy": 133,
+        "p10": 65,
+        "p90": 141,
+        "observationCount": 11106
+      },
+      "2020s": {
+        "medianDoy": 118,
+        "p10": 110,
+        "p90": 130,
+        "observationCount": 3857
+      }
+    }
+  },
+  {
+    "species": "Calluna vulgaris",
+    "nameFr": "Bruyère",
+    "nameEn": "Heather",
+    "family": "Ericaceae",
+    "flowerColor": "#BE8CB4",
+    "phenology": {
+      "1970s": {
+        "medianDoy": 68,
+        "p10": 45,
+        "p90": 90,
+        "observationCount": 8968
+      },
+      "1980s": {
+        "medianDoy": 68,
+        "p10": 66,
+        "p90": 95,
+        "observationCount": 9524
+      },
+      "1990s": {
+        "medianDoy": 64,
+        "p10": 59,
+        "p90": 69,
+        "observationCount": 23148
+      },
+      "2000s": {
+        "medianDoy": 59,
+        "p10": 42,
+        "p90": 64,
+        "observationCount": 61752
+      },
+      "2010s": {
+        "medianDoy": 71,
+        "p10": 51,
+        "p90": 90,
+        "observationCount": 50784
+      },
+      "2020s": {
+        "medianDoy": 77,
+        "p10": 57,
+        "p90": 95,
+        "observationCount": 16903
+      }
+    }
+  },
+  {
+    "species": "Convallaria majalis",
+    "nameFr": "Muguet",
+    "nameEn": "Lily of the Valley",
+    "family": "Asparagaceae",
+    "flowerColor": "#EDEAE0",
+    "phenology": {
+      "1970s": {
+        "medianDoy": 96,
+        "p10": 67,
+        "p90": 121,
+        "observationCount": 2175
+      },
+      "1980s": {
+        "medianDoy": 101,
+        "p10": 96,
+        "p90": 119,
+        "observationCount": 3250
+      },
+      "1990s": {
+        "medianDoy": 95,
+        "p10": 67,
+        "p90": 102,
+        "observationCount": 9319
+      },
+      "2000s": {
+        "medianDoy": 80,
+        "p10": 68,
+        "p90": 96,
+        "observationCount": 25782
+      },
+      "2010s": {
+        "medianDoy": 99,
+        "p10": 96,
+        "p90": 113,
+        "observationCount": 16766
+      },
+      "2020s": {
+        "medianDoy": 103,
+        "p10": 94,
+        "p90": 108,
+        "observationCount": 4934
+      }
+    }
+  },
+  {
+    "species": "Rosa canina",
+    "nameFr": "Églantier",
+    "nameEn": "Dog Rose",
+    "family": "Rosaceae",
+    "flowerColor": "#F0A0A0",
+    "phenology": {
+      "1970s": {
+        "medianDoy": 89,
+        "p10": 68,
+        "p90": 110,
+        "observationCount": 3426
+      },
+      "1980s": {
+        "medianDoy": 104,
+        "p10": 96,
+        "p90": 119,
+        "observationCount": 6056
+      },
+      "1990s": {
+        "medianDoy": 80,
+        "p10": 42,
+        "p90": 101,
+        "observationCount": 13115
+      },
+      "2000s": {
+        "medianDoy": 61,
+        "p10": 46,
+        "p90": 70,
+        "observationCount": 54657
+      },
+      "2010s": {
+        "medianDoy": 57,
+        "p10": 44,
+        "p90": 67,
+        "observationCount": 44228
+      },
+      "2020s": {
+        "medianDoy": 53,
+        "p10": 28,
+        "p90": 94,
+        "observationCount": 8477
+      }
+    }
+  },
+  {
+    "species": "Crocus vernus",
+    "nameFr": "Crocus",
+    "nameEn": "Crocus",
+    "family": "Iridaceae",
+    "flowerColor": "#C9A8E8",
+    "phenology": {
+      "1970s": {
+        "medianDoy": 55,
+        "p10": 38,
+        "p90": 118,
+        "observationCount": 571
+      },
+      "1980s": {
+        "medianDoy": 97,
+        "p10": 63,
+        "p90": 130,
+        "observationCount": 1025
+      },
+      "1990s": {
+        "medianDoy": 90,
+        "p10": 62,
+        "p90": 95,
+        "observationCount": 2935
+      },
+      "2000s": {
+        "medianDoy": 69,
+        "p10": 50,
+        "p90": 89,
+        "observationCount": 4309
+      },
+      "2010s": {
+        "medianDoy": 81,
+        "p10": 64,
+        "p90": 98,
+        "observationCount": 3373
+      },
+      "2020s": {
+        "medianDoy": 53,
+        "p10": 50,
+        "p90": 58,
+        "observationCount": 1086
+      }
+    }
+  },
+  {
+    "species": "Anemone nemorosa",
+    "nameFr": "Anémone des bois",
+    "nameEn": "Wood Anemone",
+    "family": "Ranunculaceae",
+    "flowerColor": "#E5E2D8",
+    "phenology": {
+      "1970s": {
+        "medianDoy": 88,
+        "p10": 73,
+        "p90": 96,
+        "observationCount": 4260
+      },
+      "1980s": {
+        "medianDoy": 93,
+        "p10": 86,
+        "p90": 102,
+        "observationCount": 6523
+      },
+      "1990s": {
+        "medianDoy": 67,
+        "p10": 63,
+        "p90": 75,
+        "observationCount": 15990
+      },
+      "2000s": {
+        "medianDoy": 64,
+        "p10": 63,
+        "p90": 65,
+        "observationCount": 45477
+      },
+      "2010s": {
+        "medianDoy": 77,
+        "p10": 66,
+        "p90": 80,
+        "observationCount": 28996
+      },
+      "2020s": {
+        "medianDoy": 69,
+        "p10": 61,
+        "p90": 74,
+        "observationCount": 10456
+      }
+    }
+  }
+]

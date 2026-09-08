@@ -21,18 +21,18 @@ Montrer, sur un calendrier circulaire, le moment de première floraison de plant
 
 ## Contenu (zone de montage)
 
-- Calendrier circulaire (anneau extérieur = décennie récente, anneau intérieur = décennie plus ancienne), labels des mois sur le pourtour.
+- Calendrier circulaire (deux anneaux, chacun affichant une décennie choisie indépendamment), labels des mois sur le pourtour.
 - Sélecteur d'espèces (checkboxes ou liste, jusqu'à 15 espèces affichées simultanément).
-- Bascule de comparaison de décennies (2000s / 2010s / 2020s, deux à la fois).
+- Deux sélecteurs de décennie, un par anneau (voir "Comparaison de décennies" ci-dessous).
 - Titre central ("Premières floraisons en France" / "First Flowerings in France").
 - Tooltip contextuel au survol/tap d'un arc.
 
 ## Interactions
 
-- **Sélecteur d'espèces :** multi-sélection, jusqu'à 15 espèces simultanées (au-delà, désactiver la sélection la plus ancienne ou bloquer une sélection supplémentaire avec un message, à trancher à l'implémentation). Sélection par défaut : les 8 à 10 premières espèces de la liste (voir "Sélection des espèces" dans `data-model.md`), pour un premier affichage lisible sans que le visiteur ait à choisir avant de voir quelque chose.
-- **Comparaison de décennies :** bascule à trois positions couvrant les paires 2000s/2010s, 2010s/2020s, 2000s/2020s (ou équivalent), **2010s (intérieur) / 2020s (extérieur) par défaut** (décision explicite, voir échanges de cadrage : écart plausible et modéré, décennie 2020s déjà incomplète au moment du build, voir `data-model.md`).
+- **Sélecteur d'espèces :** multi-sélection, jusqu'à 15 espèces simultanées (au-delà, désactiver la sélection la plus ancienne ou bloquer une sélection supplémentaire avec un message, à trancher à l'implémentation). Sélection par défaut : toutes les espèces de la liste (voir "Sélection des espèces" dans `data-model.md`), pour un premier affichage montrant d'emblée l'ensemble du calendrier.
+- **Comparaison de décennies :** deux sélecteurs indépendants, un pour l'anneau intérieur et un pour l'anneau extérieur, chacun proposant les six décennies couvertes par les données (1970s à 2020s, voir "Dataset source" dans `data-model.md`). Sélection libre : aucune contrainte d'ordre entre les deux anneaux (l'anneau intérieur peut porter une décennie plus récente que l'extérieur si le visiteur le choisit ainsi). **Par défaut : 1970s à l'intérieur, 2020s (2020 à aujourd'hui) à l'extérieur** (décision explicite : l'écart maximal disponible, pour rendre la dérive du calendrier la plus visible possible dès l'ouverture).
 - **Survol / tap d'un arc :** tooltip avec le nom de l'espèce, le jour médian de floraison en toutes lettres (ex. "15 avril"), la variation par rapport à l'autre décennie affichée (ex. "-8 jours").
-- **Vue initiale :** calendrier complet visible, sélection d'espèces par défaut, paire de décennies par défaut (2010s/2020s).
+- **Vue initiale :** calendrier complet visible, toutes les espèces sélectionnées, décennies par défaut (1970s intérieur / 2020s extérieur).
 
 ## États
 

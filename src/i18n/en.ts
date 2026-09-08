@@ -39,4 +39,18 @@ export default {
     durationLabel: 'Duration:',
     durationUnit: 'days',
   },
+  flowerPhenology: {
+    loading: 'Loading the flower calendar…',
+    error: 'Could not load the flowering data. Please try again later.',
+    empty: 'Select at least one species to display the calendar.',
+    titleLines: 'First\nFlowerings\nin France',
+    speciesGroupLabel: 'Displayed species',
+    innerRingLabel: 'Inner ring',
+    outerRingLabel: 'Outer ring',
+    medianLabel: 'Median flowering:',
+    variationLabel: 'Shift:',
+    variationEarlier: '{days} days earlier',
+    variationLater: '{days} days later',
+    variationSame: 'Same',
+  },
 };

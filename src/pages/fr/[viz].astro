@@ -5,7 +5,13 @@ import { fileURLToPath } from 'node:url';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getVisualizationSlug } from '../../content/config';
 import BirdMigrations from '../../components/visualizations/bird-migrations/BirdMigrations.astro';
+import FlowerPhenology from '../../components/visualizations/flower-phenology/FlowerPhenology.astro';
 import fr from '../../i18n/fr';
+
+const VIZ_COMPONENTS: Record<string, typeof BirdMigrations> = {
+  'bird-migrations': BirdMigrations,
+  'flower-phenology': FlowerPhenology,
+};
 
 const LANG = 'fr';
 
@@ -36,6 +42,7 @@ const coverExtension = ['jpg', 'png'].find((ext) =>
 );
 const coverPath = coverExtension ? `/covers/${slug}.${coverExtension}` : '/cover-placeholder.svg';
 const alternatePath = hasTranslation ? `/${slug}/` : undefined;
+const VizComponent = VIZ_COMPONENTS[slug];
 ---
 
 <BaseLayout
@@ -54,8 +61,7 @@ const alternatePath = hasTranslation ? `/${slug}/` : undefined;
     </div>
 
     <div class="dv-viz-page__mount">
-      {/* TODO: replace with a slug -> component lookup once a second visualization exists */}
-      {slug === 'bird-migrations' && <BirdMigrations lang={LANG} />}
+      {VizComponent && <VizComponent lang={LANG} />}
     </div>
 
     <section class="dv-viz-page__credits">

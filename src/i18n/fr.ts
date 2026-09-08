@@ -39,4 +39,18 @@ export default {
     durationLabel: 'Durée :',
     durationUnit: 'jours',
   },
+  flowerPhenology: {
+    loading: 'Chargement du calendrier des fleurs…',
+    error: 'Impossible de charger les données de floraison. Réessayez plus tard.',
+    empty: 'Sélectionnez au moins une espèce pour afficher le calendrier.',
+    titleLines: 'Premières\nfloraisons\nen France',
+    speciesGroupLabel: 'Espèces affichées',
+    innerRingLabel: 'Anneau intérieur',
+    outerRingLabel: 'Anneau extérieur',
+    medianLabel: 'Floraison médiane :',
+    variationLabel: 'Écart :',
+    variationEarlier: '{days} jours plus tôt',
+    variationLater: '{days} jours plus tard',
+    variationSame: 'Identique',
+  },
 };
