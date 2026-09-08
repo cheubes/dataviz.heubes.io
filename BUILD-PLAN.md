@@ -165,11 +165,13 @@ visualisation publiée dans la langue courante"), sans erreur de build ni réfé
 de test.
 ```
 
-## 8. Première visualisation réelle
+## ✅ 8. Première visualisation réelle
 
 Choix d'un premier dataset open data et d'un premier angle de visualisation, documentation de `specs/<viz-slug>/` (voir "Structure de `specs/`" dans `CLAUDE.md`), puis implémentation : contenu réel dans la collection `visualizations`, rendu interactif dans la zone de montage du gabarit générique (étape 4).
 
 **Critère :** la tuile de la vraie visualisation s'affiche à l'accueil dans les deux langues ; sa page affiche le rendu interactif réel, pas un espace réservé vide.
+
+**Statut :** fait — visualisation `bird-migrations` (Les routes de migration), données GPS/Argos réelles (quatre espèces, voir `specs/bird-migrations/data-model.md`), rendu D3 + Canvas, couverture réelle (`public/covers/bird-migrations.jpg`). `biodiversity` et `flower-phenology` restent des specs non implémentées, candidates pour une prochaine visualisation.
 
 **Prompt :**
 ```

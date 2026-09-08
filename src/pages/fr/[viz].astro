@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getVisualizationSlug } from '../../content/config';
+import BirdMigrations from '../../components/visualizations/bird-migrations/BirdMigrations.astro';
 import fr from '../../i18n/fr';
 
 const LANG = 'fr';
@@ -45,13 +46,16 @@ const alternatePath = hasTranslation ? `/${slug}/` : undefined;
   alternatePath={alternatePath}
 >
   <article class="dv-viz-page">
-    <img src={coverPath} alt={title} width="1200" height="675" class="dv-viz-page__cover" />
-
     <h1>{title}</h1>
     <p class="dv-viz-page__summary">{summary}</p>
 
     <div class="dv-viz-page__body">
       <Content />
+    </div>
+
+    <div class="dv-viz-page__mount">
+      {/* TODO: replace with a slug -> component lookup once a second visualization exists */}
+      {slug === 'bird-migrations' && <BirdMigrations lang={LANG} />}
     </div>
 
     <section class="dv-viz-page__credits">
@@ -77,10 +81,6 @@ const alternatePath = hasTranslation ? `/${slug}/` : undefined;
         }
       </ul>
     </section>
-
-    <div class="dv-viz-page__mount"></div>
-
-    <a href="/fr/" class="dv-viz-page__back">{fr.viz.backToCatalog}</a>
   </article>
 </BaseLayout>
 
@@ -89,15 +89,6 @@ const alternatePath = hasTranslation ? `/${slug}/` : undefined;
     display: flex;
     flex-direction: column;
     gap: var(--dv-space-4);
-  }
-
-  .dv-viz-page__cover {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-    border-radius: 4px;
   }
 
   .dv-viz-page__summary {
@@ -137,10 +128,5 @@ const alternatePath = hasTranslation ? `/${slug}/` : undefined;
     border: 1px solid var(--dv-gridline);
     border-radius: 4px;
     background-color: var(--dv-surface);
-  }
-
-  .dv-viz-page__back {
-    align-self: flex-start;
-    color: var(--dv-accent);
   }
 </style>

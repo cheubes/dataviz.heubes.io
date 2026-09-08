@@ -146,10 +146,10 @@ Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble d
 
 ### Page de visualisation
 
-- Couverture en tête de page (même image que la tuile, affichée plus grande), `title` en `h1`, `summary` puis présentation longue (corps de texte de `<viz-slug>.<lang>.md`, voir `data-model.md`).
-- Bloc de crédit des sources : un jeu de données par ligne (`name`, `publisher`, `license`, lien vers `url`, `retrieved`), texte secondaire.
-- Zone de montage de la visualisation elle-même : conteneur pleine largeur, hauteur minimale réservée pour éviter un saut de mise en page pendant son initialisation (voir "États" attendus dans "Règles communes à toutes les visualisations" de `technical-specifications.md`). Traitement visuel propre à chaque visualisation, documenté dans son propre `functional-specifications.md`.
-- Lien de retour au catalogue.
+- `title` en `h1`, `summary` puis présentation longue (corps de texte de `<viz-slug>.<lang>.md`, voir `data-model.md`). Pas de couverture affichée en tête de page (à la différence de la tuile) : elle reste utilisée comme image de partage (meta Open Graph, voir "SEO" dans `technical-specifications.md`), pas comme élément visuel de la page elle-même.
+- Zone de montage de la visualisation elle-même, après la présentation : conteneur pleine largeur, hauteur minimale réservée pour éviter un saut de mise en page pendant son initialisation (voir "États" attendus dans "Règles communes à toutes les visualisations" de `technical-specifications.md`). Traitement visuel propre à chaque visualisation, documenté dans son propre `functional-specifications.md`.
+- Bloc de crédit des sources, après la zone de montage : un jeu de données par ligne (`name`, `publisher`, `license`, lien vers `url`, `retrieved`), texte secondaire.
+- Pas de lien de retour au catalogue propre à la page : le retour à l'accueil se fait via l'en-tête (voir "En-tête" ci-dessus), commun à toutes les pages.
 
 ## Images
 
@@ -159,7 +159,7 @@ Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble d
 
 Format `.jpg` (photo) ou `.png` (illustration, capture d'écran), selon la nature de la visualisation ; pas de contrainte de format imposée au-delà du ratio et des dimensions minimales. `object-fit: cover` en CSS pour absorber les écarts plutôt que d'imposer un recadrage strict.
 
-Tant que la couverture propre d'une visualisation (`public/covers/<viz-slug>.jpg`/`.png`, voir `data-model.md`) n'existe pas, un placeholder partagé (`public/cover-placeholder.svg`) s'affiche à sa place sur sa tuile et sa page.
+Tant que la couverture propre d'une visualisation (`public/covers/<viz-slug>.jpg`/`.png`, voir `data-model.md`) n'existe pas, un placeholder partagé (`public/cover-placeholder.svg`) s'affiche à sa place sur sa tuile (et sert de repli pour l'image de partage de sa page, voir "Page de visualisation" ci-dessus).
 
 ## Iconographie
 

@@ -10,7 +10,13 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
-    "astro": "^5.18.2"
+    "astro": "^5.18.2",
+    "d3-geo": "^3.1.1",
+    "d3-scale": "^4.0.2",
+    "d3-selection": "^3.0.0",
+    "d3-timer": "^3.0.1",
+    "d3-zoom": "^3.0.0",
+    "topojson-client": "^3.1.0"
   },
   "devDependencies": {
     "typescript": "^5.9.3"
