@@ -3,8 +3,8 @@ import { scaleOrdinal } from 'd3-scale';
 import { select } from 'd3-selection';
 import { timer as d3Timer } from 'd3-timer';
 import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
-// topojson-client ships no bundled types; the shape used below (feature()) is narrow enough to keep as `any`.
-// @ts-expect-error no type declarations published for topojson-client
+// topojson-client ships no bundled types; resolves to `any` under this project's
+// non-strict tsconfig (no noImplicitAny), which is narrow enough for the shape used below.
 import { feature as topojsonFeature } from 'topojson-client';
 
 interface TrackPoint {
