@@ -196,11 +196,13 @@ Critère de fin : la tuile de la visualisation s'affiche à l'accueil dans les d
 sa page affiche le rendu interactif réel, pas un espace réservé vide.
 ```
 
-## 9. Déploiement
+## ✅ 9. Déploiement
 
 `.github/workflows/deploy.yml`, `public/CNAME`, source GitHub Pages réglée sur "GitHub Actions". Voir "Hébergement et déploiement" dans `technical-specifications.md`.
 
 **Critère :** le site est accessible sur `dataviz.heubes.io` après un push sur `main`.
+
+**Statut :** fait (workflow et `CNAME` en place ; nécessite le réglage manuel de la source Pages sur "GitHub Actions" dans les paramètres du repository, non modifiable depuis le code).
 
 **Prompt :**
 ```
