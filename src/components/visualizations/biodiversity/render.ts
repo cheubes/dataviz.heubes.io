@@ -49,7 +49,6 @@ export interface BiodiversityLabels {
   seasonSpring: string;
   seasonSummer: string;
   seasonAutumn: string;
-  legendToggle: string;
   liveToggle: string;
   liveLoading: string;
   liveError: string;
@@ -92,7 +91,6 @@ const SEASON_MONTHS: Record<Season, number[]> = {
 };
 
 const LIVE_RESULT_LIMIT = 300;
-const LEGEND_COLLAPSE_WIDTH = 480;
 
 function mix(hexA: string, hexB: string, t: number): string {
   const a = [1, 3, 5].map((i) => parseInt(hexA.slice(i, i + 2), 16));
@@ -179,19 +177,11 @@ export async function mountBiodiversity(root: HTMLElement, lang: 'fr' | 'en', la
   let activeGroup: GroupFilter = 'all';
   let activeSeason: SeasonFilter = 'all';
 
-  const legendDetails = document.createElement('details');
-  legendDetails.className = 'dv-biodiversity__legend';
-  legendDetails.open = typeof window === 'undefined' || window.innerWidth >= LEGEND_COLLAPSE_WIDTH;
-  const legendSummary = document.createElement('summary');
-  legendSummary.textContent = labels.legendToggle;
-  legendDetails.appendChild(legendSummary);
-
   const groupGroup = document.createElement('div');
   groupGroup.className = 'dv-biodiversity__control-group';
   groupGroup.setAttribute('role', 'radiogroup');
   groupGroup.setAttribute('aria-label', labels.groupLabel);
-  legendDetails.appendChild(groupGroup);
-  filtersRow.appendChild(legendDetails);
+  filtersRow.appendChild(groupGroup);
 
   function buildRadioOption(
     container: HTMLElement,

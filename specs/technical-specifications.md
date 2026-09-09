@@ -222,6 +222,7 @@ Au premier accès, la langue est déterminée côté client par celle du navigat
 - États communs attendus sur la page de chaque visualisation, sauf raison contraire documentée : chargement (le temps que les données et la visualisation s'initialisent), erreur (échec de chargement des données), vide (dataset filtré ou vide selon le contexte). Le traitement visuel précis de chaque état est propre à la visualisation.
 - Une visualisation dont le mode d'interaction principal n'est pas nativement accessible au clavier ou au lecteur d'écran (ex : un rendu Canvas ou WebGL) le documente comme limite connue dans son propre `technical-specifications.md`, plutôt que de le passer sous silence.
 - Le comportement responsive d'une visualisation (adaptation ou message d'indisponibilité sur petit écran) est propre à chacune et documenté dans son `functional-specifications.md`.
+- Les contrôles d'une visualisation (filtres, légende) restent toujours visibles à l'écran : pas de bascule d'affichage (ex : `<details>`/`<summary>` repliable) permettant d'en masquer une partie, y compris sur petit écran.
 
 ---
 

@@ -78,7 +78,6 @@ export interface ParisTreesLabels {
   emptyFilters: string;
   searchLabel: string;
   searchPlaceholder: string;
-  legendToggle: string;
   countLabel: string;
   remarkableLabel: string;
   circumferenceLabel: string;
@@ -244,17 +243,9 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
   legendRow.className = 'dv-paris-trees__controls-row';
   controls.appendChild(legendRow);
 
-  const legendDetails = document.createElement('details');
-  legendDetails.className = 'dv-paris-trees__legend';
-  legendDetails.open = true;
-  const legendSummary = document.createElement('summary');
-  legendSummary.textContent = labels.legendToggle;
-  legendDetails.appendChild(legendSummary);
-
   const genusGroup = document.createElement('div');
   genusGroup.className = 'dv-paris-trees__control-group';
-  legendDetails.appendChild(genusGroup);
-  legendRow.appendChild(legendDetails);
+  legendRow.appendChild(genusGroup);
 
   const activeGenera = new Set<number>(genera.map((_, i) => i));
 
