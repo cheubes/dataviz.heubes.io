@@ -105,4 +105,16 @@ export default {
     nationalGardensTreeFallback: 'Tree (genus not recorded)',
     nationalGardensLabel: 'Garden:',
   },
+  satellitesInOrbit: {
+    loading: 'Loading satellites…',
+    error: 'Could not load the satellite data. Please try again later.',
+    empty: 'No region selected.',
+    countLabel: '{count} satellites in orbit',
+    play: 'Play',
+    pause: 'Pause',
+    speedLabel: 'Speed',
+    speedSlow: 'Slow',
+    speedNormal: 'Normal',
+    speedFast: 'Fast',
+  },
 };

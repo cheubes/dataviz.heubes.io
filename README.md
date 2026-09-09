@@ -8,6 +8,7 @@ A catalogue of interactive, hand-built data visualizations. Each entry explores 
 - **Flower phenology** ([`flower-phenology`](specs/flower-phenology/)) : GBIF occurrence data for twelve wild species, rendered as D3 SVG arcs.
 - **Biodiversity in France** ([`biodiversity`](specs/biodiversity/)) : an H3 hexagonal grid over mainland France, from GBIF data aggregated via the SQL Downloads API, rendered as static D3 SVG.
 - **Paris, Tree by Tree** ([`paris-trees`](specs/paris-trees/)) : 194,315 trees from the City of Paris's tree inventory, rendered as a Canvas 2D point map with genus filtering and species search.
+- **The Orbital Rush** ([`satellites-in-orbit`](specs/satellites-in-orbit/)) : 20,020 payloads still in orbit today, from CelesTrak's SATCAT, animated year by year in a continuous loop as a Canvas 2D point swarm around a slowly rotating globe.
 
 ## Development
 

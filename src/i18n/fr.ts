@@ -105,4 +105,16 @@ export default {
     nationalGardensTreeFallback: 'Arbre (genre non renseigné)',
     nationalGardensLabel: 'Jardin :',
   },
+  satellitesInOrbit: {
+    loading: 'Chargement des satellites…',
+    error: 'Impossible de charger les données de satellites. Réessayez plus tard.',
+    empty: 'Aucune zone sélectionnée.',
+    countLabel: '{count} satellites en orbite',
+    play: 'Lecture',
+    pause: 'Pause',
+    speedLabel: 'Vitesse',
+    speedSlow: 'Lent',
+    speedNormal: 'Normal',
+    speedFast: 'Rapide',
+  },
 };
