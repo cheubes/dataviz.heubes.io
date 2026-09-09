@@ -171,10 +171,11 @@ Choix d'un premier dataset open data et d'un premier angle de visualisation, doc
 
 **Critère :** la tuile de la vraie visualisation s'affiche à l'accueil dans les deux langues ; sa page affiche le rendu interactif réel, pas un espace réservé vide.
 
-**Statut :** fait, trois visualisations réelles à ce stade :
+**Statut :** fait, quatre visualisations réelles à ce stade :
 - `bird-migrations` (Les routes de migration), données GPS/Argos réelles (quatre espèces, voir `specs/bird-migrations/data-model.md`), rendu D3 + Canvas, couverture réelle (`public/covers/bird-migrations.jpg`).
 - `flower-phenology` (Le calendrier des fleurs), données d'occurrence GBIF réelles (douze espèces sauvages, voir `specs/flower-phenology/data-model.md`), rendu D3 SVG (arcs), couverture en placeholder partagé (`public/cover-placeholder.svg`) en attendant une image propre.
 - `biodiversity` (La biodiversité française), grille hexagonale H3 (résolution 4, 395 cellules) sur silhouette de la France métropolitaine, données GBIF agrégées via l'API SQL Downloads (voir `specs/biodiversity/data-model.md`), rendu D3 SVG statique (pas de zoom/pan, retiré à la relecture), mode "données en direct" optionnel interrogeant l'API GBIF depuis le navigateur, couverture réelle (`public/covers/biodiversity.jpg`).
+- `paris-trees` (Paris, arbre par arbre), 194 315 arbres réels de l'inventaire "Les arbres" de la Ville de Paris (voir `specs/paris-trees/data-model.md` pour le périmètre retenu, ajusté à l'implémentation), rendu Canvas 2D (`d3-geo` + `d3-zoom`, projection Mercator, index spatial en grille pour le survol et le culling au rendu) sur fond de carte avec trame de rues et Seine (ajoutées après relecture, cette dernière seule donnée du site hors Paris Data, source OpenStreetMap), filtre par genre dominant et recherche d'espèce, zoom au clic sur un arrondissement, couverture réelle (`public/covers/paris-trees.jpg`).
 
 **Prompt :**
 ```

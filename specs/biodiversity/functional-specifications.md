@@ -52,7 +52,6 @@ Version tactile adaptée (voir "Responsive" dans `technical-specifications.md` g
 
 - Tooltip au tap plutôt qu'au survol ; un second tap ailleurs sur la carte le referme.
 - Filtres (groupe, saison) en boutons empilés/à la ligne selon la largeur disponible, plutôt qu'une rangée horizontale unique forcée.
-- Légende repliable sous un certain seuil de largeur, pour ne pas rogner l'espace de la carte.
 
 ## Accessibilité (limite connue)
 
