@@ -36,6 +36,7 @@ const enHref = getAlternatePathname(pathname, 'en');
 
 <script>
   import {
+    DEFAULT_LANG,
     LANG_STORAGE_KEY,
     detectBrowserLang,
     getAlternatePathname,
@@ -46,7 +47,16 @@ const enHref = getAlternatePathname(pathname, 'en');
   const currentLang = getLangFromPathname(pathname);
 
   const stored = localStorage.getItem(LANG_STORAGE_KEY);
-  const preferredLang = stored === 'fr' || stored === 'en' ? stored : detectBrowserLang();
+
+  // An explicit language prefix in the URL (e.g. /fr/...) always wins over
+  // browser detection: only the unprefixed default entry point is ambiguous
+  // enough to redirect based on the browser's language.
+  const preferredLang =
+    stored === 'fr' || stored === 'en'
+      ? stored
+      : currentLang === DEFAULT_LANG
+        ? detectBrowserLang()
+        : currentLang;
 
   if (preferredLang !== currentLang) {
     window.location.replace(getAlternatePathname(pathname, preferredLang));

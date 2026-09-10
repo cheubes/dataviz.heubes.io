@@ -209,7 +209,7 @@ Les textes d'interface (labels, messages dont le message d'indisponibilité) son
 
 ### Détection et mémorisation de la langue
 
-Au premier accès, la langue est déterminée côté client par celle du navigateur (repli sur l'anglais si ni français ni anglais), puis mémorisée dans `localStorage` après un changement manuel via le sélecteur (voir "Multilingue" dans `functional-specifications.md`). Cette détection, et la préférence mémorisée sur les visites suivantes, s'exécutent sur toute page (chrome partagé, `src/components/LanguageSelector.astro`) et redirigent, si besoin, vers l'équivalent de la page courante dans la langue déterminée ou mémorisée ; si cet équivalent n'existe pas, la redirection tombe sur `404.astro` (voir "Contenu non traduit" ci-dessus).
+Au premier accès à une URL sans préfixe de langue (anglais par défaut), la langue est déterminée côté client par celle du navigateur (repli sur l'anglais si ni français ni anglais). Une URL déjà préfixée par `/fr/` n'est jamais réévaluée par cette détection : le préfixe explicite de l'URL est un signal plus fort que la langue du navigateur et prime tant qu'aucune préférence n'a été mémorisée. Une préférence mémorisée dans `localStorage` après un changement manuel via le sélecteur (voir "Multilingue" dans `functional-specifications.md`), elle, prime sur l'URL visitée, préfixée ou non. Cette logique s'exécute sur toute page (chrome partagé, `src/components/LanguageSelector.astro`) et redirige, si besoin, vers l'équivalent de la page courante dans la langue déterminée ou mémorisée ; si cet équivalent n'existe pas, la redirection tombe sur `404.astro` (voir "Contenu non traduit" ci-dessus).
 
 ---
 
