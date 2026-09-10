@@ -2,6 +2,7 @@ import { arc as d3Arc } from 'd3-shape';
 import { scaleLinear } from 'd3-scale';
 import { select } from 'd3-selection';
 import 'd3-transition';
+import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 
 interface DecadeStats {
   medianDoy: number;
@@ -188,6 +189,16 @@ export async function mountFlowerPhenology(
   const stage = document.createElement('div');
   stage.className = 'dv-flower-phenology__stage';
   root.appendChild(stage);
+
+  // Keeps the 1:1 ring square from growing taller than the space available
+  // between header and footer: constrains the width (`max-width`, not
+  // `height`) so `aspect-ratio: 1 / 1` derives a matching height instead of
+  // stretching into a non-square box.
+  function updateStageCeiling() {
+    const nonStageHeight = root.getBoundingClientRect().height - stage.getBoundingClientRect().height;
+    const heightCeiling = getMaxStageBlockHeight() - nonStageHeight;
+    stage.style.maxWidth = `${Math.max(200, heightCeiling)}px`;
+  }
 
   const svgNS = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(svgNS, 'svg');
@@ -474,6 +485,13 @@ export async function mountFlowerPhenology(
   const resizeObserver = new ResizeObserver(() => renderFull());
   resizeObserver.observe(stage);
 
+  let ceilingResizeTimeout: ReturnType<typeof setTimeout> | undefined;
+  window.addEventListener('resize', () => {
+    clearTimeout(ceilingResizeTimeout);
+    ceilingResizeTimeout = setTimeout(updateStageCeiling, 150);
+  });
+
   updateEmptyState();
+  updateStageCeiling();
   renderFull();
 }

@@ -1,0 +1,163 @@
+---
+interface Props {
+  lang: 'fr' | 'en';
+}
+
+const { lang } = Astro.props;
+---
+
+<div id="dv-satellites-in-orbit-root" data-lang={lang}></div>
+
+<script>
+  import { mountSatellitesInOrbit } from './render';
+  import en from '../../../i18n/en';
+  import fr from '../../../i18n/fr';
+
+  const root = document.getElementById('dv-satellites-in-orbit-root');
+  if (root) {
+    const lang = root.dataset.lang === 'fr' ? 'fr' : 'en';
+    const labels = (lang === 'fr' ? fr : en).satellitesInOrbit;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          observer.disconnect();
+          mountSatellitesInOrbit(root, lang, labels);
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(root);
+  }
+</script>
+
+<style is:global>
+  .dv-satellites-in-orbit {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dv-space-3);
+    padding: var(--dv-space-3);
+  }
+
+  .dv-satellites-in-orbit__status {
+    margin: 0;
+    text-align: center;
+    color: var(--dv-ink-secondary);
+    padding: var(--dv-space-5) 0;
+  }
+
+  .dv-satellites-in-orbit__controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dv-space-2);
+    align-items: center;
+    text-align: center;
+  }
+
+  .dv-satellites-in-orbit__legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--dv-space-3);
+  }
+
+  .dv-satellites-in-orbit__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--dv-space-1);
+    font-size: 0.875rem;
+    color: var(--dv-ink-secondary);
+    cursor: pointer;
+    min-height: 36px;
+  }
+
+  .dv-satellites-in-orbit__swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dv-satellites-in-orbit__readout {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: var(--dv-space-3);
+  }
+
+  .dv-satellites-in-orbit__count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dv-ink-primary);
+  }
+
+  .dv-satellites-in-orbit__year {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--dv-ink-secondary);
+    min-width: 4ch;
+  }
+
+  .dv-satellites-in-orbit__playback {
+    display: flex;
+    justify-content: center;
+    gap: var(--dv-space-2);
+  }
+
+  .dv-satellites-in-orbit__play {
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: var(--dv-accent);
+    border: none;
+    border-radius: 4px;
+    padding: var(--dv-space-1) var(--dv-space-3);
+    cursor: pointer;
+    min-height: 36px;
+  }
+
+  .dv-satellites-in-orbit__speed {
+    font-family: inherit;
+    font-size: 0.875rem;
+    padding: var(--dv-space-1) var(--dv-space-2);
+    border: 1px solid var(--dv-gridline);
+    border-radius: 4px;
+    background-color: var(--dv-surface);
+    color: var(--dv-ink-primary);
+    min-height: 36px;
+  }
+
+  .dv-satellites-in-orbit__stage {
+    position: relative;
+    width: 100%;
+    touch-action: none;
+  }
+
+  .dv-satellites-in-orbit__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .dv-satellites-in-orbit__stage .dv-satellites-in-orbit__status {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .dv-satellites-in-orbit__stage .dv-satellites-in-orbit__status[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .dv-satellites-in-orbit__legend {
+      gap: var(--dv-space-2);
+    }
+  }
+</style>

@@ -2,19 +2,20 @@
 
 Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
 
-**Statut : brouillon de cadrage, pas encore implémenté.**
+**Statut : implémenté.**
 
 ## Source des données
 
-CelesTrak SATCAT (`records.php`, format JSON), voir "Dataset source" et "Prétraitement" dans `data-model.md`. Récupération ponctuelle au moment du prétraitement, pas à chaque build (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général) : conforme à la politique d'usage de CelesTrak, qui décourage les requêtes répétées et recommande de ne récupérer les données qu'au moment du besoin. Citation d'attribution (CelesTrak, USSPACECOM/Space-Track.org) dans le bloc de crédit des sources de la page (voir "Dataset source" dans `data-model.md` pour la décision de licence).
+CelesTrak SATCAT, catalogue complet au format CSV (`https://celestrak.org/pub/satcat.csv`, voir "Dataset source" et "Prétraitement" dans `data-model.md` pour le choix de ce format plutôt que `records.php`). Récupération ponctuelle au moment du prétraitement, pas à chaque build (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général) : conforme à la politique d'usage de CelesTrak, qui décourage les requêtes répétées et recommande de ne récupérer les données qu'au moment du besoin. Citation d'attribution (CelesTrak, USSPACECOM/Space-Track.org) dans le bloc de crédit des sources de la page (voir "Dataset source" dans `data-model.md` pour la décision de licence).
 
 ## Rendu
 
-**Canvas 2D, pas SVG**, même choix que `bird-migrations` et pour la même raison : volume de points important (dix à quinze mille attendus, voir `data-model.md`), hors de portée d'un rendu SVG performant.
+**Canvas 2D, pas SVG**, même choix que `bird-migrations` et pour la même raison : volume de points important (20 020, voir `data-model.md`), hors de portée d'un rendu SVG performant.
 
-- Globe stylisé : un cercle simple avec un dégradé radial (pas de silhouette continentale, pas de géographie réelle), dessiné une fois sur un canvas de fond, redessiné seulement au redimensionnement.
-- Nuée de points : canvas de premier plan. À la différence de `bird-migrations` (points mobiles avec effet de traînée), les points ici sont statiques une fois apparus : pas besoin d'effacer/redessiner l'ensemble de la nuée à chaque frame. Chaque nouveau point (satellite dont la date de lancement simulée vient d'être atteinte) est simplement peint par-dessus le canvas existant. Un changement de filtre zone ou un "Rejouer" vide le canvas de premier plan et reconstruit la nuée déjà accumulée en une seule passe avant de reprendre l'accumulation frame par frame.
-- D3 utilisé pour les calculs (échelle de couleur catégorielle par zone via `d3-scale`, boucle d'animation via `d3-timer`), pas pour le rendu DOM des points.
+- Globe : silhouette terrestre réelle (continents/océans, sans frontières par pays), projection orthographique `d3-geo` (`geoOrthographic`, `clipAngle(90)` pour ne montrer que l'hémisphère visible), sur un canvas de fond dédié. À la différence du choix initial (cercle uni à dégradé radial, sans géographie), ce canvas est désormais redessiné à chaque frame plutôt qu'au seul redimensionnement, pour porter la rotation continue (voir "Animation" ci-dessous). Fond de carte `public/data/satellites-in-orbit/basemap.json`, objet TopoJSON `land` (une seule géométrie fusionnée) issu du paquet `world-atlas` (données Natural Earth, domaine public), converti en GeoJSON côté client via `topojson-client` : même source et même traitement (réduction au seul objet `land`) que le fond de carte de `bird-migrations`, récupéré indépendamment pour cette visualisation plutôt que partagé entre les deux (chaque visualisation a ses propres données sous `public/data/<viz-slug>/`, voir "Structure des fichiers" dans `technical-specifications.md` général). 92 Ko.
+- Nuée de points : canvas de premier plan, superposé au canvas du globe. À la différence de `bird-migrations` (points mobiles avec effet de traînée), les points ici sont statiques une fois apparus : pas besoin d'effacer/redessiner l'ensemble de la nuée à chaque frame. Chaque nouveau point (satellite dont la date de lancement simulée vient d'être atteinte) est simplement peint par-dessus le canvas existant. Un changement de filtre zone ou une reprise de passage (voir "Animation" ci-dessous) vide le canvas de premier plan et reconstruit la nuée déjà accumulée en une seule passe avant de reprendre l'accumulation frame par frame. Le halo de points ne suit pas la rotation du globe (voir "Positionnement des points" ci-dessous) : les deux canvas sont animés indépendamment, seul celui du globe tourne.
+- D3 utilisé pour les calculs (échelle de couleur catégorielle par zone via `d3-scale`, échelle temporelle pour l'animation, projection géographique et tracé de chemin via `d3-geo`, boucle d'animation via `d3-timer`), pas pour le rendu DOM des points ni des continents.
+- Couleurs du globe, décoratives, hors palette dataviz (voir "Palette" ci-dessous pour la distinction avec la palette catégorielle des zones) : océan `#b7c2ca`, continents `#c7c0a8`, contour `#8b959c` — tons neutres et désaturés, choisis pour que les points de couleur vive de la nuée restent le seul élément saturé de la composition.
 
 ## Positionnement des points
 
@@ -22,24 +23,31 @@ Pas d'orbite réelle représentée (décision explicite, voir échanges de cadra
 
 - Angle : tiré uniformément entre 0 et 360°.
 - Rayon : tiré dans une bande fixe au-delà du rayon du globe (ex. entre 1,15 et 1,6 fois le rayon du globe), pour donner un effet de profondeur à la nuée sans porter de signification orbitale (pas de correspondance avec l'altitude réelle).
-- Tirage déterministe, dérivé de l'index du satellite dans `satellites.json` (ex. générateur pseudo-aléatoire à seed fixe) plutôt qu'un vrai `Math.random()` : la disposition reste identique entre un chargement de page et un "Rejouer", pas de re-tirage à chaque relecture.
+- Tirage déterministe, dérivé de l'index du satellite dans `satellites.json` (ex. générateur pseudo-aléatoire à seed fixe) plutôt qu'un vrai `Math.random()` : la disposition reste identique entre un chargement de page et une reprise de passage (voir "Animation" ci-dessous), pas de re-tirage à chaque boucle.
+- Position fixe dans le référentiel de l'écran, indépendante de la rotation du globe (voir "Rendu" ci-dessus) : un point ne suit pas la silhouette continentale sous-jacente au fil de sa rotation, cohérent avec l'absence de signification orbitale de sa position.
 
 ## Animation
 
 - Boucle `d3-timer`, pilotée par une date simulée continue (pas un compteur de jours cyclique comme `bird-migrations` : ici l'échelle couvre l'intégralité de 1957 à la date de récupération du catalogue, voir `generatedAt` dans `data-model.md`).
-- Mapping temps réel → temps simulé linéaire sur l'échelle complète des années couvertes (`d3.scaleLinear` ou équivalent, domaine en dates, image en secondes de lecture). Durée totale indicative : environ 25 secondes pour l'ensemble de la période (à ajuster à l'implémentation selon le rendu réel — une accumulation trop lente en début de période, quand les lancements sont rares, resterait visuellement peu engageante).
-- Passage unique, pas de bouclage automatique (voir "Lecture automatique" dans `functional-specifications.md`) : le timer s'arrête à la date la plus récente du dataset plutôt que de revenir à 1957.
+- Mapping temps de lecture écoulé → temps simulé, linéaire sur l'échelle complète des années couvertes (`d3-scale`, `scaleLinear`, domaine en millisecondes de lecture écoulées, image en dates). Durée d'un passage complet à vitesse Normal : 25 secondes (vérifiée visuellement à l'implémentation, voir "Vitesse de lecture" ci-dessous pour les deux autres vitesses).
+- **Bouclage continu :** contrairement au choix initial (passage unique, arrêt à la date la plus récente), l'animation boucle en continu comme `bird-migrations`, décision explicite de l'utilisateur. À la différence de `bird-migrations` (cycle saisonnier, boucle "naturellement" fluide), le passage 1957 → aujourd'hui n'a pas de raccord naturel avec son propre redémarrage : un temps d'arrêt de 2,5 secondes est marqué sur l'état final (nuée complète, compteur au total) avant de vider les canvas et de relancer un passage depuis 1957, pour laisser voir cet état comme un aboutissement plutôt que de couper brutalement de "aujourd'hui" à "1957".
+- **Vitesse de lecture :** Lent (×0,5), Normal (×1, par défaut), Rapide (×2), même mécanisme que `bird-migrations` (`SPEED_FACTORS`, multiplie le temps de lecture accumulé par frame). Modifie uniquement la durée d'un passage (12,5 à 50 secondes) et du temps d'arrêt en fin de passage ; sans effet sur la rotation du globe (ci-dessous), cadencée indépendamment.
+- **Rotation du globe :** ambiante et décorative, à vitesse fixe (~3°/seconde, un tour complet toutes les deux minutes environ), non cyclique au sens propre de "Bouclage continu" ci-dessus puisqu'elle ne repart jamais de zéro. Gelée par Play/Pause en même temps que le reste de l'animation (voir "Accessibilité" dans `functional-specifications.md`).
 - À chaque frame, tous les satellites dont `launchDate` est désormais atteinte et qui n'ont pas encore été peints sont ajoutés au canvas de premier plan (voir "Rendu" ci-dessus) ; `satellites.json` étant trié par date croissante (voir "Contraintes de validation" dans `data-model.md`), un simple curseur d'index suffit, pas de parcours complet du tableau à chaque frame.
 - Année simulée affichée via `Intl.DateTimeFormat(lang, { year: 'numeric' })`, comme le mois simulé de `bird-migrations`.
 
 ## Nouvelles dépendances
 
-| Dépendance | Usage | Portée |
-|---|---|---|
-| `d3-scale` | Échelle de couleur catégorielle par zone (`scaleOrdinal`), échelle temporelle (`scaleLinear` ou `scaleTime`) | Scopée à cette visualisation (île Astro) |
-| `d3-timer` | Boucle d'animation (`timer`, wrapper de `requestAnimationFrame`) | Idem |
+Aucune : `d3-scale`, `d3-timer`, `d3-geo` et `topojson-client` sont déjà des dépendances du projet (introduites par `bird-migrations`, voir son propre `technical-specifications.md`), réutilisées ici sans ajout au `package.json`.
 
-Pas de `d3-geo` ni de fond de carte ici (globe stylisé sans géographie réelle, voir "Rendu" ci-dessus), à la différence de `bird-migrations`.
+| Dépendance | Usage dans cette visualisation | Portée |
+|---|---|---|
+| `d3-scale` | Échelle de couleur catégorielle par zone (`scaleOrdinal`), échelle temporelle (`scaleLinear`) | Scopée à cette visualisation (île Astro) |
+| `d3-timer` | Boucle d'animation (`timer`, wrapper de `requestAnimationFrame`) | Idem |
+| `d3-geo` | Projection orthographique du globe (`geoOrthographic`), tracé du globe et des continents sur canvas (`geoPath`) | Idem |
+| `topojson-client` | Conversion du fond de carte TopoJSON → GeoJSON côté client | Idem |
+
+À la différence de `bird-migrations`, pas de `d3-zoom` ni de `d3-selection` ici : pas de zoom/pan sur le globe (voir "Interactions" dans `functional-specifications.md`, aucune interaction de ce type prévue).
 
 ## Palette
 
@@ -58,6 +66,8 @@ Pas de `d3-geo` ni de fond de carte ici (globe stylisé sans géographie réelle
 
 Assignation par ordre d'apparition dans `regions` (voir "Format de sortie" dans `data-model.md`), même mécanisme que `bird-migrations`.
 
+Cette palette catégorielle ne s'applique qu'aux points de la nuée : les couleurs du globe lui-même (océan, continents, voir "Rendu" ci-dessus) sont hors de son périmètre, au même titre que la teinte `#e4e2da` du fond de carte de `bird-migrations` n'est pas non plus un slot de la palette dataviz — ce sont des couleurs d'illustration, pas des couleurs encodant une donnée.
+
 ## Hydratation
 
 `client:visible`, via un `IntersectionObserver` sur la zone de montage, même mécanisme que `bird-migrations` et `flower-phenology` (voir "Hydratation" dans leurs `technical-specifications.md` respectifs) : le montage réel (fetch du JSON, initialisation Canvas) ne se déclenche qu'à l'approche du viewport.
@@ -70,9 +80,11 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Le canvas de fond (globe) et le canvas de premier plan (nuée) sont redimensionnés ensemble au redimensionnement de la zone de montage ; la nuée déjà accumulée est reconstruite en une seule passe après redimensionnement plutôt qu'étirée (mêmes positions relatives, recalculées au nouveau rayon).
 
-## Points à valider à l'implémentation
+## Décisions prises à l'implémentation
 
-- Mapping exact des codes `OWNER` du SATCAT vers les cinq zones (voir "Regroupement géographique" dans `data-model.md`), à établir sur les données réelles récupérées.
-- Volume exact d'objets après filtrage et taille du fichier `satellites.json` généré (voir "Prétraitement" dans `data-model.md`), avec une piste de compaction du format si nécessaire.
-- Durée totale de l'animation (25 secondes indicatives ci-dessus), à ajuster une fois le rendu réel observable.
-- Relecture, si possible, du texte exact (pas un résumé) de l'accord utilisateur Space-Track.org avant publication, pour confirmer la lecture retenue sur la licence (voir "Dataset source" dans `data-model.md`).
+- Mapping exact des codes `OWNER` du SATCAT vers les cinq zones : établi sur les 106 codes distincts du catalogue réel, voir "Regroupement géographique" dans `data-model.md`.
+- Volume et taille du fichier : 20 020 objets, 892 Ko, pas de compaction nécessaire (voir "Prétraitement" dans `data-model.md`).
+- Durée totale de l'animation : 25 secondes conservées après vérification visuelle (voir "Animation" ci-dessus).
+- Relecture du texte exact de l'accord utilisateur Space-Track.org : faite (`space-track.org/documentation#/agreement`), confirme la lecture retenue sur la licence (voir "Dataset source" dans `data-model.md`).
+- Habillage du globe (continents/océans, rotation) et bouclage continu : ajoutés après la première implémentation (initialement un globe uni sans géographie et un passage unique sans bouclage, voir "Rendu" et "Animation" ci-dessus), à la demande explicite de l'utilisateur.
+- Vitesse de rotation du globe (~3°/s) et durée du temps d'arrêt en fin de passage (2,5 secondes) : choisies par défaut et vérifiées visuellement, sans échange de cadrage préalable sur ces deux valeurs précises — à ajuster si besoin.

@@ -8,6 +8,12 @@ D3 v7 seul (`d3-shape` pour les arcs, `d3-scale` pour l'échelle angulaire des j
 
 Pas de carte, pas de TopoJSON, pas de `topojson-client` : seule visualisation des trois sans fond géographique.
 
+## Zone de montage : ratio 1:1 (exception documentée)
+
+**`aspect-ratio: 1 / 1` sur la zone de montage, pas le calcul `largeur × 0,6` de la hauteur par défaut du site** (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général) : seule visualisation du site dont le rendu est un cadran radial, dont la géométrie exige une zone carrée (le `viewBox` SVG est dimensionné sur `size = largeur`, voir "Rendu" ci-dessus) ; y appliquer un rectangle non carré déformerait le cercle plutôt que de simplement recadrer une carte.
+
+Reste toutefois soumise au même plafond que les autres visualisations (espace disponible entre header et footer, contrôles compris) : plutôt qu'une hauteur bridée (qui casserait le carré, largeur et hauteur restant liées par `aspect-ratio`), c'est la largeur du carré qui est bridée (`max-width` recalculé au redimensionnement, en plus du `max-width: 640px` fixe déjà en CSS) à la valeur qui, une fois la hauteur dérivée par `aspect-ratio`, respecte ce plafond.
+
 ## Nouvelles dépendances
 
 | Dépendance | Usage | Portée |
