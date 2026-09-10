@@ -4,6 +4,7 @@ import { timer as d3Timer } from 'd3-timer';
 // topojson-client ships no bundled types; resolves to `any` under this project's
 // non-strict tsconfig (no noImplicitAny), same choice as bird-migrations/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
+import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 
 interface Region {
   id: string;
@@ -234,7 +235,9 @@ export async function mountSatellitesInOrbit(
   function resize() {
     const rect = stage.getBoundingClientRect();
     width = rect.width;
-    height = Math.max(320, Math.min(width, 640));
+    const nonStageHeight = root.getBoundingClientRect().height - rect.height;
+    const heightCeiling = getMaxStageBlockHeight() - nonStageHeight;
+    height = Math.max(320, Math.min(rect.width * 0.6, heightCeiling));
     stage.style.height = `${height}px`;
     for (const canvas of [globeCanvas, swarmCanvas]) {
       canvas.width = width * devicePixelRatio;

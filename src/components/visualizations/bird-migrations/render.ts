@@ -6,6 +6,7 @@ import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 // topojson-client ships no bundled types; resolves to `any` under this project's
 // non-strict tsconfig (no noImplicitAny), which is narrow enough for the shape used below.
 import { feature as topojsonFeature } from 'topojson-client';
+import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 
 interface TrackPoint {
   lat: number;
@@ -366,11 +367,9 @@ export async function mountBirdMigrations(
   function resize() {
     const rect = stage.getBoundingClientRect();
     width = rect.width;
-    // Aspect close to the framed region's own (~0.58 width/height once the view
-    // extends north to ~68°, see viewBounds below): a landscape ratio here would
-    // waste most of its width as letterboxing either side of Europe/Africa.
-    // Height further divided by 1.5 (explicit request) on top of that ratio.
-    height = Math.max(480, rect.width * 0.85) / 1.5;
+    const nonStageHeight = root.getBoundingClientRect().height - rect.height;
+    const heightCeiling = getMaxStageBlockHeight() - nonStageHeight;
+    height = Math.max(320, Math.min(rect.width * 0.6, heightCeiling));
     stage.style.height = `${height}px`;
     for (const canvas of [basemapCanvas, trailsCanvas]) {
       canvas.width = width * devicePixelRatio;

@@ -3,6 +3,7 @@ import { scaleSqrt } from 'd3-scale';
 // topojson-client ships no bundled types; resolves to `any` under this project's
 // moduleResolution setting, same accepted gap as bird-migrations/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
+import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 
 type Group = 'birds' | 'mammals' | 'reptiles-amphibians' | 'insects' | 'plants' | 'fungi';
 type GroupFilter = Group | 'all';
@@ -298,9 +299,9 @@ export async function mountBiodiversity(root: HTMLElement, lang: 'fr' | 'en', la
   function resize() {
     const rect = stage.getBoundingClientRect();
     width = rect.width;
-    // France's silhouette is close to square once longitude is compressed by
-    // latitude (~cos(46°)), unlike bird-migrations' wide Europe/Africa frame.
-    height = Math.max(420, rect.width * 0.95);
+    const nonStageHeight = root.getBoundingClientRect().height - rect.height;
+    const heightCeiling = getMaxStageBlockHeight() - nonStageHeight;
+    height = Math.max(320, Math.min(rect.width * 0.6, heightCeiling));
     stage.style.height = `${height}px`;
     svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
 

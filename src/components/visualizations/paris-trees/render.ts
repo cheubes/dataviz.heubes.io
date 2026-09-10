@@ -1,7 +1,8 @@
-import { geoContains, geoBounds, geoMercator, geoPath } from 'd3-geo';
+import { geoContains, geoMercator, geoPath } from 'd3-geo';
 import { scaleOrdinal, scaleSqrt } from 'd3-scale';
 import { select } from 'd3-selection';
 import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
+import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 
 interface Genus {
   id: string;
@@ -119,8 +120,6 @@ const MAX_ZOOM = 40;
 const GRID_CELL_SIZE = 40; // base-projection units, rebuilt on resize alongside positions
 const SEARCH_DEBOUNCE_MS = 120;
 const ZOOM_BUTTON_STEP = 1.5;
-const MIN_STAGE_HEIGHT_PX = 340;
-const STAGE_HEIGHT_DIVISOR = 1.4;
 
 function stripAccents(s: string): string {
   return s.normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -352,10 +351,6 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
   const projection = geoMercator();
   const path = geoPath(projection, basemapCtx);
 
-  const [[lngMin, latMin], [lngMax, latMax]] = geoBounds(districtsData as any);
-  const latMid = (latMin + latMax) / 2;
-  const aspect = ((lngMax - lngMin) * Math.cos((latMid * Math.PI) / 180)) / (latMax - latMin);
-
   let transform: ZoomTransform = zoomIdentity;
   let width = 0;
   let height = 0;
@@ -426,10 +421,9 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
   function resize() {
     const rect = stage.getBoundingClientRect();
     width = rect.width;
-    // Height further divided by STAGE_HEIGHT_DIVISOR (explicit request) on top
-    // of Paris's own geographic aspect ratio: the plain geographic height felt
-    // too tall in the page.
-    height = Math.max(MIN_STAGE_HEIGHT_PX, rect.width / aspect / STAGE_HEIGHT_DIVISOR);
+    const nonStageHeight = root.getBoundingClientRect().height - rect.height;
+    const heightCeiling = getMaxStageBlockHeight() - nonStageHeight;
+    height = Math.max(320, Math.min(rect.width * 0.6, heightCeiling));
     stage.style.height = `${height}px`;
     for (const canvas of [basemapCanvas, treesCanvas]) {
       canvas.width = width * devicePixelRatio;

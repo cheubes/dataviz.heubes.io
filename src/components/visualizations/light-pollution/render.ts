@@ -4,6 +4,7 @@ import { timer as d3Timer } from 'd3-timer';
 // topojson-client ships no bundled types; resolves to `any` under this project's
 // moduleResolution setting, same accepted gap as bird-migrations/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
+import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 
 interface SkyScaleTier {
   id: number;
@@ -220,7 +221,9 @@ export async function mountLightPollution(root: HTMLElement, lang: 'fr' | 'en', 
   function resize() {
     const rect = stage.getBoundingClientRect();
     width = rect.width;
-    height = Math.max(320, rect.width * 0.6);
+    const nonStageHeight = root.getBoundingClientRect().height - rect.height;
+    const heightCeiling = getMaxStageBlockHeight() - nonStageHeight;
+    height = Math.max(320, Math.min(rect.width * 0.6, heightCeiling));
     stage.style.height = `${height}px`;
     svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
 
