@@ -164,4 +164,10 @@ export default {
     eraMiddleAges: 'Middle Ages',
     eraEarlyModern: 'Early modern period',
   },
+  grapeHarvestAlmanac: {
+    loading: 'Loading grape harvest dates…',
+    error: 'Could not load grape harvest data. Please try again later.',
+    empty: 'Select at least one region to display the chart.',
+    regionGroupLabel: 'Regions shown',
+  },
 };
