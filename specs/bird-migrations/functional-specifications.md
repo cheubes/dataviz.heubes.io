@@ -53,8 +53,8 @@ Faire voir, par l'animation de trajectoires GPS réelles, les couloirs de migrat
 
 ## États
 
-- **Chargement :** le temps que le JSON des trajectoires et le fond de carte soient récupérés et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
-- **Erreur :** échec de récupération du JSON → message d'erreur, pas de carte vide silencieuse.
+- **Chargement :** le temps que les trajectoires, le fond de carte (silhouette, cours d'eau, relief, voir `data-model.md` et `technical-specifications.md`) soient récupérés et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
+- **Erreur :** échec de récupération d'une de ces données → message d'erreur, pas de carte vide silencieuse.
 - **Vide :** combinaison espèce(s) + direction sans aucune trajectoire disponible (ex. une espèce sans données de printemps dans l'étude retenue) → message l'indiquant plutôt qu'une carte sans trajectoires sans explication.
 
 ## Responsive

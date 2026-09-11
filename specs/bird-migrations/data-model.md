@@ -95,9 +95,50 @@ Préfixes d'anonymisation par espèce : `CC` (cigogne, *Ciconia Ciconia*), `CP` 
 
 **v3 :** l'utilisateur a validé l'usage de la licence CC BY-NC pour la bondrée (voir "Dataset source" ci-dessus) ; ajoutée.
 
-**v4 (cette révision) :** en étendant le cadrage de la carte vers le nord (voir "Limite connue : cadrage nord" dans `technical-specifications.md`) pour de bon montrer les aires de reproduction des espèces ajoutées en v2, plusieurs trajectoires de busard cendré sont apparues comme des traits rectilignes aberrants traversant la carte de part en part. Diagnostic : des positions Argos Doppler mal résolues (voir "Busard cendré" ci-dessus), présentes dès la v2 mais peu visibles tant que le cadrage restreint les coupait hors champ. Corrigé à la source (voir "Prétraitement" ci-dessous) ; les portées sud du busard cendré documentées en v2 (jusqu'à -27,9°) étaient donc déjà fausses et sont corrigées ici.
+**v4 :** en étendant le cadrage de la carte vers le nord (voir "Limite connue : cadrage nord" dans `technical-specifications.md`) pour de bon montrer les aires de reproduction des espèces ajoutées en v2, plusieurs trajectoires de busard cendré sont apparues comme des traits rectilignes aberrants traversant la carte de part en part. Diagnostic : des positions Argos Doppler mal résolues (voir "Busard cendré" ci-dessus), présentes dès la v2 mais peu visibles tant que le cadrage restreint les coupait hors champ. Corrigé à la source (voir "Prétraitement" ci-dessous) ; les portées sud du busard cendré documentées en v2 (jusqu'à -27,9°) étaient donc déjà fausses et sont corrigées ici.
 
 Balbuzard et tourterelle restent absents de `tracks.json` faute de source adaptée ; les ajouter plus tard n'implique aucun changement de code (voir "Format de sortie").
+
+**v5 (cette révision) :** fond de carte enrichi de cours d'eau et d'un relief ombré, à la demande explicite de l'utilisateur. Aucun changement côté `tracks.json` ni côté espèces ; voir "Cours d'eau (fond de carte)" et "Relief (fond de carte)" ci-dessous pour les sources et le prétraitement, et "Cours d'eau" / "Relief : alignement au redimensionnement" dans `technical-specifications.md` pour le rendu.
+
+## Cours d'eau (fond de carte)
+
+Ajouté en v5 (voir "Historique" ci-dessus), à la demande explicite de l'utilisateur. Source : Natural Earth, jeu "1:50m Rivers + Lake Centerlines" (domaine public, aucune attribution requise), même filiation que la silhouette terrestre de `basemap.json` (voir "Techno carte" dans `technical-specifications.md`) : cohérent avec l'échelle très dézoomée de cette carte, à la différence de l'approche OpenStreetMap/Overpass utilisée pour `paris-trees` et `monument-layers` (précision locale, pensée pour une carte de ville ou de pays, pas adaptée ici sans curation manuelle lourde d'une liste de « grands fleuves » par pays).
+
+Récupéré via le mirroir GeoJSON communautaire de Natural Earth ([nvkelso/natural-earth-vector](https://github.com/nvkelso/natural-earth-vector), maintenu par un ancien responsable du projet Natural Earth ; mêmes données du domaine public que le shapefile officiel, évite une étape de conversion shapefile → GeoJSON pour un prétraitement ponctuel), fichier `ne_50m_rivers_lake_centerlines.geojson`, 462 entités à l'échelle mondiale, `retrieved` 2026-09-11.
+
+**Couverture mondiale, pas seulement Europe/Afrique :** un premier essai limitait les tronçons retenus à ceux tombant dans le rectangle de cadrage de la carte (lng -25/45, lat -36/68, voir "Projection" dans `technical-specifications.md`) — cohérent avec le fait que le zoom/pan reste borné à cette zone (voir "Interactions" dans `functional-specifications.md`), mais la silhouette terrestre elle-même n'est pas découpée à cette zone (voir "Fond de carte" dans `technical-specifications.md`) : le reste du monde (Amériques, Asie, Océanie) déborde visiblement sur les côtés dès le chargement, sans jamais nécessiter de pan pour l'atteindre selon la forme de la fenêtre (rapport largeur/hauteur variable, voir "Hauteur par défaut de la zone de montage" dans `technical-specifications.md` général). Élargi à la demande explicite de l'utilisateur pour couvrir la carte entière plutôt que ce seul rectangle.
+
+**Prétraitement (script ponctuel, non committé) :** aucun filtre géographique ni seuil sur l'attribut `scalerank` du jeu source (un seuil global aurait exclu à tort des cours d'eau très reconnaissables à l'échelle Europe/Afrique, comme le Rhône ou le Pô, qui portent le rang le plus bas de ce jeu ; la couverture mondiale rend de toute façon la question sans objet). Chaque entité source (`MultiLineString`, un cours d'eau étant souvent coupé en plusieurs tronçons) est aplatie telle quelle. Coordonnées arrondies à six décimales (même convention que `rivers.json`/`seine.json` de `monument-layers`/`paris-trees`), tronçons rassemblés en une unique géométrie `MultiLineString` sans propriétés, écrite dans `public/data/bird-migrations/rivers.json`.
+
+**Format de sortie**, même forme que `rivers.json` de `monument-layers`/`seine.json` de `paris-trees` — géométrie brute, pas de `Feature`, pas de propriétés, purement décoratif (aucune interaction, aucune donnée dérivée) :
+
+```json
+{ "type": "MultiLineString", "coordinates": [[[2.3522, 48.8566], [4.8, 47.3]], ...] }
+```
+
+895 tronçons (couverture mondiale), 25 641 points, 566 Ko.
+
+## Relief (fond de carte)
+
+Ajouté en v5 (voir "Historique" ci-dessus), à la demande explicite de l'utilisateur, sous réserve explicite de faisabilité : premier asset raster du site, rupture avec le style 100 % silhouette vectorielle des trois autres cartes (`biodiversity`, `flower-phenology`, et `bird-migrations` lui-même jusqu'ici), validée après un prototype comparant une teinte « douce » et une teinte « marquée » (teinte douce retenue, voir "Relief" dans `technical-specifications.md`).
+
+Source : Natural Earth, jeu raster "Gray Earth with Shaded Relief, Water" à l'échelle 1:50m (`GRAY_50M_SR_W`, domaine public, aucune attribution requise), même filiation que la silhouette terrestre. Récupéré une fois depuis la distribution officielle Natural Earth (`naturalearth.s3.amazonaws.com/50m_raster/GRAY_50M_SR_W.zip`, 11 Mo compressé, `retrieved` 2026-09-11) : TIFF source 10 800 × 5 400 px, grille équirectangulaire (1/30° par pixel).
+
+**Couverture mondiale, pas seulement Europe/Afrique :** même raison que pour les cours d'eau ci-dessus (retour utilisateur après un premier essai limité au rectangle de cadrage) — un essai limité à ce rectangle laissait les portions de silhouette hors cadre (Amériques, Asie, Océanie, visibles sur les côtés dès le chargement selon la forme de la fenêtre) en aplat beige uni sans relief ni cours d'eau, incohérent avec le reste de la silhouette. Voir "Relief : alignement au redimensionnement" dans `technical-specifications.md` pour la technique d'alignement d'une image dont l'étendue dépasse largement le cadrage Europe/Afrique.
+
+**Prétraitement (script ponctuel Node, non committé) :**
+
+1. Calculer l'emprise en pixels de la silhouette terrestre complète (`objects.land` de `basemap.json`, mêmes données que le fond de carte, bornes calculées via `path.bounds()` sur la géométrie complète plutôt que sur le seul rectangle Europe/Afrique) sous la projection réelle de la carte (`d3.geoNaturalEarth1`, module `d3-geo` déjà utilisé côté client) calibrée sur le rectangle de cadrage Europe/Afrique (`viewBounds`, même calibrage que `render.ts` pour l'alignement au rendu, voir "Résolution de référence" ci-dessous) : cette emprise dépasse largement ce rectangle dans les deux dimensions (les Amériques et l'Asie/Océanie débordent loin à gauche et à droite), d'où une image nettement plus grande que le seul cadrage Europe/Afrique.
+2. Reprojeter le raster source (équirectangulaire) sur cette emprise complète : pour chaque pixel de sortie, `projection.invert()` donne la coordonnée géographique correspondante, dont le pixel le plus proche est échantillonné dans le TIFF source.
+3. Teinter chaque pixel en mélangeant la couleur de fond de la silhouette (`#e4e2da`) avec un facteur dérivé du niveau de gris source (relief ombré) : `0,78 + 0,22 × (niveau de gris / 255)`, teinte « douce » retenue après comparaison avec une teinte « marquée » (`0,55 + 0,45 × ...`) — un ombrage à peine perceptible qui ne concurrence jamais les couleurs de trajectoires ni la lisibilité de la carte.
+4. Exporter en WebP (contenu photographique à dégradés doux, se compresse nettement mieux qu'en PNG pour ce type de contenu), écrit dans `public/data/bird-migrations/relief.webp`.
+
+Pas de découpe à la silhouette terrestre dans l'asset lui-même (l'océan reste visible en gris neutre dans le fichier source) : le découpage se fait au rendu, via le même tracé vectoriel (`ctx.clip()`) que le remplissage actuel de la silhouette (voir "Relief" dans `technical-specifications.md`) — le littoral reste donc net (tracé vectoriel), seule la texture intérieure est une image raster.
+
+**Résolution de référence :** la densité de pixels (px par degré) reprise pour l'ensemble de l'image est celle calibrée sur le rectangle Europe/Afrique à 2600 × 4348 px (`RELIEF_REF_WIDTH`/`RELIEF_REF_HEIGHT` dans `render.ts`), choisie après essais à plusieurs résolutions (1000 à 3200 px de large sur ce seul rectangle) : le raster source (1/30° par pixel) plafonne le détail réellement disponible sur cette emprise autour de 2000-3000 px, au-delà l'image n'apporterait qu'une interpolation sans détail réel supplémentaire. Appliquée à l'emprise complète de la silhouette (12 922 × 6 716 px, avec une origine `REF_ORIGIN_X`/`REF_ORIGIN_Y` = (-5523, -496) décalée par rapport au rectangle Europe/Afrique, voir "Relief : alignement au redimensionnement" dans `technical-specifications.md`). Le poids reste raisonnable malgré la surface nettement plus grande (WebP compressant très efficacement ce type de contenu à dégradés doux) : 547 Ko pour la couverture mondiale, contre 83 Ko pour le seul rectangle Europe/Afrique du premier essai. Contrepartie assumée : au zoom maximal de la carte (×6, voir "Interactions" dans `functional-specifications.md`), la texture de relief peut légèrement s'adoucir au-delà de sa résolution native, à la différence du littoral (resté vectoriel) qui reste net à tout niveau de zoom.
+
+84,7 Ko.
 
 ## Schéma des données brutes (source Movebank)
 
