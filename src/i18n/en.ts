@@ -130,6 +130,7 @@ export default {
     speedSlow: 'Slow',
     speedNormal: 'Normal',
     speedFast: 'Fast',
+    yearLabel: 'Year',
   },
   monumentLayers: {
     loading: 'Loading monuments…',
