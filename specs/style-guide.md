@@ -77,6 +77,17 @@ Statuts (fixes, jamais réutilisés pour une série de données, toujours accomp
 
 Une visualisation qui a besoin d'une palette différente de ce défaut (ex : une teinte séquentielle propre à son sujet) la documente et la valide dans son propre `technical-specifications.md` plutôt que d'improviser des couleurs (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md`).
 
+### Fond de carte (illustration)
+
+Couleurs récurrentes pour les visualisations avec fond de carte (silhouette de territoire, hydrographie) : des couleurs d'illustration, fixes quel que soit le thème, jamais réutilisées pour encoder une donnée (hors de la palette dataviz ci-dessus, voir par exemple "Palette" dans `specs/satellites-in-orbit/technical-specifications.md`).
+
+| Usage | Hex |
+|---|---|
+| Silhouette (fond de carte) | `#e4e2da` |
+| Hydrographie (cours d'eau, fleuves) | `#a8c5da` |
+
+Utilisées par `biodiversity`, `light-pollution`, `paris-trees`, `monument-layers` et `bird-migrations` ; toute nouvelle visualisation avec fond de carte réutilise ces teintes plutôt que d'en introduire de nouvelles.
+
 ## Typographie
 
 - **Police :** Ubuntu (Google Fonts), graisses 300 / 400 / 500 / 700 (voir "Polices" dans `technical-specifications.md` pour le chargement).
