@@ -11,6 +11,7 @@ A catalogue of interactive, hand-built data visualizations. Each entry explores 
 - **The Orbital Rush** ([`satellites-in-orbit`](specs/satellites-in-orbit/)) : 20,020 payloads still in orbit today, from CelesTrak's SATCAT, animated year by year in a continuous loop as a Canvas 2D point swarm around a slowly rotating globe.
 - **The Sky, Year by Year** ([`light-pollution`](specs/light-pollution/)) : NOAA VIIRS nighttime radiance for mainland France, 2013-2025, aggregated on the same H3 hexagonal grid as Biodiversity in France and translated into a six-tier sky-visibility scale, with a year slider recoloring the map.
 - **Layers of Heritage** ([`monument-layers`](specs/monument-layers/)) : 37,661 French historic monuments from the Ministry of Culture's Mérimée database, animated in chronological order of construction as a Canvas 2D point map, from a static prehistoric/antique backdrop through the medieval and modern waves.
+- **The Grape Harvest Almanac** ([`grape-harvest-almanac`](specs/grape-harvest-almanac/)) : 650 years of grape harvest dates (1354-2007) across seven French winegrowing regions, from the Daux et al. 2012 NOAA/WDS Paleoclimatology database, rendered as a D3 SVG multi-series timeline with raw and smoothed curves, annotated with four historical landmarks.
 
 ## Development
 

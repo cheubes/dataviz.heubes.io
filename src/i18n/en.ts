@@ -130,6 +130,7 @@ export default {
     speedSlow: 'Slow',
     speedNormal: 'Normal',
     speedFast: 'Fast',
+    yearLabel: 'Year',
   },
   monumentLayers: {
     loading: 'Loading monuments…',
@@ -163,5 +164,11 @@ export default {
     eraGalloRoman: 'Gallo-Roman period',
     eraMiddleAges: 'Middle Ages',
     eraEarlyModern: 'Early modern period',
+  },
+  grapeHarvestAlmanac: {
+    loading: 'Loading grape harvest dates…',
+    error: 'Could not load grape harvest data. Please try again later.',
+    empty: 'Select at least one region to display the chart.',
+    regionGroupLabel: 'Regions shown',
   },
 };

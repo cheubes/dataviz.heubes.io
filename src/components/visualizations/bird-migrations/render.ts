@@ -85,6 +85,18 @@ const SPEED_FACTORS: Record<'slow' | 'normal' | 'fast', number> = {
 };
 const HIT_RADIUS_PX = 14;
 const FADE_ALPHA = 0.06;
+const RIVER_COLOR = '#a8c5da';
+const RIVER_LINE_WIDTH_PX = 1.5;
+// Fixed reference frame relief.webp was pre-rendered at (see "Relief" in
+// technical-specifications.md): RELIEF_REF_WIDTH/HEIGHT is the box viewBounds was
+// fit into (for the reference scale/translate below), while relief.webp itself
+// covers the full world's land bounds at that scale, offset by REF_ORIGIN_X/Y
+// (both negative: the world extends left of and above that box). All four must
+// match the reprojection script exactly for the runtime affine alignment to hold.
+const RELIEF_REF_WIDTH = 2600;
+const RELIEF_REF_HEIGHT = 4348;
+const RELIEF_ORIGIN_X = -5523;
+const RELIEF_ORIGIN_Y = -496;
 
 function dayOfYear(dateStr: string): number {
   const [y, m, d] = dateStr.split('-').map(Number);
@@ -141,14 +153,24 @@ export async function mountBirdMigrations(
 
   let data: TracksData;
   let basemapTopology: any;
+  let riversData: any;
+  const reliefImg = new Image();
   try {
-    const [tracksRes, basemapRes] = await Promise.all([
+    const reliefLoaded = new Promise<void>((resolve, reject) => {
+      reliefImg.onload = () => resolve();
+      reliefImg.onerror = () => reject(new Error('relief image failed to load'));
+    });
+    const [tracksRes, basemapRes, riversRes] = await Promise.all([
       fetch('/data/bird-migrations/tracks.json'),
       fetch('/data/bird-migrations/basemap.json'),
+      fetch('/data/bird-migrations/rivers.json'),
     ]);
-    if (!tracksRes.ok || !basemapRes.ok) throw new Error('fetch failed');
+    if (!tracksRes.ok || !basemapRes.ok || !riversRes.ok) throw new Error('fetch failed');
     data = await tracksRes.json();
     basemapTopology = await basemapRes.json();
+    riversData = await riversRes.json();
+    reliefImg.src = '/data/bird-migrations/relief.webp';
+    await reliefLoaded;
   } catch {
     statusEl.textContent = labels.error;
     return;
@@ -363,6 +385,11 @@ export async function mountBirdMigrations(
   let transform: ZoomTransform = zoomIdentity;
   let width = 0;
   let height = 0;
+  // Affine alignment of relief.webp (pre-rendered once at RELIEF_REF_WIDTH/HEIGHT)
+  // onto the current live frame, recomputed on resize; see resize() below.
+  let reliefScale = 1;
+  let reliefOffsetX = 0;
+  let reliefOffsetY = 0;
 
   function resize() {
     const rect = stage.getBoundingClientRect();
@@ -377,6 +404,20 @@ export async function mountBirdMigrations(
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
     }
+    // Reference frame relief.webp was rendered at: fitExtent's contain-fit means
+    // any two frames it produces for the same geometry relate by one uniform
+    // scale+translate, so capturing that pair here lets the static image be
+    // repositioned onto the live frame below without a runtime reprojection.
+    projection.fitExtent(
+      [
+        [24, 24],
+        [RELIEF_REF_WIDTH - 24, RELIEF_REF_HEIGHT - 24],
+      ],
+      viewBounds as any
+    );
+    const refScale = projection.scale();
+    const refTranslate = projection.translate();
+
     projection.fitExtent(
       [
         [24, 24],
@@ -384,6 +425,14 @@ export async function mountBirdMigrations(
       ],
       viewBounds as any
     );
+    // relief.webp's own pixel (0,0) sits at (REF_ORIGIN_X, REF_ORIGIN_Y) in the
+    // reference frame (see RELIEF_ORIGIN_X/Y above), not at the reference frame's
+    // own (0,0); subtracting it here is equivalent to shifting refTranslate by
+    // that origin before applying the same affine relationship.
+    reliefScale = projection.scale() / refScale;
+    reliefOffsetX = projection.translate()[0] - reliefScale * (refTranslate[0] - RELIEF_ORIGIN_X);
+    reliefOffsetY = projection.translate()[1] - reliefScale * (refTranslate[1] - RELIEF_ORIGIN_Y);
+
     zoomBehavior.translateExtent([
       [0, 0],
       [width, height],
@@ -402,6 +451,24 @@ export async function mountBirdMigrations(
     path(landFeature as any);
     basemapCtx.fillStyle = '#e4e2da';
     basemapCtx.fill();
+    basemapCtx.clip();
+
+    basemapCtx.drawImage(
+      reliefImg,
+      reliefOffsetX,
+      reliefOffsetY,
+      reliefImg.naturalWidth * reliefScale,
+      reliefImg.naturalHeight * reliefScale
+    );
+
+    basemapCtx.strokeStyle = RIVER_COLOR;
+    basemapCtx.lineWidth = RIVER_LINE_WIDTH_PX / transform.k;
+    basemapCtx.lineCap = 'round';
+    basemapCtx.lineJoin = 'round';
+    basemapCtx.beginPath();
+    path(riversData as any);
+    basemapCtx.stroke();
+
     basemapCtx.restore();
     trailsCtx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
   }

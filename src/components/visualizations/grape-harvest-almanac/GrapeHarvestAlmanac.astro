@@ -1,0 +1,219 @@
+---
+interface Props {
+  lang: 'fr' | 'en';
+}
+
+const { lang } = Astro.props;
+---
+
+<div id="dv-grape-harvest-almanac-root" data-lang={lang}></div>
+
+<script>
+  import { mountGrapeHarvestAlmanac } from './render';
+  import en from '../../../i18n/en';
+  import fr from '../../../i18n/fr';
+
+  const root = document.getElementById('dv-grape-harvest-almanac-root');
+  if (root) {
+    const lang = root.dataset.lang === 'fr' ? 'fr' : 'en';
+    const labels = (lang === 'fr' ? fr : en).grapeHarvestAlmanac;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          observer.disconnect();
+          mountGrapeHarvestAlmanac(root, lang, labels);
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(root);
+  }
+</script>
+
+<style is:global>
+  .dv-grape-harvest-almanac {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dv-space-3);
+    padding: var(--dv-space-3);
+  }
+
+  .dv-grape-harvest-almanac__status {
+    margin: 0;
+    text-align: center;
+    color: var(--dv-ink-secondary);
+    padding: var(--dv-space-5) 0;
+  }
+
+  .dv-grape-harvest-almanac__controls {
+    display: flex;
+  }
+
+  .dv-grape-harvest-almanac__region-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dv-space-1) var(--dv-space-4);
+  }
+
+  .dv-grape-harvest-almanac__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--dv-space-2);
+    font-size: 0.875rem;
+    color: var(--dv-ink-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .dv-grape-harvest-almanac__swatch {
+    display: inline-block;
+    width: 16px;
+    height: 3px;
+    border-radius: 2px;
+  }
+
+  .dv-grape-harvest-almanac__stage {
+    position: relative;
+    width: 100%;
+  }
+
+  .dv-grape-harvest-almanac__svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .dv-grape-harvest-almanac__axis-label {
+    fill: var(--dv-ink-secondary);
+    font-size: 0.75rem;
+  }
+
+  .dv-grape-harvest-almanac__gridline {
+    stroke: var(--dv-gridline);
+    stroke-width: 1;
+  }
+
+  .dv-grape-harvest-almanac__event-line {
+    stroke: var(--dv-ink-secondary);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+
+  .dv-grape-harvest-almanac__event-band {
+    fill: var(--dv-ink-secondary);
+    fill-opacity: 0.08;
+  }
+
+  .dv-grape-harvest-almanac__event-marker {
+    cursor: pointer;
+    fill: var(--dv-surface);
+    stroke: var(--dv-ink-secondary);
+    stroke-width: 1.5;
+  }
+
+  .dv-grape-harvest-almanac__event-marker:hover,
+  .dv-grape-harvest-almanac__event-marker--active {
+    fill: var(--dv-accent);
+    stroke: var(--dv-accent);
+  }
+
+  .dv-grape-harvest-almanac__event-hit {
+    fill: transparent;
+    cursor: pointer;
+  }
+
+  .dv-grape-harvest-almanac__crosshair {
+    stroke: var(--dv-ink-secondary);
+    stroke-width: 1;
+    pointer-events: none;
+  }
+
+  .dv-grape-harvest-almanac__capture {
+    fill: transparent;
+  }
+
+  .dv-grape-harvest-almanac__tooltip,
+  .dv-grape-harvest-almanac__event-panel {
+    position: absolute;
+    z-index: 3;
+    max-width: 240px;
+    padding: var(--dv-space-2);
+    background-color: var(--dv-header-bg);
+    color: #ffffff;
+    border-radius: 4px;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+  }
+
+  .dv-grape-harvest-almanac__tooltip {
+    pointer-events: none;
+  }
+
+  .dv-grape-harvest-almanac__tooltip-year {
+    font-weight: 700;
+    margin-bottom: var(--dv-space-1);
+  }
+
+  .dv-grape-harvest-almanac__tooltip-row {
+    display: flex;
+    align-items: center;
+    gap: var(--dv-space-2);
+  }
+
+  .dv-grape-harvest-almanac__tooltip-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 2px;
+    flex-shrink: 0;
+  }
+
+  .dv-grape-harvest-almanac__tooltip-value {
+    font-weight: 700;
+  }
+
+  .dv-grape-harvest-almanac__tooltip-name {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .dv-grape-harvest-almanac__event-panel {
+    max-width: 280px;
+  }
+
+  .dv-grape-harvest-almanac__event-panel-title {
+    font-weight: 700;
+    margin-bottom: var(--dv-space-1);
+  }
+
+  .dv-grape-harvest-almanac__event-panel-values {
+    margin-top: var(--dv-space-2);
+    padding-top: var(--dv-space-2);
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .dv-grape-harvest-almanac__stage .dv-grape-harvest-almanac__status {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .dv-grape-harvest-almanac__stage .dv-grape-harvest-almanac__status[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .dv-grape-harvest-almanac__region-group {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: var(--dv-space-1);
+    }
+  }
+</style>

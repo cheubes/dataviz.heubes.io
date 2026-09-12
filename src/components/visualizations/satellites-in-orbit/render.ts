@@ -34,6 +34,7 @@ export interface SatellitesInOrbitLabels {
   speedSlow: string;
   speedNormal: string;
   speedFast: string;
+  yearLabel: string;
 }
 
 interface Satellite {
@@ -132,6 +133,30 @@ export async function mountSatellitesInOrbit(
     .range([satellites[0].launchMs, satellites[satellites.length - 1].launchMs])
     .clamp(true);
 
+  const firstYear = new Date(satellites[0].launchMs).getUTCFullYear();
+  const lastYear = new Date(satellites[satellites.length - 1].launchMs).getUTCFullYear();
+
+  function endOfYearMs(year: number): number {
+    return Date.UTC(year + 1, 0, 1) - 1;
+  }
+
+  // Count of satellites with launchMs at or before the end of `year`
+  // (satellites is sorted by launchMs ascending, same invariant the frame
+  // loop below relies on): the reveal cursor a manual scrub of the year
+  // slider jumps to, which can move backward unlike the frame loop's
+  // monotonic cursor advance.
+  function cursorForYear(year: number): number {
+    const cutoff = endOfYearMs(year);
+    let lo = 0;
+    let hi = satellites.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >>> 1;
+      if (satellites[mid].launchMs <= cutoff) lo = mid + 1;
+      else hi = mid;
+    }
+    return lo;
+  }
+
   // --- Layout -------------------------------------------------------------
   const controls = document.createElement('div');
   controls.className = 'dv-satellites-in-orbit__controls';
@@ -202,6 +227,34 @@ export async function mountSatellitesInOrbit(
     speedSelect.appendChild(option);
   });
   playback.appendChild(speedSelect);
+
+  // Grouped so the label, slider and value move together when the playback
+  // row wraps on narrow viewports, same structure as light-pollution and
+  // monument-layers.
+  const yearGroup = document.createElement('div');
+  yearGroup.className = 'dv-satellites-in-orbit__year-group';
+  playback.appendChild(yearGroup);
+
+  const yearLabelEl = document.createElement('label');
+  yearLabelEl.textContent = labels.yearLabel;
+  yearLabelEl.htmlFor = 'dv-satellites-in-orbit-year';
+  yearGroup.appendChild(yearLabelEl);
+
+  const yearSlider = document.createElement('input');
+  yearSlider.type = 'range';
+  yearSlider.id = 'dv-satellites-in-orbit-year';
+  yearSlider.className = 'dv-satellites-in-orbit__year-slider';
+  yearSlider.min = String(firstYear);
+  yearSlider.max = String(lastYear);
+  yearSlider.step = '1';
+  yearSlider.value = String(firstYear);
+  yearSlider.setAttribute('aria-valuetext', String(firstYear));
+  yearGroup.appendChild(yearSlider);
+
+  const yearValueEl = document.createElement('span');
+  yearValueEl.className = 'dv-satellites-in-orbit__year-value';
+  yearValueEl.textContent = String(firstYear);
+  yearGroup.appendChild(yearValueEl);
 
   const stage = document.createElement('div');
   stage.className = 'dv-satellites-in-orbit__stage';
@@ -331,6 +384,22 @@ export async function mountSatellitesInOrbit(
     emptyMessage.hidden = activeRegions.size > 0;
   }
 
+  // Jumps the reveal cursor to an arbitrary point rather than only advancing
+  // it (unlike the per-frame loop below): a manual scrub of the year slider
+  // can move backward, which a full recount + redraw handles directly rather
+  // than trying to "unpaint" points already baked into the canvas (same
+  // mechanism as monument-layers' seekToCursor).
+  function seekToCursor(newCursor: number) {
+    cursor = newCursor;
+    for (const regionId of countByRegion.keys()) countByRegion.set(regionId, 0);
+    for (let i = 0; i < cursor; i++) {
+      const sat = satellites[i];
+      countByRegion.set(sat.regionId, (countByRegion.get(sat.regionId) ?? 0) + 1);
+    }
+    rebuildForeground();
+    updateCounter();
+  }
+
   const yearFormatter = new Intl.DateTimeFormat(lang, { year: 'numeric', timeZone: 'UTC' });
   let lastYearLabel = '';
 
@@ -340,6 +409,10 @@ export async function mountSatellitesInOrbit(
       lastYearLabel = label;
       yearEl.textContent = label;
     }
+    const year = new Date(simMs).getUTCFullYear();
+    yearSlider.value = String(year);
+    yearSlider.setAttribute('aria-valuetext', String(year));
+    yearValueEl.textContent = String(year);
   }
 
   function startNewPass() {
@@ -400,6 +473,24 @@ export async function mountSatellitesInOrbit(
 
   speedSelect.addEventListener('change', () => {
     speed = speedSelect.value as Speed;
+  });
+
+  // Manual scrubbing takes over from autoplay, same convention as
+  // light-pollution and monument-layers: without this, autoplay would fight
+  // the visitor's drag on every frame.
+  yearSlider.addEventListener('input', () => {
+    playing = false;
+    playButton.textContent = labels.play;
+    playButton.setAttribute('aria-pressed', 'false');
+
+    const targetYear = Number(yearSlider.value);
+    const targetMs = endOfYearMs(targetYear);
+    playedMs = simTimeScale.invert(targetMs);
+    seekToCursor(cursorForYear(targetYear));
+    updateYearIndicator(targetMs);
+
+    holding = cursor >= satellites.length;
+    holdElapsedMs = 0;
   });
 
   resize();

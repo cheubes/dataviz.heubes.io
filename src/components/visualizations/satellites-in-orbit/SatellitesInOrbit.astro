@@ -101,8 +101,12 @@ const { lang } = Astro.props;
 
   .dv-satellites-in-orbit__playback {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     justify-content: center;
     gap: var(--dv-space-2);
+    width: 100%;
+    max-width: 520px;
   }
 
   .dv-satellites-in-orbit__play {
@@ -127,6 +131,29 @@ const { lang } = Astro.props;
     background-color: var(--dv-surface);
     color: var(--dv-ink-primary);
     min-height: 36px;
+  }
+
+  .dv-satellites-in-orbit__year-group {
+    display: flex;
+    align-items: center;
+    gap: var(--dv-space-2);
+    flex: 1 1 220px;
+  }
+
+  .dv-satellites-in-orbit__year-group label {
+    font-size: 0.875rem;
+    color: var(--dv-ink-secondary);
+  }
+
+  .dv-satellites-in-orbit__year-slider {
+    flex: 1;
+    min-height: 28px;
+  }
+
+  .dv-satellites-in-orbit__year-value {
+    font-weight: 500;
+    color: var(--dv-ink-primary);
+    min-width: 4ch;
   }
 
   .dv-satellites-in-orbit__stage {

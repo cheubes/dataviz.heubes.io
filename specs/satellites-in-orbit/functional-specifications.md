@@ -32,13 +32,14 @@ Faire voir, par l'accumulation progressive de points autour d'un globe habillé 
 - Légende des cinq zones (couleur + nom localisé), doublée d'un filtre interactif (voir "Filtre zone" ci-dessous).
 - Compteur du nombre total de satellites en orbite à l'instant simulé courant (voir "Champs dérivés côté client" dans `data-model.md`), recalculé selon les zones actives.
 - Indicateur de l'année simulée en cours.
-- Contrôles de lecture : bouton Play/Pause ; sélecteur de vitesse (Lent / Normal / Rapide, Normal par défaut).
+- Contrôles de lecture : bouton Play/Pause ; sélecteur de vitesse (Lent / Normal / Rapide, Normal par défaut) ; curseur d'année (`<input type="range">`), de la première à la dernière année du dataset.
 
 ## Interactions
 
 - **Lecture automatique :** démarre dès le chargement de la page, sans action du visiteur, en boucle continue (comme `bird-migrations`, à la différence du choix initial retenu pour cette visualisation) : chaque passage va de 1957 à la date la plus récente du dataset, marque un temps d'arrêt sur cet état final complet (quelques secondes, pour laisser voir "aujourd'hui, X satellites en orbite" comme un aboutissement plutôt que comme une frame parmi d'autres) puis reprend depuis 1957.
 - **Play/Pause :** interrompt ou reprend l'ensemble de l'animation à l'instant simulé courant, y compris la rotation du globe et le temps d'arrêt en fin de passage (voir "Accessibilité" ci-dessous : nécessaire pour un contenu qui bouge en continu sans intervention).
 - **Vitesse de lecture :** Lent / Normal / Rapide, modifie la durée d'un passage complet (Normal : environ 25 secondes) sans affecter la rotation du globe, purement décorative et cadencée indépendamment (voir "Animation" dans `technical-specifications.md`).
+- **Curseur d'année :** un pas par année, sur la plage animée (première à dernière année du dataset). Le déplacer manuellement (glisser ou clavier) met la lecture automatique en pause et reconstruit immédiatement la nuée jusqu'à l'année choisie, y compris en arrière (même convention que le curseur de `light-pollution` et `monument-layers`, voir leurs `technical-specifications.md` respectifs). Le déplacer jusqu'à sa valeur maximale déclenche la même pause finale que l'arrivée naturelle de l'animation à son terme.
 - **Filtre zone :** légende cliquable, toggle multi-sélection, une entrée par zone (couleur + nom localisé), les cinq actives par défaut. Désactiver une zone retire ses points de la nuée affichée et du compteur total, sans redémarrer l'animation en cours.
 - **Pas de fiche par satellite individuel :** ni survol, ni tap sur un point isolé (décision explicite, voir échanges de cadrage) — l'angle de cette visualisation est la densité et l'accélération d'ensemble, pas l'exploration satellite par satellite ; une telle interaction resterait par ailleurs peu fiable sur une nuée aussi dense (points très proches les uns des autres vers la fin de l'animation).
 - **Vue initiale :** les cinq zones actives, année simulée à 1957, compteur à zéro, vitesse Normal, lecture automatique déjà en cours.
@@ -56,7 +57,7 @@ Faire voir, par l'accumulation progressive de points autour d'un globe habillé 
 
 ## Accessibilité (limite connue)
 
-L'interaction principale (globe animé en rotation continue, accumulation de points) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général). Les boutons Play/Pause et les entrées de la légende/filtre restent accessibles au clavier (éléments `<button>` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention (rotation du globe comprise, voir "Play/Pause" dans "Interactions" ci-dessus) et de filtrer sans dépendre du globe animé lui-même.
+L'interaction principale (globe animé en rotation continue, accumulation de points) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général). Les boutons Play/Pause, les entrées de la légende/filtre et le curseur d'année restent accessibles au clavier (éléments `<button>`/`<input type="range">` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention (rotation du globe comprise, voir "Play/Pause" dans "Interactions" ci-dessus), de filtrer et de parcourir la chronologie sans dépendre du globe animé lui-même.
 
 ## Contenu non traduit
 

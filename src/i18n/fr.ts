@@ -130,6 +130,7 @@ export default {
     speedSlow: 'Lent',
     speedNormal: 'Normal',
     speedFast: 'Rapide',
+    yearLabel: 'Année',
   },
   monumentLayers: {
     loading: 'Chargement des monuments…',
@@ -163,5 +164,11 @@ export default {
     eraGalloRoman: 'Époque gallo-romaine',
     eraMiddleAges: 'Moyen Âge',
     eraEarlyModern: 'Temps modernes',
+  },
+  grapeHarvestAlmanac: {
+    loading: 'Chargement des dates de vendanges…',
+    error: 'Impossible de charger les données de vendanges. Réessayez plus tard.',
+    empty: 'Sélectionnez au moins une région pour afficher la courbe.',
+    regionGroupLabel: 'Régions affichées',
   },
 };
