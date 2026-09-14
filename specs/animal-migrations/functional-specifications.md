@@ -2,8 +2,6 @@
 
 Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
 
-**Statut : brouillon de cadrage, pas encore implémenté.** Titre, résumé et présentation longue sont des propositions de travail, ouvertes à révision.
-
 ## Angle éditorial
 
 | Langue | Titre | Résumé |
