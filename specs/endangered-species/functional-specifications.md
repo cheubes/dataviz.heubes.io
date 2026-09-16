@@ -2,8 +2,6 @@
 
 Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
 
-**Statut : brouillon de cadrage, pas encore implémenté.** Titre, résumé et présentation longue sont des propositions de travail, ouvertes à révision.
-
 ## Angle éditorial
 
 | Langue | Titre | Résumé |
@@ -27,19 +25,19 @@ Faire voir, à travers une sélection d'espèces emblématiques, comment leur po
 
 ## Contenu (zone de montage)
 
-- Petits multiples : une carte par espèce retenue (voir "Sélection des espèces" dans `data-model.md`), chacune affichant une foule d'icônes représentant sa population.
-- Sur chaque carte : nom de l'espèce, année du point de mesure simulé en cours.
-- Contrôles de lecture partagés entre toutes les cartes : Play/Pause, Rejouer.
+- Contrôles de lecture, au-dessus des petits multiples (jamais en surimpression, revu après retour utilisateur, voir "Responsive" ci-dessous), partagés entre toutes les cartes : Play/Pause, sélecteur de vitesse, curseur d'année (l'année simulée courante s'y lit déjà, retirée des cartes elles-mêmes après retour utilisateur : voir échanges de cadrage).
+- Petits multiples : une carte par espèce retenue (voir "Sélection des espèces" dans `data-model.md`), chacune affichant son nom et une foule d'icônes représentant sa population, de taille fixe (voir "Rendu" dans `technical-specifications.md`).
 
 ## Composition
 
-Chaque espèce dans son propre cadre, à sa propre échelle d'icônes (une icône représentant un nombre d'individus propre à chaque espèce, voir "Rendu" dans `technical-specifications.md`), décision explicite de l'utilisateur (voir échanges de cadrage) : les populations varient de quelques dizaines à plusieurs milliers d'individus selon l'espèce, une échelle unique aurait rendu les espèces les plus rares invisibles à côté des plus nombreuses.
+Chaque espèce dans son propre cadre, à sa propre échelle d'icônes (une icône représentant un nombre d'individus propre à chaque espèce, voir "Rendu" dans `technical-specifications.md`), décision explicite de l'utilisateur (voir échanges de cadrage) : les populations varient de quelques dizaines à plusieurs milliers d'individus selon l'espèce, une échelle unique aurait rendu les espèces les plus rares invisibles à côté des plus nombreuses. Cartes de taille fixe (voir "Rendu" dans `technical-specifications.md`), pas de hauteur variable selon le nombre d'icônes affichées.
 
 ## Interactions
 
-- **Lecture automatique :** démarre dès le chargement de la page. Passage unique du point de mesure le plus ancien (toutes espèces confondues) au plus récent, pas de bouclage automatique.
-- **Play/Pause :** interrompt ou reprend l'animation à l'instant simulé courant, partagé entre toutes les cartes (une seule chronologie commune, pas une par espèce).
-- **Rejouer :** n'apparaît qu'une fois l'animation arrivée à son terme ; relance un passage complet.
+- **Lecture automatique en boucle :** démarre dès le chargement de la page et boucle en continu sur l'ensemble de la période couverte, comme `bird-migrations`/`satellites-in-orbit`/`light-pollution` — pas un passage unique avec état final figé (revu après retour utilisateur, voir échanges de cadrage : la version initiale s'arrêtait au point de mesure le plus récent).
+- **Play/Pause :** interrompt ou reprend la lecture à l'instant simulé courant, partagé entre toutes les cartes (une seule chronologie commune, pas une par espèce).
+- **Vitesse :** Lent/Normal/Rapide, même convention que `light-pollution`/`satellites-in-orbit`.
+- **Curseur d'année :** `<input type="range">` natif, sur le domaine `[point de mesure le plus ancien toutes espèces confondues, point de mesure le plus récent]`, pilotable manuellement ou automatiquement ; le déplacer manuellement met la lecture automatique en pause, même convention que `light-pollution`.
 - **Survol/tap d'une carte d'espèce :** fiche de détail (estimation de population de l'année simulée courante avec sa date réelle de mesure, tendance depuis le point de mesure précédent).
 - **Pas de filtre, pas de zoom/pan :** contrairement aux visualisations à carte réelle du site, celle-ci n'est pas une carte géographique (voir "Rendu" dans `technical-specifications.md`) : un petit nombre d'espèces, toutes visibles en permanence.
 - **Vue initiale :** toutes les cartes à leur point de mesure le plus ancien, lecture automatique déjà en cours.
@@ -52,13 +50,13 @@ Chaque espèce dans son propre cadre, à sa propre échelle d'icônes (une icôn
 
 ## Responsive
 
-- Contrôles de lecture repositionnés sous les cartes plutôt qu'en surimpression.
+- Contrôles de lecture toujours au-dessus des petits multiples, jamais en surimpression (décision explicite de l'utilisateur, voir échanges de cadrage, même parti pris que `light-pollution`) : aucun repositionnement nécessaire, ils s'enchaînent normalement dans le flux de la page à toutes les tailles d'écran, la ligne Play/Pause + vitesse passant simplement au-dessus du curseur d'année sur les écrans étroits.
 - Petits multiples empilés verticalement plutôt qu'en grille sur petit écran, une carte par ligne.
 - Fiche de détail au tap sur une carte plutôt qu'au survol.
 
 ## Accessibilité (limite connue)
 
-La fiche de détail par carte (survol/tap) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documentée comme limite connue, sans repli, conformément à la règle par défaut du projet. Les boutons Play/Pause et Rejouer restent accessibles au clavier (éléments `<button>` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention.
+La fiche de détail par carte (survol/tap) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documentée comme limite connue, sans repli, conformément à la règle par défaut du projet. Le bouton Play/Pause et le curseur d'année restent accessibles au clavier (éléments `<button>`/`<input type="range">` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention.
 
 ## Contenu non traduit
 
