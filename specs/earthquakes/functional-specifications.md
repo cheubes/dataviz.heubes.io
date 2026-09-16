@@ -2,7 +2,7 @@
 
 Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
 
-**Statut : brouillon de cadrage, pas encore implémenté.** Titre, résumé et présentation longue sont des propositions de travail, ouvertes à révision.
+**Statut : implémenté.**
 
 ## Angle éditorial
 
@@ -30,8 +30,9 @@ Faire voir, sur un planisphère animé en boucle continue depuis 1900, comment l
 - Planisphère illustré (silhouette terrestre mondiale, cours d'eau et relief, voir "Rendu" dans `technical-specifications.md`), avec les frontières de plaques tectoniques tracées en superposition statique.
 - Chaque séisme pulse (bref halo qui s'étend et s'estompe) au moment simulé de sa survenue réelle, taille et intensité du pulse liées à la magnitude.
 - Annotation textuelle brève (nom et année) lors du pulse d'un séisme retenu comme notable (voir "Sélection des séismes à annoter" dans `data-model.md`).
-- Indicateur de l'année simulée en cours.
-- Contrôles de lecture : Play/Pause, sélecteur de vitesse (Lent / Normal / Rapide).
+- Indicateur de l'année simulée en cours, doublé d'un curseur d'année natif (`<input type="range">`, granularité annuelle, ajouté après la première implémentation sur le modèle de `monument-layers`/`satellites-in-orbit`).
+- Contrôles de lecture : Play/Pause, sélecteur de vitesse (Lent / Normal / Rapide), curseur d'année.
+- Boutons zoomer/dézoomer/réinitialiser le zoom, en haut à droite du planisphère (mêmes contrôles que `monument-layers`/`paris-trees`), en complément du zoom/pan à la souris et au tactile.
 - Tooltip contextuel au survol/tap.
 
 ## Interactions
@@ -40,8 +41,9 @@ Mêmes interactions que `volcanic-eruptions` (voir son `functional-specification
 
 - **Lecture automatique en boucle**, dès le chargement, sur l'ensemble de la période couverte (depuis 1900 environ).
 - **Play/Pause**, **vitesse** (Lent / Normal / Rapide).
+- **Curseur d'année** : pilotable manuellement (interrompt la lecture automatique, comme un appui sur Pause) ou automatiquement (suit la lecture en cours). Un séisme n'étant pas un point permanent, sauter à une année donnée n'affiche rien de figé pour cette année : seuls les pulses déclenchés après ce saut, à la reprise de la lecture, apparaissent (voir "Rendu" dans `technical-specifications.md`).
 - **Survol/tap d'un point** : fiche de détail (lieu, magnitude, profondeur, date) — les points sismiques n'étant pas des positions fixes répétées comme les volcans (chaque séisme est un événement unique, pas un lieu qui pulse plusieurs fois), la fiche de détail n'est disponible qu'au moment du pulse ou juste après (voir "Rendu" dans `technical-specifications.md` pour la durée de rémanence), pas en permanence comme les volcans de `volcanic-eruptions`.
-- **Zoom/pan** libre sur l'ensemble du planisphère.
+- **Zoom/pan** libre sur l'ensemble du planisphère (souris/molette, tactile), doublé de boutons zoomer/dézoomer/réinitialiser pour les visiteurs sans molette ni geste tactile.
 - **Vue initiale :** planisphère entier visible, frontières de plaques visibles, lecture automatique déjà en cours.
 
 ## États

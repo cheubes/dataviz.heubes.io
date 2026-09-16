@@ -13,6 +13,7 @@ A catalogue of interactive, hand-built data visualizations. Each entry explores 
 - **Layers of Heritage** ([`monument-layers`](specs/monument-layers/)) : 37,661 French historic monuments from the Ministry of Culture's Mérimée database, animated in chronological order of construction as a Canvas 2D point map, from a static prehistoric/antique backdrop through the medieval and modern waves.
 - **The Grape Harvest Almanac** ([`grape-harvest-almanac`](specs/grape-harvest-almanac/)) : 650 years of grape harvest dates (1354-2007) across seven French winegrowing regions, from the Daux et al. 2012 NOAA/WDS Paleoclimatology database, rendered as a D3 SVG multi-series timeline with raw and smoothed curves, annotated with four historical landmarks.
 - **What's Left** ([`endangered-species`](specs/endangered-species/)) : real population trajectories for six emblematic species (tiger, black rhinoceros, giant panda, mountain gorilla, vaquita, European hamster), each sourced from its own conservation body, rendered as fixed-size D3 SVG small multiples on original illustrated backgrounds where a crowd of paw-print icons grows or shrinks, looping from the oldest to the most recent census with a year slider and three playback speeds.
+- **The Fault Lines** ([`earthquakes`](specs/earthquakes/)) : 14,453 major earthquakes (magnitude 6+) since 1900 from the USGS catalog, replayed as pulses on a Canvas 2D world map in a continuous 90-second loop, over a static overlay of tectonic plate boundaries (Bird, 2003), with a year slider and zoom controls.
 
 ## Development
 

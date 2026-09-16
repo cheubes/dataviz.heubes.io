@@ -85,8 +85,9 @@ Couleurs récurrentes pour les visualisations avec fond de carte (silhouette de 
 |---|---|
 | Silhouette (fond de carte) | `#e4e2da` |
 | Hydrographie (cours d'eau, fleuves) | `#a8c5da` |
+| Frontières de plaques tectoniques | `#b3a696` |
 
-Utilisées par `biodiversity`, `light-pollution`, `paris-trees`, `monument-layers` et `bird-migrations` ; toute nouvelle visualisation avec fond de carte réutilise ces teintes plutôt que d'en introduire de nouvelles.
+Utilisées par `biodiversity`, `light-pollution`, `paris-trees`, `monument-layers`, `bird-migrations` et `earthquakes` (frontières de plaques tectoniques, propre à cette dernière) ; toute nouvelle visualisation avec fond de carte réutilise ces teintes plutôt que d'en introduire de nouvelles.
 
 ## Typographie
 
