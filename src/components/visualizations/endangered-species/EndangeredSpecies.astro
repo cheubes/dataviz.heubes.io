@@ -1,0 +1,183 @@
+---
+interface Props {
+  lang: 'fr' | 'en';
+}
+
+const { lang } = Astro.props;
+---
+
+<div id="dv-endangered-species-root" data-lang={lang}></div>
+
+<script>
+  import { mountEndangeredSpecies } from './render';
+  import en from '../../../i18n/en';
+  import fr from '../../../i18n/fr';
+
+  const root = document.getElementById('dv-endangered-species-root');
+  if (root) {
+    const lang = root.dataset.lang === 'fr' ? 'fr' : 'en';
+    const labels = (lang === 'fr' ? fr : en).endangeredSpecies;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          observer.disconnect();
+          mountEndangeredSpecies(root, lang, labels);
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(root);
+  }
+</script>
+
+<style is:global>
+  .dv-endangered-species {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dv-space-3);
+    padding: var(--dv-space-3);
+  }
+
+  .dv-endangered-species__status {
+    margin: 0;
+    text-align: center;
+    color: var(--dv-ink-secondary);
+    padding: var(--dv-space-5) 0;
+  }
+
+  .dv-endangered-species__defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .dv-endangered-species__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 260px);
+    justify-content: center;
+    gap: var(--dv-space-3);
+  }
+
+  /* Fixed size regardless of icon count (see "Rendu" in
+     technical-specifications.md) : the icon grid below reserves exactly 8
+     rows, so every card ends up the same height. Illustrated background
+     per species (provided by the user, see "Rendu" in
+     technical-specifications.md), dark scrim underneath the text/icons for
+     contrast regardless of the artwork's own brightness at that spot. */
+  .dv-endangered-species__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--dv-space-2);
+    height: 210px;
+    background-color: var(--dv-surface);
+    background-image: linear-gradient(rgba(13, 13, 12, 0.45), rgba(13, 13, 12, 0.45)), var(--dv-endangered-species-bg);
+    background-size: cover;
+    background-position: center;
+    border: 1px solid var(--dv-gridline);
+    border-radius: 4px;
+    padding: var(--dv-space-3);
+    cursor: pointer;
+  }
+
+  .dv-endangered-species__name {
+    margin: 0;
+    color: #ffffff;
+  }
+
+  /* 10 columns x 8 rows fixed (80 slots), sized for the real maximum
+     observed (77 icons, grand hamster d'Alsace in 2024) : unused slots stay
+     empty rather than the grid shrinking, see "Rendu" in
+     technical-specifications.md. */
+  .dv-endangered-species__icons {
+    display: grid;
+    grid-template-columns: repeat(10, 15px);
+    grid-auto-rows: 15px;
+    gap: 3px;
+  }
+
+  .dv-endangered-species__icon {
+    width: 15px;
+    height: 15px;
+    fill: #ffffff;
+  }
+
+  .dv-endangered-species__detail {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--dv-space-3);
+    background-color: var(--dv-header-bg);
+    color: #ffffff;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .dv-endangered-species__detail[hidden] {
+    display: none;
+  }
+
+  .dv-endangered-species__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--dv-space-2);
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .dv-endangered-species__play {
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: var(--dv-accent);
+    border: none;
+    border-radius: 4px;
+    padding: var(--dv-space-1) var(--dv-space-3);
+    cursor: pointer;
+    min-height: 36px;
+  }
+
+  .dv-endangered-species__speed {
+    font-family: inherit;
+    font-size: 0.875rem;
+    padding: var(--dv-space-1) var(--dv-space-2);
+    border: 1px solid var(--dv-gridline);
+    border-radius: 4px;
+    background-color: var(--dv-surface);
+    color: var(--dv-ink-primary);
+    min-height: 36px;
+  }
+
+  .dv-endangered-species__year-group {
+    display: flex;
+    align-items: center;
+    gap: var(--dv-space-2);
+    flex: 1 1 100%;
+  }
+
+  .dv-endangered-species__year-group label {
+    font-size: 0.875rem;
+    color: var(--dv-ink-secondary);
+  }
+
+  .dv-endangered-species__year-slider {
+    flex: 1;
+    min-height: 28px;
+  }
+
+  .dv-endangered-species__year-value {
+    font-weight: 500;
+    color: var(--dv-ink-primary);
+    min-width: 4ch;
+  }
+</style>

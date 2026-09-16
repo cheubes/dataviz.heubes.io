@@ -1,0 +1,86 @@
+{
+  "species": [
+    {
+      "id": "tiger",
+      "nameFr": "Tigre",
+      "nameEn": "Tiger",
+      "unit": "individuals",
+      "iconRatio": 100,
+      "counts": [
+        { "year": 2010, "population": 3200 },
+        { "year": 2016, "population": 3890 },
+        { "year": 2023, "population": 5574 }
+      ]
+    },
+    {
+      "id": "black-rhino",
+      "nameFr": "Rhinocéros noir",
+      "nameEn": "Black rhinoceros",
+      "unit": "individuals",
+      "iconRatio": 250,
+      "counts": [
+        { "year": 1980, "population": 14785 },
+        { "year": 1993, "population": 2550 },
+        { "year": 2010, "population": 4880 },
+        { "year": 2017, "population": 5495 },
+        { "year": 2021, "population": 6195 },
+        { "year": 2024, "population": 6788 }
+      ]
+    },
+    {
+      "id": "giant-panda",
+      "nameFr": "Panda géant",
+      "nameEn": "Giant panda",
+      "unit": "individuals",
+      "iconRatio": 25,
+      "counts": [
+        { "year": 1976, "population": 1000 },
+        { "year": 1988, "population": 1100 },
+        { "year": 2003, "population": 1590 },
+        { "year": 2014, "population": 1864 }
+      ]
+    },
+    {
+      "id": "mountain-gorilla",
+      "nameFr": "Gorille des montagnes",
+      "nameEn": "Mountain gorilla",
+      "unit": "individuals",
+      "iconRatio": 15,
+      "counts": [
+        { "year": 2003, "population": 380 },
+        { "year": 2011, "population": 880 },
+        { "year": 2019, "population": 1063 }
+      ]
+    },
+    {
+      "id": "vaquita",
+      "nameFr": "Vaquita",
+      "nameEn": "Vaquita",
+      "unit": "individuals",
+      "iconRatio": 10,
+      "counts": [
+        { "year": 1997, "population": 567 },
+        { "year": 2008, "population": 245 },
+        { "year": 2015, "population": 59 },
+        { "year": 2016, "population": 30 },
+        { "year": 2023, "population": 11, "populationLabel": "8-13" },
+        { "year": 2024, "population": 7, "populationLabel": "6-8" }
+      ]
+    },
+    {
+      "id": "european-hamster",
+      "nameFr": "Grand hamster d'Alsace",
+      "nameEn": "European hamster",
+      "unit": "burrows",
+      "iconRatio": 15,
+      "counts": [
+        { "year": 2012, "population": 242 },
+        { "year": 2015, "population": 216 },
+        { "year": 2019, "population": 743 },
+        { "year": 2022, "population": 958 },
+        { "year": 2024, "population": 1155 },
+        { "year": 2025, "population": 557 }
+      ]
+    }
+  ]
+}
