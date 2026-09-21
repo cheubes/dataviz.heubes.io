@@ -10,11 +10,11 @@ Catalogue USGS (`fdsnws/event`) et frontières de plaques tectoniques (modèle d
 
 ## Techno carte
 
-Même stack que `bird-migrations`/`animal-migrations`/`volcanic-eruptions`, D3 v7.
+Même stack que `bird-migrations`/`monarch-migration`/`volcanic-eruptions`, D3 v7.
 
-- **Fond de carte, cours d'eau, relief : réutilisation directe des assets de `bird-migrations`** (même décision et même réserve sur la modalité de partage entre dossiers que `animal-migrations`/`volcanic-eruptions`, voir leurs `technical-specifications.md`).
+- **Fond de carte, cours d'eau, relief : réutilisation directe des assets de `bird-migrations`** (même réserve sur la modalité de partage entre dossiers que `volcanic-eruptions`, voir son `technical-specifications.md` ; `monarch-migration` l'a tranchée par copie dans son propre dossier de données, voir "Techno carte" dans son `technical-specifications.md`).
 - **Frontières de plaques tectoniques :** géométrie statique (`plateBoundaries`, voir "Format de sortie" dans `data-model.md`) tracée sur le canvas de fond, même clip que la silhouette terrestre, teinte discrète (à valider visuellement, dans l'esprit des cours d'eau de `bird-migrations` — fine, présente mais jamais dominante face aux pulses).
-- **Projection :** `d3.geoNaturalEarth1`, `fitExtent` sur l'étendue complète de la silhouette, même choix que `animal-migrations`/`volcanic-eruptions`.
+- **Projection :** `d3.geoNaturalEarth1`, `fitExtent` sur l'étendue complète de la silhouette, même choix que `volcanic-eruptions`.
 
 ## Rendu
 

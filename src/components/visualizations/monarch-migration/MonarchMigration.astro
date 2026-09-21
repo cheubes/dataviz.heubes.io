@@ -6,23 +6,23 @@ interface Props {
 const { lang } = Astro.props;
 ---
 
-<div id="dv-animal-migrations-root" data-lang={lang}></div>
+<div id="dv-monarch-migration-root" data-lang={lang}></div>
 
 <script>
-  import { mountAnimalMigrations } from './render';
+  import { mountMonarchMigration } from './render';
   import en from '../../../i18n/en';
   import fr from '../../../i18n/fr';
 
-  const root = document.getElementById('dv-animal-migrations-root');
+  const root = document.getElementById('dv-monarch-migration-root');
   if (root) {
     const lang = root.dataset.lang === 'fr' ? 'fr' : 'en';
-    const labels = (lang === 'fr' ? fr : en).animalMigrations;
+    const labels = (lang === 'fr' ? fr : en).monarchMigration;
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) {
           observer.disconnect();
-          mountAnimalMigrations(root, lang, labels);
+          mountMonarchMigration(root, lang, labels);
         }
       },
       { rootMargin: '200px' }
@@ -32,55 +32,28 @@ const { lang } = Astro.props;
 </script>
 
 <style is:global>
-  .dv-animal-migrations {
+  .dv-monarch-migration {
     display: flex;
     flex-direction: column;
     gap: var(--dv-space-3);
     padding: var(--dv-space-3);
   }
 
-  .dv-animal-migrations__status {
+  .dv-monarch-migration__status {
     margin: 0;
     text-align: center;
     color: var(--dv-ink-secondary);
     padding: var(--dv-space-5) 0;
   }
 
-  .dv-animal-migrations__controls-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--dv-space-4);
-    align-items: center;
-  }
-
-  .dv-animal-migrations__separator {
-    color: var(--dv-gridline);
-  }
-
-  .dv-animal-migrations__control-group {
+  .dv-monarch-migration__controls {
     display: flex;
     flex-wrap: wrap;
     gap: var(--dv-space-3);
     align-items: center;
   }
 
-  .dv-animal-migrations__toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--dv-space-1);
-    font-size: 0.875rem;
-    color: var(--dv-ink-secondary);
-    cursor: pointer;
-  }
-
-  .dv-animal-migrations__swatch {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-  }
-
-  .dv-animal-migrations__play {
+  .dv-monarch-migration__play {
     font-family: inherit;
     font-size: 0.875rem;
     font-weight: 500;
@@ -93,7 +66,7 @@ const { lang } = Astro.props;
     min-height: 36px;
   }
 
-  .dv-animal-migrations__speed {
+  .dv-monarch-migration__speed {
     font-family: inherit;
     font-size: 0.875rem;
     padding: var(--dv-space-1) var(--dv-space-2);
@@ -104,27 +77,27 @@ const { lang } = Astro.props;
     min-height: 36px;
   }
 
-  .dv-animal-migrations__date {
+  .dv-monarch-migration__date {
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--dv-ink-primary);
     min-width: 6ch;
   }
 
-  .dv-animal-migrations__stage {
+  .dv-monarch-migration__stage {
     position: relative;
     width: 100%;
     touch-action: none;
   }
 
-  .dv-animal-migrations__canvas {
+  .dv-monarch-migration__canvas {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
   }
 
-  .dv-animal-migrations__tooltip {
+  .dv-monarch-migration__tooltip {
     position: absolute;
     z-index: 2;
     max-width: 220px;
@@ -135,25 +108,5 @@ const { lang } = Astro.props;
     font-size: 0.8125rem;
     line-height: 1.4;
     pointer-events: none;
-  }
-
-  .dv-animal-migrations__stage .dv-animal-migrations__status {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-  }
-
-  .dv-animal-migrations__stage .dv-animal-migrations__status[hidden] {
-    display: none;
-  }
-
-  @media (max-width: 640px) {
-    .dv-animal-migrations__controls-row {
-      flex-direction: column;
-      align-items: flex-start;
-    }
   }
 </style>

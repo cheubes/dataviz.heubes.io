@@ -51,7 +51,7 @@ Faire voir, sur un planisphère animé en boucle continue sur dix mille ans, le 
 
 ## Responsive
 
-Même traitement que `bird-migrations`/`animal-migrations` (voir "Responsive" dans leurs `functional-specifications.md` respectifs) : pan/zoom au geste tactile, tooltip et fiche de détail au tap, contrôles repositionnés pour rester utilisables sur petit écran.
+Même traitement que `bird-migrations`/`monarch-migration` (voir "Responsive" dans leurs `functional-specifications.md` respectifs) : pan/zoom au geste tactile, tooltip et fiche de détail au tap, contrôles repositionnés pour rester utilisables sur petit écran.
 
 ## Accessibilité (limite connue)
 

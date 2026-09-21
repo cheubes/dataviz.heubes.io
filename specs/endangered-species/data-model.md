@@ -20,7 +20,7 @@ Décidé explicitement avec l'utilisateur (voir échanges de cadrage), pour se d
 
 ## Sélection des espèces (réalisée à l'implémentation)
 
-Candidats pressentis, mêlant déclins marqués et histoires de rétablissement (voir "Angle éditorial" dans `functional-specifications.md` : le contraste fait partie du propos), à confirmer/ajuster une fois les historiques réels inspectés — même démarche que la sélection des espèces de `bird-migrations`/`animal-migrations` :
+Candidats pressentis, mêlant déclins marqués et histoires de rétablissement (voir "Angle éditorial" dans `functional-specifications.md` : le contraste fait partie du propos), à confirmer/ajuster une fois les historiques réels inspectés — même démarche que la sélection des espèces de `bird-migrations` :
 
 | Espèce | Intérêt narratif pressenti |
 |---|---|

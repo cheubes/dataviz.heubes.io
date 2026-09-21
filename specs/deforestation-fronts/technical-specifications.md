@@ -14,7 +14,7 @@ Global Forest Change (Hansen et al.), voir "Dataset source" et "Prétraitement" 
 
 - Trois projections indépendantes (`d3.geoMercator()` avec `fitExtent` propre à chaque région, voir "Bounding box par front" ci-dessous), pas une seule projection mondiale partagée : cohérent avec la décision de cadrage propre à chaque carte (voir "Composition" dans `functional-specifications.md`).
 - Chaque cellule de grille est un chemin SVG dont le remplissage suit la palette séquentielle (voir "Palette" ci-dessous), recalculé à chaque frame selon l'année simulée courante.
-- Fond de carte : silhouette de chaque région, à produire au prétraitement (pas de réutilisation possible des silhouettes existantes du site — `biodiversity`/`monument-layers`/`tgv-punctuality` couvrent la France, `bird-migrations`/`animal-migrations` couvrent le monde mais à une résolution et une projection pensées pour une vue globale, pas pour un zoom régional serré sur l'Amazonie ou Bornéo-Sumatra), même technique d'extraction que `bird-migrations` (`world-atlas`/Natural Earth, objet `land`, retopologisé sur la seule emprise régionale).
+- Fond de carte : silhouette de chaque région, à produire au prétraitement (pas de réutilisation possible des silhouettes existantes du site — `biodiversity`/`monument-layers`/`tgv-punctuality` couvrent la France, `bird-migrations`/`monarch-migration` couvrent le monde mais à une résolution et une projection pensées pour une vue globale, pas pour un zoom régional serré sur l'Amazonie ou Bornéo-Sumatra), même technique d'extraction que `bird-migrations` (`world-atlas`/Natural Earth, objet `land`, retopologisé sur la seule emprise régionale).
 
 ## Palette
 
