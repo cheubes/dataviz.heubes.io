@@ -36,7 +36,7 @@ Faire voir, sur un planisphère animé en boucle continue sur dix mille ans, le 
 
 ## Interactions
 
-- **Lecture automatique en boucle :** démarre dès le chargement de la page et boucle en continu sur l'ensemble de la période couverte (dix mille ans), comme `bird-migrations` — pas un passage unique avec état final figé, à la différence de `monument-layers`/`glacier-retreat`/`endangered-species`/`deforestation-fronts` (voir "Angle retenu" dans `data-model.md`).
+- **Lecture automatique en boucle :** démarre dès le chargement de la page et boucle en continu sur l'ensemble de la période couverte (dix mille ans), comme `bird-migrations` — pas un passage unique avec état final figé, à la différence de `monument-layers`/`glacier-retreat`/`endangered-species` (voir "Angle retenu" dans `data-model.md`).
 - **Play/Pause :** interrompt ou reprend la lecture à l'instant simulé courant.
 - **Vitesse :** Lent / Normal / Rapide, mêmes facteurs que `bird-migrations` (×0,5 / ×1 / ×2).
 - **Survol/tap d'un volcan :** fiche de détail (nom, localisation, nombre total d'éruptions recensées sur la période, éruption la plus récente, VEI maximal atteint) — accessible à tout moment, indépendamment du fait que le volcan pulse ou non à l'instant simulé courant.
