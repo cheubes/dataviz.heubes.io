@@ -206,4 +206,15 @@ export default {
     zoomOut: 'Dézoomer',
     zoomReset: 'Réinitialiser le zoom',
   },
+  monarchMigration: {
+    loading: 'Chargement des observations…',
+    error: 'Impossible de charger les données de migration. Réessayez plus tard.',
+    play: 'Lecture',
+    pause: 'Pause',
+    speedLabel: 'Vitesse',
+    speedSlow: 'Lent',
+    speedNormal: 'Normal',
+    speedFast: 'Rapide',
+    tooltip: 'Observations en {month} : {percent} % du pic annuel ici',
+  },
 };

@@ -206,4 +206,15 @@ export default {
     zoomOut: 'Zoom out',
     zoomReset: 'Reset zoom',
   },
+  monarchMigration: {
+    loading: 'Loading observations…',
+    error: 'Could not load the migration data. Please try again later.',
+    play: 'Play',
+    pause: 'Pause',
+    speedLabel: 'Speed',
+    speedSlow: 'Slow',
+    speedNormal: 'Normal',
+    speedFast: 'Fast',
+    tooltip: 'Observations in {month}: {percent}% of the annual peak here',
+  },
 };

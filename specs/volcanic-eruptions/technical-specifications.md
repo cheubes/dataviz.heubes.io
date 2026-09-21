@@ -10,10 +10,10 @@ Catalogue d'éruptions du Global Volcanism Program (Smithsonian), voir "Dataset 
 
 ## Techno carte
 
-Même stack que `bird-migrations`/`animal-migrations`, D3 v7, pas de Leaflet.
+Même stack que `bird-migrations`/`monarch-migration`, D3 v7, pas de Leaflet.
 
-- **Fond de carte, cours d'eau, relief : réutilisation directe des assets de `bird-migrations`** (`public/data/bird-migrations/basemap.json`, `rivers.json`, `relief.webp`), déjà à couverture mondiale (voir "Techno carte" dans `animal-migrations/technical-specifications.md` pour la même décision et la même réserve sur la modalité exacte de réutilisation entre dossiers de données).
-- **Projection :** `d3.geoNaturalEarth1`, `fitExtent` sur l'étendue complète de la silhouette (planisphère entier visible par défaut, même choix que `animal-migrations`).
+- **Fond de carte, cours d'eau, relief : réutilisation directe des assets de `bird-migrations`** (`public/data/bird-migrations/basemap.json`, `rivers.json`, `relief.webp`), déjà à couverture mondiale (voir "Techno carte" dans `monarch-migration/technical-specifications.md` : la modalité de réutilisation entre dossiers de données y est tranchée par copie dans son propre dossier, à confirmer ici).
+- **Projection :** `d3.geoNaturalEarth1`, `fitExtent` sur l'étendue complète de la silhouette (planisphère entier visible par défaut).
 
 ## Rendu
 
@@ -36,7 +36,7 @@ Palette **séquentielle** sur le VEI (voir "Palette dataviz" dans `style-guide.m
 - Boucle `d3-timer`, pilotée par une année simulée continue sur le domaine `[-8000 environ, aujourd'hui]` (dix mille ans, bornes exactes à confirmer sur le catalogue réel), **bouclée en continu** (voir "Lecture automatique en boucle" dans `functional-specifications.md`) plutôt qu'un passage unique.
 - `eruptions` étant trié par `year` croissant (voir "Contraintes de validation" dans `data-model.md`), un curseur d'index parcourt la liste à chaque frame pour déclencher les pulses dont l'année simulée vient d'être atteinte.
 - Sélecteur de vitesse : modifie la durée totale d'un cycle complet, pas la durée d'affichage d'un pulse individuel (voir "Rendu" ci-dessus, durée de pulse fixe en temps réel).
-- Année simulée affichée avec son signe (av./apr. J.-C. selon la langue), pas seulement `Intl.DateTimeFormat` (qui ne couvre pas nativement des années avant l'an 1 ou très lointaines) — mécanisme d'affichage à concevoir à l'implémentation plutôt que réutiliser tel quel celui de `bird-migrations`/`animal-migrations` (mois de l'année, pas des années sur dix millénaires).
+- Année simulée affichée avec son signe (av./apr. J.-C. selon la langue), pas seulement `Intl.DateTimeFormat` (qui ne couvre pas nativement des années avant l'an 1 ou très lointaines) — mécanisme d'affichage à concevoir à l'implémentation plutôt que réutiliser tel quel celui de `bird-migrations`/`monarch-migration` (mois de l'année, pas des années sur dix millénaires).
 
 ## Nouvelles dépendances
 
@@ -52,7 +52,7 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pan/zoom tactile via `d3-zoom`, tooltip déclenché par `pointerdown`/`click` plutôt que `pointermove` sur tactile — même mécanisme que `bird-migrations`/`animal-migrations`.
+Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pan/zoom tactile via `d3-zoom`, tooltip déclenché par `pointerdown`/`click` plutôt que `pointermove` sur tactile — même mécanisme que `bird-migrations`/`monarch-migration`.
 
 ## Points à valider à l'implémentation
 
@@ -60,4 +60,4 @@ Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pa
 - Volume réel du catalogue d'éruptions une fois récupéré, pour confirmer que Canvas et la fréquence de pulses restent lisibles sans surcharge visuelle aux périodes les plus documentées (derniers siècles).
 - Critère précis de sélection des éruptions "notables" à annoter (voir "Sélection des éruptions à annoter" dans `data-model.md`).
 - Durée totale du cycle complet en vitesse "Normal", à caler une fois un premier rendu réel observable (dix mille ans compressés, contre trente-six secondes pour un cycle annuel sur `bird-migrations` : un ordre de grandeur de compression temporelle inédit sur le site).
-- Modalité exacte de réutilisation des fichiers `basemap.json`/`rivers.json`/`relief.webp` de `bird-migrations` (même question ouverte que `animal-migrations`, voir son `technical-specifications.md`).
+- Modalité exacte de réutilisation des fichiers `basemap.json`/`rivers.json`/`relief.webp` de `bird-migrations` (question tranchée par copie dans `monarch-migration`, voir son `technical-specifications.md`, à confirmer ici).

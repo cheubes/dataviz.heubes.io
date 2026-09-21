@@ -14,6 +14,7 @@ A catalogue of interactive, hand-built data visualizations. Each entry explores 
 - **The Grape Harvest Almanac** ([`grape-harvest-almanac`](specs/grape-harvest-almanac/)) : 650 years of grape harvest dates (1354-2007) across seven French winegrowing regions, from the Daux et al. 2012 NOAA/WDS Paleoclimatology database, rendered as a D3 SVG multi-series timeline with raw and smoothed curves, annotated with four historical landmarks.
 - **What's Left** ([`endangered-species`](specs/endangered-species/)) : real population trajectories for six emblematic species (tiger, black rhinoceros, giant panda, mountain gorilla, vaquita, European hamster), each sourced from its own conservation body, rendered as fixed-size D3 SVG small multiples on original illustrated backgrounds where a crowd of paw-print icons grows or shrinks, looping from the oldest to the most recent census with a year slider and three playback speeds.
 - **The Fault Lines** ([`earthquakes`](specs/earthquakes/)) : 14,453 major earthquakes (magnitude 6+) since 1900 from the USGS catalog, replayed as pulses on a Canvas 2D world map in a continuous 90-second loop, over a static overlay of tectonic plate boundaries (Bird, 2003), with a year slider and zoom controls.
+- **The Monarch Migration** ([`monarch-migration`](specs/monarch-migration/)) : nearly 400,000 GBIF observations of the monarch butterfly, aggregated on a one-degree North American grid and animated month by month in a continuous loop as a Canvas 2D density map, on the same world basemap as Bird Migrations.
 
 ## Development
 
