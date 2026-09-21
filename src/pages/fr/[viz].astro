@@ -12,6 +12,9 @@ import SatellitesInOrbit from '../../components/visualizations/satellites-in-orb
 import LightPollution from '../../components/visualizations/light-pollution/LightPollution.astro';
 import MonumentLayers from '../../components/visualizations/monument-layers/MonumentLayers.astro';
 import GrapeHarvestAlmanac from '../../components/visualizations/grape-harvest-almanac/GrapeHarvestAlmanac.astro';
+import EndangeredSpecies from '../../components/visualizations/endangered-species/EndangeredSpecies.astro';
+import Earthquakes from '../../components/visualizations/earthquakes/Earthquakes.astro';
+import MonarchMigration from '../../components/visualizations/monarch-migration/MonarchMigration.astro';
 import fr from '../../i18n/fr';
 
 const VIZ_COMPONENTS: Record<string, typeof BirdMigrations> = {
@@ -23,6 +26,9 @@ const VIZ_COMPONENTS: Record<string, typeof BirdMigrations> = {
   'light-pollution': LightPollution,
   'monument-layers': MonumentLayers,
   'grape-harvest-almanac': GrapeHarvestAlmanac,
+  'endangered-species': EndangeredSpecies,
+  earthquakes: Earthquakes,
+  'monarch-migration': MonarchMigration,
 };
 
 const LANG = 'fr';
