@@ -87,8 +87,11 @@ Couleurs récurrentes pour les visualisations avec fond de carte (silhouette de 
 | Hydrographie (cours d'eau, fleuves) | `#a8c5da` |
 | Frontières de plaques tectoniques | `#b3a696` |
 | Point de repère permanent (volcan au repos) | `#6b6455` |
+| Réseau routier | `#c9a97e` |
+| Trame de rues (quasi invisible, densité urbaine élevée) | `#f4f2ec` |
+| Repère hors palette catégorielle (donnée annexe sans attribut fiable) | `#a5a4a0` |
 
-Utilisées par `biodiversity`, `light-pollution`, `paris-trees`, `monument-layers`, `bird-migrations`, `monarch-migration`, `earthquakes` (frontières de plaques tectoniques, propre à cette dernière), `forest-fires` et `volcanic-eruptions` (point de repère permanent, propre à cette dernière, voir "Palette" dans `specs/volcanic-eruptions/technical-specifications.md`) ; toute nouvelle visualisation avec fond de carte réutilise ces teintes plutôt que d'en introduire de nouvelles.
+Utilisées par `biodiversity`, `light-pollution`, `paris-trees`, `monument-layers`, `bird-migrations`, `monarch-migration`, `earthquakes` (frontières de plaques tectoniques, propre à cette dernière), `forest-fires` et `volcanic-eruptions` (point de repère permanent, propre à cette dernière, voir "Palette" dans `specs/volcanic-eruptions/technical-specifications.md`) ; réseau routier propre à `monument-layers`, trame de rues et repère hors palette propres à `paris-trees` (voir "Rendu"/"Interactions" dans leurs `technical-specifications.md` respectifs) ; toute nouvelle visualisation avec fond de carte réutilise ces teintes plutôt que d'en introduire de nouvelles.
 
 ## Typographie
 
