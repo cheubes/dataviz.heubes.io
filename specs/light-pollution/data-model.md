@@ -2,6 +2,8 @@
 
 Complète `data-model.md` général : schéma du dataset propre à cette visualisation.
 
+**Statut : implémenté.**
+
 ## Dataset source
 
 | `name` | `publisher` | `url` | `license` | `retrieved` |
@@ -20,6 +22,8 @@ Deux versions du produit "Annual VNL V2" ont été utilisées pour couvrir toute
 ## Réutilisation de la grille
 
 Décision technique prise à la lecture de `biodiversity/data-model.md` : les 395 cellules H3 (résolution 4) et leurs géométries sont reprises telles quelles depuis `public/data/biodiversity/hexbins.json` (mêmes identifiants `h3`, mêmes polygones), plutôt qu'une nouvelle sélection/génération de grille. Cela évite de refaire le travail déjà fait pour `biodiversity` (filtrage des cellules côtières aberrantes, correction du sens de l'anneau des polygones H3, voir "Prétraitement" dans son `data-model.md`) : seules de nouvelles propriétés (radiance et classe de visibilité par année) sont calculées pour ces mêmes cellules, pas une nouvelle géométrie.
+
+La silhouette de la France métropolitaine servant de fond de carte (voir "Rendu" dans `technical-specifications.md`) est elle aussi identique à celle de `biodiversity` (même fichier `basemap.json`, même géométrie), mais **dupliquée** sous `public/data/light-pollution/basemap.json` plutôt que partagée par un fetch inter-visualisations : chaque visualisation a ses propres données sous `public/data/<viz-slug>/` (voir "Structure des fichiers" dans `technical-specifications.md` général), même choix que `satellites-in-orbit` qui duplique de la même façon son fond de carte plutôt que de le partager avec `bird-migrations`.
 
 ## Échelle de visibilité du ciel
 

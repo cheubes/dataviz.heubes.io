@@ -2,24 +2,24 @@
 
 Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
 
-**Brouillon de cadrage.** Titre, résumé et présentation longue ci-dessous sont provisoires : l'angle retenu (voir "Angle éditorial") suppose un glissement géographique des incendies vers le Nord et l'Ouest au fil du temps, hypothèse à vérifier sur les données réelles une fois agrégées par année et par région avant de figer ce texte. Si les données ne confirment pas ce glissement (ou le contredisent), ajuster l'angle éditorial en conséquence plutôt que de forcer le récit — même précédent que `light-pollution` (voir "Angle éditorial" dans son `functional-specifications.md`).
-
 ## Angle éditorial
 
 | Langue | Titre | Résumé |
 |---|---|---|
-| FR | Où la France a brûlé | Plus de cent quarante mille incendies de forêt recensés depuis 2006 : une carte qui les rejoue, année après année, à travers le pays. |
-| EN | Where France Has Burned | Over a hundred and forty thousand forest fires recorded since 2006 : a map replaying them, year by year, across the country. |
+| FR | Où la France a brûlé | Plus de cinquante mille incendies de forêt recensés depuis 2006 : une carte qui les rejoue, année après année, à travers le pays. |
+| EN | Where France Has Burned | Over fifty thousand forest fires recorded since 2006 : a map replaying them, year by year, across the country. |
 
-**Présentation longue FR (provisoire) :**
-> Depuis 2006, la Base de Données sur les Incendies de Forêts en France (BDIFF) recense chaque incendie de forêt survenu sur le territoire : sa commune, sa date, la surface qu'il a parcourue. Plus de cent quarante mille foyers y sont aujourd'hui répertoriés, très majoritairement concentrés sur le pourtour méditerranéen.
+**Présentation longue FR :**
+> Depuis 2006, la Base de Données sur les Incendies de Forêts en France (BDIFF) recense chaque incendie de forêt survenu sur le territoire : sa commune, sa date, la surface qu'il a parcourue. Plus de cinquante mille foyers y sont aujourd'hui répertoriés, très majoritairement concentrés sur le pourtour méditerranéen.
 >
-> Cette carte rejoue, année après année, où ces incendies se sont produits : chaque point apparaît à son emplacement réel, sa taille reflétant la surface brûlée. À regarder défiler les années, une question se pose : le feu reste-t-il cantonné à ses terres historiques, ou gagne-t-il du terrain ailleurs ?
+> Cette carte rejoue, année après année, où ces incendies se sont produits : chaque point apparaît à la commune où il a démarré, sa taille reflétant la surface brûlée. La part du pourtour méditerranéen dans le total annuel recule doucement sur la période (de sept incendies sur dix en 2006-2010 à six sur dix en 2021-2025), tandis que des foyers plus nombreux apparaissent ailleurs : Bretagne, massif alpin, Normandie, Vosges. Le feu reste concentré sur ses terres historiques, mais il ne s'y cantonne plus tout à fait.
 
-**Présentation longue EN (provisoire) :**
-> Since 2006, the French Forest Fire Database (BDIFF) has recorded every forest fire on French territory : its municipality, its date, the area it burned. More than a hundred and forty thousand fires are now listed, overwhelmingly concentrated around the Mediterranean rim.
+**Présentation longue EN :**
+> Since 2006, the French Forest Fire Database (BDIFF) has recorded every forest fire on French territory : its municipality, its date, the area it burned. More than fifty thousand fires are now listed, overwhelmingly concentrated around the Mediterranean rim.
 >
-> This map replays, year by year, where these fires occurred : each point appears at its real location, its size reflecting the area burned. Watching the years go by raises a question : does fire stay confined to its historical ground, or is it spreading elsewhere ?
+> This map replays, year by year, where these fires occurred : each point appears at the municipality where it started, its size reflecting the area burned. The Mediterranean rim's share of the annual total slowly recedes over the period (from seven fires in ten in 2006-2010 to six in ten in 2021-2025), while more fires appear elsewhere : Brittany, the Alps, Normandy, the Vosges. Fire remains concentrated on its historical ground, but it no longer stays fully confined to it.
+
+Angle confirmé empiriquement sur les données réelles agrégées par année et par département (voir "Statistiques mesurées" dans `data-model.md`), pas présumé : glissement réel mais modéré, formulé en conséquence plutôt qu'exagéré.
 
 ## Objectif
 
@@ -28,7 +28,7 @@ Faire voir, par la reconstitution année par année sur une carte réelle de la 
 ## Contenu (zone de montage)
 
 - Carte illustrée de la France métropolitaine (silhouette, pas de fond de tuiles, voir "Fond de carte" dans `technical-specifications.md`).
-- Points représentant chaque incendie de l'année simulée courante (uniquement cette année-là, pas d'accumulation des années précédentes, voir "Interactions" ci-dessous), à sa position réelle, taille proportionnelle à la surface parcourue (voir "Taille des points" dans `technical-specifications.md`).
+- Points représentant chaque incendie de l'année simulée courante (uniquement cette année-là, pas d'accumulation des années précédentes, voir "Interactions" ci-dessous), à la position de sa commune de départ (pas de coordonnées plus précises dans la source, voir "Champs source utilisés" dans `data-model.md`), taille proportionnelle à la surface parcourue (voir "Taille des points" dans `technical-specifications.md`).
 - Indicateur de l'année simulée en cours.
 - Compteur du nombre d'incendies et de la surface totale brûlée à l'année simulée courante.
 - Contrôles de lecture : bouton Play/Pause ; sélecteur de vitesse (Lent / Normal / Rapide) ; curseur d'année natif (`<input type="range">`), de 2006 à l'année la plus récente disponible (voir "Périmètre retenu" dans `data-model.md`).
@@ -49,7 +49,7 @@ Faire voir, par la reconstitution année par année sur une carte réelle de la 
 
 - **Chargement :** le temps que `fires.json` et le fond de carte soient récupérés et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
 - **Erreur :** échec de récupération d'un des fichiers de données → message d'erreur, pas de carte vide silencieuse.
-- **Vide :** une année sans aucun incendie recensé dans le jeu de données retenu (à confirmer si ce cas se produit réellement une fois les données récupérées, voir "Statistiques mesurées" dans `data-model.md`) → pas de message d'erreur, la carte reste simplement vide pour cette année.
+- **Vide :** une année sans aucun incendie recensé dans le jeu de données retenu → pas de message d'erreur, la carte reste simplement vide pour cette année. Cas non rencontré sur les données réelles (1 347 incidents sur l'année la plus calme, 2024, voir "Statistiques mesurées" dans `data-model.md`), état géré par construction (la boucle de rendu itère sur le sous-ensemble de l'année, potentiellement vide) plutôt que retiré faute de cas réel.
 
 ## Responsive
 

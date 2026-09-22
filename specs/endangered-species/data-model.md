@@ -35,7 +35,7 @@ Les six candidates pressenties au cadrage sont toutes retenues, chacune avec une
 | Rhinocéros noir (*Diceros bicornis*) | 14 785 (1980) → 2 550 (1993, point bas) → 6 788 (2024) : effondrement au vingtième siècle, reprise partielle depuis |
 | Panda géant (*Ailuropoda melanoleuca*) | ~1 000 (1976) → 1 100 (1988) → 1 590 (2003) → 1 864 (2014) : hausse continue sur quatre recensements |
 | Gorille des montagnes (*Gorilla beringei beringei*) | 380 (2003) → 880 (2011) → 1 063 (2019) : hausse continue, statut passé de "en danger critique" à "en danger" en 2018 |
-| Vaquita (*Phocoena sinus*) | 567 (1997) → 245 (2008) → 59 (2015) → 30 (2016) → 10 (2023) → 7 (2024) : déclin le plus extrême du lot |
+| Vaquita (*Phocoena sinus*) | 567 (1997) → 245 (2008) → 59 (2015) → 30 (2016) → 11 (2023) → 7 (2024) : déclin le plus extrême du lot |
 | Grand hamster d'Alsace (*Cricetus cricetus*) | 242 (2012) → 216 (2015, point bas) → 1 155 (2024) → 557 (2025) : reprise en dents de scie, seule espèce européenne du lot |
 
 Nombre cible de quatre à six espèces (voir "Composition" dans `functional-specifications.md`) : les six sont conservées, aucune écartée.

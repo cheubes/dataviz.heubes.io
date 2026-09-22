@@ -3,10 +3,10 @@ lang: fr
 title: La migration des monarques
 summary: "Un voyage qu'aucun papillon ne fait en entier : le relais des monarques entre le Mexique et le Canada, mois après mois, à partir de près de 400 000 observations."
 datasets:
-  - name: GBIF Occurrence Data (Danaus plexippus, Amérique du Nord)
+  - name: GBIF Occurrence Data (Danaus plexippus, North America)
     publisher: GBIF.org (Global Biodiversity Information Facility)
     url: https://www.gbif.org/species/5133088
-    license: CC0 1.0 / CC BY 4.0 (variable selon l'occurrence)
+    license: CC0 1.0 / CC BY 4.0 (varies by occurrence)
     retrieved: '2026-09-21'
 publication-date: '2026-09-21'
 ---

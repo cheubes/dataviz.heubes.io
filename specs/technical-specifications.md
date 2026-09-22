@@ -124,6 +124,9 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   │   └── en.ts
 │   ├── layouts/
 │   │   └── BaseLayout.astro
+│   ├── scripts/
+│   │   ├── language.ts                # détection/mémorisation de la langue (Header.astro, LanguageSelector.astro)
+│   │   └── viz-stage-height.ts        # hauteur de la zone de montage, voir "Règles communes à toutes les visualisations"
 │   ├── components/
 │   │   ├── Header.astro
 │   │   ├── Footer.astro

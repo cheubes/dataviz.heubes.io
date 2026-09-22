@@ -23,7 +23,7 @@ Un jeu de données open data utilisé par une visualisation. Une visualisation p
 
 | Attribut | Localisé | Description |
 |---|---|---|
-| `name` | Oui | Nom affiché du jeu de données |
+| `name` | Non | Nom affiché du jeu de données |
 | `publisher` | Non | Organisme producteur (ex : INSEE, data.gouv.fr, Eurostat) |
 | `url` | Non | URL de la page source du jeu de données |
 | `license` | Non | Licence du jeu de données telle que publiée par la source (ex : Licence Ouverte 2.0, ODbL) |

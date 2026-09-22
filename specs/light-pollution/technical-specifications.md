@@ -2,6 +2,8 @@
 
 Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
 
+**Statut : implémenté.**
+
 ## Source des données
 
 Composites annuels VIIRS VNL (NOAA Earth Observation Group), voir "Dataset source" et "Prétraitement" dans `data-model.md`. Citation obligatoire (CC BY 4.0) dans le bloc de crédit des sources de la page.
@@ -11,6 +13,7 @@ Composites annuels VIIRS VNL (NOAA Earth Observation Group), voir "Dataset sourc
 **SVG, pas Canvas**, même choix que `biodiversity` : volume très réduit (395 cellules, voir "Réutilisation de la grille" dans `data-model.md`), loin du seuil qui justifie Canvas sur les autres visualisations du site.
 
 - Grille hexagonale : `d3-geo` pour projeter les polygones (mêmes géométries que `biodiversity/hexbins.json`, voir "Réutilisation de la grille" dans `data-model.md`, donc même projection `d3.geoMercator()` avec `fitExtent`, voir "Rendu" dans son `technical-specifications.md`).
+- Fond de carte : silhouette de la France métropolitaine, `public/data/light-pollution/basemap.json`, objet TopoJSON `france` converti en GeoJSON côté client via `topojson-client`. Fichier identique à celui de `biodiversity` mais **dupliqué** plutôt que partagé (voir "Réutilisation de la grille" dans `data-model.md`) : chaque visualisation récupère ses propres données sous `public/data/<viz-slug>/`, même règle et même choix que `satellites-in-orbit` vis-à-vis de `bird-migrations`.
 - Changement d'année (curseur, manuel ou automatique) : recolore les 395 chemins SVG existants (mise à jour de l'attribut `fill` selon la valeur `byYear[année].scale` de la cellule), pas de redessin des géométries elles-mêmes.
 - **Zone de montage compacte** (revu à la relecture) : hauteur de la carte plus basse que les zones de montage des autres visualisations à l'époque (`max(320px, largeur × 0,6)`) — légende et contrôles étant désormais au-dessus de la carte plutôt qu'en surimpression (voir "Contenu" dans `functional-specifications.md`), rien n'imposait plus de réserver une hauteur de carte généreuse pour leur laisser de la place. Ce calcul de hauteur (complété depuis d'un plafond lié à l'espace disponible entre header et footer) est devenu la hauteur par défaut de toutes les visualisations du site (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général).
 
@@ -30,7 +33,7 @@ Voir "Prétraitement" dans `data-model.md` pour le détail des étapes. Point no
 
 ## Nouvelles dépendances
 
-Aucune nouvelle dépendance pour le **projet** : `d3-geo` (projection), `d3-scale` (`scaleLinear`, dégradé continu entre les deux teintes extrêmes de la palette séquentielle, voir "Palette" ci-dessus) et `d3-timer` (lecture automatique, voir "Lecture automatique" ci-dessous) sont toutes trois déjà des dépendances existantes (`d3-timer` déjà utilisée par `satellites-in-orbit` et `bird-migrations`), seulement nouvelles pour cette visualisation.
+Aucune nouvelle dépendance pour le **projet** : `d3-geo` (projection), `d3-scale` (`scaleLinear`, dégradé continu entre les deux teintes extrêmes de la palette séquentielle, voir "Palette" ci-dessus), `d3-timer` (lecture automatique, voir "Lecture automatique" ci-dessous) et `topojson-client` (conversion du fond de carte TopoJSON → GeoJSON, voir "Rendu" ci-dessus) sont toutes déjà des dépendances existantes (`d3-timer` déjà utilisée par `satellites-in-orbit` et `bird-migrations`, `topojson-client` par `biodiversity`, `bird-migrations` et `satellites-in-orbit`), seulement nouvelles pour cette visualisation.
 
 ## Curseur d'année
 

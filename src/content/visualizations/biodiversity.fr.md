@@ -3,15 +3,15 @@ lang: fr
 title: La biodiversité française
 summary: Des millions d'observations citoyennes dessinent la carte du vivant en France.
 datasets:
-  - name: GBIF Occurrence Data (France, agrégation groupe × saison)
+  - name: GBIF Occurrence Data (France, group × season aggregation)
     publisher: GBIF.org (Global Biodiversity Information Facility)
     url: https://doi.org/10.15468/dl.h5srta
-    license: CC0 1.0 / CC BY 4.0 (variable selon l'occurrence)
+    license: CC0 1.0 / CC BY 4.0 (varies by occurrence)
     retrieved: '2026-09-08'
-  - name: GBIF Occurrence Data (France, dominance par espèce)
+  - name: GBIF Occurrence Data (France, species dominance)
     publisher: GBIF.org (Global Biodiversity Information Facility)
     url: https://doi.org/10.15468/dl.mmqnrd
-    license: CC0 1.0 / CC BY 4.0 (variable selon l'occurrence)
+    license: CC0 1.0 / CC BY 4.0 (varies by occurrence)
     retrieved: '2026-09-08'
 publication-date: '2026-09-08'
 ---

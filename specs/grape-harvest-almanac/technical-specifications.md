@@ -4,7 +4,7 @@ Complète `technical-specifications.md` général : choix techniques propres à 
 
 ## Rendu
 
-D3 v7 (`d3-shape` pour les lignes, `d3-scale` pour les échelles, `d3-selection`/`d3-transition` pour les interactions). Rendu SVG : volume de données faible (sept régions, au plus 654 points bruts chacune, environ 4 500 points au total en comptant les moyennes mobiles), pas d'enjeu de performance justifiant Canvas, même raisonnement que `flower-phenology`.
+D3 v7 (`d3-shape` pour les lignes, `d3-scale` pour les échelles) ; interactions (case à cocher, survol, tooltip, clic sur repère) en JS natif (`addEventListener`), pas de `d3-selection`/`d3-transition`. Rendu SVG : volume de données faible (sept régions, au plus 654 points bruts chacune, environ 4 500 points au total en comptant les moyennes mobiles), pas d'enjeu de performance justifiant Canvas, même raisonnement que `flower-phenology`.
 
 ## Lignes discontinues (lacunes de données)
 
@@ -45,7 +45,7 @@ Les données sources expriment une date de vendange en nombre de jours après le
 
 ## Nouvelles dépendances
 
-Aucune : `d3-shape`, `d3-scale`, `d3-selection`, `d3-transition` sont déjà des dépendances du site (via `bird-migrations`, `flower-phenology`), toutes réutilisées à l'identique, scopées à cette visualisation par convention npm.
+Aucune : `d3-shape` et `d3-scale` sont déjà des dépendances du site (via `bird-migrations`, `flower-phenology`), réutilisées à l'identique, scopées à cette visualisation par convention npm. Pas de `d3-selection`/`d3-transition` : à la différence de `bird-migrations`/`flower-phenology`, les interactions sont en JS natif (voir "Rendu" ci-dessus).
 
 ## Hydratation
 

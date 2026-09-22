@@ -3,7 +3,7 @@ lang: fr
 title: Le calendrier des fleurs
 summary: Quand fleurissent les plantes sauvages en France, et comment ce calendrier se déplace avec le réchauffement.
 datasets:
-  - name: GBIF Occurrence Data (dates de première floraison, France)
+  - name: GBIF Occurrence Data (first flowering dates, France)
     publisher: GBIF.org (Global Biodiversity Information Facility)
     url: https://www.gbif.org/occurrence/search?country=FR
     license: CC0 1.0 / CC BY 4.0 (varies by occurrence)

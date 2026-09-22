@@ -8,7 +8,7 @@ Une source officielle par espèce (voir "Dataset source" dans `data-model.md`), 
 
 ## Rendu
 
-**SVG, pas Canvas** : quatre à six petits multiples seulement (voir "Sélection des espèces" dans `data-model.md`), aucun rapport avec le volume qui a justifié Canvas sur les visualisations à carte du site. **Pas de carte géographique** ici, à la différence de `bird-migrations`, `monarch-migration`, `monument-layers` ou `tgv-punctuality` : l'angle retenu (voir "Angle retenu" dans `data-model.md`) est délibérément sans dimension spatiale, chaque espèce est une carte de petits multiples, pas un point sur un planisphère.
+**SVG, pas Canvas** : quatre à six petits multiples seulement (voir "Sélection des espèces" dans `data-model.md`), aucun rapport avec le volume qui a justifié Canvas sur les visualisations à carte du site. **Pas de carte géographique** ici, à la différence de `bird-migrations`, `monarch-migration`, `monument-layers` ou `light-pollution` : l'angle retenu (voir "Angle retenu" dans `data-model.md`) est délibérément sans dimension spatiale, chaque espèce est une carte de petits multiples, pas un point sur un planisphère.
 
 **Rendu basé uniquement sur les effectifs** (décision explicite de l'utilisateur, voir échanges de cadrage) : pas de dimension catégorielle affichée (l'ancienne catégorie de menace IUCN disparaît avec l'abandon de cette source, voir `data-model.md`), pas de mapping couleur ↔ donnée. Le nombre d'icônes affichées porte seule le message pour les données ; la couleur, elle, vient d'une illustration par espèce plutôt que d'une teinte plate (voir "Fond de carte illustré par espèce" ci-dessous), décision revenue en cours d'implémentation après une première version à fond neutre.
 

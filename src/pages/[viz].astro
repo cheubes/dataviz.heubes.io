@@ -15,6 +15,8 @@ import GrapeHarvestAlmanac from '../components/visualizations/grape-harvest-alma
 import EndangeredSpecies from '../components/visualizations/endangered-species/EndangeredSpecies.astro';
 import Earthquakes from '../components/visualizations/earthquakes/Earthquakes.astro';
 import MonarchMigration from '../components/visualizations/monarch-migration/MonarchMigration.astro';
+import ForestFires from '../components/visualizations/forest-fires/ForestFires.astro';
+import VolcanicEruptions from '../components/visualizations/volcanic-eruptions/VolcanicEruptions.astro';
 import en from '../i18n/en';
 
 const VIZ_COMPONENTS: Record<string, typeof BirdMigrations> = {
@@ -29,6 +31,8 @@ const VIZ_COMPONENTS: Record<string, typeof BirdMigrations> = {
   'endangered-species': EndangeredSpecies,
   earthquakes: Earthquakes,
   'monarch-migration': MonarchMigration,
+  'forest-fires': ForestFires,
+  'volcanic-eruptions': VolcanicEruptions,
 };
 
 const LANG = 'en';
@@ -126,6 +130,17 @@ const retrievedDateFormatter = new Intl.DateTimeFormat(LANG, {
   .dv-viz-page__summary {
     margin: 0;
     font-size: 1.125rem;
+  }
+
+  /* :global() is required here: <Content /> renders the visualization's
+     markdown body without this component's Astro scope attribute, so an
+     unscoped .dv-viz-page__body > :first-child rule silently never matches. */
+  .dv-viz-page__body > :global(:first-child) {
+    margin-top: 0;
+  }
+
+  .dv-viz-page__body > :global(:last-child) {
+    margin-bottom: 0;
   }
 
   .dv-viz-page__credits h2 {

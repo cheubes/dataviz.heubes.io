@@ -2,6 +2,8 @@
 
 Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
 
+**Statut : implémenté.**
+
 ## Angle éditorial
 
 Angle neutre, délibérément non directionnel (voir échanges de cadrage) : les données réelles (voir "Couverture géographique et temporelle" dans `data-model.md`) montrent un recul de l'intensité lumineuse depuis 2013, particulièrement marqué depuis 2022-2023 (plausiblement lié aux mesures de sobriété énergétique), pas une hausse. Le titre et le résumé de travail initiaux ("La nuit qui recule" / "The Retreating Night", supposant une pollution lumineuse croissante) présupposaient l'inverse de ce que montre le dataset : révisés en conséquence, sans affirmer de direction, pour laisser le curseur d'année la révéler.
