@@ -17,6 +17,7 @@ A catalogue of interactive, hand-built data visualizations. Each entry explores 
 - **The Monarch Migration** ([`monarch-migration`](specs/monarch-migration/)) : nearly 400,000 GBIF observations of the monarch butterfly, aggregated on a one-degree North American grid and animated month by month in a continuous loop as a Canvas 2D density map, on the same world basemap as Bird Migrations.
 - **Where France Has Burned** ([`forest-fires`](specs/forest-fires/)) : 50,946 real forest fires recorded by the French BDIFF database between 2006 and 2025, geocoded by municipality and replayed year by year as a Canvas 2D point map, each point's size proportional to the area burned, with a year slider, zoom controls, and a detail card linking to the official BDIFF record.
 - **The Pulse of the Earth** ([`volcanic-eruptions`](specs/volcanic-eruptions/)) : 10,937 volcanic eruptions across 1,214 volcanoes since 8000 BCE, from the Smithsonian's Global Volcanism Program, replayed as pulses on a Canvas 2D world map in a continuous 120-second loop over permanent resting-point markers for every volcano, with a year slider and zoom controls.
+- **Tomorrow's Medical Desert** ([`medical-deserts`](specs/medical-deserts/)) : a Canvas 2D choropleth of 34,728 French communes (DREES's real APL healthcare-access indicator joined to IGN commune boundaries), toggling between today's access and a projection without doctors aged 65+, with pixel-based hover picking and CSS-driven pan/zoom to keep the largest dataset on the site responsive.
 
 ## Development
 

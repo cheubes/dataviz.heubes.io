@@ -1,0 +1,178 @@
+---
+interface Props {
+  lang: 'fr' | 'en';
+}
+
+const { lang } = Astro.props;
+---
+
+<div id="dv-medical-deserts-root" data-lang={lang}></div>
+
+<script>
+  import { mountMedicalDeserts } from './render';
+  import en from '../../../i18n/en';
+  import fr from '../../../i18n/fr';
+
+  const root = document.getElementById('dv-medical-deserts-root');
+  if (root) {
+    const lang = root.dataset.lang === 'fr' ? 'fr' : 'en';
+    const labels = (lang === 'fr' ? fr : en).medicalDeserts;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          observer.disconnect();
+          mountMedicalDeserts(root, lang, labels);
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(root);
+  }
+</script>
+
+<style is:global>
+  .dv-medical-deserts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dv-space-3);
+    padding: var(--dv-space-3);
+  }
+
+  .dv-medical-deserts__status {
+    margin: 0;
+    text-align: center;
+    color: var(--dv-ink-secondary);
+    padding: var(--dv-space-5) 0;
+  }
+
+  .dv-medical-deserts__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dv-space-4);
+    align-items: center;
+  }
+
+  .dv-medical-deserts__toggle-group {
+    display: flex;
+    gap: var(--dv-space-3);
+  }
+
+  .dv-medical-deserts__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--dv-space-1);
+    font-size: 0.875rem;
+    color: var(--dv-ink-secondary);
+    cursor: pointer;
+  }
+
+  .dv-medical-deserts__legend {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 160px;
+  }
+
+  .dv-medical-deserts__legend-title {
+    font-size: 0.75rem;
+    color: var(--dv-ink-secondary);
+  }
+
+  .dv-medical-deserts__legend-gradient {
+    height: 8px;
+    border-radius: 4px;
+  }
+
+  .dv-medical-deserts__legend-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--dv-ink-secondary);
+  }
+
+  .dv-medical-deserts__stage {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  .dv-medical-deserts__zoom-layer {
+    position: absolute;
+    inset: 0;
+    transform-origin: 0 0;
+  }
+
+  .dv-medical-deserts__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .dv-medical-deserts__canvas--tomorrow {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .dv-medical-deserts__interaction {
+    background: transparent;
+  }
+
+  .dv-medical-deserts__zoom-controls {
+    position: absolute;
+    top: var(--dv-space-2);
+    right: var(--dv-space-2);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 2;
+  }
+
+  .dv-medical-deserts__zoom-button {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    font-family: inherit;
+    line-height: 1;
+    color: var(--dv-ink-primary);
+    background-color: var(--dv-surface);
+    border: 1px solid var(--dv-gridline);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .dv-medical-deserts__zoom-button:hover {
+    background-color: var(--dv-gridline);
+  }
+
+  .dv-medical-deserts__tooltip {
+    position: absolute;
+    z-index: 3;
+    max-width: 240px;
+    padding: var(--dv-space-2);
+    background-color: var(--dv-header-bg);
+    color: #ffffff;
+    border-radius: 4px;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    pointer-events: none;
+  }
+
+  .dv-medical-deserts__stage .dv-medical-deserts__status {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  @media (max-width: 640px) {
+    .dv-medical-deserts__controls {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
