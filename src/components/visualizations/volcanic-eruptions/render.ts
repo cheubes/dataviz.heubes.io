@@ -71,7 +71,7 @@ const SPEED_FACTORS: Record<Speed, number> = { slow: 0.5, normal: 1, fast: 2 };
 
 // Continuous loop across the whole covered period, no hold-at-end (same
 // "Lecture automatique en boucle" convention as bird-migrations/earthquakes).
-// 120s, longer than earthquakes' 90s: 10,978 eruptions over ~10,026 years is a
+// 120s, longer than earthquakes' 90s: 10,937 eruptions over ~10,026 years is a
 // bigger catalog over a far longer span (technical-specifications.md
 // "Animation" - an order-of-magnitude jump in temporal compression versus
 // every other looping visualization on the site), confirmed by watching a
