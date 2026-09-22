@@ -86,8 +86,9 @@ Couleurs récurrentes pour les visualisations avec fond de carte (silhouette de 
 | Silhouette (fond de carte) | `#e4e2da` |
 | Hydrographie (cours d'eau, fleuves) | `#a8c5da` |
 | Frontières de plaques tectoniques | `#b3a696` |
+| Point de repère permanent (volcan au repos) | `#6b6455` |
 
-Utilisées par `biodiversity`, `light-pollution`, `paris-trees`, `monument-layers`, `bird-migrations`, `monarch-migration`, `earthquakes` (frontières de plaques tectoniques, propre à cette dernière) et `forest-fires` ; toute nouvelle visualisation avec fond de carte réutilise ces teintes plutôt que d'en introduire de nouvelles.
+Utilisées par `biodiversity`, `light-pollution`, `paris-trees`, `monument-layers`, `bird-migrations`, `monarch-migration`, `earthquakes` (frontières de plaques tectoniques, propre à cette dernière), `forest-fires` et `volcanic-eruptions` (point de repère permanent, propre à cette dernière, voir "Palette" dans `specs/volcanic-eruptions/technical-specifications.md`) ; toute nouvelle visualisation avec fond de carte réutilise ces teintes plutôt que d'en introduire de nouvelles.
 
 ## Typographie
 

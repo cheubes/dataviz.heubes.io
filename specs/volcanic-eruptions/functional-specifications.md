@@ -2,7 +2,7 @@
 
 Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
 
-**Statut : brouillon de cadrage, pas encore implémenté.** Titre, résumé et présentation longue sont des propositions de travail, ouvertes à révision.
+**Statut : implémenté.**
 
 ## Angle éditorial
 
@@ -11,13 +11,13 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 | FR | Le pouls du globe | Dix mille ans d'éruptions volcaniques rejouées en boucle : la Terre n'a jamais cessé de trembler, la ceinture de feu à peine visible au repos. |
 | EN | The Pulse of the Earth | Ten thousand years of volcanic eruptions replayed on a loop : the Earth has never stopped shaking, the ring of fire barely visible at rest. |
 
-**Présentation longue FR (proposition) :**
-> Le Global Volcanism Program de la Smithsonian Institution recense chaque éruption volcanique connue depuis le début de l'Holocène, il y a environ dix mille ans : plus de mille quatre cents volcans, des milliers d'éruptions documentées, de l'observation directe la plus récente à la trace géologique la plus ancienne.
+**Présentation longue FR :**
+> Le Global Volcanism Program de la Smithsonian Institution recense chaque éruption volcanique connue depuis le début de l'Holocène, il y a environ dix mille ans : mille deux cent quatorze volcans, plus de onze mille éruptions documentées, de l'observation directe la plus récente à la trace géologique la plus ancienne.
 >
 > Ce planisphère fait pulser chaque volcan au moment réel de ses éruptions, rejouées en boucle continue sur l'ensemble de la période. Le rythme s'accélère nettement à mesure que la lecture approche du présent : en partie parce que le volcanisme s'est réellement concentré à certaines périodes, mais aussi, pour une large part, parce que les éruptions récentes sont bien mieux documentées que celles d'il y a plusieurs millénaires — un biais du catalogue à garder à l'esprit plutôt qu'une accélération univoque du phénomène lui-même.
 
-**Présentation longue EN (proposition) :**
-> The Smithsonian Institution's Global Volcanism Program records every known volcanic eruption since the start of the Holocene, roughly ten thousand years ago : over fourteen hundred volcanoes, thousands of documented eruptions, from the most recent direct observation to the oldest geological trace.
+**Présentation longue EN :**
+> The Smithsonian Institution's Global Volcanism Program records every known volcanic eruption since the start of the Holocene, roughly ten thousand years ago : one thousand two hundred and fourteen volcanoes, over eleven thousand documented eruptions, from the most recent direct observation to the oldest geological trace.
 >
 > This world map makes every volcano pulse at the real moment of its eruptions, replayed on a continuous loop across the whole period. The pace clearly picks up as the playback nears the present : partly because volcanism has genuinely clustered in certain periods, but largely because recent eruptions are far better documented than those from several millennia ago — a bias in the catalog worth keeping in mind, not a one-directional acceleration of the phenomenon itself.
 
@@ -59,4 +59,4 @@ L'interaction principale (planisphère animé, zoom/pan, survol des volcans) n'e
 
 ## Contenu non traduit
 
-Les noms de volcans restent identiques ou quasi identiques dans les deux langues dans la plupart des cas (noms propres) ; pas de contenu non traduit à signaler au-delà des règles générales.
+Les noms de volcans restent identiques ou quasi identiques dans les deux langues dans la plupart des cas (noms propres). Le pays affiché dans la fiche de détail (`Country` du GVP, voir "Champs source utilisés" dans `data-model.md`) reste en anglais dans les deux langues, comme les noms de volcans : c'est une donnée source du catalogue, pas un texte éditorial du site, même traitement que les autres champs non traduits.
