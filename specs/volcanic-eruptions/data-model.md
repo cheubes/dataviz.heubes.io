@@ -61,7 +61,9 @@ Couche `Smithsonian_VOTW_Holocene_Eruptions` :
 
 **Éruptions antérieures à l'Holocène (-8000) :** 111 éruptions sur 11 089 (1 %) portent une `StartDateYear` antérieure à -8000, hors du cadrage "dix mille ans" de l'angle éditorial malgré leur classement dans la couche "Holocene_Eruptions" du GVP. Exclues du jeu de données généré (`StartDateYear >= -8000`).
 
-**Volcans sans éruption datée dans le catalogue (25 %) :** 299 volcans sur 1 214 n'ont aucune entrée dans la couche `Holocene_Eruptions` (identifiés par indice géologique sans éruption individuellement datable, voir `Evidence_Category` du GVP). Conservés dans `volcanoes` (point de repos permanent affiché, voir "Volcans au repos" dans `technical-specifications.md`) mais ne pulsent jamais sur le cycle.
+**Volcans sans éruption datée dans le catalogue (27 %) :** 333 volcans sur 1 214 n'ont aucune éruption valide dans `eruptions.json`, la plupart faute d'entrée dans la couche `Holocene_Eruptions` (identifiés par indice géologique sans éruption individuellement datable, voir `Evidence_Category` du GVP). Conservés dans `volcanoes` (point de repos permanent affiché, voir "Volcans au repos" dans `technical-specifications.md`) mais ne pulsent jamais sur le cycle.
+
+**Anomalie constatée, non corrigée à ce stade :** 41 éruptions sur 10 978 (vingt `Volcano_Number` distincts) référencent un volcan absent de la couche `Holocene_Volcanoes` récupérée — incohérence entre les deux couches WFS du GVP au moment de la récupération, pas un filtrage volontaire du prétraitement. Ces éruptions ne pulsent sur aucun volcan affiché (leur `volcanoId` ne correspond à rien dans `volcanoes`), ce qui viole la contrainte de validation ci-dessous ; portée réelle non investiguée (bug de récupération, ou volcans retirés du service depuis).
 
 ## Sélection des éruptions à annoter
 

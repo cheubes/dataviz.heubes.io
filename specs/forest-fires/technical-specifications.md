@@ -40,6 +40,10 @@ Carte animée, zoom/pan et survol des incendies non nativement accessibles au cl
 
 `d3-geo`, `d3-zoom`, `d3-scale`, `d3-selection`, `d3-timer`, `topojson-client` : toutes déjà utilisées ailleurs sur le site (voir `monument-layers`, `paris-trees`, `satellites-in-orbit`, `light-pollution`), pas de nouvelle dépendance npm pour cette visualisation.
 
+## Hydratation
+
+`client:visible`, via un `IntersectionObserver` sur la zone de montage, même mécanisme que les autres visualisations du site.
+
 ## Contraintes de validation propres à cette visualisation
 
 - `fires` trié par `year` croissant (voir "Animation" ci-dessus, et "Prétraitement" dans `data-model.md`).

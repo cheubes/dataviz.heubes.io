@@ -11,6 +11,6 @@ datasets:
 publication-date: '2026-09-22'
 ---
 
-The Smithsonian Institution's Global Volcanism Program records every known volcanic eruption since the start of the Holocene, roughly ten thousand years ago: one thousand two hundred and fourteen volcanoes, nearly eleven thousand documented eruptions, from the most recent direct observation to the oldest geological trace.
+The Smithsonian Institution's Global Volcanism Program records every known volcanic eruption since the start of the Holocene, roughly ten thousand years ago: one thousand two hundred and fourteen volcanoes, over eleven thousand documented eruptions, from the most recent direct observation to the oldest geological trace.
 
 This world map makes every volcano pulse at the real moment of its eruptions, replayed on a continuous loop across the whole period. The pace clearly picks up as the playback nears the present: partly because volcanism has genuinely clustered in certain periods, but largely because recent eruptions are far better documented than those from several millennia ago — a bias in the catalog worth keeping in mind, not a one-directional acceleration of the phenomenon itself.

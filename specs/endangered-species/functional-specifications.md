@@ -6,8 +6,8 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 
 | Langue | Titre | Résumé |
 |---|---|---|
-| FR | Ce qu'il en reste | Une poignée d'espèces emblématiques, une foule d'individus qui s'amenuise ou se reconstitue, recensement après recensement. |
-| EN | What's Left | A handful of emblematic species, a crowd of individuals that shrinks or rebuilds, census after census. |
+| FR | Ce qu'il en reste | Six espèces emblématiques, une foule d'icônes qui s'amenuise ou se reconstitue, recensement après recensement. |
+| EN | What's Left | Six emblematic species, a crowd of icons that shrinks or rebuilds, census after census. |
 
 **Présentation longue FR (proposition) :**
 > Tigre, rhinocéros noir, panda géant, gorille des montagnes, vaquita, grand hamster d'Alsace : ces espèces emblématiques sont suivies depuis des décennies par des organismes de conservation qui en recensent régulièrement la population sauvage. Chaque nouveau recensement est une estimation, parfois précise à quelques individus près, du nombre réel qu'il en reste à l'état sauvage.

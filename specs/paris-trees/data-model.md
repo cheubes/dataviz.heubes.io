@@ -135,7 +135,7 @@ Le tableau `genera` liste huit genres dominants plus l'entrée `"other"` (voir "
 
 25 094 tronçons (2 écartés faute de géométrie, voir "Prétraitement" ci-dessus), 1,2 Mo non compressé (391 Ko gzippé).
 
-**`public/data/paris-trees/seine.json`** — même forme (`MultiLineString`, aucune propriété), dix-sept chaînes (tracé principal, bras autour des îles Saint-Louis, de la Cité et aux Cygnes, voir "Dataset source" ci-dessus) totalisant 529 points, 10 Ko.
+**`public/data/paris-trees/seine.json`** — même forme (`MultiLineString`, aucune propriété), dix-sept chaînes (tracé principal, bras autour des îles Saint-Louis, de la Cité et aux Cygnes, voir "Dataset source" ci-dessus) totalisant 490 points, 10 Ko.
 
 **`public/data/paris-trees/national-gardens.json`** — structure analogue à `trees.json` (tableaux parallèles), mais un schéma bien plus pauvre reflétant celui, minimal, de la source :
 

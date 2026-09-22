@@ -2,6 +2,8 @@
 
 Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
 
+**Statut : implémenté.**
+
 ## Source des données
 
 Composites annuels VIIRS VNL (NOAA Earth Observation Group), voir "Dataset source" et "Prétraitement" dans `data-model.md`. Citation obligatoire (CC BY 4.0) dans le bloc de crédit des sources de la page.

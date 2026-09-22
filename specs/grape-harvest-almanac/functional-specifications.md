@@ -13,7 +13,7 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 > Chaque année depuis le quatorzième siècle, des viticulteurs ont noté la date à laquelle ils vendangeaient. Mises bout à bout, ces dates composent l'une des plus longues séries climatiques directement observées au monde : six cent cinquante ans d'étés plus ou moins chauds, racontés depuis sept régions viticoles françaises. On y lit des sécheresses qui ont vidé les rivières, un été qui n'a jamais eu lieu, une crise qui a failli faire disparaître le vignoble, et des records de précocité tout récents.
 
 **Présentation longue EN :**
-> Every year since the fourteenth century, winegrowers have recorded the date they started picking grapes. Strung together, these dates form one of the longest directly observed climate series in the world: six hundred and fifty years of warmer or cooler summers, told through four French winegrowing regions. They record droughts that emptied rivers, a summer that never came, a crisis that nearly wiped out French vineyards, and very recent records for early harvests.
+> Every year since the fourteenth century, winegrowers have recorded the date they started picking grapes. Strung together, these dates form one of the longest directly observed climate series in the world: six hundred and fifty years of warmer or cooler summers, told through seven French winegrowing regions. They record droughts that emptied rivers, a summer that never came, a crisis that nearly wiped out French vineyards, and very recent records for early harvests.
 
 ## Objectif
 

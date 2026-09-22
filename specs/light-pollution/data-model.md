@@ -2,6 +2,8 @@
 
 Complète `data-model.md` général : schéma du dataset propre à cette visualisation.
 
+**Statut : implémenté.**
+
 ## Dataset source
 
 | `name` | `publisher` | `url` | `license` | `retrieved` |
