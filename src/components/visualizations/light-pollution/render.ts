@@ -82,7 +82,7 @@ export async function mountLightPollution(root: HTMLElement, lang: 'fr' | 'en', 
   try {
     const [skyRes, basemapRes] = await Promise.all([
       fetch('/data/light-pollution/skybins.json'),
-      fetch('/data/biodiversity/basemap.json'),
+      fetch('/data/light-pollution/basemap.json'),
     ]);
     if (!skyRes.ok || !basemapRes.ok) throw new Error('fetch failed');
     data = await skyRes.json();
