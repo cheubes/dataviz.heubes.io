@@ -6,7 +6,7 @@ datasets:
   - name: Western Europe 650 Year Grape Harvest Date Database (Daux et al. 2012)
     publisher: NOAA/NCEI, World Data Service for Paleoclimatology
     url: https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=noaa-historical-13194
-    license: Données publiques NOAA/NCEI, citation de l'article source requise
+    license: NOAA/NCEI public data, citation of the source article required
     retrieved: '2026-09-10'
 publication-date: '2026-09-10'
 ---

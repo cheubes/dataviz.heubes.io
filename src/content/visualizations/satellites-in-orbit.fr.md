@@ -6,7 +6,7 @@ datasets:
   - name: Satellite Catalog (SATCAT)
     publisher: CelesTrak
     url: https://celestrak.org/satcat/
-    license: Non formalisée ; redistribution admise sous réserve de citation (USSPACECOM)
+    license: Not formalized ; redistribution permitted with citation (USSPACECOM)
     retrieved: '2026-09-09'
 publication-date: '2026-09-09'
 ---

@@ -4,7 +4,7 @@ title: Where France Has Burned
 summary: "Over fifty thousand forest fires recorded since 2006: a map replaying them, year by year, across the country."
 datasets:
   - name: Base de Données sur les Incendies de Forêts en France (BDIFF)
-    publisher: French Ministry of Agriculture and Food Sovereignty / IGN
+    publisher: Ministère de l'Agriculture et de la Souveraineté alimentaire / IGN
     url: https://bdiff.agriculture.gouv.fr/
     license: Licence Ouverte v2.0
     retrieved: '2026-09-22'

@@ -3,7 +3,7 @@ lang: fr
 title: Le ciel, d'année en année
 summary: "Depuis 2013, des satellites mesurent chaque année la lumière artificielle émise depuis le sol en France : ce qu'on peut encore espérer voir dans le ciel nocturne, région par région."
 datasets:
-  - name: VIIRS Nighttime Lights (VNL), composites annuels
+  - name: VIIRS Nighttime Lights (VNL), annual composites
     publisher: NOAA Earth Observation Group
     url: https://eogdata.mines.edu/products/vnl/
     license: CC BY 4.0

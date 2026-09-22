@@ -28,10 +28,10 @@ datasets:
     url: https://www.fisheries.noaa.gov/west-coast/science-data/vaquita-conservation-and-abundance
     license: Public domain
     retrieved: '2026-09-14'
-  - name: Annual active burrow counts for the European hamster (2012-2025)
-    publisher: French Office for Biodiversity (OFB) / Grand Est regional prefecture
+  - name: Comptages annuels de terriers actifs du grand hamster d'Alsace (2012-2025)
+    publisher: Office français de la biodiversité (OFB) / Préfecture de la région Grand Est
     url: https://www.prefectures-regions.gouv.fr/irecontenu/telechargement/131694/967059/file/CP-ComptageHamsters-091025.pdf
-    license: Open licence (probable)
+    license: Licence ouverte (probable)
     retrieved: '2026-09-14'
 publication-date: '2026-09-14'
 ---
