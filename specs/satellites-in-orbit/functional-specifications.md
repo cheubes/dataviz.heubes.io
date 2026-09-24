@@ -9,7 +9,7 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 | Langue | Titre | Résumé |
 |---|---|---|
 | FR | La ruée vers l'orbite | Une nuée qui grandit depuis 1957 : l'accélération du nombre de satellites en orbite autour de la Terre, et qui les a lancés. |
-| EN | The Orbital Rush | A swarm growing since 1957 : the accelerating number of satellites in orbit around Earth, and who launched them. |
+| EN | The Orbital Rush | A swarm growing since 1957: the accelerating number of satellites in orbit around Earth, and who launched them. |
 
 **Présentation longue FR :**
 > Depuis Spoutnik en 1957, des milliers de satellites ont rejoint l'orbite terrestre : stations de navigation, satellites météo, télescopes, engins scientifiques, constellations de télécommunication. Cette visualisation anime, année par année, l'accumulation réelle des satellites toujours en orbite aujourd'hui (actifs ou non), à partir du catalogue tenu par le réseau de surveillance spatiale de l'US Space Force.
@@ -17,9 +17,9 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 > Chaque point représente un satellite réel, positionné au moment de son lancement plutôt que sur sa véritable orbite (voir `technical-specifications.md`), coloré selon la zone qui l'a mis en orbite : États-Unis, Russie/URSS, Chine, Europe ou reste du monde. La nuée reste clairsemée pendant les premières décennies de l'ère spatiale, avant de s'épaissir nettement à partir des années deux mille.
 
 **Présentation longue EN :**
-> Since Sputnik in 1957, thousands of satellites have reached Earth orbit : navigation systems, weather satellites, telescopes, scientific probes, telecommunication constellations. This visualization animates, year by year, the real accumulation of satellites still in orbit today (active or not), drawn from the catalog maintained by the US Space Force's space surveillance network.
+> Since Sputnik in 1957, thousands of satellites have reached Earth orbit: navigation systems, weather satellites, telescopes, scientific probes, telecommunication constellations. This visualization animates, year by year, the real accumulation of satellites still in orbit today (active or not), drawn from the catalog maintained by the US Space Force's space surveillance network.
 >
-> Each point represents a real satellite, positioned at the moment of its launch rather than on its actual orbit (see `technical-specifications.md`), colored by the launching region : United States, Russia/USSR, China, Europe, or the rest of the world. The swarm stays sparse through the early decades of the space age, then thickens sharply from the two-thousands onward.
+> Each point represents a real satellite, positioned at the moment of its launch rather than on its actual orbit (see `technical-specifications.md`), colored by the launching region: United States, Russia/USSR, China, Europe, or the rest of the world. The swarm stays sparse through the early decades of the space age, then thickens sharply from the two-thousands onward.
 
 ## Objectif
 
@@ -36,13 +36,13 @@ Faire voir, par l'accumulation progressive de points autour d'un globe habillé 
 
 ## Interactions
 
-- **Lecture automatique :** démarre dès le chargement de la page, sans action du visiteur, en boucle continue (comme `bird-migrations`, à la différence du choix initial retenu pour cette visualisation) : chaque passage va de 1957 à la date la plus récente du dataset, marque un temps d'arrêt sur cet état final complet (quelques secondes, pour laisser voir "aujourd'hui, X satellites en orbite" comme un aboutissement plutôt que comme une frame parmi d'autres) puis reprend depuis 1957.
+- **Lecture automatique :** démarre dès le chargement de la page, sans action du visiteur, en boucle continue (comme `bird-migrations`, à la différence du choix initial retenu pour cette visualisation) : chaque passage va de 1958 (premier satellite du dataset encore en orbite, Vanguard 1 : Spoutnik 1, lancé en 1957, est retombé depuis, voir `data-model.md`) à la date la plus récente du dataset, marque un temps d'arrêt sur cet état final complet (quelques secondes, pour laisser voir "aujourd'hui, X satellites en orbite" comme un aboutissement plutôt que comme une frame parmi d'autres) puis reprend depuis 1958.
 - **Play/Pause :** interrompt ou reprend l'ensemble de l'animation à l'instant simulé courant, y compris la rotation du globe et le temps d'arrêt en fin de passage (voir "Accessibilité" ci-dessous : nécessaire pour un contenu qui bouge en continu sans intervention).
 - **Vitesse de lecture :** Lent / Normal / Rapide, modifie la durée d'un passage complet (Normal : environ 25 secondes) sans affecter la rotation du globe, purement décorative et cadencée indépendamment (voir "Animation" dans `technical-specifications.md`).
 - **Curseur d'année :** un pas par année, sur la plage animée (première à dernière année du dataset). Le déplacer manuellement (glisser ou clavier) met la lecture automatique en pause et reconstruit immédiatement la nuée jusqu'à l'année choisie, y compris en arrière (même convention que le curseur de `light-pollution` et `monument-layers`, voir leurs `technical-specifications.md` respectifs). Le déplacer jusqu'à sa valeur maximale déclenche la même pause finale que l'arrivée naturelle de l'animation à son terme.
 - **Filtre zone :** légende cliquable, toggle multi-sélection, une entrée par zone (couleur + nom localisé), les cinq actives par défaut. Désactiver une zone retire ses points de la nuée affichée et du compteur total, sans redémarrer l'animation en cours.
 - **Pas de fiche par satellite individuel :** ni survol, ni tap sur un point isolé (décision explicite, voir échanges de cadrage) — l'angle de cette visualisation est la densité et l'accélération d'ensemble, pas l'exploration satellite par satellite ; une telle interaction resterait par ailleurs peu fiable sur une nuée aussi dense (points très proches les uns des autres vers la fin de l'animation).
-- **Vue initiale :** les cinq zones actives, année simulée à 1957, compteur à zéro, vitesse Normal, lecture automatique déjà en cours.
+- **Vue initiale :** les cinq zones actives, année simulée à 1958, compteur à zéro, vitesse Normal, lecture automatique déjà en cours.
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les zones actives et l'année choisie (pause ou curseur) sont restaurées, la visualisation s'ouvrant alors en pause sur cette année. La rotation du globe, purement décorative, n'est pas conservée.
 
 ## États

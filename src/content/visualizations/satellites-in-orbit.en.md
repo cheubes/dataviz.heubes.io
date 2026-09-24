@@ -1,7 +1,7 @@
 ---
 lang: en
 title: The Orbital Rush
-summary: "A swarm growing since 1957 : the accelerating number of satellites in orbit around Earth, and who launched them."
+summary: "A swarm growing since 1957: the accelerating number of satellites in orbit around Earth, and who launched them."
 datasets:
   - name: Satellite Catalog (SATCAT)
     publisher: CelesTrak
