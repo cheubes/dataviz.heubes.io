@@ -60,6 +60,19 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation.
 
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `year` | Année disponible dans `skybins.json` (2013 à 2025) | Lecture en cours |
+
+- `year` porte l'année elle-même, pas l'indice du curseur (`yearSlider.value`), pour qu'un lien reste lisible et survive à l'ajout d'une année au jeu de données.
+- `year` est écrit à la pause (bouton) et au relâchement du curseur d'année, et retiré à la reprise de la lecture. Un lien porteur de `year` ouvre la carte en pause sur cette année.
+- Un lien ou un curseur posé sur la dernière année reprend la lecture, une fois relancée, par la pause brève de fin de passage (`HOLD_MS`) avant de reboucler à 2013, plutôt que de rester bloqué sur cette année.
+- Pas de cadrage à capturer (carte fixe, voir "Interactions" dans `functional-specifications.md`), ni de filtre. La fiche de détail épinglée n'est pas capturée (état transitoire).
+
 ## Décisions prises à l'implémentation
 
 Réponses aux points laissés ouverts par le brouillon de cadrage :

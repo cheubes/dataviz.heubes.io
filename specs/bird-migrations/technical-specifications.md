@@ -100,3 +100,21 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 ## Responsive
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pan/zoom tactile via `d3-zoom` (pincer pour zoomer, glisser pour déplacer, pris en charge nativement par ce module aussi bien à la souris qu'au doigt) ; tooltip déclenché par `pointerdown`/`click` plutôt que `pointermove` quand `event.pointerType === 'touch'`.
+
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `species` | Identifiants d'espèce de `species` séparés par des virgules (`white-stork,common-cuckoo`) ; vide (`species=`) : aucune espèce active (état "vide") | Toutes les espèces actives |
+| `direction` | `autumn`, `spring` | Les deux |
+| `view` | `static` | Vue animée |
+| `day` | Jour simulé, entier de 0 (1er janvier) à 364 | Lecture en cours |
+| `zoom` | `<k>,<lon>,<lat>` (format commun) | Zone Europe/Afrique entière |
+
+- **`day` suit la règle générale de position temporelle, sans l'écart d'`earthquakes` :** en pause, les traînées s'effacent mais la tête de chaque trajectoire active ce jour-là reste dessinée, donc l'image en pause montre bien où se trouve chaque oiseau. `day` est écrit à la pause (bouton Play/Pause) et retiré à la reprise ; un lien porteur de `day` ouvre la vue animée en pause sur ce jour (bouton sur "Lecture", `aria-pressed="false"`, mois affiché). Pas de curseur temporel dans cette visualisation, donc pas d'écriture sur `change`.
+- Précision au jour entier : un jour simulé dure environ 0,1 s en vitesse "Normal", la position restaurée diffère de moins d'un jour de celle vue à la pause.
+- `day` reste dans l'URL en vue statique : il ne s'y voit pas, mais le retour à la vue animée reprend en pause sur ce jour (la pause survit au changement de vue, voir "Vue statique" ci-dessus). Un lien `view=static&day=…` restaure donc les deux.
+- Non capturés, en plus de la vitesse (règle générale) : le surlignage d'un individu et sa fiche épinglée au tap, sélection transitoire au même titre qu'une infobulle (en vue animée, la tête qui la porte disparaît d'ailleurs dès que l'individu sort de sa période de migration).
+- `species` : un identifiant inconnu est ignoré ; une liste dont aucun identifiant n'est connu est ignorée en entier (toutes les espèces actives).

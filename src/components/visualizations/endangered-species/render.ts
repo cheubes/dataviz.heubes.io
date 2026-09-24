@@ -1,5 +1,6 @@
 import { interpolateNumber } from 'd3-interpolate';
 import { timer as d3Timer } from 'd3-timer';
+import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
 
 interface SpeciesCount {
   year: number;
@@ -410,6 +411,7 @@ export async function mountEndangeredSpecies(
   playButton.addEventListener('click', () => {
     playing = !playing;
     updatePlayButton();
+    setUrlParams({ year: playing ? null : String(currentYear) });
   });
 
   speedSelect.addEventListener('change', () => {
@@ -420,8 +422,23 @@ export async function mountEndangeredSpecies(
     // Manual scrubbing takes over from autoplay, same as pressing pause.
     playing = false;
     updatePlayButton();
-    holding = false;
     stepElapsedMs = 0;
     setYear(Number(yearSlider.value));
+    // Resuming from the last year must go through the end-of-pass hold, or
+    // the autoplay step (which only ever advances) would stay stuck there.
+    holding = currentYear === maxYear;
+    holdElapsedMs = 0;
   });
+
+  yearSlider.addEventListener('change', () => {
+    setUrlParams({ year: yearSlider.value });
+  });
+
+  const urlYear = Number(getUrlParam('year'));
+  if (Number.isInteger(urlYear) && urlYear >= minYear && urlYear <= maxYear) {
+    playing = false;
+    updatePlayButton();
+    setYear(urlYear);
+    holding = currentYear === maxYear;
+  }
 }

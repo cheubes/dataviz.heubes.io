@@ -4,6 +4,7 @@ import { scaleSqrt } from 'd3-scale';
 // moduleResolution setting, same accepted gap as bird-migrations/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
+import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
 
 type Group = 'birds' | 'mammals' | 'reptiles-amphibians' | 'insects' | 'plants' | 'fungi';
 type GroupFilter = Group | 'all';
@@ -175,8 +176,10 @@ export async function mountBiodiversity(root: HTMLElement, lang: 'fr' | 'en', la
   filtersRow.className = 'dv-biodiversity__controls-row';
   controls.appendChild(filtersRow);
 
-  let activeGroup: GroupFilter = 'all';
-  let activeSeason: SeasonFilter = 'all';
+  const groupParam = getUrlParam('group');
+  const seasonParam = getUrlParam('season');
+  let activeGroup: GroupFilter = GROUPS.find((g) => g === groupParam) ?? 'all';
+  let activeSeason: SeasonFilter = SEASONS.find((s) => s === seasonParam) ?? 'all';
 
   const groupGroup = document.createElement('div');
   groupGroup.className = 'dv-biodiversity__control-group';
@@ -212,12 +215,12 @@ export async function mountBiodiversity(root: HTMLElement, lang: 'fr' | 'en', la
     container.appendChild(optionLabel);
   }
 
-  buildRadioOption(groupGroup, 'dv-biodiversity-group', labels.groupAll, true, null, () => {
+  buildRadioOption(groupGroup, 'dv-biodiversity-group', labels.groupAll, activeGroup === 'all', null, () => {
     activeGroup = 'all';
     handleFilterChange();
   });
   GROUPS.forEach((g) => {
-    buildRadioOption(groupGroup, 'dv-biodiversity-group', groupLabelOf[g], false, GROUP_COLOR[g], () => {
+    buildRadioOption(groupGroup, 'dv-biodiversity-group', groupLabelOf[g], activeGroup === g, GROUP_COLOR[g], () => {
       activeGroup = g;
       handleFilterChange();
     });
@@ -229,12 +232,12 @@ export async function mountBiodiversity(root: HTMLElement, lang: 'fr' | 'en', la
   seasonGroup.setAttribute('aria-label', labels.seasonLabel);
   filtersRow.appendChild(seasonGroup);
 
-  buildRadioOption(seasonGroup, 'dv-biodiversity-season', labels.seasonAll, true, null, () => {
+  buildRadioOption(seasonGroup, 'dv-biodiversity-season', labels.seasonAll, activeSeason === 'all', null, () => {
     activeSeason = 'all';
     handleFilterChange();
   });
   SEASONS.forEach((s) => {
-    buildRadioOption(seasonGroup, 'dv-biodiversity-season', seasonLabelOf[s], false, null, () => {
+    buildRadioOption(seasonGroup, 'dv-biodiversity-season', seasonLabelOf[s], activeSeason === s, null, () => {
       activeSeason = s;
       handleFilterChange();
     });
@@ -465,6 +468,8 @@ export async function mountBiodiversity(root: HTMLElement, lang: 'fr' | 'en', la
     }
   }
 
+  // Deliberately kept out of the URL: a shared link must never fire GBIF
+  // requests without the recipient's own action.
   liveToggleInput.addEventListener('change', () => {
     if (liveToggleInput.checked) {
       refreshLiveData();
@@ -483,6 +488,10 @@ export async function mountBiodiversity(root: HTMLElement, lang: 'fr' | 'en', la
   // (handled inline there), never a fresh fetch, so it calls renderMap()
   // directly instead of going through this.
   function handleFilterChange() {
+    setUrlParams({
+      group: activeGroup === 'all' ? null : activeGroup,
+      season: activeSeason === 'all' ? null : activeSeason,
+    });
     renderMap();
     if (liveToggleInput.checked) refreshLiveData();
   }

@@ -7,6 +7,7 @@ import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 // non-strict tsconfig (no noImplicitAny), which is narrow enough for the shape used below.
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
+import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
 
 interface TrackPoint {
   lat: number;
@@ -84,6 +85,7 @@ const SPEED_FACTORS: Record<'slow' | 'normal' | 'fast', number> = {
   fast: 2,
 };
 const HIT_RADIUS_PX = 14;
+const ZOOM_EXTENT: [number, number] = [1, 6];
 const FADE_ALPHA = 0.06;
 const RIVER_COLOR = '#a8c5da';
 const RIVER_LINE_WIDTH_PX = 1.5;
@@ -214,6 +216,7 @@ export async function mountBirdMigrations(
   const speciesGroup = document.createElement('div');
   speciesGroup.className = 'dv-bird-migrations__control-group';
   const activeSpecies = new Set(data.species.map((s) => s.id));
+  const speciesInputs = new Map<string, HTMLInputElement>();
   data.species.forEach((species) => {
     const label = document.createElement('label');
     label.className = 'dv-bird-migrations__toggle';
@@ -225,7 +228,17 @@ export async function mountBirdMigrations(
       else activeSpecies.delete(species.id);
       updateEmptyState();
       redrawIfStatic();
+      setUrlParams({
+        species:
+          activeSpecies.size === data.species.length
+            ? null
+            : data.species
+                .filter((s) => activeSpecies.has(s.id))
+                .map((s) => s.id)
+                .join(','),
+      });
     });
+    speciesInputs.set(species.id, input);
     const swatch = document.createElement('span');
     swatch.className = 'dv-bird-migrations__swatch';
     swatch.style.backgroundColor = color(species.id);
@@ -244,6 +257,7 @@ export async function mountBirdMigrations(
     { value: 'spring', text: labels.directionSpring },
     { value: 'both', text: labels.directionBoth },
   ];
+  const directionInputs = new Map<Direction, HTMLInputElement>();
   directionOptions.forEach((opt) => {
     const label = document.createElement('label');
     label.className = 'dv-bird-migrations__toggle';
@@ -255,7 +269,9 @@ export async function mountBirdMigrations(
       if (input.checked) activeDirection = opt.value;
       updateEmptyState();
       redrawIfStatic();
+      setUrlParams({ direction: activeDirection === 'both' ? null : activeDirection });
     });
+    directionInputs.set(opt.value, input);
     label.append(input, document.createTextNode(opt.text));
     directionGroup.appendChild(label);
   });
@@ -276,6 +292,7 @@ export async function mountBirdMigrations(
     { value: 'animated', text: labels.viewAnimated },
     { value: 'static', text: labels.viewStatic },
   ];
+  const viewModeInputs = new Map<'animated' | 'static', HTMLInputElement>();
   viewModeOptions.forEach((opt) => {
     const label = document.createElement('label');
     label.className = 'dv-bird-migrations__toggle';
@@ -284,8 +301,11 @@ export async function mountBirdMigrations(
     input.name = 'dv-bird-migrations-view';
     input.checked = opt.value === 'animated';
     input.addEventListener('change', () => {
-      if (input.checked) setViewMode(opt.value);
+      if (!input.checked) return;
+      setViewMode(opt.value);
+      setUrlParams({ view: opt.value === 'static' ? 'static' : null });
     });
+    viewModeInputs.set(opt.value, input);
     label.append(input, document.createTextNode(opt.text));
     viewModeGroup.appendChild(label);
   });
@@ -473,8 +493,10 @@ export async function mountBirdMigrations(
     trailsCtx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
   }
 
+  let restoringUrlState = false;
+
   const zoomBehavior = d3Zoom<HTMLCanvasElement, unknown>()
-    .scaleExtent([1, 6])
+    .scaleExtent(ZOOM_EXTENT)
     .on('zoom', (event) => {
       transform = event.transform;
       drawBasemap();
@@ -484,6 +506,9 @@ export async function mountBirdMigrations(
         for (const leg of legs) leg.pixel = null; // avoid a stray line jumping across the redraw
         trailsCtx.clearRect(0, 0, width, height);
       }
+    })
+    .on('end', () => {
+      if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
   select(trailsCanvas).call(zoomBehavior as any);
 
@@ -672,6 +697,7 @@ export async function mountBirdMigrations(
     playing = !playing;
     playButton.textContent = playing ? labels.pause : labels.play;
     playButton.setAttribute('aria-pressed', String(playing));
+    setUrlParams({ day: playing ? null : String(Math.floor(simDay)) });
   });
 
   speedSelect.addEventListener('change', () => {
@@ -771,6 +797,48 @@ export async function mountBirdMigrations(
     }
     redrawIfStatic();
   });
+
+  // --- Initial state from the URL ----------------------------------------
+  // Runs synchronously after startAnimationLoop(): d3-timer's first tick is
+  // on the next animation frame, so the restored state is in place before it.
+  const speciesParam = getUrlParam('species');
+  if (speciesParam !== null) {
+    const ids = speciesParam.split(',').filter((id) => speciesInputs.has(id));
+    if (speciesParam === '' || ids.length > 0) {
+      activeSpecies.clear();
+      for (const id of ids) activeSpecies.add(id);
+      speciesInputs.forEach((input, id) => {
+        input.checked = activeSpecies.has(id);
+      });
+    }
+  }
+
+  const directionParam = getUrlParam('direction');
+  if (directionParam === 'autumn' || directionParam === 'spring') {
+    activeDirection = directionParam;
+    directionInputs.get(directionParam)!.checked = true;
+  }
+
+  const dayParam = Number(getUrlParam('day') || NaN);
+  if (Number.isInteger(dayParam) && dayParam >= 0 && dayParam < 365) {
+    simDay = dayParam;
+    playing = false;
+    playButton.textContent = labels.play;
+    playButton.setAttribute('aria-pressed', 'false');
+    updateDateIndicator();
+  }
+
+  if (getUrlParam('view') === 'static') {
+    viewModeInputs.get('static')!.checked = true;
+    setViewMode('static');
+  }
+
+  const initialTransform = readZoomParam(projection, width, height, ZOOM_EXTENT);
+  if (initialTransform) {
+    restoringUrlState = true;
+    select(trailsCanvas).call(zoomBehavior.transform as any, initialTransform);
+    restoringUrlState = false;
+  }
 
   updateEmptyState();
 }

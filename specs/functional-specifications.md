@@ -70,6 +70,26 @@ La page d'une visualisation peut proposer au téléchargement les fichiers de do
 
 Affichage : voir "Page de visualisation" dans `style-guide.md`.
 
+### État partageable dans l'URL
+
+L'URL de la page d'une visualisation reflète en continu l'état choisi par le visiteur. Copier l'adresse du navigateur suffit pour partager exactement ce qu'il voit, et ouvrir ce lien restaure cet état (parcours 5). Il n'y a pas de bouton de partage dédié.
+
+- État capturé :
+  - les filtres et bascules (régions, espèces, groupes, saison, mode d'affichage, recherche…) ;
+  - la position temporelle (année, mois) des visualisations animées ;
+  - le cadrage (niveau de zoom et centre) des cartes zoomables.
+- État non capturé :
+  - la vitesse de lecture ;
+  - les survols et infobulles ;
+  - toute bascule qui déclenche des appels à un service tiers : un lien partagé ne doit pas provoquer de requête externe sans action du visiteur.
+- URL minimale : seuls les éléments qui diffèrent de l'état par défaut apparaissent dans l'URL. Une visualisation dans son état initial garde une URL nue.
+- Position temporelle : elle n'apparaît dans l'URL que quand la lecture est en pause, que ce soit par le bouton ou par une manipulation du curseur. La reprise de la lecture la retire. Un lien qui porte une position temporelle ouvre la visualisation en pause sur ce moment. Une visualisation dont l'image en pause n'a pas de sens peut s'en écarter (ex : des impulsions éphémères qui s'effacent aussitôt la lecture arrêtée) : elle documente et justifie alors son propre comportement.
+- Valeurs invalides ou inconnues (lien tronqué, identifiant disparu, année hors bornes) : chaque paramètre invalide est ignoré silencieusement et remplacé par sa valeur par défaut, et les paramètres valides restent appliqués. Pas de message d'erreur.
+- Historique : ces mises à jour ne créent pas d'entrée dans l'historique du navigateur. Le bouton "précédent" quitte la page au lieu de rejouer chaque clic sur un filtre.
+- Changement de langue : l'état est conservé. Les paramètres sont les mêmes dans les deux langues (voir "Multilingue" ci-dessus).
+
+Chaque visualisation liste ses propres paramètres dans son `technical-specifications.md` (section "État dans l'URL"). Mécanisme commun : voir "État dans l'URL" dans `technical-specifications.md`.
+
 ## Hors périmètre
 
 - Comptes utilisateurs, authentification.

@@ -7,6 +7,7 @@ import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 // non-strict tsconfig (no noImplicitAny), which is narrow enough for the shape used below.
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
+import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
 
 interface DensityEntry {
   month: number; // 1-12
@@ -366,12 +367,17 @@ export async function mountMonarchMigration(
     densityCtx.globalAlpha = 1;
   }
 
+  let restoringUrlState = false;
+
   const zoomBehavior = d3Zoom<HTMLCanvasElement, unknown>()
     .scaleExtent(ZOOM_SCALE_EXTENT)
     .on('zoom', (event) => {
       transform = event.transform;
       drawBasemap();
       drawDensity();
+    })
+    .on('end', () => {
+      if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
   select(densityCanvas).call(zoomBehavior as any);
 
@@ -381,6 +387,13 @@ export async function mountMonarchMigration(
     resizeTimeout = setTimeout(resize, 150);
   });
   resize();
+
+  const initialTransform = readZoomParam(projection, width, height, ZOOM_SCALE_EXTENT);
+  if (initialTransform) {
+    restoringUrlState = true;
+    select(densityCanvas).call(zoomBehavior.transform as any, initialTransform);
+    restoringUrlState = false;
+  }
 
   // --- Animation --------------------------------------------------------
   let playing = true;
@@ -450,15 +463,28 @@ export async function mountMonarchMigration(
     renderFrame();
   });
 
-  playButton.addEventListener('click', () => {
-    playing = !playing;
+  function setPlaying(value: boolean) {
+    playing = value;
     playButton.textContent = playing ? labels.pause : labels.play;
     playButton.setAttribute('aria-pressed', String(playing));
+  }
+
+  playButton.addEventListener('click', () => {
+    setPlaying(!playing);
+    setUrlParams({ month: playing ? null : String(currentMonth.monthIndex + 1) });
   });
 
   speedSelect.addEventListener('change', () => {
     speed = speedSelect.value as 'slow' | 'normal' | 'fast';
   });
+
+  // The data is monthly, so a shared month opens on its first day: the frame
+  // then shows that month's counts exactly, not an interpolation towards the next.
+  const urlMonth = Number(getUrlParam('month'));
+  if (Number.isInteger(urlMonth) && urlMonth >= 1 && urlMonth <= 12) {
+    simDay = (Date.UTC(2001, urlMonth - 1, 1) - Date.UTC(2001, 0, 1)) / 86_400_000;
+    setPlaying(false);
+  }
 
   // --- Tooltip interactions ----------------------------------------------
   function cellAtEvent(event: MouseEvent): { x: number; y: number; cell: DensityCell | null } {

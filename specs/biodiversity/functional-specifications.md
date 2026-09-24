@@ -36,6 +36,7 @@ Donner à voir la répartition géographique du vivant observé en France métro
 - **Survol / tap d'une cellule :** tooltip avec le nombre d'observations (pour le filtre courant), le groupe dominant si "Tous les groupes" est actif, un exemple d'espèce.
 - **Pas de zoom ni de panoramique** (écart à l'intention initiale, demande explicite à l'implémentation) : la carte reste fixe, toujours cadrée sur la totalité de la silhouette de la France (voir "Vue initiale" ci-dessous, qui décrit donc l'unique vue plutôt qu'un simple état de départ). Simplifie l'interaction au profit des seuls filtres et du tooltip ; voir "Accessibilité" ci-dessous pour l'effet sur la limite déjà documentée.
 - **Vue initiale (et unique) :** France métropolitaine entière visible, aucun filtre actif au-delà des valeurs par défaut ("Tous les groupes", "Toutes saisons"), mode par défaut (pas "données en direct").
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : le groupe et la saison sont restaurés. La bascule "Données en direct" ne l'est jamais, puisqu'elle interroge GBIF : un lien ouvre toujours la grille précalculée, et le destinataire active le mode lui-même s'il le souhaite (voir "État dans l'URL" dans `technical-specifications.md`).
 
 ## États
 

@@ -91,6 +91,19 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Le canvas de fond (globe) et le canvas de premier plan (nuée) sont redimensionnés ensemble au redimensionnement de la zone de montage ; la nuée déjà accumulée est reconstruite en une seule passe après redimensionnement plutôt qu'étirée (mêmes positions relatives, recalculées au nouveau rayon).
 
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `regions` | Identifiants de zones actives (`us`, `russia-ussr`, `china`, `europe`, `other`), séparés par des virgules ; vide (`regions=`) pour aucune zone | Les cinq zones actives |
+| `year` | Année entière entre les bornes du curseur d'année | Lecture en cours |
+
+- `regions` : identifiants inconnus ignorés ; une liste non vide dont aucun identifiant n'est connu est invalide et laisse les cinq zones actives. `regions=` restaure l'état vide voulu (voir "États" dans `functional-specifications.md`).
+- `year` est écrit à la pause (bouton) et au relâchement du curseur d'année, et retiré à la reprise de la lecture. Un lien porteur de `year` ouvre la visualisation en pause, par le même chemin qu'un déplacement manuel du curseur (voir "Curseur d'année" ci-dessus) : la nuée est reconstruite jusqu'au 31 décembre de cette année. Une pause en cours d'année est donc restaurée à la fin de cette même année, cohérent avec la granularité annuelle du curseur.
+- La rotation du globe n'est pas capturée : décorative, elle n'est pas un cadrage choisi par le visiteur (voir "Animation" ci-dessus).
+
 ## Décisions prises à l'implémentation
 
 - Mapping exact des codes `OWNER` du SATCAT vers les cinq zones : établi sur les 106 codes distincts du catalogue réel, voir "Regroupement géographique" dans `data-model.md`.

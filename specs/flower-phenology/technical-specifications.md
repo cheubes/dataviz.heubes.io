@@ -53,3 +53,17 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 ## Responsive
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation.
+
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `species` | Noms scientifiques (`species`, voir `data-model.md`) des espèces affichées, séparés par des virgules, dans l'ordre du sélecteur ; vide (`species=`) si aucune espèce n'est cochée | Toutes les espèces |
+| `inner` | Décennie de l'anneau intérieur (`1970s` à `2020s`) | `1970s` |
+| `outer` | Décennie de l'anneau extérieur (`1970s` à `2020s`) | `2020s` |
+
+- Les noms scientifiques contiennent une espace, encodée `+` dans l'URL (`species=Papaver+rhoeas,Centaurea+cyanus`) : c'est l'identifiant des données tel quel, pas un slug dérivé.
+- Un nom inconnu dans `species` est ignoré ; une liste dont aucun nom n'est reconnu est traitée comme invalide (retour à toutes les espèces), pour qu'un lien cassé ne tombe pas sur l'état vide.
+- À la lecture, les décennies restaurées sont dessinées directement, sans la transition de changement de décennie (voir "Rendu" ci-dessus), qui n'a de sens qu'en réponse à un choix du visiteur.

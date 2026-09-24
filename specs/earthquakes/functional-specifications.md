@@ -45,6 +45,7 @@ Mêmes interactions que `volcanic-eruptions` (voir son `functional-specification
 - **Survol/tap d'un point** : fiche de détail (lieu, magnitude, profondeur, date) — les points sismiques n'étant pas des positions fixes répétées comme les volcans (chaque séisme est un événement unique, pas un lieu qui pulse plusieurs fois), la fiche de détail n'est disponible qu'au moment du pulse ou juste après (voir "Rendu" dans `technical-specifications.md` pour la durée de rémanence), pas en permanence comme les volcans de `volcanic-eruptions`.
 - **Zoom/pan** libre sur l'ensemble du planisphère (souris/molette, tactile), doublé de boutons zoomer/dézoomer/réinitialiser pour les visiteurs sans molette ni geste tactile.
 - **Vue initiale :** planisphère entier visible, frontières de plaques visibles, lecture automatique déjà en cours.
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : l'année et le cadrage sont restaurés. Une année partagée relance la lecture à partir de cette année au lieu de figer la carte en pause, puisqu'une image en pause n'aurait aucun séisme à montrer (voir "État dans l'URL" dans `technical-specifications.md`).
 
 ## États
 

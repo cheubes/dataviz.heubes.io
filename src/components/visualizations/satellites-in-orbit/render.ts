@@ -5,6 +5,7 @@ import { timer as d3Timer } from 'd3-timer';
 // non-strict tsconfig (no noImplicitAny), same choice as bird-migrations/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
+import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
 
 interface Region {
   id: string;
@@ -167,6 +168,7 @@ export async function mountSatellitesInOrbit(
   controls.appendChild(legend);
 
   const activeRegions = new Set(data.regions.map((r) => r.id));
+  const regionInputs = new Map<string, HTMLInputElement>();
   data.regions.forEach((region) => {
     const label = document.createElement('label');
     label.className = 'dv-satellites-in-orbit__toggle';
@@ -176,10 +178,15 @@ export async function mountSatellitesInOrbit(
     input.addEventListener('change', () => {
       if (input.checked) activeRegions.add(region.id);
       else activeRegions.delete(region.id);
-      rebuildForeground();
-      updateCounter();
-      updateEmptyState();
+      applyRegionFilter();
+      setUrlParams({
+        regions:
+          activeRegions.size === data.regions.length
+            ? null
+            : data.regions.filter((r) => activeRegions.has(r.id)).map((r) => r.id).join(','),
+      });
     });
+    regionInputs.set(region.id, input);
     const swatch = document.createElement('span');
     swatch.className = 'dv-satellites-in-orbit__swatch';
     swatch.style.backgroundColor = color(region.id);
@@ -384,6 +391,12 @@ export async function mountSatellitesInOrbit(
     emptyMessage.hidden = activeRegions.size > 0;
   }
 
+  function applyRegionFilter() {
+    rebuildForeground();
+    updateCounter();
+    updateEmptyState();
+  }
+
   // Jumps the reveal cursor to an arbitrary point rather than only advancing
   // it (unlike the per-frame loop below): a manual scrub of the year slider
   // can move backward, which a full recount + redraw handles directly rather
@@ -469,6 +482,7 @@ export async function mountSatellitesInOrbit(
     playing = !playing;
     playButton.textContent = playing ? labels.pause : labels.play;
     playButton.setAttribute('aria-pressed', String(playing));
+    setUrlParams({ year: playing ? null : String(new Date(simTimeScale(playedMs)).getUTCFullYear()) });
   });
 
   speedSelect.addEventListener('change', () => {
@@ -478,12 +492,11 @@ export async function mountSatellitesInOrbit(
   // Manual scrubbing takes over from autoplay, same convention as
   // light-pollution and monument-layers: without this, autoplay would fight
   // the visitor's drag on every frame.
-  yearSlider.addEventListener('input', () => {
+  function seekToYear(targetYear: number) {
     playing = false;
     playButton.textContent = labels.play;
     playButton.setAttribute('aria-pressed', 'false');
 
-    const targetYear = Number(yearSlider.value);
     const targetMs = endOfYearMs(targetYear);
     playedMs = simTimeScale.invert(targetMs);
     seekToCursor(cursorForYear(targetYear));
@@ -491,10 +504,33 @@ export async function mountSatellitesInOrbit(
 
     holding = cursor >= satellites.length;
     holdElapsedMs = 0;
+  }
+
+  yearSlider.addEventListener('input', () => {
+    seekToYear(Number(yearSlider.value));
+  });
+
+  yearSlider.addEventListener('change', () => {
+    setUrlParams({ year: yearSlider.value });
   });
 
   resize();
-  updateCounter();
-  updateEmptyState();
+
+  const urlRegions = getUrlParam('regions');
+  if (urlRegions !== null) {
+    const ids = urlRegions === '' ? [] : urlRegions.split(',').filter((id) => regionInputs.has(id));
+    // A non-empty list whose ids are all unknown is a broken link, not a
+    // request for the empty state: keep the default.
+    if (urlRegions === '' || ids.length > 0) {
+      activeRegions.clear();
+      for (const id of ids) activeRegions.add(id);
+      for (const [id, input] of regionInputs) input.checked = activeRegions.has(id);
+    }
+  }
+
+  const urlYear = Number(getUrlParam('year'));
+  if (Number.isInteger(urlYear) && urlYear >= firstYear && urlYear <= lastYear) seekToYear(urlYear);
+
+  applyRegionFilter();
   startAnimationLoop();
 }

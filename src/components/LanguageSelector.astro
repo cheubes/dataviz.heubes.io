@@ -43,7 +43,7 @@ const enHref = getAlternatePathname(pathname, 'en');
     getLangFromPathname,
   } from '../scripts/language';
 
-  const { pathname } = window.location;
+  const { pathname, search, hash } = window.location;
   const currentLang = getLangFromPathname(pathname);
 
   const stored = localStorage.getItem(LANG_STORAGE_KEY);
@@ -59,7 +59,7 @@ const enHref = getAlternatePathname(pathname, 'en');
         : currentLang;
 
   if (preferredLang !== currentLang) {
-    window.location.replace(getAlternatePathname(pathname, preferredLang));
+    window.location.replace(`${getAlternatePathname(pathname, preferredLang)}${search}${hash}`);
   }
 
   document.querySelectorAll<HTMLAnchorElement>('.dv-lang-selector__flag').forEach((link) => {
@@ -67,6 +67,9 @@ const enHref = getAlternatePathname(pathname, 'en');
       const lang = link.dataset.lang;
       if (lang === 'fr' || lang === 'en') {
         localStorage.setItem(LANG_STORAGE_KEY, lang);
+        // Read at click time: visualizations rewrite the query string as the
+        // visitor interacts, so the state must be carried over as it is now.
+        link.href = `${getAlternatePathname(window.location.pathname, lang)}${window.location.search}${window.location.hash}`;
       }
     });
   });

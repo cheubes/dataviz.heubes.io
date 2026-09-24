@@ -1,6 +1,7 @@
 import { scaleLinear } from 'd3-scale';
 import { line as d3Line } from 'd3-shape';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
+import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
 
 interface SeriesPoint {
   year: number;
@@ -132,7 +133,21 @@ export async function mountGrapeHarvestAlmanac(
   }
   statusEl.remove();
 
-  const activeRegions = new Set(data.regions.map((r) => r.id));
+  const allRegionIds = data.regions.map((r) => r.id);
+
+  // Absent = every region, empty = none; a list naming no known region is a
+  // broken link rather than a deliberate empty selection, so it falls back to
+  // the default.
+  function readRegionsParam(): string[] {
+    const param = getUrlParam('regions');
+    if (param === null) return allRegionIds;
+    if (param === '') return [];
+    const ids = param.split(',');
+    const known = allRegionIds.filter((id) => ids.includes(id));
+    return known.length > 0 ? known : allRegionIds;
+  }
+
+  const activeRegions = new Set(readRegionsParam());
 
   const minYear = Math.min(...data.regions.map((r) => r.startYear));
   const maxYear = Math.max(...data.regions.map((r) => r.endYear));
@@ -162,10 +177,16 @@ export async function mountGrapeHarvestAlmanac(
     toggleLabel.className = 'dv-grape-harvest-almanac__toggle';
     const input = document.createElement('input');
     input.type = 'checkbox';
-    input.checked = true;
+    input.checked = activeRegions.has(region.id);
     input.addEventListener('change', () => {
       if (input.checked) activeRegions.add(region.id);
       else activeRegions.delete(region.id);
+      setUrlParams({
+        regions:
+          activeRegions.size === allRegionIds.length
+            ? null
+            : allRegionIds.filter((id) => activeRegions.has(id)).join(','),
+      });
       updateEmptyState();
       redrawData();
     });
