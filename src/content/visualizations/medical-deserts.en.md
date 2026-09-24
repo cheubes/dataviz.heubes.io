@@ -9,7 +9,7 @@ datasets:
     license: Licence Ouverte v2.0
     retrieved: '2026-09-22'
   - name: Contours des communes de France simplifié
-    publisher: data.gouv.fr (derived from IGN ADMIN EXPRESS COG)
+    publisher: data.gouv.fr (dérivé d'IGN ADMIN EXPRESS COG)
     url: https://www.data.gouv.fr/datasets/contours-des-communes-de-france-simplifie-avec-regions-et-departement-doutre-mer-rapproches/
     license: Licence Ouverte v2.0
     retrieved: '2026-09-22'

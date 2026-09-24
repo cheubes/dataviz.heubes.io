@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Treize étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Quatorze étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -317,4 +317,25 @@ style-guide.md).
 
 Critère de fin : la page s'affiche dans les deux langues, le lien du pied de page y mène
 depuis toutes les pages, et le sélecteur de langue bascule d'une version à l'autre.
+```
+
+## ✅ 14. Validation du contenu entre fichiers
+
+Les règles de `data-model.md` qui portent sur plusieurs fichiers (attributs non localisés identiques entre les deux langues, `lang` cohérent avec le nom de fichier, slug réservé, composant monté pour chaque visualisation) font échouer le build au lieu d'être vérifiées à la main. Voir "Validation des données" dans `technical-specifications.md`.
+
+**Critère :** chacune de ces règles, volontairement enfreinte, fait échouer `npm run build` avec un message qui nomme la visualisation et le champ en cause ; le contenu réel passe.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 14 du plan de construction (BUILD-PLAN.md) : validation du contenu entre
+fichiers.
+
+Crée src/content/validation.ts (validateVisualizations) et appelle-la depuis src/pages/[viz].astro
+et src/pages/fr/[viz].astro, en suivant "Validation des données" dans
+technical-specifications.md et "Contraintes et règles de validation" dans data-model.md.
+
+Critère de fin : enfreindre volontairement chaque règle fait échouer le build avec un message
+précis ; le contenu réel passe.
 ```
