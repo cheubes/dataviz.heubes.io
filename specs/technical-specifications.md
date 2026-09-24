@@ -41,7 +41,7 @@
 - **Repository :** `https://github.com/cheubes/dataviz.heubes.io`
 - **Domaine :** `dataviz.heubes.io` (fichier `public/CNAME`)
 - **Déploiement :** GitHub Actions (`.github/workflows/deploy.yml`), déclenché sur push sur `main` : build Astro puis publication via `actions/deploy-pages`. GitHub Pages ne construit pas Astro nativement : la source Pages du repository doit être réglée sur "GitHub Actions", pas sur une branche.
-- **Générateur :** Astro (`astro build`), sortie statique dans `dist/`.
+- **Générateur :** Astro, sortie statique dans `dist/`. Le script `build` du `package.json` enchaîne `astro check && astro build` : la vérification de types (fichiers `.ts` et `.astro`) précède toujours la génération, en local comme au déploiement, et une erreur de type fait échouer le build avant toute publication. `withastro/action` lançant ce même script `build`, le workflow n'a pas d'étape de vérification propre.
 
 ```yaml
 # .github/workflows/deploy.yml
@@ -86,7 +86,8 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 
 - `astro` (dernière version stable 5.x)
 - `@astrojs/sitemap` (voir "SEO")
-- `typescript` (vérification de types, pas un framework UI)
+- `typescript` et `@astrojs/check` (dépendances de développement : vérification de types par `astro check`, pas un framework UI, voir "Hébergement et déploiement")
+  - Limite connue : les modules `d3-*` et `topojson-client` n'embarquent pas de déclarations de types. Leurs imports sont typés `any` et échappent à la vérification (`astro check` les signale en simple indication, sans erreur). Les paquets `@types/d3-*` qui combleraient ce trou seraient de nouvelles dépendances, à discuter avant ajout.
 - Aucune dépendance CSS ni bibliothèque d'icônes : les quatre icônes Creative Commons du pied de page sont des SVG inline (voir "Iconographie" dans `style-guide.md`).
 - Pas de dépendance JS de chrome au-delà de vanilla.
 - Dépendances propres à une visualisation : ajoutées et documentées au cas par cas, discutées avant ajout (voir "Règles communes à toutes les visualisations" et les règles globales de sécurité du projet).
@@ -225,7 +226,7 @@ L'anglais, langue par défaut, n'a pas de préfixe ; le français est préfixé 
 
 ### Textes d'interface
 
-Les textes d'interface (labels, messages dont le message d'indisponibilité) sont centralisés dans `src/i18n/fr.ts` et `src/i18n/en.ts`. Ils sont distincts du contenu des visualisations, qui suit le format documenté dans `data-model.md`.
+Les textes d'interface (labels, messages dont le message d'indisponibilité) sont centralisés dans `src/i18n/fr.ts` et `src/i18n/en.ts`. Ils sont distincts du contenu des visualisations, qui suit le format documenté dans `data-model.md`. Le dictionnaire français est déclaré `satisfies typeof en` : une clé présente d'un seul côté fait échouer la vérification de types, donc le build, au lieu d'afficher `undefined`.
 
 ### Détection et mémorisation de la langue
 

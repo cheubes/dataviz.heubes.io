@@ -1,3 +1,7 @@
+import type en from './en';
+
+// Checked against the English dictionary so a key missing from either side
+// fails the type check instead of rendering `undefined`.
 export default {
   site: {
     name: 'Données Vivantes',
@@ -295,4 +299,4 @@ export default {
     zoomOut: 'Dézoomer',
     zoomReset: 'Réinitialiser le zoom',
   },
-};
+} satisfies typeof en;
