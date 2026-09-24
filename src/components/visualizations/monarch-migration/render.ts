@@ -3,9 +3,8 @@ import { scalePow } from 'd3-scale';
 import { select } from 'd3-selection';
 import { timer as d3Timer } from 'd3-timer';
 import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
-// topojson-client ships no bundled types; resolves to `any` under this project's
-// non-strict tsconfig (no noImplicitAny), which is narrow enough for the shape used below.
 import { feature as topojsonFeature } from 'topojson-client';
+import type { Polygon } from 'geojson';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
 import { prefersReducedMotion } from '../../../scripts/reduced-motion';
@@ -86,7 +85,7 @@ function densifiedRing(corners: [number, number][], stepsPerEdge: number): [numb
 // Rings wound clockwise (not the RFC 7946 counter-clockwise convention): d3-geo's
 // spherical winding rule is the inverse, and a counter-clockwise ring gets read as
 // "everything except this box", fitting to the whole world instead of it.
-const REFERENCE_VIEW_BOUNDS = {
+const REFERENCE_VIEW_BOUNDS: Polygon = {
   type: 'Polygon',
   coordinates: [
     densifiedRing(
@@ -99,10 +98,10 @@ const REFERENCE_VIEW_BOUNDS = {
       20
     ),
   ],
-} as const;
+};
 
 // North America, with a small margin around the density grid (14-52°N, 125-65°W).
-const VIEW_BOUNDS = {
+const VIEW_BOUNDS: Polygon = {
   type: 'Polygon',
   coordinates: [
     densifiedRing(
@@ -115,7 +114,7 @@ const VIEW_BOUNDS = {
       20
     ),
   ],
-} as const;
+};
 
 function monthFraction(simDay: number): { monthIndex: number; nextMonthIndex: number; frac: number } {
   const ms = Date.UTC(2001, 0, 1) + simDay * 86_400_000;
@@ -271,7 +270,7 @@ export async function mountMonarchMigration(
         [24, 24],
         [RELIEF_REF_WIDTH - 24, RELIEF_REF_HEIGHT - 24],
       ],
-      REFERENCE_VIEW_BOUNDS as any
+      REFERENCE_VIEW_BOUNDS
     );
     const refScale = projection.scale();
     const refTranslate = projection.translate();
@@ -281,7 +280,7 @@ export async function mountMonarchMigration(
         [24, 24],
         [width - 24, height - 24],
       ],
-      VIEW_BOUNDS as any
+      VIEW_BOUNDS
     );
     reliefScale = projection.scale() / refScale;
     reliefOffsetX = projection.translate()[0] - reliefScale * (refTranslate[0] - RELIEF_ORIGIN_X);
@@ -302,7 +301,7 @@ export async function mountMonarchMigration(
     basemapCtx.translate(transform.x, transform.y);
     basemapCtx.scale(transform.k, transform.k);
     basemapCtx.beginPath();
-    path(landFeature as any);
+    path(landFeature);
     basemapCtx.fillStyle = '#e4e2da';
     basemapCtx.fill();
     basemapCtx.clip();
@@ -320,7 +319,7 @@ export async function mountMonarchMigration(
     basemapCtx.lineCap = 'round';
     basemapCtx.lineJoin = 'round';
     basemapCtx.beginPath();
-    path(riversData as any);
+    path(riversData);
     basemapCtx.stroke();
 
     basemapCtx.restore();
@@ -383,7 +382,7 @@ export async function mountMonarchMigration(
     .on('end', () => {
       if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
-  select(densityCanvas).call(zoomBehavior as any);
+  select(densityCanvas).call(zoomBehavior);
 
   let resizeTimeout: ReturnType<typeof setTimeout> | undefined;
   window.addEventListener('resize', () => {
@@ -395,7 +394,7 @@ export async function mountMonarchMigration(
   const initialTransform = readZoomParam(projection, width, height, ZOOM_SCALE_EXTENT);
   if (initialTransform) {
     restoringUrlState = true;
-    select(densityCanvas).call(zoomBehavior.transform as any, initialTransform);
+    zoomBehavior.transform(select(densityCanvas), initialTransform);
     restoringUrlState = false;
   }
 

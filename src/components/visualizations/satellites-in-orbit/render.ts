@@ -1,8 +1,6 @@
 import { geoOrthographic, geoPath } from 'd3-geo';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import { timer as d3Timer } from 'd3-timer';
-// topojson-client ships no bundled types; resolves to `any` under this project's
-// non-strict tsconfig (no noImplicitAny), same choice as bird-migrations/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
@@ -325,15 +323,15 @@ export async function mountSatellitesInOrbit(
     projection.rotate([rotationLambda, GLOBE_TILT_DEG]);
     globeCtx.clearRect(0, 0, width, height);
     globeCtx.beginPath();
-    path({ type: 'Sphere' } as any);
+    path({ type: 'Sphere' });
     globeCtx.fillStyle = OCEAN_COLOR;
     globeCtx.fill();
     globeCtx.beginPath();
-    path(landFeature as any);
+    path(landFeature);
     globeCtx.fillStyle = LAND_COLOR;
     globeCtx.fill();
     globeCtx.beginPath();
-    path({ type: 'Sphere' } as any);
+    path({ type: 'Sphere' });
     globeCtx.strokeStyle = GLOBE_STROKE_COLOR;
     globeCtx.lineWidth = 1;
     globeCtx.stroke();

@@ -3,8 +3,6 @@ import { scaleLinear } from 'd3-scale';
 import { select } from 'd3-selection';
 import { timer as d3Timer } from 'd3-timer';
 import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
-// topojson-client ships no bundled types; resolves to `any` under this project's
-// moduleResolution setting, same accepted gap as biodiversity/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
@@ -489,7 +487,7 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
         [16, 16],
         [width - 16, height - 16],
       ],
-      landFeature as any
+      landFeature
     );
     zoomBehavior.translateExtent([
       [0, 0],
@@ -513,7 +511,7 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
     .on('end', () => {
       if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
-  select(monumentsCanvas).call(zoomBehavior as any);
+  select(monumentsCanvas).call(zoomBehavior);
 
   function updateZoomButtons() {
     zoomOutButton.disabled = transform.k <= 1;
@@ -522,13 +520,13 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
   updateZoomButtons();
 
   zoomInButton.addEventListener('click', () => {
-    select(monumentsCanvas).call(zoomBehavior.scaleBy as any, ZOOM_BUTTON_STEP);
+    zoomBehavior.scaleBy(select(monumentsCanvas), ZOOM_BUTTON_STEP);
   });
   zoomOutButton.addEventListener('click', () => {
-    select(monumentsCanvas).call(zoomBehavior.scaleBy as any, 1 / ZOOM_BUTTON_STEP);
+    zoomBehavior.scaleBy(select(monumentsCanvas), 1 / ZOOM_BUTTON_STEP);
   });
   zoomResetButton.addEventListener('click', () => {
-    select(monumentsCanvas).call(zoomBehavior.transform as any, zoomIdentity);
+    zoomBehavior.transform(select(monumentsCanvas), zoomIdentity);
   });
 
   let resizeTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -552,7 +550,7 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
     basemapCtx.translate(transform.x, transform.y);
     basemapCtx.scale(transform.k, transform.k);
     basemapCtx.beginPath();
-    path(landFeature as any);
+    path(landFeature);
     basemapCtx.fillStyle = BASEMAP_FILL;
     basemapCtx.fill();
     basemapCtx.clip();
@@ -564,13 +562,13 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
     basemapCtx.lineCap = 'round';
     basemapCtx.lineJoin = 'round';
     basemapCtx.beginPath();
-    path(riversData as any);
+    path(riversData);
     basemapCtx.stroke();
 
     basemapCtx.strokeStyle = ROAD_COLOR;
     basemapCtx.lineWidth = ROAD_LINE_WIDTH_PX / transform.k;
     basemapCtx.beginPath();
-    path(roadsData as any);
+    path(roadsData);
     basemapCtx.stroke();
     basemapCtx.restore();
 
@@ -578,7 +576,7 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
     basemapCtx.translate(transform.x, transform.y);
     basemapCtx.scale(transform.k, transform.k);
     basemapCtx.beginPath();
-    path(landFeature as any);
+    path(landFeature);
     basemapCtx.strokeStyle = BASEMAP_STROKE;
     basemapCtx.lineWidth = 1 / transform.k;
     basemapCtx.stroke();
@@ -850,7 +848,7 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
   const initialTransform = readZoomParam(projection, width, height, [1, MAX_ZOOM]);
   if (initialTransform) {
     restoringUrlState = true;
-    select(monumentsCanvas).call(zoomBehavior.transform as any, initialTransform);
+    zoomBehavior.transform(select(monumentsCanvas), initialTransform);
     restoringUrlState = false;
   }
 

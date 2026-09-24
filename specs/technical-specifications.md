@@ -87,7 +87,9 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 - `astro` (dernière version stable 5.x)
 - `@astrojs/sitemap` (voir "SEO")
 - `typescript` et `@astrojs/check` (dépendances de développement : vérification de types par `astro check`, pas un framework UI, voir "Hébergement et déploiement")
-  - Limite connue : les modules `d3-*` et `topojson-client` n'embarquent pas de déclarations de types. Leurs imports sont typés `any` et échappent à la vérification (`astro check` les signale en simple indication, sans erreur). Les paquets `@types/d3-*` qui combleraient ce trou seraient de nouvelles dépendances, à discuter avant ajout.
+  - Les modules `d3-*` et `topojson-client` n'embarquent pas leurs déclarations de types : elles viennent des paquets `@types/d3-*` (un par module d3 utilisé) et `@types/topojson-client`, en dépendances de développement. Toute nouvelle dépendance d3 ajoute son paquet `@types` correspondant.
+  - Aucun `as any` aux appels d3 : les appels de zoom s'écrivent `zoomBehavior.scaleBy(select(...), k)` plutôt que `select(...).call(zoomBehavior.scaleBy, k)`, dont les surcharges ne se typent pas sans cast ; les géométries constantes passées à `fitExtent`/`path` sont typées `Polygon` (`geojson`) plutôt que déclarées `as const`, dont les tableaux en lecture seule sont refusés ; les générateurs d'arcs à accesseurs constants sont typés `d3Arc<null>()` et appelés avec `null`.
+  - Limite connue : les fonds de carte TopoJSON chargés à l'exécution restent annotés `any` (`basemapTopology: any`, `fetchJson<any>`), si bien que les géométries qui en sont extraites échappent en partie à la vérification. Les typer (`Topology` de `topojson-specification`) se fera au fil des modifications de chaque visualisation.
 - Aucune dépendance CSS ni bibliothèque d'icônes : les quatre icônes Creative Commons du pied de page sont des SVG inline (voir "Iconographie" dans `style-guide.md`).
 - Pas de dépendance JS de chrome au-delà de vanilla.
 - Dépendances propres à une visualisation : ajoutées et documentées au cas par cas, discutées avant ajout (voir "Règles communes à toutes les visualisations" et les règles globales de sécurité du projet).

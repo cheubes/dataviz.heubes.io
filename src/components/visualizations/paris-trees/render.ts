@@ -454,7 +454,7 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
         [16, 16],
         [width - 16, height - 16],
       ],
-      districtsData as any
+      districtsData
     );
     zoomBehavior.translateExtent([
       [0, 0],
@@ -479,7 +479,7 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
     .on('end', () => {
       if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
-  select(treesCanvas).call(zoomBehavior as any);
+  select(treesCanvas).call(zoomBehavior);
 
   function updateZoomButtons() {
     zoomOutButton.disabled = transform.k <= 1;
@@ -488,13 +488,13 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
   updateZoomButtons();
 
   zoomInButton.addEventListener('click', () => {
-    select(treesCanvas).call(zoomBehavior.scaleBy as any, ZOOM_BUTTON_STEP);
+    zoomBehavior.scaleBy(select(treesCanvas), ZOOM_BUTTON_STEP);
   });
   zoomOutButton.addEventListener('click', () => {
-    select(treesCanvas).call(zoomBehavior.scaleBy as any, 1 / ZOOM_BUTTON_STEP);
+    zoomBehavior.scaleBy(select(treesCanvas), 1 / ZOOM_BUTTON_STEP);
   });
   zoomResetButton.addEventListener('click', () => {
-    select(treesCanvas).call(zoomBehavior.transform as any, zoomIdentity);
+    zoomBehavior.transform(select(treesCanvas), zoomIdentity);
   });
 
   // Debounced: unlike the other visualizations' ResizeObserver, a resize here
@@ -521,7 +521,7 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
     basemapCtx.translate(transform.x, transform.y);
     basemapCtx.scale(transform.k, transform.k);
     basemapCtx.beginPath();
-    for (const feature of districtsData.features) path(feature as any);
+    for (const feature of districtsData.features) path(feature);
     basemapCtx.fillStyle = BASEMAP_FILL;
     basemapCtx.fill();
     basemapCtx.clip();
@@ -531,12 +531,12 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
     basemapCtx.lineCap = 'round';
     basemapCtx.lineJoin = 'round';
     basemapCtx.beginPath();
-    path(seineData as any);
+    path(seineData);
     basemapCtx.stroke();
     basemapCtx.strokeStyle = STREET_COLOR;
     basemapCtx.lineWidth = STREET_LINE_WIDTH_PX / transform.k;
     basemapCtx.beginPath();
-    path(streetsData as any);
+    path(streetsData);
     basemapCtx.stroke();
     basemapCtx.restore();
 
@@ -547,7 +547,7 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
     basemapCtx.lineWidth = 1 / transform.k;
     for (const feature of districtsData.features) {
       basemapCtx.beginPath();
-      path(feature as any);
+      path(feature);
       basemapCtx.stroke();
     }
     basemapCtx.restore();
@@ -637,7 +637,7 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
     const geoPoint = projection.invert?.([baseX, baseY]);
     if (!geoPoint) return null;
     for (const feature of districtsData.features) {
-      if (geoContains(feature as any, geoPoint)) return feature.properties.c_ar;
+      if (geoContains(feature, geoPoint)) return feature.properties.c_ar;
     }
     return null;
   }
@@ -645,14 +645,14 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
   function zoomToDistrict(cAr: number) {
     const feature = districtsData.features.find((f) => f.properties.c_ar === cAr);
     if (!feature) return;
-    const [[x0, y0], [x1, y1]] = path.bounds(feature as any);
+    const [[x0, y0], [x1, y1]] = path.bounds(feature);
     const boundsWidth = Math.max(1, x1 - x0);
     const boundsHeight = Math.max(1, y1 - y0);
     const scale = Math.max(1, Math.min(MAX_ZOOM, 0.85 / Math.max(boundsWidth / width, boundsHeight / height)));
     const cx = (x0 + x1) / 2;
     const cy = (y0 + y1) / 2;
     const next = zoomIdentity.translate(width / 2 - scale * cx, height / 2 - scale * cy).scale(scale);
-    select(treesCanvas).call(zoomBehavior.transform as any, next);
+    zoomBehavior.transform(select(treesCanvas), next);
   }
 
   // --- Tooltip --------------------------------------------------------------
@@ -848,7 +848,7 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
   const initialTransform = readZoomParam(projection, width, height, [1, MAX_ZOOM]);
   if (initialTransform) {
     restoringUrlState = true;
-    select(treesCanvas).call(zoomBehavior.transform as any, initialTransform);
+    zoomBehavior.transform(select(treesCanvas), initialTransform);
     restoringUrlState = false;
   }
 }
