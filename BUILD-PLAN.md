@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Dix-neuf étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Vingt étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -443,4 +443,24 @@ de les contourner, et retire les commentaires devenus faux sur l'absence de type
 technical-specifications.md.
 
 Critère de fin : astro check ne signale plus de déclaration manquante et passe sans erreur.
+```
+
+## ✅ 20. Passage à Astro 7
+
+Montée de version d'Astro 5 à 7, qui lève les vulnérabilités signalées par `npm audit` (Astro, `sharp`, `esbuild`). Configuration des collections déplacée vers `src/content.config.ts`, `z` importé depuis `astro/zod`, `compressHTML: true` pour garder le rendu d'Astro 5, fichiers de `public/` localisés depuis la racine du projet. Voir "Génération de site" et "Dépendances" dans `technical-specifications.md`.
+
+**Critère :** `npm audit` ne signale plus de vulnérabilité, `npm run build` passe, le texte rendu de chaque page est identique à celui d'Astro 5 (hors ordre du catalogue, voir ci-dessous), et les visualisations se comportent comme avant.
+
+**Statut :** fait. Seul écart constaté : Astro 7 liste les entrées de collection par ordre alphabétique, alors qu'Astro 5 suivait un ordre de fichiers quelconque. L'ordre des tuiles du catalogue a donc changé, et `home-page.md` ne le spécifie pas.
+
+**Prompt :**
+```
+Implémente l'étape 20 du plan de construction (BUILD-PLAN.md) : passage à Astro 7.
+
+Monte astro en 7.x, applique les changements cassants des guides de migration v6 et v7
+(emplacement de la configuration des collections, import de Zod, compressHTML, chemins vers
+public/), puis compare le site généré à celui d'Astro 5 (texte de chaque page, captures) et
+rejoue les scénarios d'interaction des visualisations.
+
+Critère de fin : npm audit sans vulnérabilité, build qui passe, rendu et comportement identiques.
 ```

@@ -5,7 +5,9 @@
 ### Génération de site
 
 - **Astro**, sortie statique (`output: 'static'`), pas de rendu serveur.
-- **Content collections** (`src/content/config.ts`, schéma Zod) pour les visualisations (voir "Structure des fichiers" ci-dessous). Les thèmes (voir "Thème" dans `data-model.md`) sont un enum fermé porté par le schéma de cette collection, pas une collection à part : ils n'ont pas de contenu ni de page propres (voir "Filtre thématique" dans `home-page.md`).
+- `compressHTML: true` dans `astro.config.mjs` : Astro 7 est passé par défaut au mode `'jsx'`, qui supprime les blancs entre éléments en ligne ("À propos · Réalisée par…", liens de téléchargement séparés par des virgules). La valeur `true` garde le comportement d'Astro 5 : le texte rendu est resté identique mot pour mot lors de la montée de version.
+- Les fichiers de `public/` lus au build (couvertures, données téléchargeables) sont localisés depuis la racine du projet (`process.cwd()`), pas depuis `import.meta.url` : ce dernier désigne l'emplacement du fichier compilé, qui change d'une version de Vite à l'autre (cassé lors du passage à Astro 7).
+- **Content collections** (`src/content.config.ts`, schéma Zod) pour les visualisations (voir "Structure des fichiers" ci-dessous). Les thèmes (voir "Thème" dans `data-model.md`) sont un enum fermé porté par le schéma de cette collection, pas une collection à part : ils n'ont pas de contenu ni de page propres (voir "Filtre thématique" dans `home-page.md`).
 - Composants `.astro` pour le chrome partagé (layout, en-tête, pied de page, sélecteur de langue, tuile de catalogue). Chaque visualisation ajoute ses propres composants (voir "Règles communes à toutes les visualisations").
 
 ### CSS / UI
@@ -84,7 +86,7 @@ jobs:
 
 Indicatif, à reconfirmer au moment de l'implémentation :
 
-- `astro` (dernière version stable 5.x)
+- `astro` (7.x, qui demande Node.js 22.12 ou plus récent ; le workflow de déploiement tourne sous Node 24, valeur par défaut de `withastro/action@v6`)
 - `@astrojs/sitemap` (voir "SEO")
 - `typescript` et `@astrojs/check` (dépendances de développement : vérification de types par `astro check`, pas un framework UI, voir "Hébergement et déploiement")
   - Les modules `d3-*` et `topojson-client` n'embarquent pas leurs déclarations de types : elles viennent des paquets `@types/d3-*` (un par module d3 utilisé) et `@types/topojson-client`, en dépendances de développement. Toute nouvelle dépendance d3 ajoute son paquet `@types` correspondant.
@@ -117,8 +119,8 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │           └── ...                    # données statifiées consommées par la visualisation,
 │                                       # voir specs/<viz-slug>/data-model.md
 ├── src/
+│   ├── content.config.ts              # schémas des content collections
 │   ├── content/
-│   │   ├── config.ts                  # schémas des content collections
 │   │   ├── validation.ts              # règles de validation entre fichiers, voir "Validation des données"
 │   │   ├── about/
 │   │   │   ├── about.fr.md            # texte de la page "À propos", hors collection, voir about-page.md
@@ -170,13 +172,15 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 ### Schéma des content collections (indicatif)
 
 ```ts
-// src/content/config.ts — à ajuster à l'implémentation
-import { defineCollection, z } from 'astro:content';
+// src/content.config.ts — à ajuster à l'implémentation
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
+import { glob } from 'astro/loaders';
 
 const THEMES = ['living', 'climate', 'earth', 'territory', 'space'] as const; // voir "Thème" dans data-model.md
 
 const visualizations = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/visualizations' }), // generateId propre, voir ci-dessous
   schema: z.object({
     lang: z.enum(['fr', 'en']),
     title: z.string(),
@@ -184,7 +188,7 @@ const visualizations = defineCollection({
     datasets: z.array(z.object({
       name: z.string(),
       publisher: z.string(),
-      url: z.string().url(),
+      url: z.url(),
       license: z.string().optional(),
       retrieved: z.string().optional(),
     })),
@@ -197,7 +201,7 @@ const visualizations = defineCollection({
 export const collections = { visualizations };
 ```
 
-La correspondance exacte entre le nom de fichier (`<viz-slug>.<lang>.md`) et le `slug`/`lang` exposés par la collection (extraction, `getStaticPaths`) est un détail d'implémentation confirmé à l'étape 3 du plan de construction (voir `BUILD-PLAN.md`) : le `generateId` par défaut du loader `glob` concatène le nom de base et le suffixe de langue sans séparateur (ex : `test-viz.fr.md` → `test-vizfr`), impropre à en extraire le `slug`. La collection `visualizations` déclare donc un `generateId` propre qui ne retire que l'extension `.md` (ex : `test-viz.fr.md` → id `test-viz.fr`), et une fonction `getVisualizationSlug` (exportée depuis `src/content/config.ts`) retire le suffixe `.<lang>` de cet id pour obtenir le `slug` utilisé dans les URLs.
+La correspondance exacte entre le nom de fichier (`<viz-slug>.<lang>.md`) et le `slug`/`lang` exposés par la collection (extraction, `getStaticPaths`) est un détail d'implémentation confirmé à l'étape 3 du plan de construction (voir `BUILD-PLAN.md`) : le `generateId` par défaut du loader `glob` concatène le nom de base et le suffixe de langue sans séparateur (ex : `test-viz.fr.md` → `test-vizfr`), impropre à en extraire le `slug`. La collection `visualizations` déclare donc un `generateId` propre qui ne retire que l'extension `.md` (ex : `test-viz.fr.md` → id `test-viz.fr`), et une fonction `getVisualizationSlug` (exportée depuis `src/content.config.ts`) retire le suffixe `.<lang>` de cet id pour obtenir le `slug` utilisé dans les URLs.
 
 ---
 
@@ -283,7 +287,7 @@ Mécanisme commun de l'état partageable (voir "État partageable dans l'URL" da
 
 ## Validation des données
 
-- La validation de structure (présence et type des champs) est native aux content collections d'Astro via le schéma Zod (`src/content/config.ts`) : `astro build` échoue si un fichier de contenu ne respecte pas le schéma, sans script dédié.
+- La validation de structure (présence et type des champs) est native aux content collections d'Astro via le schéma Zod (`src/content.config.ts`) : `astro build` échoue si un fichier de contenu ne respecte pas le schéma, sans script dédié.
 - Les règles qui portent sur plusieurs fichiers, hors de portée d'un schéma par fichier (voir "Contraintes et règles de validation" dans `data-model.md`), sont vérifiées au build par `validateVisualizations` (`src/content/validation.ts`) :
   - égalité des attributs non localisés entre `<viz-slug>.fr.md` et `<viz-slug>.en.md`, sans tenir compte de l'ordre des clés ;
   - correspondance entre `lang` et le suffixe du nom de fichier ;
