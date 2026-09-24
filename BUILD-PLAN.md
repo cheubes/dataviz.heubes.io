@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Dix-sept étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Dix-huit étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -402,4 +402,25 @@ en suivant "Hébergement et déploiement" et "Textes d'interface" dans technical
 
 Critère de fin : une erreur de type volontaire (fichier .astro, clé i18n manquante) fait échouer
 npm run build ; le code réel passe.
+```
+
+## ✅ 18. Surveillance des liens des sources
+
+Chaque semaine, un workflow GitHub vérifie les URL des jeux de données et échoue si l'une est cassée (404, 410, 5xx persistant, domaine introuvable). Les réponses qui ne disent rien de l'existence de la source (anti-robots, limitation, certificat, délai) sont listées sans faire échouer le run. Voir "Surveillance des sources" dans `technical-specifications.md`.
+
+**Critère :** `npm run check-links` classe correctement les URL réelles (aucune cassée, les indéterminées identifiées) ; une URL volontairement cassée fait sortir le script en erreur.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 18 du plan de construction (BUILD-PLAN.md) : surveillance des liens des
+sources.
+
+Crée scripts/check-source-links.mjs (Node, sans dépendance) et
+.github/workflows/check-source-links.yml (hebdomadaire et à la demande), en suivant
+"Surveillance des sources" dans technical-specifications.md.
+
+Critère de fin : les URL réelles sont correctement classées, et une URL volontairement cassée
+fait échouer le script.
 ```
