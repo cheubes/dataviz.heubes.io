@@ -35,6 +35,7 @@ export default {
       'Fichiers tels que la visualisation les utilise. Leur réutilisation reste soumise aux licences des sources ci-dessus.',
     backToCatalog: 'Retour au catalogue',
     tableSummary: 'Voir les données sous forme de tableau',
+    preparedDataName: '{title} : données préparées',
     tableTotal: 'Total',
     notAvailable: 'n.d.',
   },

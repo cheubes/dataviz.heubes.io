@@ -139,6 +139,7 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   │   ├── url-state.ts               # état partageable dans l'URL, voir "État dans l'URL"
 │   │   ├── data-table.ts              # type commun des vues tableau, voir "Vue tableau des données"
 │   │   ├── reduced-motion.ts          # préférence de mouvement réduit, voir "Accessibilité"
+│   │   ├── structured-data.ts         # données structurées schema.org, voir "SEO"
 │   │   └── viz-stage-height.ts        # hauteur de la zone de montage, voir "Règles communes à toutes les visualisations"
 │   ├── components/
 │   │   ├── Header.astro
@@ -348,6 +349,11 @@ Les URL des jeux de données (attribut `url` de chaque entrée de `datasets`, vo
 - `<link rel="canonical">` vers l'URL de la page sans query string, dans `BaseLayout.astro` : les liens partagés porteurs d'état (voir "État dans l'URL" ci-dessus) restent des variantes d'une seule page indexée.
 - Balises meta et Open Graph (titre, description = `summary`, image = couverture) générées directement dans `BaseLayout.astro`, pas de plugin dédié nécessaire (à la différence de `jekyll-seo-tag`).
 - `@astrojs/sitemap` pour un `sitemap.xml` généré automatiquement.
+- **Données structurées schema.org** (JSON-LD), dans le `<head>` de chaque page de visualisation, construites au build par `src/scripts/structured-data.ts` à partir du frontmatter :
+  - la visualisation, en `CreativeWork` : titre, résumé, date de publication, auteur, couverture, thèmes, licence du site (CC BY-NC-SA 4.0), et ses sources citées en `isBasedOn` (chacune en `Dataset` avec éditeur, URL et licence) ;
+  - quand la visualisation déclare des fichiers téléchargeables (voir "Téléchargement des données préparées" dans `functional-specifications.md`), ces fichiers en `Dataset` dérivé : le résumé en description (entre 50 et 5 000 caractères, comme l'exige Google Dataset Search), un `DataDownload` par fichier, les mêmes sources en `isBasedOn`, et pour licence la liste des licences de ces sources, puisque les fichiers restent soumis à chacune (même règle que la mention affichée sous les liens de téléchargement).
+
+  Rendu par `BaseLayout.astro` (propriété `structuredData`) dans un `<script type="application/ld+json">`, les `<` échappés pour qu'aucun texte de contenu ne puisse fermer la balise.
 
 ---
 
