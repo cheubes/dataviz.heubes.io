@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Dix-huit étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Dix-neuf étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -423,4 +423,24 @@ Crée scripts/check-source-links.mjs (Node, sans dépendance) et
 
 Critère de fin : les URL réelles sont correctement classées, et une URL volontairement cassée
 fait échouer le script.
+```
+
+## ✅ 19. Types des modules d3
+
+Déclarations de types des modules `d3-*` et de `topojson-client` (`@types/*`, dépendances de développement), pour que `astro check` vérifie les appels d3 au lieu de les laisser en `any`, et retrait des 81 `as any` qui court-circuitaient cette vérification aux appels d3. Voir "Dépendances" dans `technical-specifications.md`.
+
+**Critère :** `astro check` ne signale plus aucune déclaration de types manquante, le code de rendu ne contient plus de `as any`, et les interactions (zoom, molette, glisser, transitions) se comportent comme avant.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 19 du plan de construction (BUILD-PLAN.md) : types des modules d3.
+
+Ajoute en dépendances de développement les paquets @types correspondant à chaque module d3
+utilisé et à topojson-client, retire les `as any` des appels d3 en corrigeant les types au lieu
+de les contourner, et retire les commentaires devenus faux sur l'absence de types, en suivant "Dépendances" dans
+technical-specifications.md.
+
+Critère de fin : astro check ne signale plus de déclaration manquante et passe sans erreur.
 ```

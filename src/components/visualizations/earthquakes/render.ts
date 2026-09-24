@@ -3,9 +3,8 @@ import { scaleLinear, scaleSqrt } from 'd3-scale';
 import { select } from 'd3-selection';
 import { timer as d3Timer } from 'd3-timer';
 import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
-// topojson-client ships no bundled types; resolves to `any` under this project's
-// non-strict tsconfig, same accepted gap as bird-migrations/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
+import type { Polygon } from 'geojson';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
 import { prefersReducedMotion } from '../../../scripts/reduced-motion';
@@ -140,7 +139,7 @@ function densifiedRing(corners: [number, number][], stepsPerEdge: number): [numb
   ring.push(ring[0]);
   return ring;
 }
-const RELIEF_REFERENCE_BOUNDS = {
+const RELIEF_REFERENCE_BOUNDS: Polygon = {
   type: 'Polygon',
   coordinates: [
     densifiedRing(
@@ -153,7 +152,7 @@ const RELIEF_REFERENCE_BOUNDS = {
       20
     ),
   ],
-} as const;
+};
 
 // Same year-only grouping, spread evenly across the year for a smoother
 // per-frame trigger cadence (see the `Earthquake` interface above). `list`
@@ -391,7 +390,7 @@ export async function mountEarthquakes(root: HTMLElement, lang: 'fr' | 'en', lab
         [24, 24],
         [RELIEF_REF_WIDTH - 24, RELIEF_REF_HEIGHT - 24],
       ],
-      RELIEF_REFERENCE_BOUNDS as any
+      RELIEF_REFERENCE_BOUNDS
     );
     const refScale = projection.scale();
     const refTranslate = projection.translate();
@@ -403,7 +402,7 @@ export async function mountEarthquakes(root: HTMLElement, lang: 'fr' | 'en', lab
         [24, 24],
         [width - 24, height - 24],
       ],
-      landFeature as any
+      landFeature
     );
     reliefScale = projection.scale() / refScale;
     reliefOffsetX = projection.translate()[0] - reliefScale * (refTranslate[0] - RELIEF_ORIGIN_X);
@@ -426,7 +425,7 @@ export async function mountEarthquakes(root: HTMLElement, lang: 'fr' | 'en', lab
     basemapCtx.scale(transform.k, transform.k);
 
     basemapCtx.beginPath();
-    path(landFeature as any);
+    path(landFeature);
     basemapCtx.fillStyle = BASEMAP_FILL;
     basemapCtx.fill();
     basemapCtx.save();
@@ -445,7 +444,7 @@ export async function mountEarthquakes(root: HTMLElement, lang: 'fr' | 'en', lab
     basemapCtx.lineCap = 'round';
     basemapCtx.lineJoin = 'round';
     basemapCtx.beginPath();
-    path(riversData as any);
+    path(riversData);
     basemapCtx.stroke();
     // Land-only clip lifted before the plate boundaries below: unlike rivers,
     // boundaries run through open ocean as often as through land (mid-ocean
@@ -457,7 +456,7 @@ export async function mountEarthquakes(root: HTMLElement, lang: 'fr' | 'en', lab
     basemapCtx.lineCap = 'round';
     basemapCtx.lineJoin = 'round';
     basemapCtx.beginPath();
-    path(data.plateBoundaries as any);
+    path(data.plateBoundaries);
     basemapCtx.stroke();
 
     basemapCtx.restore();
@@ -477,7 +476,7 @@ export async function mountEarthquakes(root: HTMLElement, lang: 'fr' | 'en', lab
     .on('end', () => {
       if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
-  select(pulsesCanvas).call(zoomBehavior as any);
+  select(pulsesCanvas).call(zoomBehavior);
 
   function updateZoomButtons() {
     zoomOutButton.disabled = transform.k <= MIN_ZOOM;
@@ -486,13 +485,13 @@ export async function mountEarthquakes(root: HTMLElement, lang: 'fr' | 'en', lab
   updateZoomButtons();
 
   zoomInButton.addEventListener('click', () => {
-    select(pulsesCanvas).call(zoomBehavior.scaleBy as any, ZOOM_BUTTON_STEP);
+    zoomBehavior.scaleBy(select(pulsesCanvas), ZOOM_BUTTON_STEP);
   });
   zoomOutButton.addEventListener('click', () => {
-    select(pulsesCanvas).call(zoomBehavior.scaleBy as any, 1 / ZOOM_BUTTON_STEP);
+    zoomBehavior.scaleBy(select(pulsesCanvas), 1 / ZOOM_BUTTON_STEP);
   });
   zoomResetButton.addEventListener('click', () => {
-    select(pulsesCanvas).call(zoomBehavior.transform as any, zoomIdentity);
+    zoomBehavior.transform(select(pulsesCanvas), zoomIdentity);
   });
 
   let resizeTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -505,7 +504,7 @@ export async function mountEarthquakes(root: HTMLElement, lang: 'fr' | 'en', lab
   const initialTransform = readZoomParam(projection, width, height, [MIN_ZOOM, MAX_ZOOM]);
   if (initialTransform) {
     restoringUrlState = true;
-    select(pulsesCanvas).call(zoomBehavior.transform as any, initialTransform);
+    zoomBehavior.transform(select(pulsesCanvas), initialTransform);
     restoringUrlState = false;
   }
 

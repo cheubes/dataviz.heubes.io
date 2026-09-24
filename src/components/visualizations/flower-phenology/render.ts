@@ -356,7 +356,7 @@ export async function mountFlowerPhenology(
         const { inner, outer } = laneRadii(ringStart, laneIndex);
         const { band, median } = arcAngles(stats);
 
-        const bandGenerator = d3Arc()
+        const bandGenerator = d3Arc<null>()
           .innerRadius(inner)
           .outerRadius(outer)
           .cornerRadius(cornerRadius)
@@ -365,20 +365,20 @@ export async function mountFlowerPhenology(
 
         const bandPath = document.createElementNS(svgNS, 'path');
         bandPath.setAttribute('class', 'dv-flower-phenology__arc');
-        bandPath.setAttribute('d', bandGenerator({} as any) ?? '');
+        bandPath.setAttribute('d', bandGenerator(null) ?? '');
         bandPath.setAttribute('fill', entry.flowerColor);
         bandPath.setAttribute('fill-opacity', '0.75');
         bandPath.setAttribute('stroke', 'var(--dv-gridline)');
         bandPath.setAttribute('stroke-width', '1');
 
-        const medianGenerator = d3Arc()
+        const medianGenerator = d3Arc<null>()
           .innerRadius(inner)
           .outerRadius(outer)
           .startAngle(median.start)
           .endAngle(median.end);
 
         const medianPath = document.createElementNS(svgNS, 'path');
-        medianPath.setAttribute('d', medianGenerator({} as any) ?? '');
+        medianPath.setAttribute('d', medianGenerator(null) ?? '');
         medianPath.setAttribute('fill', entry.flowerColor);
         medianPath.setAttribute('pointer-events', 'none');
 
@@ -498,13 +498,13 @@ export async function mountFlowerPhenology(
     from: ArcAngles,
     to: ArcAngles
   ) {
-    const generator = d3Arc().innerRadius(innerR).outerRadius(outerR).cornerRadius(cornerRadius);
+    const generator = d3Arc<null>().innerRadius(innerR).outerRadius(outerR).cornerRadius(cornerRadius);
     select(path)
       .transition()
       .duration(ringTransitionMs)
       .attrTween('d', () => (t: number) => {
         generator.startAngle(from.start + (to.start - from.start) * t).endAngle(from.end + (to.end - from.end) * t);
-        return generator({} as any) ?? '';
+        return generator(null) ?? '';
       });
   }
 
