@@ -7,7 +7,7 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 | Langue | Titre | Résumé |
 |---|---|---|
 | FR | Où la France a brûlé | Plus de cinquante mille incendies de forêt recensés depuis 2006 : une carte qui les rejoue, année après année, à travers le pays. |
-| EN | Where France Has Burned | Over fifty thousand forest fires recorded since 2006 : a map replaying them, year by year, across the country. |
+| EN | Where France Has Burned | Over fifty thousand forest fires recorded since 2006: a map replaying them, year by year, across the country. |
 
 **Présentation longue FR :**
 > Depuis 2006, la Base de Données sur les Incendies de Forêts en France (BDIFF) recense chaque incendie de forêt survenu sur le territoire : sa commune, sa date, la surface qu'il a parcourue. Plus de cinquante mille foyers y sont aujourd'hui répertoriés, très majoritairement concentrés sur le pourtour méditerranéen.
@@ -15,9 +15,9 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 > Cette carte rejoue, année après année, où ces incendies se sont produits : chaque point apparaît à la commune où il a démarré, sa taille reflétant la surface brûlée. La part du pourtour méditerranéen dans le total annuel recule doucement sur la période (de sept incendies sur dix en 2006-2010 à six sur dix en 2021-2025), tandis que des foyers plus nombreux apparaissent ailleurs : Bretagne, massif alpin, Normandie, Vosges. Le feu reste concentré sur ses terres historiques, mais il ne s'y cantonne plus tout à fait.
 
 **Présentation longue EN :**
-> Since 2006, the French Forest Fire Database (BDIFF) has recorded every forest fire on French territory : its municipality, its date, the area it burned. More than fifty thousand fires are now listed, overwhelmingly concentrated around the Mediterranean rim.
+> Since 2006, the French Forest Fire Database (BDIFF) has recorded every forest fire on French territory: its municipality, its date, the area it burned. More than fifty thousand fires are now listed, overwhelmingly concentrated around the Mediterranean rim.
 >
-> This map replays, year by year, where these fires occurred : each point appears at the municipality where it started, its size reflecting the area burned. The Mediterranean rim's share of the annual total slowly recedes over the period (from seven fires in ten in 2006-2010 to six in ten in 2021-2025), while more fires appear elsewhere : Brittany, the Alps, Normandy, the Vosges. Fire remains concentrated on its historical ground, but it no longer stays fully confined to it.
+> This map replays, year by year, where these fires occurred: each point appears at the municipality where it started, its size reflecting the area burned. The Mediterranean rim's share of the annual total slowly recedes over the period (from seven fires in ten in 2006-2010 to six in ten in 2021-2025), while more fires appear elsewhere: Brittany, the Alps, Normandy, the Vosges. Fire remains concentrated on its historical ground, but it no longer stays fully confined to it.
 
 Angle confirmé empiriquement sur les données réelles agrégées par année et par département (voir "Statistiques mesurées" dans `data-model.md`), pas présumé : glissement réel mais modéré, formulé en conséquence plutôt qu'exagéré.
 

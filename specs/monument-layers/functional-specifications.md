@@ -7,7 +7,7 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 | Langue | Titre | Résumé |
 |---|---|---|
 | FR | Les strates du patrimoine | Quarante-cinq mille monuments historiques français, de leur plus ancienne pierre connue à aujourd'hui : une carte qui se construit sous vos yeux, siècle après siècle. |
-| EN | Layers of Heritage | Forty-five thousand French historic monuments, from their oldest known stone to today : a map that builds itself before your eyes, century after century. |
+| EN | Layers of Heritage | Forty-five thousand French historic monuments, from their oldest known stone to today: a map that builds itself before your eyes, century after century. |
 
 **Présentation longue FR :**
 > Depuis 1840, l'État protège des monuments jugés dignes de conservation : châteaux, églises, ponts, lavoirs, gares... La base Mérimée du ministère de la Culture recense aujourd'hui près de quarante-cinq mille édifices protégés en France métropolitaine, chacun daté de sa plus ancienne campagne de construction connue.
@@ -15,9 +15,9 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 > Cette carte les fait apparaître dans l'ordre chronologique de leur construction plutôt que de leur protection : des vestiges antiques épars jusqu'à la densité du bâti du dix-neuvième siècle, en passant par les grandes vagues romane, gothique et classique. Une teinte de plus en plus sombre marque la profondeur du temps : chaque point ajouté est une strate de plus dans la construction du pays.
 
 **Présentation longue EN :**
-> Since 1840, the French state has protected buildings deemed worth preserving : castles, churches, bridges, wash houses, railway stations... The Ministry of Culture's Mérimée database now lists nearly forty-five thousand protected buildings in mainland France, each dated to its oldest known construction phase.
+> Since 1840, the French state has protected buildings deemed worth preserving: castles, churches, bridges, wash houses, railway stations... The Ministry of Culture's Mérimée database now lists nearly forty-five thousand protected buildings in mainland France, each dated to its oldest known construction phase.
 >
-> This map reveals them in the chronological order of their construction rather than their protection : from scattered antique remains to the density of nineteenth-century building, passing through the great Romanesque, Gothic, and Classical waves. A progressively darker shade marks the depth of time : each point added is one more layer in the construction of the country.
+> This map reveals them in the chronological order of their construction rather than their protection: from scattered antique remains to the density of nineteenth-century building, passing through the great Romanesque, Gothic, and Classical waves. A progressively darker shade marks the depth of time: each point added is one more layer in the construction of the country.
 
 ## Objectif
 
