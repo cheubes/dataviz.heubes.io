@@ -44,6 +44,7 @@ Faire voir, par la reconstitution année par année sur une carte réelle de la 
 - **Zoom/pan :** libre sur la carte (souris/molette, tactile), pour observer une concentration régionale (ex. le pourtour méditerranéen) une fois qu'elle est apparue. Doublé de boutons zoomer/dézoomer/réinitialiser (mêmes contrôles que `monument-layers`/`paris-trees`), désactivés aux bornes de l'échelle de zoom.
 - **Survol/tap d'un incendie :** fiche de détail (commune, département, date, surface parcourue, cause suspectée si connue, lien vers la fiche officielle BDIFF). Le lien n'est cliquable qu'une fois la fiche épinglée (clic/tap sur le point), même raison que `monument-layers` : en simple survol, la fiche suit le pointeur et resterait impossible à atteindre sans se refermer avant de pouvoir cliquer le lien.
 - **Vue initiale :** carte de France entière visible, année 2006 affichée, lecture automatique déjà en cours.
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : l'année et le cadrage sont restaurés. Une année partagée ouvre la carte en pause sur cette année (voir "État dans l'URL" dans `technical-specifications.md`).
 
 ## États
 

@@ -5,6 +5,7 @@ import { timer as d3Timer } from 'd3-timer';
 // moduleResolution setting, same accepted gap as bird-migrations/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
+import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
 
 interface SkyScaleTier {
   id: number;
@@ -367,6 +368,7 @@ export async function mountLightPollution(root: HTMLElement, lang: 'fr' | 'en', 
   playButton.addEventListener('click', () => {
     playing = !playing;
     updatePlayButton();
+    setUrlParams({ year: playing ? null : String(years[selectedYearIndex]) });
   });
 
   speedSelect.addEventListener('change', () => {
@@ -377,13 +379,28 @@ export async function mountLightPollution(root: HTMLElement, lang: 'fr' | 'en', 
     // Manual scrubbing takes over from autoplay, same as pressing pause.
     playing = false;
     updatePlayButton();
-    holding = false;
     stepElapsedMs = 0;
     selectedYearIndex = Number(yearSlider.value);
+    // Resuming from the last year must go through the end-of-pass hold, or
+    // the autoplay step (which only ever advances) would stay stuck there.
+    holding = selectedYearIndex === years.length - 1;
+    holdElapsedMs = 0;
     renderMap();
+  });
+
+  yearSlider.addEventListener('change', () => {
+    setUrlParams({ year: String(years[selectedYearIndex]) });
   });
 
   const resizeObserver = new ResizeObserver(() => resize());
   resizeObserver.observe(stage);
   resize();
+
+  const urlYearIndex = years.indexOf(Number(getUrlParam('year')));
+  if (urlYearIndex !== -1) {
+    playing = false;
+    updatePlayButton();
+    holding = urlYearIndex === years.length - 1;
+    setYearIndex(urlYearIndex);
+  }
 }

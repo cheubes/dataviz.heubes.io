@@ -33,6 +33,7 @@ Montrer, sur un calendrier circulaire, le moment de première floraison de plant
 - **Comparaison de décennies :** deux sélecteurs indépendants, un pour l'anneau intérieur et un pour l'anneau extérieur, chacun proposant les six décennies couvertes par les données (1970s à 2020s, voir "Dataset source" dans `data-model.md`). Sélection libre : aucune contrainte d'ordre entre les deux anneaux (l'anneau intérieur peut porter une décennie plus récente que l'extérieur si le visiteur le choisit ainsi). **Par défaut : 1970s à l'intérieur, 2020s (2020 à aujourd'hui) à l'extérieur** (décision explicite : l'écart maximal disponible, pour rendre la dérive du calendrier la plus visible possible dès l'ouverture).
 - **Survol / tap d'un arc :** tooltip avec le nom de l'espèce, le jour médian de floraison en toutes lettres (ex. "15 avril"), la variation par rapport à l'autre décennie affichée (ex. "-8 jours").
 - **Vue initiale :** calendrier complet visible, toutes les espèces sélectionnées, décennies par défaut (1970s intérieur / 2020s extérieur).
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les espèces affichées et la décennie de chaque anneau sont restaurées, y compris une sélection vide. Le tooltip n'est pas capturé (voir "État dans l'URL" dans `technical-specifications.md`).
 
 ## États
 

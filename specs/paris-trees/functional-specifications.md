@@ -45,6 +45,7 @@ Donner à explorer librement, sans thèse imposée, la totalité du patrimoine a
 - **Survol/tap d'un arbre de jardin national** (case "Jardins nationaux" activée) : fiche de détail minimale (genre et espèce si connus, sinon mention générique ; nom du jardin), cohérente avec la pauvreté des attributs disponibles pour ces points (voir "Contenu" ci-dessus). Prioritaire sur un arbre municipal proche en cas de superposition, cohérent avec son affichage par-dessus le reste de la nuée.
 - **Taille des points :** proportionnelle à la circonférence du tronc (voir "Rendu" dans `technical-specifications.md`), lisible sans interaction, en complément de la fiche de détail.
 - **Vue initiale :** tous les genres actifs, jardins nationaux affichés, recherche vide, carte centrée sur Paris entier, zoom initial cadrant les vingt arrondissements.
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les genres actifs, la recherche, la case "Jardins nationaux" et le cadrage (y compris celui obtenu par un clic sur un arrondissement) sont restaurés. La fiche de détail d'un arbre n'est pas partagée.
 
 ## États
 

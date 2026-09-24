@@ -7,6 +7,7 @@ import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 // moduleResolution setting, same accepted gap as monument-layers/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
+import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
 
 type Cause = 'natural' | 'human' | 'malicious' | 'unknown';
 
@@ -349,6 +350,8 @@ export async function mountForestFires(root: HTMLElement, lang: 'fr' | 'en', lab
     firesCtx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
   }
 
+  let restoringUrlState = false;
+
   const zoomBehavior = d3Zoom<HTMLCanvasElement, unknown>()
     .scaleExtent([MIN_ZOOM, MAX_ZOOM])
     .on('zoom', (event) => {
@@ -356,6 +359,9 @@ export async function mountForestFires(root: HTMLElement, lang: 'fr' | 'en', lab
       drawBasemap();
       renderYear();
       updateZoomButtons();
+    })
+    .on('end', () => {
+      if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
   select(firesCanvas).call(zoomBehavior as any);
 
@@ -465,6 +471,7 @@ export async function mountForestFires(root: HTMLElement, lang: 'fr' | 'en', lab
   playButton.addEventListener('click', () => {
     playing = !playing;
     updatePlayButton();
+    setUrlParams({ year: playing ? null : String(years[selectedYearIndex]) });
   });
 
   speedSelect.addEventListener('change', () => {
@@ -477,9 +484,16 @@ export async function mountForestFires(root: HTMLElement, lang: 'fr' | 'en', lab
   yearSlider.addEventListener('input', () => {
     playing = false;
     updatePlayButton();
-    holding = false;
     stepElapsedMs = 0;
     setYearIndex(Number(yearSlider.value));
+    // Resuming from the last year must go through the end-of-pass hold, or
+    // the autoplay step (which only ever advances) would stay stuck there.
+    holding = selectedYearIndex === years.length - 1;
+    holdElapsedMs = 0;
+  });
+
+  yearSlider.addEventListener('change', () => {
+    setUrlParams({ year: String(years[Number(yearSlider.value)]) });
   });
 
   // --- Tooltip ----------------------------------------------------------------
@@ -569,4 +583,19 @@ export async function mountForestFires(root: HTMLElement, lang: 'fr' | 'en', lab
 
   // --- Boot -----------------------------------------------------------------
   resize();
+
+  const initialTransform = readZoomParam(projection, width, height, [MIN_ZOOM, MAX_ZOOM]);
+  if (initialTransform) {
+    restoringUrlState = true;
+    select(firesCanvas).call(zoomBehavior.transform as any, initialTransform);
+    restoringUrlState = false;
+  }
+
+  const urlYearIndex = years.indexOf(Number(getUrlParam('year')));
+  if (urlYearIndex !== -1) {
+    playing = false;
+    updatePlayButton();
+    holding = urlYearIndex === years.length - 1;
+    setYearIndex(urlYearIndex);
+  }
 }

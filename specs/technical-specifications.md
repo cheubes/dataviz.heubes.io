@@ -127,6 +127,7 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   ├── scripts/
 │   │   ├── language.ts                # détection/mémorisation de la langue (Header.astro, LanguageSelector.astro)
 │   │   ├── theme-filter.ts            # filtre thématique du catalogue (ThemeFilter.astro, VizCard.astro)
+│   │   ├── url-state.ts               # état partageable dans l'URL, voir "État dans l'URL"
 │   │   └── viz-stage-height.ts        # hauteur de la zone de montage, voir "Règles communes à toutes les visualisations"
 │   ├── components/
 │   │   ├── Header.astro
@@ -240,6 +241,35 @@ Au premier accès à une URL sans préfixe de langue (anglais par défaut), la l
 
 ---
 
+## État dans l'URL
+
+Mécanisme commun de l'état partageable (voir "État partageable dans l'URL" dans `functional-specifications.md`).
+
+- **Support :** query string (`?year=1964&zoom=3.2,142.3700,38.3200`). Noms de paramètres en anglais, courts, en kebab-case. Les listes sont des identifiants séparés par des virgules, identiques aux identifiants des données (ex : `regions=us,china`). Ces identifiants ne sont jamais des libellés traduits, pour que l'URL reste la même dans les deux langues.
+- **Module commun :** `src/scripts/url-state.ts`.
+  - `getUrlParam(name)` : lit un paramètre.
+  - `setUrlParams({ name: value | null })` : met à jour l'URL via `history.replaceState`. Il fusionne avec les paramètres existants, retire ceux qui valent `null` et conserve le fragment.
+  - `readZoomParam(projection, largeur, hauteur, scaleExtent)` / `writeZoomParam(transform, projection, largeur, hauteur)` : le format de cadrage ci-dessous, commun aux cartes zoomables.
+
+  Chaque visualisation reste propriétaire de ses paramètres : leur lecture, leur validation et leur application sont dans son propre `render.ts`, conformément à "Règles communes à toutes les visualisations" ci-dessus.
+- **Écriture :**
+  - seulement en réponse à une action du visiteur, jamais depuis la boucle d'animation ;
+  - pour les curseurs, sur `change` (relâchement) plutôt que sur `input` ;
+  - pour le zoom, sur l'événement `end` de `d3-zoom`, en fin de geste ;
+  - pour une recherche texte, après une temporisation.
+
+  Raison : les navigateurs limitent la fréquence de `history.replaceState` (Safari : une centaine d'appels par tranche de 30 secondes au-delà de laquelle il lève une exception).
+- **Lecture :** une fois, au montage, après le chargement des données et le premier dimensionnement, avant la première image. Chaque paramètre est validé séparément (identifiant connu, nombre fini, borne respectée) ; un paramètre invalide est ignoré. Appliquer l'état initial ne réécrit pas l'URL.
+- **Cadrage des cartes zoomables :** `zoom=<k>,<lon>,<lat>`.
+  - `k` : le facteur d'échelle `d3-zoom`, à deux décimales.
+  - `lon`, `lat` : les coordonnées géographiques (quatre décimales) du centre de la zone visible, soit `projection.invert(transform.invert([largeur / 2, hauteur / 2]))`.
+
+  Des coordonnées géographiques plutôt que des pixels, pour que le lien cadre la même zone quelle que soit la taille ou le ratio de l'écran du destinataire. À la lecture, `k` est borné au `scaleExtent` de la carte, le point est reprojeté, et la transformation `translate(largeur / 2 − k·x, hauteur / 2 − k·y).scale(k)` est appliquée via `zoomBehavior.transform`, qui borne aussi la translation au `translateExtent`. Paramètre absent quand `k = 1` (vue d'ensemble).
+- **Changement de langue :** `src/components/LanguageSelector.astro` reporte la query string et le fragment courants, à la fois dans la redirection automatique et dans les liens du sélecteur (lus au moment du clic, puisque l'URL change pendant la visite).
+- **SEO :** un `<link rel="canonical">` sans query string, dans `BaseLayout.astro`, ramène toutes les variantes partagées à l'URL de la page (voir "SEO" ci-dessous).
+
+---
+
 ## Validation des données
 
 - La validation de structure (présence et type des champs) est native aux content collections d'Astro via le schéma Zod (`src/content/config.ts`) : `astro build` échoue si un fichier de contenu ne respecte pas le schéma, sans script dédié.
@@ -267,6 +297,7 @@ Au premier accès à une URL sans préfixe de langue (anglais par défaut), la l
 - Rendu statique : chaque page existe indépendamment au moment du crawl, sans dépendre de JavaScript pour son contenu principal (à l'exception de la visualisation interactive elle-même).
 - Chaque visualisation a sa propre URL indexable (voir "Structure des URLs").
 - Liens `hreflang` / alternate entre les versions FR et EN d'une même page, dans `BaseLayout.astro`.
+- `<link rel="canonical">` vers l'URL de la page sans query string, dans `BaseLayout.astro` : les liens partagés porteurs d'état (voir "État dans l'URL" ci-dessus) restent des variantes d'une seule page indexée.
 - Balises meta et Open Graph (titre, description = `summary`, image = couverture) générées directement dans `BaseLayout.astro`, pas de plugin dédié nécessaire (à la différence de `jekyll-seo-tag`).
 - `@astrojs/sitemap` pour un `sitemap.xml` généré automatiquement.
 

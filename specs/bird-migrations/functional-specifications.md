@@ -50,6 +50,7 @@ Faire voir, par l'animation de trajectoires GPS réelles, les couloirs de migrat
 - **Survol / tap d'une trajectoire :** surlignage de la trajectoire de l'individu, tooltip avec l'espèce, l'identifiant anonymisé ("Individu CC_001"), la distance totale parcourue (km) et la durée de la migration (jours), voir "Champs dérivés côté client" dans `data-model.md`. Fonctionne dans les deux vues : en vue animée, seule la tête mobile de la trajectoire déclenche le tooltip ; en vue statique, n'importe quel point du tracé complet le déclenche (plus facile à cibler, puisque tout le trajet est visible en permanence).
 - **Zoom / pan :** sur la zone Europe/Afrique illustrée (pas de panoramique libre au-delà). Partagé entre les deux vues.
 - **Vue initiale :** zone Europe/Afrique entière visible, toutes espèces actives, direction "Les deux", vue "Animée" avec animation déjà en cours.
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les espèces actives, la direction, la vue, le cadrage et, si la lecture était en pause, le jour simulé sont restaurés ; un lien pris en pause ouvre l'animation en pause sur ce jour. Ni la vitesse ni l'individu surligné ne sont partagés.
 
 ## États
 

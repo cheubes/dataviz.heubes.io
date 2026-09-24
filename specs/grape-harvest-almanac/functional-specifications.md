@@ -33,6 +33,7 @@ Montrer, sur une ligne temporelle continue, l'évolution des dates de vendanges 
 - **Survol / tap d'une courbe :** curseur vertical (crosshair) accroché à l'année la plus proche, tooltip listant, pour chaque région active ayant une donnée cette année-là, sa date de vendange exacte (ex. "Bourgogne : 22 octobre").
 - **Sélection des régions :** sept cases à cocher (une par région), doublant la légende. Décocher une région masque ses deux courbes (brute et moyenne mobile). Les sept régions sont cochées par défaut.
 - **Clic/tap sur un repère historique :** ouvre un panneau de détail (titre, description, voir "Repères historiques" dans `data-model.md`) ; un second tap ailleurs (mobile) ou un nouveau clic sur le repère (desktop, pour le refermer) le referme, même comportement que le tooltip de `flower-phenology`.
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les régions cochées sont restaurées, y compris une sélection vide. Le tooltip et le panneau d'un repère historique ne sont pas capturés (voir "État dans l'URL" dans `technical-specifications.md`).
 
 ## États
 

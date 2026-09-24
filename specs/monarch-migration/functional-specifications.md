@@ -36,6 +36,7 @@ Faire voir, sur une carte animée au long d'une année, la migration du monarque
 - **Épinglage :** un clic (ou un tap) sur une case épingle le tooltip, un clic ailleurs le retire.
 - **Zoom/pan :** libre (souris/molette, tactile), jusqu'à ×6.
 - **Vue initiale :** Amérique du Nord entière visible, lecture automatique déjà en cours.
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : le mois et le cadrage sont restaurés. Un mois partagé ouvre la carte en pause au début de ce mois (voir "État dans l'URL" dans `technical-specifications.md`).
 
 ## États
 

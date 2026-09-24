@@ -42,6 +42,7 @@ Faire voir, sur un planisphère animé en boucle continue sur dix mille ans, le 
 - **Survol/tap d'un volcan :** fiche de détail (nom, localisation, nombre total d'éruptions recensées sur la période, éruption la plus récente, VEI maximal atteint) — accessible à tout moment, indépendamment du fait que le volcan pulse ou non à l'instant simulé courant.
 - **Zoom/pan :** libre sur l'ensemble du planisphère (souris/molette, tactile), utile pour distinguer les volcans rapprochés le long d'une même ceinture (Indonésie, Japon, Amérique centrale notamment).
 - **Vue initiale :** planisphère entier visible, lecture automatique déjà en cours, quelque part dans le cycle (pas nécessairement au tout début des dix mille ans).
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : l'année et le cadrage sont restaurés. Comme pour `earthquakes`, une année partagée relance la lecture à partir de cette année au lieu de figer la carte en pause, puisqu'une image en pause ne montrerait que les volcans au repos, identiques à toute année (voir "État dans l'URL" dans `technical-specifications.md`).
 
 ## États
 

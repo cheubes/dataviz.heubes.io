@@ -77,6 +77,22 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pan/zoom tactile via `d3-zoom` (même mécanisme que `bird-migrations`) ; fiche de détail déclenchée par `pointerdown`/`click` plutôt que `pointermove` quand `event.pointerType === 'touch'`.
 
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `genera` | Identifiants de genre de `genera` séparés par des virgules (`platanus,tilia`, `other` pour "Autres", voir "Format de sortie" dans `data-model.md`) ; vide (`genera=`) : aucun genre actif (état "vide") | Tous les genres actifs |
+| `search` | Texte saisi dans le champ de recherche, tel quel (sans espaces de bord) | Recherche vide |
+| `gardens` | `off` | Jardins nationaux affichés |
+| `zoom` | `<k>,<lon>,<lat>` (format commun) | Paris entier |
+
+- `search` est écrit 500 ms après la dernière frappe, par une temporisation distincte de celle (120 ms) qui redessine la carte : la carte suit la frappe, l'URL seulement la saisie posée.
+- `genera` : un identifiant inconnu est ignoré ; une liste dont aucun identifiant n'est connu est ignorée en entier (tous les genres actifs).
+- La case "Jardins nationaux" ne déclenche aucune requête (`national-gardens.json` est un fichier local, chargé dans tous les cas) : elle entre donc dans l'état partagé.
+- Le clic sur un arrondissement et les boutons de zoom passent par `zoomBehavior.transform`/`scaleBy`, qui émettent eux aussi l'événement `end` : le cadrage qu'ils produisent est écrit comme celui d'un geste.
+
 ## Points résolus à l'implémentation
 
 - Les huit genres dominants réels et leur nom commun associé : voir "Regroupement par genre" dans `data-model.md`.

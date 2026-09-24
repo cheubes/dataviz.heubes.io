@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Onze étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Douze étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -274,4 +274,26 @@ Déclare les fichiers principaux de chaque visualisation dont les licences le pe
 
 Critère de fin : les liens et tailles s'affichent correctement dans les deux langues ; retirer
 volontairement un fichier déclaré fait échouer le build.
+```
+
+## ✅ 12. État partageable dans l'URL
+
+L'URL de chaque page de visualisation reflète en continu les filtres, la position temporelle (en pause) et le cadrage des cartes zoomables. Ouvrir le lien restaure cet état, y compris après un changement de langue. Voir "État partageable dans l'URL" dans `functional-specifications.md`, "État dans l'URL" dans `technical-specifications.md` et la section du même nom dans chaque `specs/<viz-slug>/technical-specifications.md`.
+
+**Critère :** pour chaque visualisation, manipuler ses contrôles met à jour l'URL sans créer d'entrée d'historique. Rouvrir cette URL dans un nouvel onglet restaure le même état, et une valeur invalide est ignorée sans erreur.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 12 du plan de construction (BUILD-PLAN.md) : état partageable dans l'URL.
+
+Crée src/scripts/url-state.ts (lecture/écriture des paramètres, format commun de cadrage),
+reporte la query string dans LanguageSelector.astro et ajoute un <link rel="canonical"> dans
+BaseLayout.astro, en suivant "État dans l'URL" dans technical-specifications.md. Branche ensuite
+chaque visualisation (lecture au montage, écriture sur action du visiteur) et documente ses
+paramètres dans son propre technical-specifications.md.
+
+Critère de fin : pour chaque visualisation, l'URL suit les manipulations et sa réouverture
+restaure l'état ; les paramètres invalides sont ignorés sans erreur.
 ```

@@ -69,6 +69,19 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pan/zoom tactile via `d3-zoom` (même mécanisme que `bird-migrations` et `paris-trees`) ; fiche de détail déclenchée par `pointerdown`/`click` plutôt que `pointermove` quand `event.pointerType === 'touch'`.
 
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `protection` | `classe`, `inscrit` (identifiants de `protection` dans `monuments.json`) | Les deux |
+| `year` | Année entière de 0 à l'année de construction la plus récente retenue (bornes du curseur d'année) | Lecture en cours |
+| `zoom` | `<k>,<lon>,<lat>` (format commun) | France entière |
+
+- `year` est écrit à la pause (bouton) et au relâchement du curseur d'année, et retiré à la reprise de la lecture. Un lien qui le porte ouvre la carte en pause sur cette année, par le même chemin que le curseur (voir "Curseur d'année" ci-dessus), y compris l'état `holding` à la valeur maximale : l'image en pause (l'accumulation atteinte) a un sens en soi.
+- À la pause, l'année écrite est l'année simulée arrondie à l'entier inférieur, alors que l'indicateur d'année l'arrondit au plus proche : seul l'arrondi inférieur reconstruit exactement les monuments visibles (révélés dès que `constructionYear` ≤ année simulée), les vagues de chaque siècle étant datées à l'année `xx50` (voir "Interprétation du siècle de construction" dans `data-model.md`). L'année du lien peut donc différer d'un an de celle affichée au moment de la pause.
+
 ## Points tranchés à l'implémentation
 
 - **Répartition réelle des monuments par siècle, mesurée sur le CSV complet (46 760 notices) :** très fortement concentrée sur le second millénaire (50 % des monuments retenus datent d'après 1550, 90 % d'après 1150), avec une longue traîne antique et préhistorique très clairsemée (4,75 % des monuments avant l'an 0, jusqu'à -20 000). Une échelle temporelle strictement linéaire sur l'ensemble de cette plage aurait comprimé les vagues romane/gothique/classique dans une fraction de seconde de l'animation, la quasi-totalité du temps de lecture étant consommée par la traîne préhistorique quasi vide. Résolu par le socle statique + balayage animé depuis l'an 0 décrit dans "Animation" ci-dessus (décision validée avec l'utilisateur).

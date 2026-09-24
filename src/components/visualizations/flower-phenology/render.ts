@@ -3,6 +3,7 @@ import { scaleLinear } from 'd3-scale';
 import { select } from 'd3-selection';
 import 'd3-transition';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
+import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
 
 interface DecadeStats {
   medianDoy: number;
@@ -133,17 +134,37 @@ export async function mountFlowerPhenology(
   speciesGroup.setAttribute('aria-label', labels.speciesGroupLabel);
   controls.appendChild(speciesGroup);
 
-  const selectedSpecies = new Set(data.map((s) => s.species));
+  const allSpecies = data.map((s) => s.species);
+
+  // Absent = every species, empty = none; a list naming no known species is
+  // a broken link rather than a deliberate empty selection, so it falls back
+  // to the default.
+  function readSpeciesParam(): string[] {
+    const param = getUrlParam('species');
+    if (param === null) return allSpecies;
+    if (param === '') return [];
+    const ids = param.split(',');
+    const known = allSpecies.filter((id) => ids.includes(id));
+    return known.length > 0 ? known : allSpecies;
+  }
+
+  const selectedSpecies = new Set(readSpeciesParam());
 
   data.forEach((entry) => {
     const label = document.createElement('label');
     label.className = 'dv-flower-phenology__toggle';
     const input = document.createElement('input');
     input.type = 'checkbox';
-    input.checked = true;
+    input.checked = selectedSpecies.has(entry.species);
     input.addEventListener('change', () => {
       if (input.checked) selectedSpecies.add(entry.species);
       else selectedSpecies.delete(entry.species);
+      setUrlParams({
+        species:
+          selectedSpecies.size === allSpecies.length
+            ? null
+            : allSpecies.filter((id) => selectedSpecies.has(id)).join(','),
+      });
       renderFull();
     });
     const swatch = document.createElement('span');
@@ -157,8 +178,13 @@ export async function mountFlowerPhenology(
   decadeGroup.className = 'dv-flower-phenology__decade-group';
   controls.appendChild(decadeGroup);
 
-  let innerDecade: Decade = DEFAULT_INNER_DECADE;
-  let outerDecade: Decade = DEFAULT_OUTER_DECADE;
+  function readDecadeParam(ringKey: RingKey, fallback: Decade): Decade {
+    const param = getUrlParam(ringKey);
+    return DECADES.find((decade) => decade === param) ?? fallback;
+  }
+
+  let innerDecade: Decade = readDecadeParam('inner', DEFAULT_INNER_DECADE);
+  let outerDecade: Decade = readDecadeParam('outer', DEFAULT_OUTER_DECADE);
 
   function buildDecadeSelect(ringKey: RingKey, ringLabel: string, initial: Decade): HTMLSelectElement {
     const field = document.createElement('label');
@@ -176,6 +202,8 @@ export async function mountFlowerPhenology(
       select.appendChild(option);
     });
     select.addEventListener('change', () => {
+      const defaultDecade = ringKey === 'inner' ? DEFAULT_INNER_DECADE : DEFAULT_OUTER_DECADE;
+      setUrlParams({ [ringKey]: select.value === defaultDecade ? null : select.value });
       changeRingDecade(ringKey, select.value as Decade);
     });
     field.append(text, select);

@@ -7,6 +7,7 @@ import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 // non-strict tsconfig, same accepted gap as bird-migrations/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
+import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
 
 interface Volcano {
   id: string;
@@ -499,6 +500,8 @@ export async function mountVolcanicEruptions(
     pulsesCtx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
   }
 
+  let restoringUrlState = false;
+
   const zoomBehavior = d3Zoom<HTMLCanvasElement, unknown>()
     .scaleExtent([MIN_ZOOM, MAX_ZOOM])
     .on('zoom', (event) => {
@@ -506,6 +509,9 @@ export async function mountVolcanicEruptions(
       drawBackground();
       renderPulses();
       updateZoomButtons();
+    })
+    .on('end', () => {
+      if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
   select(pulsesCanvas).call(zoomBehavior as any);
 
@@ -531,6 +537,13 @@ export async function mountVolcanicEruptions(
     resizeTimeout = setTimeout(resize, 150);
   });
   resize();
+
+  const initialTransform = readZoomParam(projection, width, height, [MIN_ZOOM, MAX_ZOOM]);
+  if (initialTransform) {
+    restoringUrlState = true;
+    select(pulsesCanvas).call(zoomBehavior.transform as any, initialTransform);
+    restoringUrlState = false;
+  }
 
   // --- Animation ----------------------------------------------------------
   function projectPixel(x: number, y: number): [number, number] {
@@ -630,6 +643,9 @@ export async function mountVolcanicEruptions(
     playing = !playing;
     playButton.textContent = playing ? labels.pause : labels.play;
     playButton.setAttribute('aria-pressed', String(playing));
+    setUrlParams({
+      year: playing ? null : String(Math.floor(startYear + (playedMs / TOTAL_DURATION_MS) * totalYears)),
+    });
   });
 
   speedSelect.addEventListener('change', () => {
@@ -655,6 +671,25 @@ export async function mountVolcanicEruptions(
     updateYearIndicator(targetYear);
     renderPulses();
   });
+
+  yearSlider.addEventListener('change', () => {
+    setUrlParams({ year: yearSlider.value });
+  });
+
+  // A paused frame shows nothing specific to its year: pulses fade within
+  // PULSE_DURATION_MS once playback stops, and the resting points are the same
+  // at every year. So a shared year restarts playback from that year instead,
+  // and the URL drops it since playback is running, same as earthquakes.
+  // Year 0 lies within the covered range, so a missing or empty param must not
+  // go through Number() (which would turn it into 0).
+  const urlYearParam = getUrlParam('year');
+  const urlYear = urlYearParam ? Number(urlYearParam) : NaN;
+  if (Number.isInteger(urlYear) && urlYear >= startYear && urlYear < endYear) {
+    playedMs = ((urlYear - startYear) / totalYears) * TOTAL_DURATION_MS;
+    cursor = cursorForSimYear(urlYear);
+    updateYearIndicator(urlYear);
+    setUrlParams({ year: null });
+  }
 
   // --- Tooltip --------------------------------------------------------------
   function hideTooltip() {
