@@ -25,6 +25,7 @@ datasets:
     retrieved: '2026-09-08'
 themes: [living]
 publication-date: '2026-09-07'
+downloads: [tracks.json]
 ---
 
 Chaque année, des rapaces, des cigognes et d'autres oiseaux équipés de balises GPS quittent l'Europe pour rejoindre l'Afrique, avant d'effectuer le trajet inverse au printemps. Cette carte anime les trajectoires réelles d'individus suivis dans le cadre de quatre études scientifiques : la cigogne blanche (*Ciconia ciconia*, étude « LifeTrack White Stork Bavaria », Institut Max Planck du comportement animal, 2014-2023), le busard cendré (*Circus pygargus*, Trierweiler et al. 2014), le coucou gris (*Cuculus canorus*, Thorup et al. 2020) et la bondrée apivore (*Pernis apivorus*, Byholm et al. 2025).

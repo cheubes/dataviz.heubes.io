@@ -1,0 +1,66 @@
+---
+import { existsSync, statSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+interface Props {
+  slug: string;
+  files: string[];
+  lang: 'fr' | 'en';
+  label: string;
+  note: string;
+}
+
+const MEGABYTE = 1_000_000;
+const KILOBYTE = 1_000;
+
+const { slug, files, lang, label, note } = Astro.props;
+
+const formatSize = (bytes: number) => {
+  const [value, unit] = bytes >= MEGABYTE ? [bytes / MEGABYTE, 'megabyte'] : [bytes / KILOBYTE, 'kilobyte'];
+  return new Intl.NumberFormat(lang, {
+    style: 'unit',
+    unit,
+    unitDisplay: 'short',
+    maximumFractionDigits: 1,
+  }).format(value);
+};
+
+const downloads = files.map((file) => {
+  const path = fileURLToPath(new URL(`../../public/data/${slug}/${file}`, import.meta.url));
+  if (!existsSync(path)) {
+    throw new Error(`Declared download "${file}" not found in public/data/${slug}/`);
+  }
+  return { file, href: `/data/${slug}/${file}`, size: formatSize(statSync(path).size) };
+});
+---
+
+<div class="dv-downloads">
+  <p>
+    {label}{' '}
+    {
+      downloads.map(({ file, href, size }, index) => (
+        <>
+          <a href={href} download>{file}</a> ({size}){index < downloads.length - 1 && ', '}
+        </>
+      ))
+    }
+  </p>
+  <p>{note}</p>
+</div>
+
+<style>
+  .dv-downloads {
+    margin-top: var(--dv-space-3);
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: var(--dv-ink-secondary);
+  }
+
+  .dv-downloads p {
+    margin: 0;
+  }
+
+  .dv-downloads a {
+    color: var(--dv-accent);
+  }
+</style>

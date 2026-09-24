@@ -15,6 +15,7 @@ datasets:
     retrieved: '2026-09-22'
 themes: [earth]
 publication-date: '2026-09-22'
+downloads: [fires.json]
 ---
 
 Since 2006, the French Forest Fire Database (BDIFF) has recorded every forest fire on French territory: its municipality, its date, the area it burned. More than fifty thousand fires are now listed, overwhelmingly concentrated around the Mediterranean rim.

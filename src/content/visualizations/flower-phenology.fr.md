@@ -10,6 +10,7 @@ datasets:
     retrieved: '2026-09-08'
 themes: [living, climate]
 publication-date: '2026-09-08'
+downloads: [phenology.json]
 ---
 
 La phénologie, l'étude des cycles saisonniers du vivant, est l'un des indices les plus sensibles du changement climatique. En France, des milliers d'observations citoyennes enregistrent chaque année les premières floraisons des plantes sauvages. Visualisées sur un calendrier circulaire, ces données révèlent la beauté des rythmes naturels et, dans leur dérive progressive, l'empreinte discrète du réchauffement.

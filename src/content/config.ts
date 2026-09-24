@@ -34,6 +34,7 @@ const visualizations = defineCollection({
     ),
     themes: z.array(z.enum(THEMES)).min(1),
     'publication-date': z.string(),
+    downloads: z.array(z.string()).optional(),
   }),
 });
 

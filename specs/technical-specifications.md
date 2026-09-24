@@ -135,6 +135,7 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   │   ├── ThemeFilter.astro          # chips de filtre thématique, voir home-page.md
 │   │   ├── VizCard.astro              # tuile de catalogue
 │   │   ├── RelatedVisualizations.astro # visualisations liées (réutilise VizCard.astro), voir functional-specifications.md
+│   │   ├── DataDownloads.astro        # téléchargement des données préparées, voir functional-specifications.md
 │   │   └── visualizations/
 │   │       └── <viz-slug>/
 │   │           └── ...                # composants propres à cette visualisation
@@ -178,6 +179,7 @@ const visualizations = defineCollection({
     })),
     themes: z.array(z.enum(THEMES)).min(1),
     'publication-date': z.string(),
+    downloads: z.array(z.string()).optional(), // noms de fichiers de public/data/<viz-slug>/
   }),
 });
 
@@ -208,6 +210,7 @@ L'anglais, langue par défaut, n'a pas de préfixe ; le français est préfixé 
 - `[viz].astro` et `fr/[viz].astro` génèrent chacun leurs chemins via `getStaticPaths`, à partir des entrées de la collection `visualizations` filtrées par `lang`.
 - Une visualisation non traduite dans une langue n'a tout simplement pas d'entrée de collection pour cette langue, donc pas de page générée à cette URL : la visite de cette URL tombe sur `404.astro`.
 - Les visualisations liées (voir "Visualisations liées" dans `functional-specifications.md`) sont sélectionnées au build par `src/components/RelatedVisualizations.astro`, à partir des entrées de la collection filtrées par la langue de la page : du HTML statique, sans JS client.
+- Les liens de téléchargement des données préparées (voir "Téléchargement des données préparées" dans `functional-specifications.md`) sont générés au build par `src/components/DataDownloads.astro` à partir de l'attribut `downloads`. La taille de chaque fichier est lue sur le disque (`public/data/<viz-slug>/`) et formatée selon la langue de la page (`Intl.NumberFormat`, unités décimales ko/Mo). Un fichier déclaré mais absent fait échouer le build. Les liens portent l'attribut `download` pour forcer l'enregistrement plutôt que l'affichage du JSON dans l'onglet.
 
 ### Contenu non traduit ("message d'indisponibilité")
 

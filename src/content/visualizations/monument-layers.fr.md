@@ -20,6 +20,7 @@ datasets:
     retrieved: '2026-09-10'
 themes: [territory]
 publication-date: '2026-09-10'
+downloads: [monuments.json]
 ---
 
 Depuis 1840, l'État protège des monuments jugés dignes de conservation : châteaux, églises, ponts, lavoirs, gares... La base Mérimée du ministère de la Culture recense aujourd'hui près de quarante-cinq mille édifices protégés en France métropolitaine, chacun daté de sa plus ancienne campagne de construction connue.

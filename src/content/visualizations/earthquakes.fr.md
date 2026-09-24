@@ -15,6 +15,7 @@ datasets:
     retrieved: '2026-09-16'
 themes: [earth]
 publication-date: '2026-09-16'
+downloads: [earthquakes.json]
 ---
 
 Depuis le début du vingtième siècle, les sismographes du monde entier enregistrent avec précision la magnitude et la position de chaque séisme majeur. Ce planisphère rejoue, en boucle continue, plus d'un siècle de ces séismes (magnitude 6 et plus), chacun pulsant au moment réel de sa survenue.

@@ -15,6 +15,7 @@ datasets:
     retrieved: '2026-09-22'
 themes: [territory]
 publication-date: '2026-09-22'
+downloads: [communes.json]
 ---
 
 L'accessibilité potentielle localisée (APL) mesure, commune par commune, le nombre de consultations de médecine générale réellement accessibles par habitant et par an. Calculé chaque année par la DREES, cet indicateur existe aussi dans une version restreinte aux médecins de moins de soixante-cinq ans : une photographie de ce que deviendrait l'accès aux soins si les praticiens les plus proches de la retraite cessaient leur activité.

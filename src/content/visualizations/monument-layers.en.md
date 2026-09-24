@@ -20,6 +20,7 @@ datasets:
     retrieved: '2026-09-10'
 themes: [territory]
 publication-date: '2026-09-10'
+downloads: [monuments.json]
 ---
 
 Since 1840, the French state has protected buildings deemed worth preserving: castles, churches, bridges, wash houses, railway stations... The Ministry of Culture's Mérimée database now lists nearly forty-five thousand protected buildings in mainland France, each dated to its oldest known construction phase.

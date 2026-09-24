@@ -10,6 +10,7 @@ datasets:
     retrieved: '2026-09-21'
 themes: [living]
 publication-date: '2026-09-21'
+downloads: [density.json]
 ---
 
 A monarch butterfly never makes the full journey. The migration that carries it from Mexico to Canada and back is a relay across several successive generations, none of which knows the journey's starting point or its destination.
