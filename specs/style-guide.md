@@ -110,7 +110,7 @@ Utilisées par `biodiversity`, `light-pollution`, `paris-trees`, `monument-layer
 
 Ponctuation du texte français (textes d'interface `i18n/fr.ts`, frontmatter et corps des `<viz-slug>.fr.md`, textes français embarqués dans les données comme les champs `*Fr`) : une espace insécable précède toujours les ponctuations doubles (`:`, `;`, `!`, `?`) et les points de suspension (`…` comme `...`). Elle est saisie comme caractère U+00A0, pas comme entité `&nbsp;`, que le frontmatter et les chaînes JS afficheraient littéralement. Les attributs non localisés (ex : `license` d'un dataset, identique entre les deux langues) restent tels que publiés par la source.
 
-Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble du site) ; l'affordance vient de la couleur (`--dv-accent` ou `--dv-gold` selon la surface, voir "Couleurs") et de son changement au survol/focus, pas du soulignement.
+Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble du site) ; l'affordance vient de la couleur (`--dv-accent` ou `--dv-gold` selon la surface, voir "Couleurs") et de son changement au survol/focus, pas du soulignement. `--dv-accent` est posé par défaut sur la règle globale `a` (`global.css`), pour que tout lien du texte courant (corps Markdown d'une visualisation, page "À propos") ait la couleur de la charte sans règle propre. Les liens sur surface sombre (en-tête, pied de page, infobulles) redéfinissent leur couleur localement.
 
 ## Espacements, grille et responsive
 
