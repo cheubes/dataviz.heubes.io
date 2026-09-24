@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Quinze étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Seize étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -360,4 +360,26 @@ functional-specifications.md.
 
 Critère de fin : préférence émulée, aucune visualisation ne bouge d'elle-même et chacune
 s'ouvre sur l'état documenté ; sans la préférence, rien ne change.
+```
+
+## ✅ 16. Polices et icônes hébergées par le site
+
+La police Ubuntu (woff2, sous-ensembles latin et latin-ext) est servie depuis `public/fonts/ubuntu/`, et les quatre icônes Creative Commons du pied de page sont des SVG inline : ni Google Fonts, ni Font Awesome sur CDN. Voir "Polices" et "Dépendances" dans `technical-specifications.md`, "Iconographie" dans `style-guide.md`.
+
+**Critère :** afficher n'importe quelle page ne déclenche aucune requête vers un autre domaine, et le rendu (police, icônes du pied de page) reste identique.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 16 du plan de construction (BUILD-PLAN.md) : polices et icônes hébergées
+par le site.
+
+Télécharge une fois les woff2 d'Ubuntu (300/400/500/700, sous-ensembles latin et latin-ext) et
+leur licence dans public/fonts/ubuntu/, déclare-les en @font-face dans global.css, remplace les
+icônes Font Awesome du pied de page par leurs tracés SVG inline et retire les liens CDN de
+BaseLayout.astro, en suivant "Polices" dans technical-specifications.md et "Iconographie" dans
+style-guide.md.
+
+Critère de fin : aucune requête vers un autre domaine à l'affichage d'une page, rendu inchangé.
 ```

@@ -95,7 +95,7 @@ Utilisées par `biodiversity`, `light-pollution`, `paris-trees`, `monument-layer
 
 ## Typographie
 
-- **Police :** Ubuntu (Google Fonts), graisses 300 / 400 / 500 / 700 (voir "Polices" dans `technical-specifications.md` pour le chargement).
+- **Police :** Ubuntu, hébergée par le site, graisses 300 / 400 / 500 / 700 (voir "Polices" dans `technical-specifications.md` pour le chargement).
 - `font-family: "Ubuntu", sans-serif;` sur `body`.
 
 | Usage | Taille | Graisse | Couleur |
@@ -192,4 +192,4 @@ Tant que la couverture propre d'une visualisation (`public/covers/<viz-slug>.jpg
 
 Pas de bibliothèque d'icônes par défaut (pas de nouvelle dépendance sans discussion, voir les règles globales de sécurité du projet). Les rares besoins d'icône (ex : lien externe) utilisent un caractère Unicode ou un SVG inline minimal.
 
-Exception : les quatre icônes de la mention de licence en pied de page (voir "Pied de page" ci-dessus) utilisent Font Awesome Free (sous-ensemble `brands`, voir "Dépendances" dans `technical-specifications.md`) — `fa-creative-commons`, `fa-creative-commons-by`, `fa-creative-commons-nc-eu`, `fa-creative-commons-sa`, dans cet ordre, taille `1rem`, couleur héritée du pied de page (blanc, doré au survol).
+Exception : les quatre icônes de la mention de licence en pied de page (voir "Pied de page" ci-dessus) reprennent les tracés SVG de Font Awesome Free 7.3.1 (icônes sous licence CC BY 4.0, créditée en commentaire dans `Footer.astro`) : `creative-commons`, `creative-commons-by`, `creative-commons-nc-eu`, `creative-commons-sa`, dans cet ordre. Inlinés dans le pied de page plutôt que chargés depuis la bibliothèque, qui n'est plus utilisée nulle part. Taille du texte du pied de page (`1em`), chacune dans une boîte de `1.25em` de large qui les espace, couleur héritée du pied de page (blanc, doré au survol).

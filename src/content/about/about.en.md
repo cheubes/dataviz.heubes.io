@@ -20,7 +20,7 @@ A visualization's address follows what you do with it: filters, a paused year, a
 
 The site is static, generated with [Astro](https://astro.build) and hosted on GitHub Pages. The visualizations are coded one by one, mostly with [D3](https://d3js.org) and Canvas. The source code is public on [GitHub](https://github.com/cheubes/dataviz.heubes.io).
 
-No audience tracking, no cookies: only your language preference is stored, in your browser.
+No audience tracking, no cookies: only your language preference is stored, in your browser. Fonts and icons are served by the site itself: displaying a page contacts no third-party service.
 
 ## License
 

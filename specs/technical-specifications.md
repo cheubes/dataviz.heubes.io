@@ -15,13 +15,9 @@
 
 ### Polices
 
-- **Ubuntu** (Google Fonts, CDN), graisses 300 / 400 / 500 / 700 (voir "Typographie" dans `style-guide.md`). Chargée dans `BaseLayout.astro` :
-
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
-```
+- **Ubuntu**, graisses 300 / 400 / 500 / 700 (voir "Typographie" dans `style-guide.md`), hébergée par le site lui-même : fichiers woff2 dans `public/fonts/ubuntu/`, accompagnés de leur licence (`UFL.txt`, Ubuntu Font Licence 1.0), déclarés par des règles `@font-face` en tête de `src/styles/global.css` (`font-display: swap`).
+- Seuls les sous-ensembles `latin` et `latin-ext` sont hébergés, avec les plages Unicode (`unicode-range`) de Google Fonts, d'où ils ont été téléchargés une fois : ils couvrent le français et les diacritiques des noms propres. Le navigateur ne télécharge que les graisses et sous-ensembles que la page utilise. Un caractère hors de ces plages retombe sur la police de repli (`sans-serif`).
+- Raison : aucune requête vers un service tiers à l'affichage d'une page (ni Google Fonts, ni CDN), ce qui évite de transmettre l'adresse IP des visiteurs à un tiers et supprime deux connexions externes au premier affichage.
 
 ### JavaScript et visualisations
 
@@ -91,8 +87,8 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 - `astro` (dernière version stable 5.x)
 - `@astrojs/sitemap` (voir "SEO")
 - `typescript` (vérification de types, pas un framework UI)
-- Font Awesome Free 7.3.1 (CDN, `cdn.jsdelivr.net`, sous-ensemble brands) : seule exception à "pas de dépendance CSS", pour les icônes Creative Commons du pied de page (voir "Iconographie" dans `style-guide.md`). Pas de dépendance npm : chargée en `<link>` dans `BaseLayout.astro`, comme les polices Google Fonts.
-- Pas d'autre dépendance CSS, pas de dépendance JS de chrome au-delà de vanilla.
+- Aucune dépendance CSS ni bibliothèque d'icônes : les quatre icônes Creative Commons du pied de page sont des SVG inline (voir "Iconographie" dans `style-guide.md`).
+- Pas de dépendance JS de chrome au-delà de vanilla.
 - Dépendances propres à une visualisation : ajoutées et documentées au cas par cas, discutées avant ajout (voir "Règles communes à toutes les visualisations" et les règles globales de sécurité du projet).
 
 ---
@@ -107,6 +103,8 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   ├── CNAME
 │   ├── logo.png                       # favicon et logo de l'en-tête, voir style-guide.md
 │   ├── cover-placeholder.svg          # couverture de repli, voir "Images" dans style-guide.md
+│   ├── fonts/
+│   │   └── ubuntu/                    # woff2 auto-hébergés et licence UFL.txt, voir "Polices"
 │   ├── covers/
 │   │   └── <viz-slug>.jpg            # ou .png, voir data-model.md
 │   └── data/
