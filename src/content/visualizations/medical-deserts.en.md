@@ -13,6 +13,7 @@ datasets:
     url: https://www.data.gouv.fr/datasets/contours-des-communes-de-france-simplifie-avec-regions-et-departement-doutre-mer-rapproches/
     license: Licence Ouverte v2.0
     retrieved: '2026-09-22'
+themes: [territory]
 publication-date: '2026-09-22'
 ---
 

@@ -8,6 +8,7 @@ datasets:
     url: https://volcano.si.edu
     license: Non-commercial use with attribution
     retrieved: '2026-09-22'
+themes: [earth]
 publication-date: '2026-09-22'
 ---
 

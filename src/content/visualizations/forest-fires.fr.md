@@ -13,6 +13,7 @@ datasets:
     url: https://geo.api.gouv.fr/decoupage-administratif
     license: Licence Ouverte v2.0
     retrieved: '2026-09-22'
+themes: [earth]
 publication-date: '2026-09-22'
 ---
 

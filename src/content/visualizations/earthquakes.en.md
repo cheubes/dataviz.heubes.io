@@ -13,6 +13,7 @@ datasets:
     url: https://github.com/fraxen/tectonicplates
     license: Open Data Commons Attribution License (ODC-BY)
     retrieved: '2026-09-16'
+themes: [earth]
 publication-date: '2026-09-16'
 ---
 

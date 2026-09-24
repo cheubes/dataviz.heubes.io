@@ -8,6 +8,7 @@ datasets:
     url: https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=noaa-historical-13194
     license: NOAA/NCEI public data, citation of the source article required
     retrieved: '2026-09-10'
+themes: [climate]
 publication-date: '2026-09-10'
 ---
 

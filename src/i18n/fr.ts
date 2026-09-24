@@ -7,6 +7,15 @@ export default {
     empty: "Aucune visualisation n'est encore publiée.",
     description:
       "Catalogue de visualisations de données interactives et originales, chacune explorant un dataset open data avec une mise en forme qui lui est propre.",
+    themeFilterLabel: 'Filtrer par thème',
+    noResults: 'Aucune visualisation pour ce thème.',
+  },
+  themes: {
+    living: 'Vivant',
+    climate: 'Climat',
+    earth: 'Terre',
+    territory: 'Territoire et société',
+    space: 'Espace',
   },
   viz: {
     sourcesHeading: 'Sources des données',

@@ -8,6 +8,7 @@ datasets:
     url: https://eogdata.mines.edu/products/vnl/
     license: CC BY 4.0
     retrieved: '2026-09-09'
+themes: [earth]
 publication-date: '2026-09-09'
 ---
 

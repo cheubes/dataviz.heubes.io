@@ -5,7 +5,7 @@
 ### Génération de site
 
 - **Astro**, sortie statique (`output: 'static'`), pas de rendu serveur.
-- **Content collections** (`src/content/config.ts`, schéma Zod) pour les visualisations et les catégories (voir "Structure des fichiers" ci-dessous).
+- **Content collections** (`src/content/config.ts`, schéma Zod) pour les visualisations (voir "Structure des fichiers" ci-dessous). Les thèmes (voir "Thème" dans `data-model.md`) sont un enum fermé porté par le schéma de cette collection, pas une collection à part : ils n'ont pas de contenu ni de page propres (voir "Filtre thématique" dans `home-page.md`).
 - Composants `.astro` pour le chrome partagé (layout, en-tête, pied de page, sélecteur de langue, tuile de catalogue). Chaque visualisation ajoute ses propres composants (voir "Règles communes à toutes les visualisations").
 
 ### CSS / UI
@@ -25,7 +25,7 @@
 
 ### JavaScript et visualisations
 
-- Vanilla JS/TS pour le chrome partagé (sélecteur de langue, détection et mémorisation de la préférence).
+- Vanilla JS/TS pour le chrome partagé (sélecteur de langue, détection et mémorisation de la préférence, filtre thématique du catalogue).
 - Pas de framework JS imposé pour le chrome (pas de React/Vue/Svelte par défaut).
 - Chaque visualisation choisit librement sa technique de rendu et ses librairies (D3, Observable Plot, deck.gl, Three.js, Canvas 2D...), scopées à sa propre page via les îles Astro (voir "Règles communes à toutes les visualisations").
 
@@ -120,17 +120,19 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   │       ├── <viz-slug>.fr.md
 │   │       └── <viz-slug>.en.md
 │   ├── i18n/
-│   │   ├── fr.ts                      # textes d'interface (labels, message d'indisponibilité)
+│   │   ├── fr.ts                      # textes d'interface (labels, message d'indisponibilité, libellés des thèmes)
 │   │   └── en.ts
 │   ├── layouts/
 │   │   └── BaseLayout.astro
 │   ├── scripts/
 │   │   ├── language.ts                # détection/mémorisation de la langue (Header.astro, LanguageSelector.astro)
+│   │   ├── theme-filter.ts            # filtre thématique du catalogue (ThemeFilter.astro, VizCard.astro)
 │   │   └── viz-stage-height.ts        # hauteur de la zone de montage, voir "Règles communes à toutes les visualisations"
 │   ├── components/
 │   │   ├── Header.astro
 │   │   ├── Footer.astro
 │   │   ├── LanguageSelector.astro
+│   │   ├── ThemeFilter.astro          # chips de filtre thématique, voir home-page.md
 │   │   ├── VizCard.astro              # tuile de catalogue
 │   │   └── visualizations/
 │   │       └── <viz-slug>/
@@ -158,6 +160,8 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 // src/content/config.ts — à ajuster à l'implémentation
 import { defineCollection, z } from 'astro:content';
 
+const THEMES = ['living', 'climate', 'earth', 'territory', 'space'] as const; // voir "Thème" dans data-model.md
+
 const visualizations = defineCollection({
   type: 'content',
   schema: z.object({
@@ -171,6 +175,7 @@ const visualizations = defineCollection({
       license: z.string().optional(),
       retrieved: z.string().optional(),
     })),
+    themes: z.array(z.enum(THEMES)).min(1),
     'publication-date': z.string(),
   }),
 });
@@ -266,7 +271,7 @@ Au premier accès à une URL sans préfixe de langue (anglais par défaut), la l
 
 | Élément | Convention | Exemple |
 |---|---|---|
-| Slugs (visualisation, catégorie) | kebab-case anglais | `air-pollution`, `environment` |
+| Slugs (visualisation, thème) | kebab-case anglais | `air-pollution`, `living` |
 | Composants Astro | PascalCase | `VizCard.astro`, `LanguageSelector.astro` |
 | Fichiers de contenu / données | kebab-case | `air-pollution.fr.md` |
 | Classes CSS custom | `.dv-` + kebab-case | `.dv-card`, `.dv-header` |

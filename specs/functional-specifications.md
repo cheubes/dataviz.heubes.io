@@ -11,6 +11,7 @@ L'objectif est de donner à un visiteur curieux un point d'entrée vers ce catal
 Dans le périmètre :
 
 - Consultation du catalogue de visualisations, depuis la page d'accueil.
+- Filtrage du catalogue par thème, depuis la page d'accueil (voir `home-page.md`).
 - Consultation, pour chaque visualisation, de sa page dédiée : présentation du dataset source, du contexte de la mise en forme choisie, et interaction avec la visualisation elle-même.
 - Site multilingue (français, anglais).
 
@@ -49,4 +50,4 @@ Le contenu (catalogue, visualisations) est produit par l'auteur du site directem
 - Comptes utilisateurs, authentification.
 - Édition de contenu via une interface web : le contenu est créé et modifié directement dans les fichiers sources (voir `data-model.md`).
 - Contenu généré par les visiteurs (commentaires, contributions).
-- Recherche et filtrage transverse du catalogue : à réévaluer quand le nombre de visualisations le justifiera, non nécessaire tant que le catalogue reste restreint.
+- Recherche texte libre transverse du catalogue : à réévaluer quand le nombre de visualisations le justifiera davantage ; le filtrage par thème (voir `home-page.md`) couvre le besoin de navigation par sujet pour l'instant.

@@ -18,6 +18,7 @@ datasets:
     url: https://www.openstreetmap.org/copyright
     license: Open Database License (ODbL)
     retrieved: '2026-09-10'
+themes: [territory]
 publication-date: '2026-09-10'
 ---
 

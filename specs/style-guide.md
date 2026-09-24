@@ -154,6 +154,13 @@ Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble d
 - Pied de page fixe (`position: fixed`, ancré en bas de viewport) sur toute la largeur, hauteur indicative `--dv-footer-height` ; le contenu principal réserve cet espace en bas de page pour ne jamais passer dessous. Padding vertical `--dv-space-2` et espacement `--dv-space-2` entre les icônes et le texte de la mention de licence.
 - Comme l'en-tête, largeur pleine sans le conteneur de page : ses éléments sont au plus près du bord de la fenêtre, avec seulement `--dv-gutter` d'espacement horizontal.
 
+### Chips de filtre (catalogue)
+
+- Une chip par thème (voir "Thème" dans `data-model.md`), disposées en ligne au-dessus de la grille de tuiles, avec retour à la ligne (`flex-wrap`) plutôt que défilement horizontal. Forme pilule (`border-radius` élevé), padding `--dv-space-2` horizontal / `--dv-space-1` vertical, espacement `--dv-space-2` entre chips.
+- État inactif (thème non sélectionné) : fond `--dv-surface`, texte `--dv-ink-secondary`, bordure `--dv-gridline`.
+- État actif (thème sélectionné) : fond `--dv-header-bg`, texte blanc, bordure `--dv-header-bg` — même couleur de marque que le survol des tuiles (voir "Tuiles (catalogue)" ci-dessous et la note sur `--dv-header-bg` dans "Couleurs" ci-dessus), contraste largement supérieur au minimum WCAG AA (texte blanc sur `#2c374c`, ratio ≈ 12:1). Pas `--dv-accent` : à 4,4:1 avec du texte blanc, il passe sous le seuil AA 4,5:1 requis pour du texte de cette taille (0.875rem, sous le seuil de "grand texte").
+- Survol/focus (état inactif) : bordure `--dv-accent`, cohérent avec son rôle d'élément interactif sur fond clair (voir "Couleurs" ci-dessus). Pas d'usage de `--dv-gold` ici, réservé aux surfaces sombres de l'en-tête et du pied de page.
+
 ### Tuiles (catalogue)
 
 - Couverture (ratio et dimensions : voir "Images" ci-dessous), en lazy loading, `title` en titre, `summary` en corps, aligné en justifié. Zone de texte (titre + résumé) à hauteur fixe, résumé défilant verticalement au-delà de cette hauteur plutôt que tronqué : chaque tuile garde la même hauteur quelle que soit la longueur du résumé.

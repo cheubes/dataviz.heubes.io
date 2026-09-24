@@ -8,6 +8,7 @@ datasets:
     url: https://www.gbif.org/occurrence/search?country=FR
     license: CC0 1.0 / CC BY 4.0 (varies by occurrence)
     retrieved: '2026-09-08'
+themes: [living, climate]
 publication-date: '2026-09-08'
 ---
 
