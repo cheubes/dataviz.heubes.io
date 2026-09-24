@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Vingt-deux étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Vingt-trois étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -504,4 +504,24 @@ technical-specifications.md.
 
 Critère de fin : JSON-LD valide sur chaque page de visualisation, Dataset présent uniquement avec
 des téléchargements, descriptions et URL conformes.
+```
+
+## ✅ 23. Couvertures en WebP
+
+Les couvertures passent de `public/covers/` à `src/assets/covers/`, pour que le build en dérive des WebP en trois largeurs pour les tuiles du catalogue, et une copie JPEG pour l'image de partage. Voir "Images" dans `data-model.md` et "Performance" dans `technical-specifications.md`.
+
+**Critère :** les tuiles servent des WebP adaptés à leur taille d'affichage, l'image de partage reste un JPEG, et le poids des images de l'accueil baisse nettement (mesuré : 3 559 Ko → 658 Ko sur desktop, 204 Ko sur mobile).
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 23 du plan de construction (BUILD-PLAN.md) : couvertures en WebP.
+
+Déplace les couvertures dans src/assets/covers/, crée src/scripts/covers.ts, rends les tuiles
+avec le composant Image d'Astro (WebP, srcset et sizes calés sur la grille) et dérive l'image de
+partage en JPEG, en suivant "Images" dans data-model.md et "Performance" dans
+technical-specifications.md.
+
+Critère de fin : WebP adaptés sur les tuiles, JPEG pour le partage, poids de l'accueil mesuré.
 ```
