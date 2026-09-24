@@ -451,7 +451,7 @@ Montée de version d'Astro 5 à 7, qui lève les vulnérabilités signalées par
 
 **Critère :** `npm audit` ne signale plus de vulnérabilité, `npm run build` passe, le texte rendu de chaque page est identique à celui d'Astro 5 (hors ordre du catalogue, voir ci-dessous), et les visualisations se comportent comme avant.
 
-**Statut :** fait. Seul écart constaté : Astro 7 liste les entrées de collection par ordre alphabétique, alors qu'Astro 5 suivait un ordre de fichiers quelconque. L'ordre des tuiles du catalogue a donc changé, et `home-page.md` ne le spécifie pas.
+**Statut :** fait. Seul écart constaté : Astro 7 liste les entrées de collection par ordre alphabétique, alors qu'Astro 5 suivait un ordre de fichiers quelconque. L'ordre des tuiles du catalogue a donc changé. Décision ensuite : garder l'ordre alphabétique de slug, désormais imposé explicitement dans le code et spécifié dans `home-page.md`.
 
 **Prompt :**
 ```
