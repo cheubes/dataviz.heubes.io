@@ -44,6 +44,7 @@ Faire voir, par l'accumulation progressive de points autour d'un globe habillé 
 - **Pas de fiche par satellite individuel :** ni survol, ni tap sur un point isolé (décision explicite, voir échanges de cadrage) — l'angle de cette visualisation est la densité et l'accélération d'ensemble, pas l'exploration satellite par satellite ; une telle interaction resterait par ailleurs peu fiable sur une nuée aussi dense (points très proches les uns des autres vers la fin de l'animation).
 - **Vue initiale :** les cinq zones actives, année simulée à 1958, compteur à zéro, vitesse Normal, lecture automatique déjà en cours.
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les zones actives et l'année choisie (pause ou curseur) sont restaurées, la visualisation s'ouvrant alors en pause sur cette année. La rotation du globe, purement décorative, n'est pas conservée.
+- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la visualisation s'ouvre en pause sur la dernière année, nuée complète et globe immobile.
 
 ## États
 

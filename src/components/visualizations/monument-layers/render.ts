@@ -8,6 +8,7 @@ import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
+import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
 type Era =
   | 'paleolithic'
@@ -865,6 +866,7 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
   const urlYearParam = getUrlParam('year');
   const urlYear = urlYearParam ? Number(urlYearParam) : NaN;
   if (Number.isInteger(urlYear) && urlYear >= PRELUDE_CUTOFF_YEAR && urlYear <= newestYear) scrubToYear(urlYear);
+  else if (prefersReducedMotion()) scrubToYear(newestYear);
 
   startAnimationLoop();
 }

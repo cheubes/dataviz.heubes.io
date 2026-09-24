@@ -68,6 +68,7 @@ Voir "État dans l'URL" dans le `technical-specifications.md` général pour le 
 | `zoom` | `<k>,<lon>,<lat>` (format commun) | Planisphère entier |
 
 - **Écart à la règle générale de position temporelle, même traitement que `earthquakes` :** une fois la lecture arrêtée, les pulses s'effacent en 700 ms et l'annotation en 2 200 ms (voir "Rendu" ci-dessus), et les points de volcan au repos sont les mêmes quelle que soit l'année. Une image en pause sur une année partagée ne montrerait donc rien de propre à cette année, hormis l'indicateur. Un lien porteur de `year` relance donc la lecture à partir de cette année au lieu de l'ouvrir en pause. L'URL retire alors `year` dès le montage, puisque la lecture tourne : c'est la seule écriture de l'URL qui ne suit pas une action du visiteur.
+- **Exception, mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : `year` n'est pas retiré au montage et la visualisation reste en pause sur l'année partagée, la préférence du visiteur primant sur la relance de la lecture. Sans `year`, elle s'ouvre en pause au début de la période.
 - `year` est écrit à la pause (bouton) et au relâchement du curseur d'année, et retiré à la reprise de la lecture.
 
 ## Points tranchés à l'implémentation

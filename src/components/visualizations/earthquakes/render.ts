@@ -8,6 +8,7 @@ import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
+import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
 interface RawEarthquake {
   id: string;
@@ -655,12 +656,22 @@ export async function mountEarthquakes(root: HTMLElement, lang: 'fr' | 'en', lab
   // Earthquakes are transient pulses that fade as soon as playback stops, so
   // a paused frame would be an empty map: a shared year restarts playback
   // from that year instead, and the URL drops it since playback is running.
+  // Reduced motion is the exception: it keeps that year paused, and without a
+  // shared year it pauses at the start of the period.
+  const reducedMotion = prefersReducedMotion();
   const urlYear = Number(getUrlParam('year'));
   if (Number.isInteger(urlYear) && urlYear >= startYear && urlYear < endYear) {
     playedMs = ((urlYear - startYear) / totalYears) * TOTAL_DURATION_MS;
     cursor = cursorForSimYear(urlYear);
     updateYearIndicator(urlYear);
-    setUrlParams({ year: null });
+    if (!reducedMotion) setUrlParams({ year: null });
+  }
+  if (reducedMotion) {
+    playing = false;
+    playButton.textContent = labels.play;
+    playButton.setAttribute('aria-pressed', 'false');
+    // The playback loop is what normally fills the year indicator.
+    updateYearIndicator(startYear + (playedMs / TOTAL_DURATION_MS) * totalYears);
   }
 
   // --- Tooltip --------------------------------------------------------------

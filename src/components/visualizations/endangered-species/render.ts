@@ -1,6 +1,7 @@
 import { interpolateNumber } from 'd3-interpolate';
 import { timer as d3Timer } from 'd3-timer';
 import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
+import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
 interface SpeciesCount {
   year: number;
@@ -435,10 +436,16 @@ export async function mountEndangeredSpecies(
   });
 
   const urlYear = Number(getUrlParam('year'));
-  if (Number.isInteger(urlYear) && urlYear >= minYear && urlYear <= maxYear) {
+  const initialYear =
+    Number.isInteger(urlYear) && urlYear >= minYear && urlYear <= maxYear
+      ? urlYear
+      : prefersReducedMotion()
+        ? maxYear
+        : null;
+  if (initialYear !== null) {
     playing = false;
     updatePlayButton();
-    setYear(urlYear);
+    setYear(initialYear);
     holding = currentYear === maxYear;
   }
 }

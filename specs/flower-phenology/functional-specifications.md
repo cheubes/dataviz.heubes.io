@@ -34,6 +34,7 @@ Montrer, sur un calendrier circulaire, le moment de première floraison de plant
 - **Survol / tap d'un arc :** tooltip avec le nom de l'espèce, le jour médian de floraison en toutes lettres (ex. "15 avril"), la variation par rapport à l'autre décennie affichée (ex. "-8 jours").
 - **Vue initiale :** calendrier complet visible, toutes les espèces sélectionnées, décennies par défaut (1970s intérieur / 2020s extérieur).
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les espèces affichées et la décennie de chaque anneau sont restaurées, y compris une sélection vide. Le tooltip n'est pas capturé (voir "État dans l'URL" dans `technical-specifications.md`).
+- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : changer de décennie redessine les anneaux sans transition, au lieu de faire glisser les arcs.
 
 ## États
 

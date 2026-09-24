@@ -92,6 +92,15 @@ L'URL de la page d'une visualisation reflète en continu l'état choisi par le v
 
 Chaque visualisation liste ses propres paramètres dans son `technical-specifications.md` (section "État dans l'URL"). Mécanisme commun : voir "État dans l'URL" dans `technical-specifications.md`.
 
+### Mouvement réduit
+
+Quand le visiteur a demandé à son système de réduire les animations (préférence `prefers-reduced-motion`), le site ne lance aucun mouvement de lui-même :
+
+- **Lecture automatique :** une visualisation animée s'ouvre en pause, sur son état final, le plus informatif sans mouvement (dernière année, accumulation complète). Le bouton Lecture reste disponible : lancer la lecture est alors un choix explicite du visiteur, et l'animation se déroule normalement. Chaque visualisation animée précise son état d'ouverture dans son `functional-specifications.md`, en particulier quand elle n'a pas d'état final (cycle sans fin, impulsions éphémères).
+- **Transitions qui déplacent des éléments** (arcs qui glissent, zoom animé par un bouton) : immédiates. Les fondus de couleur ou d'opacité (survol, bascule entre deux cartes) sont conservés, car ils ne déplacent rien.
+- **Lien partagé :** une position temporelle portée par l'URL (voir "État partageable dans l'URL" ci-dessus) prime sur l'état final, et la visualisation reste en pause sur cette position, y compris quand elle relancerait sinon la lecture. L'état d'ouverture choisi pour le mouvement réduit n'est jamais écrit dans l'URL : ce n'est pas une action du visiteur.
+- La préférence est lue une fois, au chargement de la visualisation. La modifier pendant la visite ne change rien avant le rechargement de la page.
+
 ## Hors périmètre
 
 - Comptes utilisateurs, authentification.

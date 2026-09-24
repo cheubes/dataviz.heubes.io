@@ -51,6 +51,7 @@ Faire voir, par l'animation de trajectoires GPS réelles, les couloirs de migrat
 - **Zoom / pan :** sur la zone Europe/Afrique illustrée (pas de panoramique libre au-delà). Partagé entre les deux vues.
 - **Vue initiale :** zone Europe/Afrique entière visible, toutes espèces actives, direction "Les deux", vue "Animée" avec animation déjà en cours.
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les espèces actives, la direction, la vue, le cadrage et, si la lecture était en pause, le jour simulé sont restaurés ; un lien pris en pause ouvre l'animation en pause sur ce jour. Ni la vitesse ni l'individu surligné ne sont partagés.
+- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la visualisation s'ouvre sur la vue statique, trajets complets dessinés, sans lecture : une image en pause de la vue animée ne montrerait que la position de chaque oiseau. Un lien porteur d'un jour garde la vue animée, en pause sur ce jour.
 
 ## États
 

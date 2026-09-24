@@ -44,6 +44,7 @@ Faire voir, par l'accumulation chronologique de points sur une carte réelle de 
 - **Survol/tap d'un monument :** fiche de détail (nom, commune/département, siècle de construction, nature de la protection, catégorie de l'édifice, lien vers la notice de référence sur la Plateforme Ouverte du Patrimoine du ministère de la Culture — ajouté après la première implémentation, retour utilisateur). Fonctionne à tout moment, y compris pendant la lecture, sur les monuments déjà apparus. Le lien n'est cliquable qu'une fois la fiche épinglée (clic/tap sur le monument) : en simple survol, la fiche suit le pointeur et resterait impossible à atteindre sans se refermer avant qu'on puisse cliquer le lien.
 - **Vue initiale :** filtre "Les deux", carte de France entière visible avec le socle antique déjà affiché (voir "Lecture automatique" ci-dessus), lecture automatique déjà en cours, compteur reflétant ce socle plutôt que zéro (1 790 monuments au filtre "Les deux", moins avec un filtre de protection isolé).
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : le filtre protection, l'année et le cadrage sont restaurés. Une année partagée ouvre la carte en pause sur l'accumulation atteinte à cette année (voir "État dans l'URL" dans `technical-specifications.md`).
+- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause sur l'accumulation complète, à la dernière année de construction du jeu de données.
 
 ## États
 

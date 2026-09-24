@@ -4,6 +4,7 @@ import { select } from 'd3-selection';
 import 'd3-transition';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
+import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
 interface DecadeStats {
   medianDoy: number;
@@ -487,6 +488,8 @@ export async function mountFlowerPhenology(
     else outerDecade = newDecade;
   }
 
+  const ringTransitionMs = prefersReducedMotion() ? 0 : RING_TRANSITION_MS;
+
   function animateArc(
     path: SVGPathElement,
     innerR: number,
@@ -498,7 +501,7 @@ export async function mountFlowerPhenology(
     const generator = d3Arc().innerRadius(innerR).outerRadius(outerR).cornerRadius(cornerRadius);
     select(path)
       .transition()
-      .duration(RING_TRANSITION_MS)
+      .duration(ringTransitionMs)
       .attrTween('d', () => (t: number) => {
         generator.startAngle(from.start + (to.start - from.start) * t).endAngle(from.end + (to.end - from.end) * t);
         return generator({} as any) ?? '';
