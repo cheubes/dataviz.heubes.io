@@ -169,10 +169,19 @@ Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble d
 - Fond `--dv-surface`, titre `--dv-ink-primary`, texte `--dv-ink-secondary`, bordure `--dv-gridline`.
 - Survol : légère élévation (ombre) et bordure `--dv-header-bg` (identité de marque).
 
+### Tableau de données
+
+- Bloc repliable (`<details>`), fermé par défaut. Son libellé (`<summary>`) est en `--dv-accent`, en texte secondaire, précédé du triangle natif du navigateur, qui indique l'état ouvert ou fermé.
+- Tableau pleine largeur du conteneur, typographie du texte secondaire (`0.875rem`, graisse 300, `--dv-ink-secondary`), en-têtes en graisse 500 et `--dv-ink-primary`. Légende (`<caption>`) alignée à gauche, au-dessus du tableau.
+- Filets horizontaux `--dv-gridline` entre les lignes, pas de filets verticaux ni de zébrures. Ligne de total séparée par un filet plus épais (`2px`).
+- Nombres alignés à droite, en chiffres tabulaires (`font-variant-numeric: tabular-nums`) pour que les unités s'alignent d'une ligne à l'autre. Texte aligné à gauche.
+- Sur petit écran, le tableau défile horizontalement dans son propre conteneur, jamais la page (voir "Espacements, grille et responsive").
+
 ### Page de visualisation
 
 - `title` en `h1`, `summary` puis présentation longue (corps de texte de `<viz-slug>.<lang>.md`, voir `data-model.md`). Pas de couverture affichée en tête de page (à la différence de la tuile) : elle reste utilisée comme image de partage (meta Open Graph, voir "SEO" dans `technical-specifications.md`), pas comme élément visuel de la page elle-même.
 - Zone de montage de la visualisation elle-même, après la présentation : conteneur pleine largeur, hauteur minimale réservée pour éviter un saut de mise en page pendant son initialisation (voir "États" attendus dans "Règles communes à toutes les visualisations" de `technical-specifications.md`). Traitement visuel propre à chaque visualisation, documenté dans son propre `functional-specifications.md`.
+- Vue tableau, entre la zone de montage et le bloc de crédit, quand la visualisation en propose une (voir "Tableau de données" ci-dessus).
 - Bloc de crédit des sources, après la zone de montage : un jeu de données par ligne (`name`, `publisher`, `license`, lien vers `url`, `retrieved`), texte secondaire.
 - Téléchargement des données préparées, en fin de bloc de crédit, sous la liste des sources (voir "Téléchargement des données préparées" dans `functional-specifications.md`) : un libellé, puis un lien par fichier (nom du fichier en `--dv-accent`, taille entre parenthèses, séparés par des virgules), et une mention rappelant que la réutilisation reste soumise aux licences des sources. Même typographie que les lignes de sources (texte secondaire). Pas d'icône. Absent quand la visualisation ne déclare aucun fichier.
 - Section des visualisations liées, après le bloc de crédit (règle de sélection : voir "Visualisations liées" dans `functional-specifications.md`) : titre `h2` au même style que celui du bloc de crédit, puis les tuiles du catalogue réutilisées telles quelles (voir "Tuiles (catalogue)" ci-dessus), dans la même grille fluide que l'accueil. Avec moins de trois tuiles, celles-ci gardent la largeur qu'elles auraient dans la grille complète au lieu de s'étirer. Section absente quand aucune visualisation ne partage de thème.

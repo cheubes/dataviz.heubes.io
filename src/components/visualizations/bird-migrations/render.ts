@@ -9,26 +9,26 @@ import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
 import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
-interface TrackPoint {
+export interface TrackPoint {
   lat: number;
   lng: number;
   date: string;
 }
 
-interface Track {
+export interface Track {
   individualId: string;
   speciesId: string;
   direction: 'autumn' | 'spring';
   points: TrackPoint[];
 }
 
-interface Species {
+export interface Species {
   id: string;
   nameFr: string;
   nameEn: string;
 }
 
-interface TracksData {
+export interface TracksData {
   species: Species[];
   tracks: Track[];
 }
@@ -127,13 +127,13 @@ function haversineKm(a: TrackPoint, b: TrackPoint): number {
   return EARTH_RADIUS_KM * geoDistance([a.lng, a.lat], [b.lng, b.lat]);
 }
 
-function totalDistanceKm(points: TrackPoint[]): number {
+export function totalDistanceKm(points: TrackPoint[]): number {
   let total = 0;
   for (let i = 1; i < points.length; i++) total += haversineKm(points[i - 1], points[i]);
   return total;
 }
 
-function durationDays(points: TrackPoint[]): number {
+export function durationDays(points: TrackPoint[]): number {
   const [y1, m1, d1] = points[0].date.split('-').map(Number);
   const last = points[points.length - 1];
   const [y2, m2, d2] = last.date.split('-').map(Number);

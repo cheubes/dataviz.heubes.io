@@ -48,6 +48,15 @@ Mêmes interactions que `volcanic-eruptions` (voir son `functional-specification
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : l'année et le cadrage sont restaurés. Une année partagée relance la lecture à partir de cette année au lieu de figer la carte en pause, puisqu'une image en pause n'aurait aucun séisme à montrer (voir "État dans l'URL" dans `technical-specifications.md`).
 - **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause au début de la période. Faute d'image fixe (les impulsions s'effacent), elle ne montre que les frontières de plaques jusqu'à un appui sur Lecture. Une année partagée reste alors en pause au lieu de relancer la lecture.
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Séismes de magnitude 6 ou plus, par décennie" / "Earthquakes of magnitude 6 or more, by decade".
+- **Lignes :** une par décennie (1900-1909 à la décennie en cours).
+- **Colonnes :** Séismes (magnitude 6 ou plus) ; Magnitude 7 ou plus ; Magnitude 8 ou plus ; Plus fort séisme (lieu tel que fourni par l'USGS, année quand ce libellé ne la contient pas déjà, magnitude).
+- **Ligne de total :** toute la période, avec le plus fort séisme de la période.
+
 ## États
 
 - **Chargement :** le temps que le JSON des séismes/frontières de plaques et le fond de carte soient récupérés et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
@@ -61,6 +70,8 @@ Même traitement que `volcanic-eruptions`/`bird-migrations` (voir "Responsive" d
 ## Accessibilité (limite connue)
 
 L'interaction principale (planisphère animé, zoom/pan, survol des séismes) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documentée comme limite connue, sans repli, conformément à la règle par défaut du projet. Le bouton Play/Pause reste accessible au clavier (élément `<button>` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention.
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
 
 ## Contenu non traduit
 

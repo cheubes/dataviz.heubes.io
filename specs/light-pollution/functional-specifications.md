@@ -49,6 +49,15 @@ Faire voir, sur une grille de la France métropolitaine, l'évolution de l'inten
 
 Chaque passage part de 2013 (année la plus ancienne) et avance d'une année à la fois jusqu'à 2025 (aujourd'hui), marque un temps d'arrêt de quelques secondes sur cet état final (même logique que `satellites-in-orbit` : laisser voir l'année la plus récente comme un aboutissement plutôt que comme une frame parmi d'autres) puis reprend depuis 2013. Revient ainsi sur la précédente décision "vue initiale = année la plus récente" : avec une lecture automatique en boucle, il n'y a plus d'" état initial" figé à privilégier, la boucle montre systématiquement les deux bornes (départ et aboutissement).
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Part du territoire par niveau de visibilité du ciel, par année" / "Share of the territory by sky visibility level, by year".
+- **Lignes :** une par année (2013 à 2025).
+- **Colonnes :** les six niveaux de l'échelle de visibilité, du ciel remarquable au ciel urbain, avec les libellés de la légende de la carte. Cellule : part des cellules de la grille dans ce niveau (%), les cellules ayant toutes la même surface.
+- **Pas de ligne de total :** chaque ligne fait 100 %.
+
 ## États
 
 - **Chargement :** le temps que `skybins.json` soit récupéré et que la grille s'initialise ; zone de montage réservée sans saut de mise en page.
@@ -62,6 +71,8 @@ Légende et contrôles étant toujours au-dessus de la carte (jamais en surimpre
 ## Accessibilité (limite connue)
 
 La fiche de détail par cellule (survol/tap) n'est pas nativement accessible au clavier ni au lecteur d'écran, même limite que les grilles hexagonales de `biodiversity`. Documentée comme limite connue, sans repli, conformément à la règle par défaut du projet. Le curseur d'année reste accessible au clavier (élément `<input type="range">` standard) : la recoloration de la grille selon l'année reste donc pilotable sans souris, seule la fiche de détail par cellule ne l'est pas. Le bouton Play/Pause est requis dès lors que le contenu s'anime en continu sans action du visiteur (même rationale que `satellites-in-orbit`).
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
 
 ## Contenu non traduit
 

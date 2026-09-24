@@ -47,6 +47,16 @@ Donner à explorer librement, sans thèse imposée, la totalité du patrimoine a
 - **Vue initiale :** tous les genres actifs, jardins nationaux affichés, recherche vide, carte centrée sur Paris entier, zoom initial cadrant les vingt arrondissements.
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les genres actifs, la recherche, la case "Jardins nationaux" et le cadrage (y compris celui obtenu par un clic sur un arrondissement) sont restaurés. La fiche de détail d'un arbre n'est pas partagée.
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Arbres de l'inventaire municipal, par arrondissement" / "Trees in the municipal inventory, by district".
+- **Lignes :** les vingt arrondissements.
+- **Colonnes :** Arbres ; Genre dominant (nom du genre et part des arbres de l'arrondissement, en %), choisi parmi les genres nommés : la catégorie "Autres", qui regroupe tous les genres minoritaires, dépasse à elle seule les platanes et l'emporterait partout ; Arbres remarquables.
+- **Ligne de total :** "Paris", avec le genre dominant de toute la ville.
+- Les arbres des jardins nationaux (OpenStreetMap) ne sont pas repris : le tableau décrit l'inventaire municipal, comme la carte par défaut.
+
 ## États
 
 - **Chargement :** le temps que les cinq fichiers de données (`trees.json`, `districts.json`, `streets.json`, `seine.json`, `national-gardens.json`) soient récupérés et que la carte s'initialise. `trees.json` nettement plus volumineux que sur les autres visualisations du site (voir "Format de données" dans `technical-specifications.md`) : un indicateur de progression du chargement est prévu plutôt qu'un simple état binaire chargé/non chargé, pour ne pas laisser un visiteur avec une carte vide sans retour pendant plusieurs secondes ; les quatre autres fichiers, nettement plus légers, n'ont pas cet indicateur.
@@ -62,6 +72,8 @@ Donner à explorer librement, sans thèse imposée, la totalité du patrimoine a
 ## Accessibilité (limite connue)
 
 L'interaction principale (carte de points, pan tactile/souris, survol des arbres) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général). Le champ de recherche, les entrées de la légende/filtre, la case "Jardins nationaux" et les boutons de zoom restent accessibles au clavier (éléments `<input>` et `<button>` standard, `aria-label` sur les boutons de zoom qui n'ont qu'un symbole), pour permettre de filtrer et de zoomer sans dépendre du geste souris/tactile sur la carte elle-même ; le pan reste hors clavier (aucun bouton de déplacement ajouté).
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
 
 ## Contenu non traduit
 

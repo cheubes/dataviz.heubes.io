@@ -47,6 +47,16 @@ Faire voir, sur un planisphère animé en boucle continue sur dix mille ans, le 
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : l'année et le cadrage sont restaurés. Comme pour `earthquakes`, une année partagée relance la lecture à partir de cette année au lieu de figer la carte en pause, puisqu'une image en pause ne montrerait que les volcans au repos, identiques à toute année (voir "État dans l'URL" dans `technical-specifications.md`).
 - **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause au début de la période, avec les volcans au repos et leurs fiches de détail disponibles. Une année partagée reste alors en pause au lieu de relancer la lecture.
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Éruptions recensées par millénaire" / "Recorded eruptions by millennium".
+- **Lignes :** un millénaire par ligne, de 8000 av. J.-C. à aujourd'hui, avec les mêmes formats d'année que la visualisation.
+- **Colonnes :** Éruptions ; Éruptions d'indice d'explosivité 4 ou plus ; Volcans actifs (au moins une éruption dans le millénaire).
+- **Ligne de total :** toute la période.
+- Le tableau rend directement lisible le biais de documentation décrit dans la présentation : le dernier millénaire complet compte à lui seul près des deux tiers des éruptions recensées.
+
 ## États
 
 - **Chargement :** le temps que le JSON des volcans/éruptions et le fond de carte soient récupérés et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
@@ -60,6 +70,8 @@ Même traitement que `bird-migrations`/`monarch-migration` (voir "Responsive" da
 ## Accessibilité (limite connue)
 
 L'interaction principale (planisphère animé, zoom/pan, survol des volcans) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documentée comme limite connue, sans repli, conformément à la règle par défaut du projet. Le bouton Play/Pause reste accessible au clavier (élément `<button>` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention.
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
 
 ## Contenu non traduit
 

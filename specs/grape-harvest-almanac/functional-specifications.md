@@ -35,6 +35,15 @@ Montrer, sur une ligne temporelle continue, l'évolution des dates de vendanges 
 - **Clic/tap sur un repère historique :** ouvre un panneau de détail (titre, description, voir "Repères historiques" dans `data-model.md`) ; un second tap ailleurs (mobile) ou un nouveau clic sur le repère (desktop, pour le refermer) le referme, même comportement que le tooltip de `flower-phenology`.
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les régions cochées sont restaurées, y compris une sélection vide. Le tooltip et le panneau d'un repère historique ne sont pas capturés (voir "État dans l'URL" dans `technical-specifications.md`).
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Date moyenne des vendanges, par siècle et par région (nombre d'années renseignées entre parenthèses)" / "Average harvest date, by century and region (number of recorded years in brackets)".
+- **Lignes :** un siècle par ligne, du 14e au 21e.
+- **Colonnes :** une par région, dans l'ordre des cases à cocher. Cellule : date moyenne des vendanges sur les années renseignées du siècle (31 août + décalage moyen), suivie du nombre d'années entre parenthèses ("26 septembre (99)"), pour que le lecteur juge la fiabilité d'une moyenne qui ne repose parfois que sur une poignée d'années. "n.d." quand la région n'a aucune année dans le siècle.
+- **Pas de ligne de total :** une moyenne toutes périodes confondues effacerait l'avancée des vendanges, qui est l'objet de la visualisation.
+
 ## États
 
 - **Chargement :** le temps que le JSON de vendanges soit récupéré et que la ligne temporelle s'initialise ; zone de montage réservée sans saut de mise en page.
@@ -51,3 +60,5 @@ Version tactile adaptée (voir "Responsive" dans `technical-specifications.md` g
 ## Accessibilité (limite connue)
 
 L'interaction principale (ligne temporelle SVG, survol/tap des courbes et des repères) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général).
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.

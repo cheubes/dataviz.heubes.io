@@ -8,7 +8,7 @@ import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
 import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
-type Era =
+export type Era =
   | 'paleolithic'
   | 'mesolithic'
   | 'neolithic'
@@ -28,7 +28,7 @@ interface Department {
   nameEn: string;
 }
 
-interface RawMonument {
+export interface RawMonument {
   name: string;
   commune: string;
   lat: number;
@@ -191,7 +191,7 @@ function eraLabel(era: Era, labels: MonumentLayersLabels): string {
   }
 }
 
-function periodLabel(m: RawMonument, lang: 'fr' | 'en', labels: MonumentLayersLabels): string {
+export function periodLabel(m: RawMonument, lang: 'fr' | 'en', labels: MonumentLayersLabels): string {
   return m.era ? eraLabel(m.era, labels) : centuryLabel(m.constructionYear, lang, labels);
 }
 

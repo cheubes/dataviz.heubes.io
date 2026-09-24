@@ -39,6 +39,15 @@ Faire voir, sur une carte animée au long d'une année, la migration du monarque
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : le mois et le cadrage sont restaurés. Un mois partagé ouvre la carte en pause au début de ce mois (voir "État dans l'URL" dans `technical-specifications.md`).
 - **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause au début du mois d'août. Le cycle n'a pas d'état final : août est le mois où la densité couvre le plus de cases et totalise le plus d'observations (960 cases, un peu plus de 100 000 observations), soit l'image la plus complète de la vague.
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Observations de monarques par mois, en Amérique du Nord" / "Monarch observations by month, in North America".
+- **Lignes :** les douze mois.
+- **Colonnes :** Observations ; Cases occupées (sur la grille d'un degré) ; Latitude moyenne (°N, pondérée par le nombre d'observations) ; Case la plus au nord (°N).
+- **Ligne de total :** "Année" : total des observations, nombre de cases occupées au moins un mois, latitude moyenne et case la plus au nord sur l'ensemble de l'année.
+
 ## États
 
 - **Chargement :** le temps que le fichier de densité et le fond de carte soient récupérés et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
@@ -52,6 +61,8 @@ Pan/zoom au geste tactile, tooltip et épinglage au tap, contrôles sur une lign
 ## Accessibilité (limite connue)
 
 L'interaction principale (carte animée, zoom/pan, survol des cases) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet. Le bouton Play/Pause reste accessible au clavier (élément `<button>` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention.
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
 
 ## Limites connues
 
