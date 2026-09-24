@@ -108,6 +108,8 @@ Utilisées par `biodiversity`, `light-pollution`, `paris-trees`, `monument-layer
 
 `line-height` : 1.2 pour les titres, 1.5 pour le corps de texte.
 
+Ponctuation du texte français (textes d'interface `i18n/fr.ts`, frontmatter et corps des `<viz-slug>.fr.md`, textes français embarqués dans les données comme les champs `*Fr`) : une espace insécable précède toujours les ponctuations doubles (`:`, `;`, `!`, `?`) et les points de suspension (`…` comme `...`). Elle est saisie comme caractère U+00A0, pas comme entité `&nbsp;`, que le frontmatter et les chaînes JS afficheraient littéralement. Les attributs non localisés (ex : `license` d'un dataset, identique entre les deux langues) restent tels que publiés par la source.
+
 Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble du site) ; l'affordance vient de la couleur (`--dv-accent` ou `--dv-gold` selon la surface, voir "Couleurs") et de son changement au survol/focus, pas du soulignement.
 
 ## Espacements, grille et responsive
