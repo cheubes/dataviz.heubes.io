@@ -1,11 +1,11 @@
 ---
 import { getCollection, render } from 'astro:content';
 import { existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import RelatedVisualizations from '../components/RelatedVisualizations.astro';
 import DataDownloads from '../components/DataDownloads.astro';
-import { getVisualizationSlug } from '../content/config';
+import { getVisualizationSlug } from '../content.config';
 import { validateVisualizations } from '../content/validation';
 import BirdMigrations from '../components/visualizations/bird-migrations/BirdMigrations.astro';
 import FlowerPhenology from '../components/visualizations/flower-phenology/FlowerPhenology.astro';
@@ -67,7 +67,7 @@ const slug = getVisualizationSlug(viz.id, lang);
 const { Content } = await render(viz);
 
 const coverExtension = ['jpg', 'png'].find((ext) =>
-  existsSync(fileURLToPath(new URL(`../../public/covers/${slug}.${ext}`, import.meta.url)))
+  existsSync(join(process.cwd(), 'public', 'covers', `${slug}.${ext}`))
 );
 const coverPath = coverExtension ? `/covers/${slug}.${coverExtension}` : '/cover-placeholder.svg';
 const alternatePath = hasTranslation ? `/fr/${slug}/` : undefined;

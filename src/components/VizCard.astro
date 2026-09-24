@@ -1,8 +1,8 @@
 ---
 import { existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import type { CollectionEntry } from 'astro:content';
-import { getVisualizationSlug } from '../content/config';
+import { getVisualizationSlug } from '../content.config';
 
 interface Props {
   viz: CollectionEntry<'visualizations'>;
@@ -15,7 +15,7 @@ const slug = getVisualizationSlug(viz.id, lang);
 const href = lang === 'fr' ? `/fr/${slug}/` : `/${slug}/`;
 
 const coverExtension = ['jpg', 'png'].find((ext) =>
-  existsSync(fileURLToPath(new URL(`../../public/covers/${slug}.${ext}`, import.meta.url)))
+  existsSync(join(process.cwd(), 'public', 'covers', `${slug}.${ext}`))
 );
 const coverPath = coverExtension ? `/covers/${slug}.${coverExtension}` : '/cover-placeholder.svg';
 ---

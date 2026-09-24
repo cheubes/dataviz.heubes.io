@@ -1,5 +1,5 @@
 import type { CollectionEntry } from 'astro:content';
-import { getVisualizationSlug } from './config';
+import { getVisualizationSlug } from '../content.config';
 
 const NON_LOCALIZED_FIELDS = ['datasets', 'themes', 'publication-date', 'downloads'] as const;
 const RESERVED_SLUGS = ['about'];

@@ -1,6 +1,7 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
-import { THEMES } from '../scripts/theme-filter';
+import { THEMES } from './scripts/theme-filter';
 
 // The default generateId concatenates basename and lang suffix without a
 // separator (test-viz.fr.md -> "test-vizfr"), unusable to recover the slug.
@@ -27,7 +28,7 @@ const visualizations = defineCollection({
       z.object({
         name: z.string(),
         publisher: z.string(),
-        url: z.string().url(),
+        url: z.url(),
         license: z.string().optional(),
         retrieved: z.string().optional(),
       })
