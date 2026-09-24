@@ -25,6 +25,7 @@ A catalogue of interactive, hand-built data visualizations. Each entry explores 
 npm install
 npm run dev       # local dev server
 npm run check     # type-check .ts and .astro files (astro check)
+npm run check-links  # check every dataset source URL (also run weekly by GitHub Actions)
 npm run build     # type-check, then static build to dist/
 npm run preview   # preview the production build
 ```

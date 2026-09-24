@@ -100,6 +100,8 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 /
 ├── astro.config.mjs
 ├── package.json
+├── scripts/
+│   └── check-source-links.mjs         # vérification hebdomadaire des URL des sources, voir "Surveillance des sources"
 ├── public/
 │   ├── CNAME
 │   ├── logo.png                       # favicon et logo de l'en-tête, voir style-guide.md
@@ -288,6 +290,20 @@ Mécanisme commun de l'état partageable (voir "État partageable dans l'URL" da
 
   Elle est appelée par `[viz].astro` et `fr/[viz].astro`, dans le corps de la page plutôt que dans `getStaticPaths`, qui s'exécute dans une portée isolée et ne voit pas la table des composants. Elle rassemble toutes les erreurs dans un seul message et fait échouer `astro build`, donc aussi le déploiement : pas de script séparé à penser à lancer, ni de dépendance ajoutée.
 - La présence de l'image de couverture n'est pas vérifiée : le repli sur le placeholder est voulu tant que la couverture n'existe pas (voir "Images" dans `style-guide.md`).
+
+---
+
+## Surveillance des sources
+
+Les URL des jeux de données (attribut `url` de chaque entrée de `datasets`, voir "Dataset source" dans `data-model.md`) pointent vers des sites tiers qui évoluent sans prévenir. Elles sont vérifiées chaque semaine, hors du build : une vérification réseau dans le build le rendrait dépendant de la disponibilité de sites tiers.
+
+- **Script :** `scripts/check-source-links.mjs` (Node, sans dépendance), lancé en local par `npm run check-links`. Il lit les URL dans le frontmatter des fichiers de contenu, les dédoublonne et les interroge en GET, en suivant les redirections, avec un délai de 60 s et un nouvel essai après une réponse 5xx, un délai dépassé ou une connexion interrompue.
+- **Trois verdicts :**
+  - **OK** : réponse inférieure à 400.
+  - **Cassé** : 404, 410, erreur 5xx persistante, domaine introuvable ou connexion refusée.
+  - **Indéterminé** : toute autre réponse (401, 403, 429…), erreur de certificat, délai dépassé. Ces réponses ne disent rien de l'existence de la source. Mesuré à la mise en place : GBIF et la Smithsonian bloquent les robots derrière Cloudflare (403), la BDIFF sert une chaîne de certificats incomplète que Node rejette et que les navigateurs complètent, la NOAA dépasse régulièrement le délai. Toutes répondent normalement dans un navigateur.
+- **Workflow :** `.github/workflows/check-source-links.yml`, chaque lundi à 6 h UTC et à la demande (`workflow_dispatch`), sans autre permission que la lecture du dépôt. Il échoue uniquement s'il trouve un lien cassé : GitHub envoie alors son e-mail d'échec habituel. Le détail des liens cassés et indéterminés, par visualisation, figure dans le résumé du run. Un lien indéterminé qui le reste plusieurs semaines est à vérifier à la main.
+- **Limite connue :** GitHub désactive les workflows planifiés d'un dépôt resté sans activité pendant 60 jours. Il faut alors les réactiver dans l'onglet Actions.
 
 ---
 
