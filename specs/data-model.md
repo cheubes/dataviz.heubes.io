@@ -78,10 +78,12 @@ Les attributs non localisés (`datasets`, `themes`, `publication-date`, `downloa
 3. Ajouter l'image de couverture (`public/covers/<viz-slug>.jpg` ou `.png`).
 4. Implémenter la visualisation elle-même selon `specs/<viz-slug>/functional-specifications.md`, `data-model.md` et `technical-specifications.md`.
 5. Le cas échéant, déclarer les fichiers de données principaux dans `downloads`, après vérification des licences des sources (voir "Téléchargement des données préparées" dans `functional-specifications.md`).
-6. Valider (voir "Contraintes et règles de validation" ci-dessous et "Validation des données" dans `technical-specifications.md`).
+6. Valider en lançant `npm run build`, qui échoue sur toute règle non respectée (voir "Contraintes et règles de validation" ci-dessous et "Validation des données" dans `technical-specifications.md`).
 7. Publier.
 
 ## Contraintes et règles de validation
+
+Toutes ces règles sont vérifiées au build, sauf celles que les noms de fichiers garantissent d'eux-mêmes (slug identique entre les deux traductions, unicité du slug) : le schéma Zod couvre chaque fichier isolément, et `validateVisualizations` les règles entre fichiers (voir "Validation des données" dans `technical-specifications.md`).
 
 - Le `slug` d'une visualisation est identique pour ses deux traductions.
 - Un `slug` de visualisation est unique globalement, et ne peut pas être `about`, réservé à la page "À propos" (voir "Structure des URLs" dans `technical-specifications.md`).

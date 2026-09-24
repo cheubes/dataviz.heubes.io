@@ -116,6 +116,7 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 ├── src/
 │   ├── content/
 │   │   ├── config.ts                  # schémas des content collections
+│   │   ├── validation.ts              # règles de validation entre fichiers, voir "Validation des données"
 │   │   ├── about/
 │   │   │   ├── about.fr.md            # texte de la page "À propos", hors collection, voir about-page.md
 │   │   │   └── about.en.md
@@ -279,7 +280,14 @@ Mécanisme commun de l'état partageable (voir "État partageable dans l'URL" da
 ## Validation des données
 
 - La validation de structure (présence et type des champs) est native aux content collections d'Astro via le schéma Zod (`src/content/config.ts`) : `astro build` échoue si un fichier de contenu ne respecte pas le schéma, sans script dédié.
-- Les règles qui dépassent un schéma de champ (ex : les valeurs des attributs non localisés doivent être identiques entre `<viz-slug>.fr.md` et `<viz-slug>.en.md`, voir "Contraintes et règles de validation" dans `data-model.md`) sont vérifiées manuellement avant publication à ce stade, faute de validation croisée native entre fichiers d'une même collection. Si le nombre de visualisations le justifie plus tard, un script de validation dédié pourra être introduit, à discuter avant ajout.
+- Les règles qui portent sur plusieurs fichiers, hors de portée d'un schéma par fichier (voir "Contraintes et règles de validation" dans `data-model.md`), sont vérifiées au build par `validateVisualizations` (`src/content/validation.ts`) :
+  - égalité des attributs non localisés entre `<viz-slug>.fr.md` et `<viz-slug>.en.md`, sans tenir compte de l'ordre des clés ;
+  - correspondance entre `lang` et le suffixe du nom de fichier ;
+  - slug réservé `about` ;
+  - présence d'un composant de visualisation monté pour chaque visualisation de la langue de la page.
+
+  Elle est appelée par `[viz].astro` et `fr/[viz].astro`, dans le corps de la page plutôt que dans `getStaticPaths`, qui s'exécute dans une portée isolée et ne voit pas la table des composants. Elle rassemble toutes les erreurs dans un seul message et fait échouer `astro build`, donc aussi le déploiement : pas de script séparé à penser à lancer, ni de dépendance ajoutée.
+- La présence de l'image de couverture n'est pas vérifiée : le repli sur le placeholder est voulu tant que la couverture n'existe pas (voir "Images" dans `style-guide.md`).
 
 ---
 
