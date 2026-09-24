@@ -116,6 +116,9 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 ├── src/
 │   ├── content/
 │   │   ├── config.ts                  # schémas des content collections
+│   │   ├── about/
+│   │   │   ├── about.fr.md            # texte de la page "À propos", hors collection, voir about-page.md
+│   │   │   └── about.en.md
 │   │   └── visualizations/
 │   │       ├── <viz-slug>.fr.md
 │   │       └── <viz-slug>.en.md
@@ -143,9 +146,11 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   ├── pages/
 │   │   ├── index.astro                # accueil EN
 │   │   ├── 404.astro                  # message d'indisponibilité localisé
+│   │   ├── about.astro                # page "À propos" EN, voir about-page.md
 │   │   ├── [viz].astro                # page de visualisation EN
 │   │   └── fr/
 │   │       ├── index.astro            # accueil FR
+│   │       ├── about.astro            # page "À propos" FR
 │   │       └── [viz].astro            # page de visualisation FR
 │   └── styles/
 │       └── global.css                 # variables CSS (voir style-guide.md)
@@ -203,6 +208,7 @@ Le site est entièrement statique, généré au build par Astro. Aucun rendu dyn
 - `/fr/` : accueil du site (français)
 - `/<viz-slug>/` : page d'une visualisation (EN)
 - `/fr/<viz-slug>/` : page d'une visualisation (FR)
+- `/about/`, `/fr/about/` : page "À propos" (voir `about-page.md`). Le slug `about` est donc réservé : aucune visualisation ne peut le prendre (voir "Contraintes et règles de validation" dans `data-model.md`).
 
 L'anglais, langue par défaut, n'a pas de préfixe ; le français est préfixé par `/fr/`.
 

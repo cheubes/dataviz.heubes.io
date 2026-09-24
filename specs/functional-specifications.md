@@ -15,6 +15,7 @@ Dans le périmètre :
 - Consultation, pour chaque visualisation, de sa page dédiée : présentation du dataset source, du contexte de la mise en forme choisie, et interaction avec la visualisation elle-même.
 - Accès, depuis la page d'une visualisation, aux autres visualisations qui partagent un thème avec elle (voir "Visualisations liées" ci-dessous).
 - Téléchargement, depuis la page d'une visualisation, des données préparées qu'elle consomme, quand l'auteur les déclare téléchargeables (voir "Téléchargement des données préparées" ci-dessous).
+- Page "À propos" : démarche, données, fabrication et licence du site (voir `about-page.md`).
 - Site multilingue (français, anglais).
 
 Voir aussi "Hors périmètre" ci-dessous.
@@ -46,6 +47,7 @@ Le contenu (catalogue, visualisations) est produit par l'auteur du site directem
 ### Navigation
 
 - Chaque page permet de revenir à la page d'accueil du site.
+- Chaque page donne accès à la page "À propos", depuis le pied de page (voir `about-page.md`).
 
 ### Visualisations liées
 

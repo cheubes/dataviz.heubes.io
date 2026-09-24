@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Douze étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Treize étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -296,4 +296,25 @@ paramètres dans son propre technical-specifications.md.
 
 Critère de fin : pour chaque visualisation, l'URL suit les manipulations et sa réouverture
 restaure l'état ; les paramètres invalides sont ignorés sans erreur.
+```
+
+## ✅ 13. Page "À propos"
+
+Page `/about/` et `/fr/about/` (démarche, données, partage, fabrication, licence, auteur), accessible depuis un lien du pied de page. Voir `about-page.md` et "Pied de page" dans `style-guide.md`.
+
+**Critère :** la page s'affiche dans les deux langues avec le même texte, le lien du pied de page y mène depuis toutes les pages, et le sélecteur de langue bascule d'une version à l'autre.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 13 du plan de construction (BUILD-PLAN.md) : page "À propos".
+
+Rédige src/content/about/about.fr.md et about.en.md d'après les sections de about-page.md, en
+ne décrivant que ce qui est vrai du site, puis crée src/pages/about.astro et
+src/pages/fr/about.astro et ajoute le lien au pied de page (voir "Pied de page" dans
+style-guide.md).
+
+Critère de fin : la page s'affiche dans les deux langues, le lien du pied de page y mène
+depuis toutes les pages, et le sélecteur de langue bascule d'une version à l'autre.
 ```

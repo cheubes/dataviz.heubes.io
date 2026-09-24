@@ -10,6 +10,10 @@ export default {
     themeFilterLabel: 'Filter by theme',
     noResults: 'No visualization matches this theme.',
   },
+  about: {
+    title: 'About',
+    description: "Living Data's approach, where its data comes from, how it's made and its license.",
+  },
   themes: {
     living: 'Life',
     climate: 'Climate',

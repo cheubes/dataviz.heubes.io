@@ -1,4 +1,7 @@
 ---
+import en from '../i18n/en';
+import fr from '../i18n/fr';
+
 interface Props {
   lang?: 'fr' | 'en';
 }
@@ -10,6 +13,8 @@ const licenseUrl = lang === 'fr'
   : 'https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en';
 
 const creditLabel = lang === 'fr' ? 'Réalisée par' : 'Created by';
+const aboutLabel = (lang === 'fr' ? fr : en).about.title;
+const aboutHref = lang === 'fr' ? '/fr/about/' : '/about/';
 ---
 
 <footer class="dv-footer">
@@ -26,7 +31,7 @@ const creditLabel = lang === 'fr' ? 'Réalisée par' : 'Created by';
       </a>
     </p>
     <p class="dv-footer__credit">
-      {creditLabel} <a href="https://christophe.heubes.org">Christophe Heubès</a>
+      <a href={aboutHref}>{aboutLabel}</a> · {creditLabel} <a href="https://christophe.heubes.org">Christophe Heubès</a>
     </p>
   </div>
 </footer>
