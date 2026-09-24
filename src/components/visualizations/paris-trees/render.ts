@@ -3,6 +3,7 @@ import { scaleOrdinal, scaleSqrt } from 'd3-scale';
 import { select } from 'd3-selection';
 import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
+import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
 
 interface Genus {
   id: string;
@@ -119,6 +120,7 @@ const DIM_ALPHA = 0.12;
 const MAX_ZOOM = 40;
 const GRID_CELL_SIZE = 40; // base-projection units, rebuilt on resize alongside positions
 const SEARCH_DEBOUNCE_MS = 120;
+const SEARCH_URL_DEBOUNCE_MS = 500;
 const ZOOM_BUTTON_STEP = 1.5;
 
 function stripAccents(s: string): string {
@@ -247,6 +249,19 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
   legendRow.appendChild(genusGroup);
 
   const activeGenera = new Set<number>(genera.map((_, i) => i));
+  const genusInputs: HTMLInputElement[] = [];
+
+  function writeGeneraParam() {
+    setUrlParams({
+      genera:
+        activeGenera.size === genera.length
+          ? null
+          : genera
+              .filter((_, i) => activeGenera.has(i))
+              .map((g) => g.id)
+              .join(','),
+    });
+  }
 
   genera.forEach((genus, index) => {
     const optionLabel = document.createElement('label');
@@ -258,7 +273,9 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
       if (input.checked) activeGenera.add(index);
       else activeGenera.delete(index);
       redraw();
+      writeGeneraParam();
     });
+    genusInputs.push(input);
     const swatch = document.createElement('span');
     swatch.className = 'dv-paris-trees__swatch';
     swatch.style.backgroundColor = genusColor(index);
@@ -295,6 +312,7 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
   gardensToggleInput.addEventListener('change', () => {
     showNationalGardens = gardensToggleInput.checked;
     redraw();
+    setUrlParams({ gardens: showNationalGardens ? null : 'off' });
   });
 
   const stage = document.createElement('div');
@@ -448,6 +466,8 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
     redraw();
   }
 
+  let restoringUrlState = false;
+
   const zoomBehavior = d3Zoom<HTMLCanvasElement, unknown>()
     .scaleExtent([1, MAX_ZOOM])
     .on('zoom', (event) => {
@@ -455,6 +475,9 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
       drawBasemap();
       redraw();
       updateZoomButtons();
+    })
+    .on('end', () => {
+      if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
   select(treesCanvas).call(zoomBehavior as any);
 
@@ -782,13 +805,50 @@ export async function mountParisTrees(root: HTMLElement, lang: 'fr' | 'en', labe
 
   // --- Search -----------------------------------------------------------
   let searchDebounce: ReturnType<typeof setTimeout> | undefined;
+  let searchUrlDebounce: ReturnType<typeof setTimeout> | undefined;
   searchInput.addEventListener('input', () => {
     clearTimeout(searchDebounce);
     searchDebounce = setTimeout(() => {
       normalizedQuery = normalizeForSearch(searchInput.value);
       redraw();
     }, SEARCH_DEBOUNCE_MS);
+    clearTimeout(searchUrlDebounce);
+    searchUrlDebounce = setTimeout(() => {
+      setUrlParams({ search: searchInput.value.trim() || null });
+    }, SEARCH_URL_DEBOUNCE_MS);
   });
 
+  // --- Initial state from the URL ----------------------------------------
+  const generaParam = getUrlParam('genera');
+  if (generaParam !== null) {
+    const ids = generaParam.split(',');
+    const indexes = genera.map((g, i) => (ids.includes(g.id) ? i : -1)).filter((i) => i !== -1);
+    if (generaParam === '' || indexes.length > 0) {
+      activeGenera.clear();
+      for (const i of indexes) activeGenera.add(i);
+      genusInputs.forEach((input, i) => {
+        input.checked = activeGenera.has(i);
+      });
+    }
+  }
+
+  const searchParam = getUrlParam('search')?.trim();
+  if (searchParam) {
+    searchInput.value = searchParam;
+    normalizedQuery = normalizeForSearch(searchParam);
+  }
+
+  if (getUrlParam('gardens') === 'off') {
+    showNationalGardens = false;
+    gardensToggleInput.checked = false;
+  }
+
   resize();
+
+  const initialTransform = readZoomParam(projection, width, height, [1, MAX_ZOOM]);
+  if (initialTransform) {
+    restoringUrlState = true;
+    select(treesCanvas).call(zoomBehavior.transform as any, initialTransform);
+    restoringUrlState = false;
+  }
 }

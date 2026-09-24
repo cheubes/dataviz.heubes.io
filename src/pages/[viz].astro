@@ -3,7 +3,10 @@ import { getCollection, render } from 'astro:content';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import RelatedVisualizations from '../components/RelatedVisualizations.astro';
+import DataDownloads from '../components/DataDownloads.astro';
 import { getVisualizationSlug } from '../content/config';
+import { validateVisualizations } from '../content/validation';
 import BirdMigrations from '../components/visualizations/bird-migrations/BirdMigrations.astro';
 import FlowerPhenology from '../components/visualizations/flower-phenology/FlowerPhenology.astro';
 import Biodiversity from '../components/visualizations/biodiversity/Biodiversity.astro';
@@ -56,8 +59,10 @@ export async function getStaticPaths() {
   });
 }
 
+validateVisualizations(await getCollection('visualizations'), LANG, Object.keys(VIZ_COMPONENTS));
+
 const { viz, hasTranslation } = Astro.props;
-const { lang, title, summary, datasets } = viz.data;
+const { lang, title, summary, datasets, downloads } = viz.data;
 const slug = getVisualizationSlug(viz.id, lang);
 const { Content } = await render(viz);
 
@@ -118,7 +123,20 @@ const retrievedDateFormatter = new Intl.DateTimeFormat(LANG, {
           ))
         }
       </ul>
+      {
+        downloads && (
+          <DataDownloads
+            slug={slug}
+            files={downloads}
+            lang={LANG}
+            label={en.viz.downloadsLabel}
+            note={en.viz.downloadsNote}
+          />
+        )
+      }
     </section>
+
+    <RelatedVisualizations viz={viz} heading={en.viz.relatedHeading} />
   </article>
 </BaseLayout>
 

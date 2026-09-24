@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import VizCard from '../../components/VizCard.astro';
+import ThemeFilter from '../../components/ThemeFilter.astro';
 import fr from '../../i18n/fr';
 
 const LANG = 'fr';
@@ -19,11 +20,17 @@ const visualizations = await getCollection('visualizations', (viz) => viz.data.l
     visualizations.length === 0 ? (
       <p>{fr.home.empty}</p>
     ) : (
-      <div class="dv-catalog-grid">
-        {visualizations.map((viz) => (
-          <VizCard viz={viz} />
-        ))}
-      </div>
+      <>
+        <ThemeFilter labels={fr.themes} ariaLabel={fr.home.themeFilterLabel} />
+        <p class="dv-catalog-empty" data-theme-filter-empty hidden>
+          {fr.home.noResults}
+        </p>
+        <div class="dv-catalog-grid">
+          {visualizations.map((viz) => (
+            <VizCard viz={viz} />
+          ))}
+        </div>
+      </>
     )
   }
 </BaseLayout>
@@ -33,5 +40,9 @@ const visualizations = await getCollection('visualizations', (viz) => viz.data.l
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: var(--dv-space-4);
+  }
+
+  .dv-catalog-empty {
+    color: var(--dv-ink-secondary);
   }
 </style>

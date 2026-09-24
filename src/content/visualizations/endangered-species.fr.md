@@ -33,9 +33,10 @@ datasets:
     url: https://www.prefectures-regions.gouv.fr/irecontenu/telechargement/131694/967059/file/CP-ComptageHamsters-091025.pdf
     license: Licence ouverte (probable)
     retrieved: '2026-09-14'
+themes: [living]
 publication-date: '2026-09-14'
 ---
 
-Tigre, rhinocéros noir, panda géant, gorille des montagnes, vaquita, grand hamster d'Alsace : ces espèces emblématiques sont suivies depuis des décennies par des organismes de conservation qui en recensent régulièrement la population sauvage. Chaque nouveau recensement est une estimation, parfois précise à quelques individus près, du nombre réel qu'il en reste à l'état sauvage.
+Tigre, rhinocéros noir, panda géant, gorille des montagnes, vaquita, grand hamster d'Alsace : ces espèces emblématiques sont suivies depuis des décennies par des organismes de conservation qui en recensent régulièrement la population sauvage. Chaque nouveau recensement est une estimation, parfois précise à quelques individus près, du nombre réel qu'il en reste à l'état sauvage.
 
-Cette page suit ces espèces à travers leurs recensements successifs, chacune représentée par une foule d'icônes qui grandit ou rétrécit au fil du temps. Le récit n'est pas univoque : à côté du déclin de la vaquita ou du grand hamster d'Alsace, le panda géant et le gorille des montagnes montrent qu'un rétablissement reste possible.
+Cette page suit ces espèces à travers leurs recensements successifs, chacune représentée par une foule d'icônes qui grandit ou rétrécit au fil du temps. Le récit n'est pas univoque : à côté du déclin de la vaquita ou du grand hamster d'Alsace, le panda géant et le gorille des montagnes montrent qu'un rétablissement reste possible.

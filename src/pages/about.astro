@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Content } from '../content/about/about.en.md';
+import en from '../i18n/en';
+
+const LANG = 'en';
+---
+
+<BaseLayout
+  title={`${en.about.title} · ${en.site.name}`}
+  description={en.about.description}
+  lang={LANG}
+  alternatePath="/fr/about/"
+>
+  <article class="dv-about-page">
+    <h1>{en.about.title}</h1>
+    <Content />
+  </article>
+</BaseLayout>
+
+<style>
+  /* :global() is required here: <Content /> renders the markdown without this
+     component's Astro scope attribute (same constraint as [viz].astro). */
+  .dv-about-page > :global(:last-child) {
+    margin-bottom: 0;
+  }
+</style>

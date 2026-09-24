@@ -51,3 +51,16 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 ## Responsive
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pan/zoom tactile via `d3-zoom` ; fiche de détail déclenchée par `pointerdown`/`click` plutôt que `pointermove` sur tactile.
+
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `view` | `tomorrow` (état "Sans les médecins de 65 ans et plus") | État "Aujourd'hui" |
+| `zoom` | `<k>,<lon>,<lat>` (format commun) | France métropolitaine entière |
+
+- **Cadrage malgré le zoom par transformation CSS** (voir "Rendu" ci-dessus, point 3) : le calque transformé a son origine en `0 0` (`transform-origin`) et ses canvas ont les dimensions de la zone de carte, sur lesquelles la projection est cadrée. La transformation `d3-zoom` relie donc les pixels de la projection à ceux de la zone de carte exactement comme sur les cartes redessinées, et le format commun s'applique sans adaptation.
+- Les boutons de zoom animent leur transformation (`transition`) : l'URL est écrite à l'événement `end`, en fin de transition.
+- `view=tomorrow` est appliqué avant le premier dimensionnement de la carte, avant tout calcul de style des canvas : la carte s'ouvre directement sur cet état au lieu de jouer au chargement le fondu CSS de la bascule.

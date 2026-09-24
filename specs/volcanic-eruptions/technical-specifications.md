@@ -58,6 +58,19 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pan/zoom tactile via `d3-zoom`, tooltip déclenché par `pointerdown`/`click` plutôt que `pointermove` sur tactile, boutons zoomer/dézoomer/réinitialiser en complément (haut droit de la zone de carte) — même mécanisme que `bird-migrations`/`monarch-migration`/`earthquakes`.
 
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `year` | Année entière dans la période couverte (-8000 à la dernière année du catalogue), négative avant notre ère | Lecture en cours |
+| `zoom` | `<k>,<lon>,<lat>` (format commun) | Planisphère entier |
+
+- **Écart à la règle générale de position temporelle, même traitement que `earthquakes` :** une fois la lecture arrêtée, les pulses s'effacent en 700 ms et l'annotation en 2 200 ms (voir "Rendu" ci-dessus), et les points de volcan au repos sont les mêmes quelle que soit l'année. Une image en pause sur une année partagée ne montrerait donc rien de propre à cette année, hormis l'indicateur. Un lien porteur de `year` relance donc la lecture à partir de cette année au lieu de l'ouvrir en pause. L'URL retire alors `year` dès le montage, puisque la lecture tourne : c'est la seule écriture de l'URL qui ne suit pas une action du visiteur.
+- **Exception, mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : `year` n'est pas retiré au montage et la visualisation reste en pause sur l'année partagée, la préférence du visiteur primant sur la relance de la lecture. Sans `year`, elle s'ouvre en pause au début de la période.
+- `year` est écrit à la pause (bouton) et au relâchement du curseur d'année, et retiré à la reprise de la lecture.
+
 ## Points tranchés à l'implémentation
 
 - **Licence GVP vérifiée** (voir "Licence" dans `data-model.md`) : usage non commercial avec citation, web service WFS accessible sans blocage anti-bot (contrairement au site HTML principal).

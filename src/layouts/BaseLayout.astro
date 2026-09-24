@@ -32,6 +32,7 @@ const alternateUrl = alternatePath ? new URL(alternatePath, Astro.site) : undefi
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
@@ -49,19 +50,6 @@ const alternateUrl = alternatePath ? new URL(alternatePath, Astro.site) : undefi
     }
 
     <link rel="icon" type="image/png" href="/logo.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"
-      integrity="sha384-qrALq7+6jBOZIQsNnT6xGkMDru64qD6uTlDra39xrt2SoXl4pO3FX6Roz/RpR/BS"
-      crossorigin="anonymous"
-    />
   </head>
   <body>
     <Header />

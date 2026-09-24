@@ -39,6 +39,8 @@ Faire voir, sur une carte réelle des communes de France métropolitaine, l'éca
 - **Zoom/pan :** libre sur la carte (souris/molette, tactile), nécessaire pour distinguer les communes dans les zones denses (agglomérations).
 - **Pas de filtre par département/région :** l'ensemble du territoire reste visible en permanence, le zoom suffit à explorer une zone précise.
 - **Vue initiale :** France métropolitaine entière visible, état "Aujourd'hui" de la bascule.
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : l'état de la bascule et le cadrage sont restaurés. Un lien pris sur l'état "Sans les médecins de 65 ans et plus" ouvre directement la carte dans cet état, sans rejouer le fondu de la bascule.
+- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : les boutons de zoom recadrent la carte sans animation. Le fondu entre les cartes "aujourd'hui" et "demain" est conservé : il change l'opacité sans rien déplacer.
 
 ## États
 

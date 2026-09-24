@@ -58,3 +58,14 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 ## Responsive
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation.
+
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `regions` | Identifiants (`id`, voir `data-model.md`) des régions cochées, séparés par des virgules, dans l'ordre des cases ; vide (`regions=`) si aucune région n'est cochée | Les sept régions |
+
+- Un identifiant inconnu est ignoré ; une liste dont aucun identifiant n'est reconnu est traitée comme invalide (retour aux sept régions), pour qu'un lien cassé ne tombe pas sur l'état vide.
+- Le panneau de détail d'un repère historique et le tooltip ne sont pas capturés : ce sont des consultations passagères, pas un état de la vue.

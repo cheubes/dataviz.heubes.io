@@ -4,6 +4,8 @@ import { select } from 'd3-selection';
 import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
+import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
+import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
 interface CommuneFeature {
   type: 'Feature';
@@ -133,7 +135,9 @@ export async function mountMedicalDeserts(
     input.name = 'dv-medical-deserts-state';
     input.checked = opt.value === false;
     input.addEventListener('change', () => {
-      if (input.checked) setState(opt.value);
+      if (!input.checked) return;
+      setState(opt.value);
+      setUrlParams({ view: opt.value ? 'tomorrow' : null });
     });
     toggleInputs.push(input);
     label.append(input, document.createTextNode(opt.text));
@@ -291,22 +295,31 @@ export async function mountMedicalDeserts(
     zoomLayer.style.transform = `translate(${transform.x}px, ${transform.y}px) scale(${transform.k})`;
   }
 
+  let restoringUrlState = false;
+
   const zoomBehavior = d3Zoom<HTMLCanvasElement, unknown>()
     .scaleExtent(ZOOM_EXTENT)
     .on('zoom', (event) => {
       transform = event.transform;
       applyTransform();
+    })
+    .on('end', () => {
+      if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
   select(interactionCanvas).call(zoomBehavior as any);
 
+  const reducedMotion = prefersReducedMotion();
+  const zoomTransitionMs = reducedMotion ? 0 : 200;
+  const resetTransitionMs = reducedMotion ? 0 : 300;
+
   zoomInButton.addEventListener('click', () => {
-    select(interactionCanvas).transition().duration(200).call(zoomBehavior.scaleBy as any, 1.5);
+    select(interactionCanvas).transition().duration(zoomTransitionMs).call(zoomBehavior.scaleBy as any, 1.5);
   });
   zoomOutButton.addEventListener('click', () => {
-    select(interactionCanvas).transition().duration(200).call(zoomBehavior.scaleBy as any, 1 / 1.5);
+    select(interactionCanvas).transition().duration(zoomTransitionMs).call(zoomBehavior.scaleBy as any, 1 / 1.5);
   });
   zoomResetButton.addEventListener('click', () => {
-    select(interactionCanvas).transition().duration(300).call(zoomBehavior.transform as any, zoomIdentity);
+    select(interactionCanvas).transition().duration(resetTransitionMs).call(zoomBehavior.transform as any, zoomIdentity);
   });
 
   let resizeTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -314,7 +327,26 @@ export async function mountMedicalDeserts(
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(resize, 150);
   });
+
+  // Applied before resize(), whose layout read is the first style computation
+  // of canvasTomorrow: set any later, the opacity change would play the
+  // today-to-tomorrow CSS fade on load instead of opening on that state.
+  if (getUrlParam('view') === 'tomorrow') {
+    toggleInputs[1].checked = true;
+    setState(true);
+  }
+
   resize();
+
+  // zoomLayer's CSS transform has its origin at 0 0 and the canvases share the
+  // stage's width/height and projection, so the d3-zoom transform maps base
+  // projection pixels to stage pixels exactly like the redrawn maps.
+  const initialTransform = readZoomParam(projection, width, height, ZOOM_EXTENT);
+  if (initialTransform) {
+    restoringUrlState = true;
+    select(interactionCanvas).call(zoomBehavior.transform as any, initialTransform);
+    restoringUrlState = false;
+  }
 
   // --- Toggle -----------------------------------------------------------
   function setState(tomorrow: boolean) {
@@ -391,5 +423,4 @@ export async function mountMedicalDeserts(
   });
 
   void showTomorrow;
-  void toggleInputs;
 }

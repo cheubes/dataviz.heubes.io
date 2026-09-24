@@ -28,9 +28,9 @@ Pas d'orbite réelle représentée (décision explicite, voir échanges de cadra
 
 ## Animation
 
-- Boucle `d3-timer`, pilotée par une date simulée continue (pas un compteur de jours cyclique comme `bird-migrations` : ici l'échelle couvre l'intégralité de 1957 à la date de récupération du catalogue, voir `generatedAt` dans `data-model.md`).
+- Boucle `d3-timer`, pilotée par une date simulée continue (pas un compteur de jours cyclique comme `bird-migrations` : ici l'échelle couvre l'intégralité du jeu de données, du premier lancement (Vanguard 1, 17 mars 1958, voir `data-model.md`) au plus récent).
 - Mapping temps de lecture écoulé → temps simulé, linéaire sur l'échelle complète des années couvertes (`d3-scale`, `scaleLinear`, domaine en millisecondes de lecture écoulées, image en dates). Durée d'un passage complet à vitesse Normal : 25 secondes (vérifiée visuellement à l'implémentation, voir "Vitesse de lecture" ci-dessous pour les deux autres vitesses).
-- **Bouclage continu :** contrairement au choix initial (passage unique, arrêt à la date la plus récente), l'animation boucle en continu comme `bird-migrations`, décision explicite de l'utilisateur. À la différence de `bird-migrations` (cycle saisonnier, boucle "naturellement" fluide), le passage 1957 → aujourd'hui n'a pas de raccord naturel avec son propre redémarrage : un temps d'arrêt de 2,5 secondes est marqué sur l'état final (nuée complète, compteur au total) avant de vider les canvas et de relancer un passage depuis 1957, pour laisser voir cet état comme un aboutissement plutôt que de couper brutalement de "aujourd'hui" à "1957".
+- **Bouclage continu :** contrairement au choix initial (passage unique, arrêt à la date la plus récente), l'animation boucle en continu comme `bird-migrations`, décision explicite de l'utilisateur. À la différence de `bird-migrations` (cycle saisonnier, boucle "naturellement" fluide), le passage 1958 → aujourd'hui n'a pas de raccord naturel avec son propre redémarrage : un temps d'arrêt de 2,5 secondes est marqué sur l'état final (nuée complète, compteur au total) avant de vider les canvas et de relancer un passage depuis 1958, pour laisser voir cet état comme un aboutissement plutôt que de couper brutalement de "aujourd'hui" à "1958".
 - **Vitesse de lecture :** Lent (×0,5), Normal (×1, par défaut), Rapide (×2), même mécanisme que `bird-migrations` (`SPEED_FACTORS`, multiplie le temps de lecture accumulé par frame). Modifie uniquement la durée d'un passage (12,5 à 50 secondes) et du temps d'arrêt en fin de passage ; sans effet sur la rotation du globe (ci-dessous), cadencée indépendamment.
 - **Rotation du globe :** ambiante et décorative, à vitesse fixe (~3°/seconde, un tour complet toutes les deux minutes environ), non cyclique au sens propre de "Bouclage continu" ci-dessus puisqu'elle ne repart jamais de zéro. Gelée par Play/Pause en même temps que le reste de l'animation (voir "Accessibilité" dans `functional-specifications.md`).
 - À chaque frame, tous les satellites dont `launchDate` est désormais atteinte et qui n'ont pas encore été peints sont ajoutés au canvas de premier plan (voir "Rendu" ci-dessus) ; `satellites.json` étant trié par date croissante (voir "Contraintes de validation" dans `data-model.md`), un simple curseur d'index suffit, pas de parcours complet du tableau à chaque frame.
@@ -90,6 +90,19 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 ## Responsive
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Le canvas de fond (globe) et le canvas de premier plan (nuée) sont redimensionnés ensemble au redimensionnement de la zone de montage ; la nuée déjà accumulée est reconstruite en une seule passe après redimensionnement plutôt qu'étirée (mêmes positions relatives, recalculées au nouveau rayon).
+
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `regions` | Identifiants de zones actives (`us`, `russia-ussr`, `china`, `europe`, `other`), séparés par des virgules ; vide (`regions=`) pour aucune zone | Les cinq zones actives |
+| `year` | Année entière entre les bornes du curseur d'année | Lecture en cours |
+
+- `regions` : identifiants inconnus ignorés ; une liste non vide dont aucun identifiant n'est connu est invalide et laisse les cinq zones actives. `regions=` restaure l'état vide voulu (voir "États" dans `functional-specifications.md`).
+- `year` est écrit à la pause (bouton) et au relâchement du curseur d'année, et retiré à la reprise de la lecture. Un lien porteur de `year` ouvre la visualisation en pause, par le même chemin qu'un déplacement manuel du curseur (voir "Curseur d'année" ci-dessus) : la nuée est reconstruite jusqu'au 31 décembre de cette année. Une pause en cours d'année est donc restaurée à la fin de cette même année, cohérent avec la granularité annuelle du curseur.
+- La rotation du globe n'est pas capturée : décorative, elle n'est pas un cadrage choisi par le visiteur (voir "Animation" ci-dessus).
 
 ## Décisions prises à l'implémentation
 

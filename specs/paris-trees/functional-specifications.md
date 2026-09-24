@@ -9,7 +9,7 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 | Langue | Titre | Résumé |
 |---|---|---|
 | FR | Paris, arbre par arbre | 194 000 arbres de Paris, recensés un par un : explorez-les par quartier, par genre ou par nom d'espèce. |
-| EN | Paris, Tree by Tree | 194,000 of Paris's trees, mapped one by one : explore them by district, genus, or species name. |
+| EN | Paris, Tree by Tree | 194,000 of Paris's trees, mapped one by one: explore them by district, genus, or species name. |
 
 **Présentation longue FR :**
 > La Ville de Paris tient un inventaire de son patrimoine arboré : arbres d'alignement le long des rues, arbres des jardins, des bois et des équipements municipaux. Cette carte affiche 194 000 arbres de cet inventaire, chacun positionné à son emplacement réel dans les vingt arrondissements de la ville (le jeu source recense aussi environ 25 000 arbres plantés dans des cimetières parisiens extraterritoriaux, en dehors de la ville elle-même ; ils ne sont pas repris ici, hors du périmètre géographique de cette carte).
@@ -17,9 +17,9 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 > Aucune thèse à suivre ici : c'est une forêt à parcourir. Zoomez sur un quartier, filtrez par genre dominant (platanes, marronniers, tilleuls...), ou cherchez une espèce précise pour voir où elle pousse dans la ville. L'inventaire, mis à jour chaque semaine par la Ville de Paris, ne couvre pas les arbres du domaine privé ni la totalité du patrimoine municipal : une photographie partielle, mais la plus complète disponible en open data.
 
 **Présentation longue EN :**
-> The City of Paris maintains an inventory of its tree stock : street trees, park trees, woodland trees, and trees on municipal grounds. This map displays 194,000 trees from that inventory, each placed at its real location within the city's twenty districts (the source dataset also lists about 25,000 trees planted in extraterritorial Paris-owned cemeteries, outside the city itself ; they aren't included here, outside this map's geographic scope).
+> The City of Paris maintains an inventory of its tree stock: street trees, park trees, woodland trees, and trees on municipal grounds. This map displays 194,000 trees from that inventory, each placed at its real location within the city's twenty districts (the source dataset also lists about 25,000 trees planted in extraterritorial Paris-owned cemeteries, outside the city itself; they aren't included here, outside this map's geographic scope).
 >
-> There's no argument to follow here : it's a forest to wander through. Zoom into a district, filter by dominant genus (plane trees, horse chestnuts, lime trees...), or search for a specific species to see where it grows across the city. The inventory, updated weekly by the City of Paris, doesn't cover privately-owned trees or the full extent of the municipal tree stock : a partial picture, but the most complete one available as open data.
+> There's no argument to follow here: it's a forest to wander through. Zoom into a district, filter by dominant genus (plane trees, horse chestnuts, lime trees...), or search for a specific species to see where it grows across the city. The inventory, updated weekly by the City of Paris, doesn't cover privately-owned trees or the full extent of the municipal tree stock: a partial picture, but the most complete one available as open data.
 
 ## Objectif
 
@@ -45,6 +45,7 @@ Donner à explorer librement, sans thèse imposée, la totalité du patrimoine a
 - **Survol/tap d'un arbre de jardin national** (case "Jardins nationaux" activée) : fiche de détail minimale (genre et espèce si connus, sinon mention générique ; nom du jardin), cohérente avec la pauvreté des attributs disponibles pour ces points (voir "Contenu" ci-dessus). Prioritaire sur un arbre municipal proche en cas de superposition, cohérent avec son affichage par-dessus le reste de la nuée.
 - **Taille des points :** proportionnelle à la circonférence du tronc (voir "Rendu" dans `technical-specifications.md`), lisible sans interaction, en complément de la fiche de détail.
 - **Vue initiale :** tous les genres actifs, jardins nationaux affichés, recherche vide, carte centrée sur Paris entier, zoom initial cadrant les vingt arrondissements.
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les genres actifs, la recherche, la case "Jardins nationaux" et le cadrage (y compris celui obtenu par un clic sur un arrondissement) sont restaurés. La fiche de détail d'un arbre n'est pas partagée.
 
 ## États
 

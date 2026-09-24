@@ -48,3 +48,15 @@ Carte animée, zoom/pan et survol des incendies non nativement accessibles au cl
 
 - `fires` trié par `year` croissant (voir "Animation" ci-dessus, et "Prétraitement" dans `data-model.md`).
 - Chaque `departmentCode` référencé dans `fires` existe dans `departments`.
+
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `year` | Année entière de 2006 à l'année la plus récente disponible | Lecture en cours |
+| `zoom` | `<k>,<lon>,<lat>` (format commun) | France entière |
+
+- `year` est écrit à la pause (bouton) et au relâchement du curseur d'année, et retiré à la reprise de la lecture. Un lien qui le porte ouvre la carte en pause sur cette année, conformément à la règle générale : l'image en pause (tous les incendies de l'année) a un sens en soi.
+- Un lien ou un curseur posé sur la dernière année reprend la lecture, une fois relancée, par la pause brève de fin de passage avant de reboucler à 2006 (voir "Animation" ci-dessus), plutôt que de rester bloqué sur cette année.

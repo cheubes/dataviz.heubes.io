@@ -8,7 +8,9 @@ datasets:
     url: https://www.gbif.org/occurrence/search?country=FR
     license: CC0 1.0 / CC BY 4.0 (varies by occurrence)
     retrieved: '2026-09-08'
+themes: [living, climate]
 publication-date: '2026-09-08'
+downloads: [phenology.json]
 ---
 
 Phenology, the study of seasonal cycles in nature, is one of the most sensitive indicators of climate change. Across France, thousands of citizen observations record each year the first flowering dates of wild plants. Visualised on a circular calendar, these data reveal the beauty of natural rhythms and, in their slow drift, the quiet imprint of warming temperatures.

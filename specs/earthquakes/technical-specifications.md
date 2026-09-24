@@ -52,6 +52,19 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pan/zoom tactile via `d3-zoom`, tooltip déclenché par `pointerdown`/`click` plutôt que `pointermove` sur tactile — même mécanisme que `bird-migrations`/`volcanic-eruptions`.
 
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `year` | Année entière dans la période couverte (1900 à la dernière année du catalogue) | Lecture en cours |
+| `zoom` | `<k>,<lon>,<lat>` (format commun) | Planisphère entier |
+
+- **Écart à la règle générale de position temporelle :** un séisme n'est qu'une impulsion éphémère qui s'efface une fois la lecture arrêtée (voir "Interactions" dans `functional-specifications.md`), donc une image en pause sur une année partagée serait une carte vide. Un lien porteur de `year` relance donc la lecture à partir de cette année au lieu de l'ouvrir en pause. L'URL retire alors `year` dès le montage, puisque la lecture tourne : c'est la seule écriture de l'URL qui ne suit pas une action du visiteur.
+- **Exception, mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : `year` n'est pas retiré au montage et la visualisation reste en pause sur l'année partagée, la préférence du visiteur primant sur la relance de la lecture. Sans `year`, elle s'ouvre en pause au début de la période.
+- `year` est écrit à la pause (bouton) et au relâchement du curseur d'année, et retiré à la reprise de la lecture.
+
 ## Points tranchés à l'implémentation
 
 - **Domaine public des données USGS confirmé formellement** : page officielle des politiques USGS ("Copyrights and Credits"), citée textuellement dans `data-model.md`.

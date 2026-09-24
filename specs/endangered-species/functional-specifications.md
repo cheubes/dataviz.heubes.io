@@ -15,9 +15,9 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 > Cette page suit ces espèces à travers leurs recensements successifs, chacune représentée par une foule d'icônes qui grandit ou rétrécit au fil du temps. Le récit n'est pas univoque : à côté du déclin de la vaquita ou du grand hamster d'Alsace, le panda géant et le gorille des montagnes montrent qu'un rétablissement reste possible.
 
 **Présentation longue EN (proposition) :**
-> Tiger, black rhinoceros, giant panda, mountain gorilla, vaquita, European hamster : these emblematic species have been tracked for decades by conservation bodies that regularly survey their wild population. Each new census is an estimate, sometimes accurate to within a handful of individuals, of how many actually remain in the wild.
+> Tiger, black rhinoceros, giant panda, mountain gorilla, vaquita, European hamster: these emblematic species have been tracked for decades by conservation bodies that regularly survey their wild population. Each new census is an estimate, sometimes accurate to within a handful of individuals, of how many actually remain in the wild.
 >
-> This page follows these species through their successive censuses, each one represented by a crowd of icons that grows or shrinks over time. The story isn't one-directional : alongside the decline of the vaquita or the European hamster, the giant panda and the mountain gorilla show that recovery remains possible.
+> This page follows these species through their successive censuses, each one represented by a crowd of icons that grows or shrinks over time. The story isn't one-directional: alongside the decline of the vaquita or the European hamster, the giant panda and the mountain gorilla show that recovery remains possible.
 
 ## Objectif
 
@@ -41,6 +41,8 @@ Chaque espèce dans son propre cadre, à sa propre échelle d'icônes (une icôn
 - **Survol/tap d'une carte d'espèce :** fiche de détail (estimation de population de l'année simulée courante avec sa date réelle de mesure, tendance depuis le point de mesure précédent).
 - **Pas de filtre, pas de zoom/pan :** contrairement aux visualisations à carte réelle du site, celle-ci n'est pas une carte géographique (voir "Rendu" dans `technical-specifications.md`) : un petit nombre d'espèces, toutes visibles en permanence.
 - **Vue initiale :** toutes les cartes à leur point de mesure le plus ancien, lecture automatique déjà en cours.
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : une année choisie (pause ou curseur) est restaurée, les cartes s'ouvrant alors en pause sur cette année.
+- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : les petits multiples s'ouvrent en pause sur la dernière année, celle des recensements les plus récents.
 
 ## États
 

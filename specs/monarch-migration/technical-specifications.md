@@ -55,3 +55,16 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 ## Responsive
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pan/zoom tactile via `d3-zoom`, tooltip déclenché par `click` plutôt que `pointermove` sur tactile, même mécanisme que `bird-migrations`.
+
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `month` | Mois entier, de 1 (janvier) à 12 (décembre) | Lecture en cours |
+| `zoom` | `<k>,<lon>,<lat>` (format commun) | Amérique du Nord entière |
+
+- **Position temporelle arrondie au mois :** le temps simulé est un jour fractionnaire, mais l'indicateur n'affiche que le nom du mois et les données sont mensuelles (voir "Animation" ci-dessus). `month` est le mois affiché au moment de la pause. Un lien porteur de `month` ouvre la carte en pause sur le premier jour de ce mois, où l'interpolation est nulle : l'image montre exactement les effectifs de ce mois. Elle peut donc différer légèrement de celle du visiteur qui a partagé, s'il a mis en pause en fin de mois (interpolation déjà avancée vers le mois suivant), mais le mois affiché est le même. Un jour de l'année aurait reproduit l'image au pixel près, pour un paramètre que l'interface n'expose nulle part.
+- `month` est écrit à la pause et retiré à la reprise de la lecture. Pas de curseur temporel dans cette visualisation.
+- Le tooltip épinglé n'est pas capturé (état transitoire).

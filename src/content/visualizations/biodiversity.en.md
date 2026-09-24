@@ -13,7 +13,9 @@ datasets:
     url: https://doi.org/10.15468/dl.mmqnrd
     license: CC0 1.0 / CC BY 4.0 (varies by occurrence)
     retrieved: '2026-09-08'
+themes: [living]
 publication-date: '2026-09-08'
+downloads: [hexbins.json]
 ---
 
 Every year, millions of species observations are recorded across France by amateur and professional naturalists, then contributed to global databases. Visualised together, they reveal concentrations, absences, ecological corridors. This map invites you to filter by major taxonomic group and by season, to see how life occupies and crosses the territory.

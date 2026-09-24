@@ -13,6 +13,7 @@ L'implémentation suit `BUILD-PLAN.md`, qui définit l'ordre en étapes incréme
 - **`technical-specifications.md`** : stack technique, hébergement/déploiement, architecture (routage, content collections), performance, accessibilité, SEO, et règles communes à toutes les visualisations (chargement des librairies, gestion des données, états communs).
 - **`style-guide.md`** : charte graphique (couleurs, typographie, espacements), composants UI de base (en-tête, pied de page, tuiles), palette dataviz — valable pour l'ensemble du site, y compris les visualisations.
 - **`home-page.md`** : spécification fonctionnelle de la page d'accueil (catalogue).
+- **`about-page.md`** : spécification de la page "À propos" (contenu attendu, accès, format).
 - **`<viz-slug>/`** : un dossier par visualisation publiée, avec :
   - `data-model.md` : schéma du dataset propre à cette visualisation (colonnes, format, source précise, transformations).
   - `functional-specifications.md` : spécification fonctionnelle de la visualisation, y compris son écran (objectif, contenu, interactions, états, responsive).
@@ -22,7 +23,7 @@ Quatorze dossiers `<viz-slug>/` existent à ce stade (voir la liste à l'étape 
 
 ## Quand et comment utiliser ces specs
 
-- **Avant toute implémentation**, lire le ou les fichiers concernés par la tâche. Les cinq specs générales (`functional-specifications.md`, `data-model.md`, `technical-specifications.md`, `style-guide.md`, `home-page.md`) s'appliquent à tout le site ; chaque dossier `<viz-slug>/` complète avec ce qui est propre à cette visualisation.
+- **Avant toute implémentation**, lire le ou les fichiers concernés par la tâche. Les six specs générales (`functional-specifications.md`, `data-model.md`, `technical-specifications.md`, `style-guide.md`, `home-page.md`, `about-page.md`) s'appliquent à tout le site ; chaque dossier `<viz-slug>/` complète avec ce qui est propre à cette visualisation.
 - **Les fichiers se référencent constamment entre eux** ("voir `X.md`") plutôt que de dupliquer l'information. Suivre ces renvois plutôt que de deviner : si une spec mentionne une règle définie ailleurs (le comportement multilingue, une couleur de la charte...), la source de vérité est le fichier référencé.
 - **En cas de modification d'une spec**, chercher les autres fichiers qui la référencent (`grep` du nom de fichier dans `specs/`) et vérifier qu'ils restent cohérents avec le changement.
 - **En cas de doute ou de silence des specs** sur un point nécessaire à l'implémentation, demander plutôt que de supposer : ce sont des choix de conception, pas des détails d'implémentation libres.

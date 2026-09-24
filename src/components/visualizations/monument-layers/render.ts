@@ -7,6 +7,8 @@ import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 // moduleResolution setting, same accepted gap as biodiversity/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
+import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
+import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
 type Era =
   | 'paleolithic'
@@ -283,7 +285,7 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
   filterGroup.setAttribute('aria-label', labels.protectionLabel);
   controls.appendChild(filterGroup);
 
-  function buildFilterOption(text: string, checked: boolean, onChange: () => void) {
+  function buildFilterOption(text: string, checked: boolean, onChange: () => void): HTMLInputElement {
     const optionLabel = document.createElement('label');
     optionLabel.className = 'dv-monument-layers__toggle';
     const input = document.createElement('input');
@@ -295,20 +297,26 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
     });
     optionLabel.append(input, document.createTextNode(text));
     filterGroup.appendChild(optionLabel);
+    return input;
   }
 
-  buildFilterOption(labels.protectionAll, true, () => {
-    activeProtection = 'all';
-    handleFilterChange();
-  });
-  buildFilterOption(labels.protectionClasse, false, () => {
-    activeProtection = 'classe';
-    handleFilterChange();
-  });
-  buildFilterOption(labels.protectionInscrit, false, () => {
-    activeProtection = 'inscrit';
-    handleFilterChange();
-  });
+  const protectionInputs: Record<ProtectionFilter, HTMLInputElement> = {
+    all: buildFilterOption(labels.protectionAll, true, () => {
+      activeProtection = 'all';
+      handleFilterChange();
+      setUrlParams({ protection: null });
+    }),
+    classe: buildFilterOption(labels.protectionClasse, false, () => {
+      activeProtection = 'classe';
+      handleFilterChange();
+      setUrlParams({ protection: 'classe' });
+    }),
+    inscrit: buildFilterOption(labels.protectionInscrit, false, () => {
+      activeProtection = 'inscrit';
+      handleFilterChange();
+      setUrlParams({ protection: 'inscrit' });
+    }),
+  };
 
   const readout = document.createElement('div');
   readout.className = 'dv-monument-layers__readout';
@@ -492,6 +500,8 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
     redrawForeground();
   }
 
+  let restoringUrlState = false;
+
   const zoomBehavior = d3Zoom<HTMLCanvasElement, unknown>()
     .scaleExtent([1, MAX_ZOOM])
     .on('zoom', (event) => {
@@ -499,6 +509,9 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
       drawBasemap();
       redrawForeground();
       updateZoomButtons();
+    })
+    .on('end', () => {
+      if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
   select(monumentsCanvas).call(zoomBehavior as any);
 
@@ -709,6 +722,11 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
     playing = !playing;
     playButton.textContent = playing ? labels.pause : labels.play;
     playButton.setAttribute('aria-pressed', String(playing));
+    // Floored rather than rounded like the year readout: monuments are revealed
+    // once constructionYear <= currentSimYear, so only the floor rebuilds the
+    // exact same map (a rounded 1550 would add the whole 16th-century wave,
+    // dated 1550, that a paused 1549.6 hasn't revealed yet).
+    setUrlParams({ year: playing ? null : String(Math.floor(currentSimYear)) });
   });
 
   speedSelect.addEventListener('change', () => {
@@ -718,19 +736,27 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
   // Manual scrubbing takes over from autoplay, same as pressing pause (see
   // light-pollution/render.ts's year slider for the same convention): without
   // this, autoplay would fight the visitor's drag on every frame.
-  yearSlider.addEventListener('input', () => {
+  function scrubToYear(targetYear: number) {
     playing = false;
     playButton.textContent = labels.play;
     playButton.setAttribute('aria-pressed', 'false');
 
-    const targetYear = Number(yearSlider.value);
     currentSimYear = targetYear;
     playedMs = simYearScale.invert(targetYear);
     seekToCursor(cursorForYear(targetYear));
+    yearSlider.value = String(targetYear);
     yearValueEl.textContent = String(targetYear);
 
     holding = cursor >= monuments.length;
     holdElapsedMs = 0;
+  }
+
+  yearSlider.addEventListener('input', () => {
+    scrubToYear(Number(yearSlider.value));
+  });
+
+  yearSlider.addEventListener('change', () => {
+    setUrlParams({ year: yearSlider.value });
   });
 
   // --- Tooltip --------------------------------------------------------------
@@ -820,5 +846,27 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
   // --- Boot -----------------------------------------------------------
   resize();
   startNewPass();
+
+  const initialTransform = readZoomParam(projection, width, height, [1, MAX_ZOOM]);
+  if (initialTransform) {
+    restoringUrlState = true;
+    select(monumentsCanvas).call(zoomBehavior.transform as any, initialTransform);
+    restoringUrlState = false;
+  }
+
+  const urlProtection = getUrlParam('protection');
+  if (urlProtection === 'classe' || urlProtection === 'inscrit') {
+    protectionInputs[urlProtection].checked = true;
+    activeProtection = urlProtection;
+    handleFilterChange();
+  }
+
+  // Year 0 is the slider's lower bound, so a missing or empty param must not
+  // go through Number() (which would turn it into 0).
+  const urlYearParam = getUrlParam('year');
+  const urlYear = urlYearParam ? Number(urlYearParam) : NaN;
+  if (Number.isInteger(urlYear) && urlYear >= PRELUDE_CUTOFF_YEAR && urlYear <= newestYear) scrubToYear(urlYear);
+  else if (prefersReducedMotion()) scrubToYear(newestYear);
+
   startAnimationLoop();
 }

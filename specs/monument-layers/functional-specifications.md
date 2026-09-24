@@ -7,7 +7,7 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 | Langue | Titre | Résumé |
 |---|---|---|
 | FR | Les strates du patrimoine | Quarante-cinq mille monuments historiques français, de leur plus ancienne pierre connue à aujourd'hui : une carte qui se construit sous vos yeux, siècle après siècle. |
-| EN | Layers of Heritage | Forty-five thousand French historic monuments, from their oldest known stone to today : a map that builds itself before your eyes, century after century. |
+| EN | Layers of Heritage | Forty-five thousand French historic monuments, from their oldest known stone to today: a map that builds itself before your eyes, century after century. |
 
 **Présentation longue FR :**
 > Depuis 1840, l'État protège des monuments jugés dignes de conservation : châteaux, églises, ponts, lavoirs, gares... La base Mérimée du ministère de la Culture recense aujourd'hui près de quarante-cinq mille édifices protégés en France métropolitaine, chacun daté de sa plus ancienne campagne de construction connue.
@@ -15,9 +15,9 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 > Cette carte les fait apparaître dans l'ordre chronologique de leur construction plutôt que de leur protection : des vestiges antiques épars jusqu'à la densité du bâti du dix-neuvième siècle, en passant par les grandes vagues romane, gothique et classique. Une teinte de plus en plus sombre marque la profondeur du temps : chaque point ajouté est une strate de plus dans la construction du pays.
 
 **Présentation longue EN :**
-> Since 1840, the French state has protected buildings deemed worth preserving : castles, churches, bridges, wash houses, railway stations... The Ministry of Culture's Mérimée database now lists nearly forty-five thousand protected buildings in mainland France, each dated to its oldest known construction phase.
+> Since 1840, the French state has protected buildings deemed worth preserving: castles, churches, bridges, wash houses, railway stations... The Ministry of Culture's Mérimée database now lists nearly forty-five thousand protected buildings in mainland France, each dated to its oldest known construction phase.
 >
-> This map reveals them in the chronological order of their construction rather than their protection : from scattered antique remains to the density of nineteenth-century building, passing through the great Romanesque, Gothic, and Classical waves. A progressively darker shade marks the depth of time : each point added is one more layer in the construction of the country.
+> This map reveals them in the chronological order of their construction rather than their protection: from scattered antique remains to the density of nineteenth-century building, passing through the great Romanesque, Gothic, and Classical waves. A progressively darker shade marks the depth of time: each point added is one more layer in the construction of the country.
 
 ## Objectif
 
@@ -43,6 +43,8 @@ Faire voir, par l'accumulation chronologique de points sur une carte réelle de 
 - **Zoom/pan :** libre sur la carte (souris/molette, tactile), pour observer une concentration régionale (ex. les châteaux de la Loire, la densité parisienne) une fois qu'elle est apparue. Doublé de boutons zoomer/dézoomer/réinitialiser en surimpression sur la carte (même contrôles que `paris-trees`, voir son `functional-specifications.md`), désactivés aux bornes de l'échelle de zoom.
 - **Survol/tap d'un monument :** fiche de détail (nom, commune/département, siècle de construction, nature de la protection, catégorie de l'édifice, lien vers la notice de référence sur la Plateforme Ouverte du Patrimoine du ministère de la Culture — ajouté après la première implémentation, retour utilisateur). Fonctionne à tout moment, y compris pendant la lecture, sur les monuments déjà apparus. Le lien n'est cliquable qu'une fois la fiche épinglée (clic/tap sur le monument) : en simple survol, la fiche suit le pointeur et resterait impossible à atteindre sans se refermer avant qu'on puisse cliquer le lien.
 - **Vue initiale :** filtre "Les deux", carte de France entière visible avec le socle antique déjà affiché (voir "Lecture automatique" ci-dessus), lecture automatique déjà en cours, compteur reflétant ce socle plutôt que zéro (1 790 monuments au filtre "Les deux", moins avec un filtre de protection isolé).
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : le filtre protection, l'année et le cadrage sont restaurés. Une année partagée ouvre la carte en pause sur l'accumulation atteinte à cette année (voir "État dans l'URL" dans `technical-specifications.md`).
+- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause sur l'accumulation complète, à la dernière année de construction du jeu de données.
 
 ## États
 

@@ -95,7 +95,7 @@ Utilisées par `biodiversity`, `light-pollution`, `paris-trees`, `monument-layer
 
 ## Typographie
 
-- **Police :** Ubuntu (Google Fonts), graisses 300 / 400 / 500 / 700 (voir "Polices" dans `technical-specifications.md` pour le chargement).
+- **Police :** Ubuntu, hébergée par le site, graisses 300 / 400 / 500 / 700 (voir "Polices" dans `technical-specifications.md` pour le chargement).
 - `font-family: "Ubuntu", sans-serif;` sur `body`.
 
 | Usage | Taille | Graisse | Couleur |
@@ -108,7 +108,9 @@ Utilisées par `biodiversity`, `light-pollution`, `paris-trees`, `monument-layer
 
 `line-height` : 1.2 pour les titres, 1.5 pour le corps de texte.
 
-Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble du site) ; l'affordance vient de la couleur (`--dv-accent` ou `--dv-gold` selon la surface, voir "Couleurs") et de son changement au survol/focus, pas du soulignement.
+Ponctuation du texte français (textes d'interface `i18n/fr.ts`, frontmatter et corps des `<viz-slug>.fr.md`, textes français embarqués dans les données comme les champs `*Fr`) : une espace insécable précède toujours les ponctuations doubles (`:`, `;`, `!`, `?`) et les points de suspension (`…` comme `...`). Elle est saisie comme caractère U+00A0, pas comme entité `&nbsp;`, que le frontmatter et les chaînes JS afficheraient littéralement. Les attributs non localisés (ex : `license` d'un dataset, identique entre les deux langues) restent tels que publiés par la source.
+
+Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble du site) ; l'affordance vient de la couleur (`--dv-accent` ou `--dv-gold` selon la surface, voir "Couleurs") et de son changement au survol/focus, pas du soulignement. `--dv-accent` est posé par défaut sur la règle globale `a` (`global.css`), pour que tout lien du texte courant (corps Markdown d'une visualisation, page "À propos") ait la couleur de la charte sans règle propre. Les liens sur surface sombre (en-tête, pied de page, infobulles) redéfinissent leur couleur localement.
 
 ## Espacements, grille et responsive
 
@@ -149,10 +151,17 @@ Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble d
 ### Pied de page
 
 - **Gauche** : mention de licence, quatre icônes Creative Commons (voir "Iconographie") suivies du texte "CC BY-NC-SA 4.0", lien vers `https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr` ou `.../deed.en` selon la langue courante, appliquée à la présentation et au code originaux du site ; la licence propre à chaque dataset source reste celle de sa source (voir "Dataset source" dans `data-model.md`), non affectée par celle-ci.
-- **Droite** : mention "Réalisée par Christophe Heubès" (FR) / "Created by Christophe Heubès" (EN), le nom en lien vers `https://christophe.heubes.org`.
+- **Droite** : lien "À propos" / "About" vers la page du même nom (voir `about-page.md`), puis, séparée par un point médian, la mention "Réalisée par Christophe Heubès" (FR) / "Created by Christophe Heubès" (EN), le nom en lien vers `https://christophe.heubes.org`.
 - Fond `--dv-footer-bg` (gris foncé), texte blanc, bordure haute `--dv-gridline`, liens en `--dv-gold` au survol.
 - Pied de page fixe (`position: fixed`, ancré en bas de viewport) sur toute la largeur, hauteur indicative `--dv-footer-height` ; le contenu principal réserve cet espace en bas de page pour ne jamais passer dessous. Padding vertical `--dv-space-2` et espacement `--dv-space-2` entre les icônes et le texte de la mention de licence.
 - Comme l'en-tête, largeur pleine sans le conteneur de page : ses éléments sont au plus près du bord de la fenêtre, avec seulement `--dv-gutter` d'espacement horizontal.
+
+### Chips de filtre (catalogue)
+
+- Une chip par thème (voir "Thème" dans `data-model.md`), disposées en ligne au-dessus de la grille de tuiles, avec retour à la ligne (`flex-wrap`) plutôt que défilement horizontal. Forme pilule (`border-radius` élevé), padding `--dv-space-2` horizontal / `--dv-space-1` vertical, espacement `--dv-space-2` entre chips.
+- État inactif (thème non sélectionné) : fond `--dv-surface`, texte `--dv-ink-secondary`, bordure `--dv-gridline`.
+- État actif (thème sélectionné) : fond `--dv-header-bg`, texte blanc, bordure `--dv-header-bg` — même couleur de marque que le survol des tuiles (voir "Tuiles (catalogue)" ci-dessous et la note sur `--dv-header-bg` dans "Couleurs" ci-dessus), contraste largement supérieur au minimum WCAG AA (texte blanc sur `#2c374c`, ratio ≈ 12:1). Pas `--dv-accent` : à 4,4:1 avec du texte blanc, il passe sous le seuil AA 4,5:1 requis pour du texte de cette taille (0.875rem, sous le seuil de "grand texte").
+- Survol/focus (état inactif) : bordure `--dv-accent`, cohérent avec son rôle d'élément interactif sur fond clair (voir "Couleurs" ci-dessus). Pas d'usage de `--dv-gold` ici, réservé aux surfaces sombres de l'en-tête et du pied de page.
 
 ### Tuiles (catalogue)
 
@@ -165,6 +174,8 @@ Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble d
 - `title` en `h1`, `summary` puis présentation longue (corps de texte de `<viz-slug>.<lang>.md`, voir `data-model.md`). Pas de couverture affichée en tête de page (à la différence de la tuile) : elle reste utilisée comme image de partage (meta Open Graph, voir "SEO" dans `technical-specifications.md`), pas comme élément visuel de la page elle-même.
 - Zone de montage de la visualisation elle-même, après la présentation : conteneur pleine largeur, hauteur minimale réservée pour éviter un saut de mise en page pendant son initialisation (voir "États" attendus dans "Règles communes à toutes les visualisations" de `technical-specifications.md`). Traitement visuel propre à chaque visualisation, documenté dans son propre `functional-specifications.md`.
 - Bloc de crédit des sources, après la zone de montage : un jeu de données par ligne (`name`, `publisher`, `license`, lien vers `url`, `retrieved`), texte secondaire.
+- Téléchargement des données préparées, en fin de bloc de crédit, sous la liste des sources (voir "Téléchargement des données préparées" dans `functional-specifications.md`) : un libellé, puis un lien par fichier (nom du fichier en `--dv-accent`, taille entre parenthèses, séparés par des virgules), et une mention rappelant que la réutilisation reste soumise aux licences des sources. Même typographie que les lignes de sources (texte secondaire). Pas d'icône. Absent quand la visualisation ne déclare aucun fichier.
+- Section des visualisations liées, après le bloc de crédit (règle de sélection : voir "Visualisations liées" dans `functional-specifications.md`) : titre `h2` au même style que celui du bloc de crédit, puis les tuiles du catalogue réutilisées telles quelles (voir "Tuiles (catalogue)" ci-dessus), dans la même grille fluide que l'accueil. Avec moins de trois tuiles, celles-ci gardent la largeur qu'elles auraient dans la grille complète au lieu de s'étirer. Section absente quand aucune visualisation ne partage de thème.
 - Pas de lien de retour au catalogue propre à la page : le retour à l'accueil se fait via l'en-tête (voir "En-tête" ci-dessus), commun à toutes les pages.
 
 ## Images
@@ -181,4 +192,4 @@ Tant que la couverture propre d'une visualisation (`public/covers/<viz-slug>.jpg
 
 Pas de bibliothèque d'icônes par défaut (pas de nouvelle dépendance sans discussion, voir les règles globales de sécurité du projet). Les rares besoins d'icône (ex : lien externe) utilisent un caractère Unicode ou un SVG inline minimal.
 
-Exception : les quatre icônes de la mention de licence en pied de page (voir "Pied de page" ci-dessus) utilisent Font Awesome Free (sous-ensemble `brands`, voir "Dépendances" dans `technical-specifications.md`) — `fa-creative-commons`, `fa-creative-commons-by`, `fa-creative-commons-nc-eu`, `fa-creative-commons-sa`, dans cet ordre, taille `1rem`, couleur héritée du pied de page (blanc, doré au survol).
+Exception : les quatre icônes de la mention de licence en pied de page (voir "Pied de page" ci-dessus) reprennent les tracés SVG de Font Awesome Free 7.3.1 (icônes sous licence CC BY 4.0, créditée en commentaire dans `Footer.astro`) : `creative-commons`, `creative-commons-by`, `creative-commons-nc-eu`, `creative-commons-sa`, dans cet ordre. Inlinés dans le pied de page plutôt que chargés depuis la bibliothèque, qui n'est plus utilisée nulle part. Taille du texte du pied de page (`1em`), chacune dans une boîte de `1.25em` de large qui les espace, couleur héritée du pied de page (blanc, doré au survol).

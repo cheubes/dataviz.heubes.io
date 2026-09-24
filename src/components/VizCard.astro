@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { viz } = Astro.props;
-const { lang, title, summary } = viz.data;
+const { lang, title, summary, themes } = viz.data;
 
 const slug = getVisualizationSlug(viz.id, lang);
 const href = lang === 'fr' ? `/fr/${slug}/` : `/${slug}/`;
@@ -20,7 +20,7 @@ const coverExtension = ['jpg', 'png'].find((ext) =>
 const coverPath = coverExtension ? `/covers/${slug}.${coverExtension}` : '/cover-placeholder.svg';
 ---
 
-<article class="dv-viz-card">
+<article class="dv-viz-card" data-themes={themes.join(' ')}>
   <a href={href} class="dv-viz-card__cover-link">
     <img src={coverPath} alt={title} loading="lazy" width="1200" height="675" class="dv-viz-card__cover" />
   </a>
@@ -43,6 +43,10 @@ const coverPath = coverExtension ? `/covers/${slug}.${coverExtension}` : '/cover
     border-radius: 4px;
     overflow: hidden;
     transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+
+  .dv-viz-card[hidden] {
+    display: none;
   }
 
   .dv-viz-card:hover {

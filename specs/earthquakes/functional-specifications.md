@@ -9,7 +9,7 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 | Langue | Titre | Résumé |
 |---|---|---|
 | FR | Les lignes de faille | Plus d'un siècle de séismes majeurs rejoués en boucle : leurs pulses dessinent, sans qu'on ait besoin de le dire, les frontières des plaques tectoniques. |
-| EN | The Fault Lines | Over a century of major earthquakes replayed on a loop : their pulses trace, without needing to be told to, the boundaries of the tectonic plates. |
+| EN | The Fault Lines | Over a century of major earthquakes replayed on a loop: their pulses trace, without needing to be told to, the boundaries of the tectonic plates. |
 
 **Présentation longue FR (proposition) :**
 > Depuis le début du vingtième siècle, les sismographes du monde entier enregistrent avec précision la magnitude et la position de chaque séisme majeur. Ce planisphère rejoue, en boucle continue, plus d'un siècle de ces séismes (magnitude 6 et plus), chacun pulsant au moment réel de sa survenue.
@@ -19,7 +19,7 @@ Complète `functional-specifications.md` général : écran de cette visualisati
 **Présentation longue EN (proposition) :**
 > Since the early twentieth century, seismographs worldwide have precisely recorded the magnitude and location of every major earthquake. This world map replays, on a continuous loop, over a century of these earthquakes (magnitude 6 and above), each pulsing at the real moment it occurred.
 >
-> In the background, a thin line traces the known boundaries of the tectonic plates, established independently through geophysics. The two aren't a coincidence : nearly all major earthquakes cluster along these boundaries, the most visible and continuous evidence of the plates that make up the Earth's crust moving against one another.
+> In the background, a thin line traces the known boundaries of the tectonic plates, established independently through geophysics. The two aren't a coincidence: nearly all major earthquakes cluster along these boundaries, the most visible and continuous evidence of the plates that make up the Earth's crust moving against one another.
 
 ## Objectif
 
@@ -45,6 +45,8 @@ Mêmes interactions que `volcanic-eruptions` (voir son `functional-specification
 - **Survol/tap d'un point** : fiche de détail (lieu, magnitude, profondeur, date) — les points sismiques n'étant pas des positions fixes répétées comme les volcans (chaque séisme est un événement unique, pas un lieu qui pulse plusieurs fois), la fiche de détail n'est disponible qu'au moment du pulse ou juste après (voir "Rendu" dans `technical-specifications.md` pour la durée de rémanence), pas en permanence comme les volcans de `volcanic-eruptions`.
 - **Zoom/pan** libre sur l'ensemble du planisphère (souris/molette, tactile), doublé de boutons zoomer/dézoomer/réinitialiser pour les visiteurs sans molette ni geste tactile.
 - **Vue initiale :** planisphère entier visible, frontières de plaques visibles, lecture automatique déjà en cours.
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : l'année et le cadrage sont restaurés. Une année partagée relance la lecture à partir de cette année au lieu de figer la carte en pause, puisqu'une image en pause n'aurait aucun séisme à montrer (voir "État dans l'URL" dans `technical-specifications.md`).
+- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause au début de la période. Faute d'image fixe (les impulsions s'effacent), elle ne montre que les frontières de plaques jusqu'à un appui sur Lecture. Une année partagée reste alors en pause au lieu de relancer la lecture.
 
 ## États
 

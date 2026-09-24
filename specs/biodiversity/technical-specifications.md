@@ -66,3 +66,14 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 ## Responsive
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation pour le comportement attendu ; sans pan/zoom (voir "Techno cartes" ci-dessus), le seul geste tactile à gérer est le tap sur une cellule pour le tooltip, via l'API Pointer Events unifiée (déjà utilisée pour le survol souris).
+
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `group` | `birds`, `mammals`, `reptiles-amphibians`, `insects`, `plants`, `fungi` | Tous les groupes |
+| `season` | `winter`, `spring`, `summer`, `autumn` | Toutes saisons |
+
+- **Bascule "Données en direct" exclue :** elle n'est ni écrite ni relue, puisqu'elle déclenche des requêtes vers l'API GBIF (voir la section du mode "données en direct" ci-dessus) et qu'un lien partagé ne doit pas provoquer de requête externe sans action du visiteur. Un lien ouvre donc toujours la grille précalculée, avec le groupe et la saison du lien. Quand le mode est actif, `group` et `season` continuent d'être écrits à chaque changement de filtre.

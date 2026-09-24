@@ -33,6 +33,7 @@ datasets:
     url: https://www.prefectures-regions.gouv.fr/irecontenu/telechargement/131694/967059/file/CP-ComptageHamsters-091025.pdf
     license: Licence ouverte (probable)
     retrieved: '2026-09-14'
+themes: [living]
 publication-date: '2026-09-14'
 ---
 

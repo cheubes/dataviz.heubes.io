@@ -1,0 +1,85 @@
+---
+import { THEMES } from '../scripts/theme-filter';
+
+interface Props {
+  labels: Record<string, string>;
+  ariaLabel: string;
+}
+
+const { labels, ariaLabel } = Astro.props;
+---
+
+<div class="dv-theme-filter" role="group" aria-label={ariaLabel}>
+  {
+    THEMES.map((theme) => (
+      <button type="button" class="dv-theme-filter__chip" data-theme={theme} aria-pressed="false">
+        {labels[theme]}
+      </button>
+    ))
+  }
+</div>
+
+<style>
+  .dv-theme-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dv-space-2);
+    margin-bottom: var(--dv-space-4);
+  }
+
+  .dv-theme-filter__chip {
+    font-family: inherit;
+    font-size: 0.875rem;
+    padding: var(--dv-space-1) var(--dv-space-2);
+    border-radius: 999px;
+    border: 1px solid var(--dv-gridline);
+    background-color: var(--dv-surface);
+    color: var(--dv-ink-secondary);
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .dv-theme-filter__chip:hover,
+  .dv-theme-filter__chip:focus-visible {
+    border-color: var(--dv-accent);
+  }
+
+  .dv-theme-filter__chip[aria-pressed='true'] {
+    background-color: var(--dv-header-bg);
+    border-color: var(--dv-header-bg);
+    color: #ffffff;
+  }
+</style>
+
+<script>
+  import { parseThemes, matchesSelection, type Theme } from '../scripts/theme-filter';
+
+  const chips = document.querySelectorAll<HTMLButtonElement>('.dv-theme-filter__chip');
+  const cards = document.querySelectorAll<HTMLElement>('.dv-viz-card');
+  const noResults = document.querySelector<HTMLElement>('[data-theme-filter-empty]');
+
+  function applyFilter(selected: Theme | null) {
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const cardThemes = parseThemes(card.dataset.themes);
+      const visible = matchesSelection(cardThemes, selected);
+      card.hidden = !visible;
+      if (visible) visibleCount += 1;
+    });
+
+    if (noResults) {
+      noResults.hidden = !(selected !== null && visibleCount === 0);
+    }
+  }
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const wasActive = chip.getAttribute('aria-pressed') === 'true';
+      chips.forEach((other) => other.setAttribute('aria-pressed', 'false'));
+      const selected = wasActive ? null : (chip.dataset.theme as Theme);
+      if (selected) chip.setAttribute('aria-pressed', 'true');
+      applyFilter(selected);
+    });
+  });
+</script>

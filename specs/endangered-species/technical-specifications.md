@@ -55,6 +55,18 @@ Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cet
 
 Voir "Responsive" dans `functional-specifications.md` de cette visualisation.
 
+## État dans l'URL
+
+Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+
+| Paramètre | Valeurs | Défaut (absent de l'URL) |
+|---|---|---|
+| `year` | Année entière entre les bornes du curseur d'année (point de mesure le plus ancien au plus récent, toutes espèces confondues) | Lecture en cours |
+
+- `year` est écrit à la pause (bouton) et au relâchement du curseur d'année, et retiré à la reprise de la lecture. Un lien porteur de `year` ouvre les petits multiples en pause sur cette année.
+- Un lien ou un curseur posé sur la dernière année reprend la lecture, une fois relancée, par la pause brève de fin de passage (`HOLD_MS`) avant de reboucler à la première année, plutôt que de rester bloqué sur cette année.
+- Pas de filtre ni de cadrage à capturer (voir "Interactions" dans `functional-specifications.md`). La fiche de détail épinglée n'est pas capturée (état transitoire).
+
 ## Points tranchés à l'implémentation
 
 Tous les points laissés ouverts au cadrage sont désormais résolus (voir "Dataset source", "Sélection des espèces" et "Points d'attention actés" dans `data-model.md`) : sources et chiffres réels vérifiés, six espèces conservées, silhouette générique unique (empreinte de patte) et `iconRatio` fixés par espèce dans le JSON.

@@ -5,7 +5,7 @@
 ### Génération de site
 
 - **Astro**, sortie statique (`output: 'static'`), pas de rendu serveur.
-- **Content collections** (`src/content/config.ts`, schéma Zod) pour les visualisations et les catégories (voir "Structure des fichiers" ci-dessous).
+- **Content collections** (`src/content/config.ts`, schéma Zod) pour les visualisations (voir "Structure des fichiers" ci-dessous). Les thèmes (voir "Thème" dans `data-model.md`) sont un enum fermé porté par le schéma de cette collection, pas une collection à part : ils n'ont pas de contenu ni de page propres (voir "Filtre thématique" dans `home-page.md`).
 - Composants `.astro` pour le chrome partagé (layout, en-tête, pied de page, sélecteur de langue, tuile de catalogue). Chaque visualisation ajoute ses propres composants (voir "Règles communes à toutes les visualisations").
 
 ### CSS / UI
@@ -15,17 +15,13 @@
 
 ### Polices
 
-- **Ubuntu** (Google Fonts, CDN), graisses 300 / 400 / 500 / 700 (voir "Typographie" dans `style-guide.md`). Chargée dans `BaseLayout.astro` :
-
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
-```
+- **Ubuntu**, graisses 300 / 400 / 500 / 700 (voir "Typographie" dans `style-guide.md`), hébergée par le site lui-même : fichiers woff2 dans `public/fonts/ubuntu/`, accompagnés de leur licence (`UFL.txt`, Ubuntu Font Licence 1.0), déclarés par des règles `@font-face` en tête de `src/styles/global.css` (`font-display: swap`).
+- Seuls les sous-ensembles `latin` et `latin-ext` sont hébergés, avec les plages Unicode (`unicode-range`) de Google Fonts, d'où ils ont été téléchargés une fois : ils couvrent le français et les diacritiques des noms propres. Le navigateur ne télécharge que les graisses et sous-ensembles que la page utilise. Un caractère hors de ces plages retombe sur la police de repli (`sans-serif`).
+- Raison : aucune requête vers un service tiers à l'affichage d'une page (ni Google Fonts, ni CDN), ce qui évite de transmettre l'adresse IP des visiteurs à un tiers et supprime deux connexions externes au premier affichage.
 
 ### JavaScript et visualisations
 
-- Vanilla JS/TS pour le chrome partagé (sélecteur de langue, détection et mémorisation de la préférence).
+- Vanilla JS/TS pour le chrome partagé (sélecteur de langue, détection et mémorisation de la préférence, filtre thématique du catalogue).
 - Pas de framework JS imposé pour le chrome (pas de React/Vue/Svelte par défaut).
 - Chaque visualisation choisit librement sa technique de rendu et ses librairies (D3, Observable Plot, deck.gl, Three.js, Canvas 2D...), scopées à sa propre page via les îles Astro (voir "Règles communes à toutes les visualisations").
 
@@ -45,7 +41,7 @@
 - **Repository :** `https://github.com/cheubes/dataviz.heubes.io`
 - **Domaine :** `dataviz.heubes.io` (fichier `public/CNAME`)
 - **Déploiement :** GitHub Actions (`.github/workflows/deploy.yml`), déclenché sur push sur `main` : build Astro puis publication via `actions/deploy-pages`. GitHub Pages ne construit pas Astro nativement : la source Pages du repository doit être réglée sur "GitHub Actions", pas sur une branche.
-- **Générateur :** Astro (`astro build`), sortie statique dans `dist/`.
+- **Générateur :** Astro, sortie statique dans `dist/`. Le script `build` du `package.json` enchaîne `astro check && astro build` : la vérification de types (fichiers `.ts` et `.astro`) précède toujours la génération, en local comme au déploiement, et une erreur de type fait échouer le build avant toute publication. `withastro/action` lançant ce même script `build`, le workflow n'a pas d'étape de vérification propre.
 
 ```yaml
 # .github/workflows/deploy.yml
@@ -90,9 +86,10 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 
 - `astro` (dernière version stable 5.x)
 - `@astrojs/sitemap` (voir "SEO")
-- `typescript` (vérification de types, pas un framework UI)
-- Font Awesome Free 7.3.1 (CDN, `cdn.jsdelivr.net`, sous-ensemble brands) : seule exception à "pas de dépendance CSS", pour les icônes Creative Commons du pied de page (voir "Iconographie" dans `style-guide.md`). Pas de dépendance npm : chargée en `<link>` dans `BaseLayout.astro`, comme les polices Google Fonts.
-- Pas d'autre dépendance CSS, pas de dépendance JS de chrome au-delà de vanilla.
+- `typescript` et `@astrojs/check` (dépendances de développement : vérification de types par `astro check`, pas un framework UI, voir "Hébergement et déploiement")
+  - Limite connue : les modules `d3-*` et `topojson-client` n'embarquent pas de déclarations de types. Leurs imports sont typés `any` et échappent à la vérification (`astro check` les signale en simple indication, sans erreur). Les paquets `@types/d3-*` qui combleraient ce trou seraient de nouvelles dépendances, à discuter avant ajout.
+- Aucune dépendance CSS ni bibliothèque d'icônes : les quatre icônes Creative Commons du pied de page sont des SVG inline (voir "Iconographie" dans `style-guide.md`).
+- Pas de dépendance JS de chrome au-delà de vanilla.
 - Dépendances propres à une visualisation : ajoutées et documentées au cas par cas, discutées avant ajout (voir "Règles communes à toutes les visualisations" et les règles globales de sécurité du projet).
 
 ---
@@ -107,6 +104,8 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   ├── CNAME
 │   ├── logo.png                       # favicon et logo de l'en-tête, voir style-guide.md
 │   ├── cover-placeholder.svg          # couverture de repli, voir "Images" dans style-guide.md
+│   ├── fonts/
+│   │   └── ubuntu/                    # woff2 auto-hébergés et licence UFL.txt, voir "Polices"
 │   ├── covers/
 │   │   └── <viz-slug>.jpg            # ou .png, voir data-model.md
 │   └── data/
@@ -116,31 +115,43 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 ├── src/
 │   ├── content/
 │   │   ├── config.ts                  # schémas des content collections
+│   │   ├── validation.ts              # règles de validation entre fichiers, voir "Validation des données"
+│   │   ├── about/
+│   │   │   ├── about.fr.md            # texte de la page "À propos", hors collection, voir about-page.md
+│   │   │   └── about.en.md
 │   │   └── visualizations/
 │   │       ├── <viz-slug>.fr.md
 │   │       └── <viz-slug>.en.md
 │   ├── i18n/
-│   │   ├── fr.ts                      # textes d'interface (labels, message d'indisponibilité)
+│   │   ├── fr.ts                      # textes d'interface (labels, message d'indisponibilité, libellés des thèmes)
 │   │   └── en.ts
 │   ├── layouts/
 │   │   └── BaseLayout.astro
 │   ├── scripts/
 │   │   ├── language.ts                # détection/mémorisation de la langue (Header.astro, LanguageSelector.astro)
+│   │   ├── theme-filter.ts            # filtre thématique du catalogue (ThemeFilter.astro, VizCard.astro)
+│   │   ├── url-state.ts               # état partageable dans l'URL, voir "État dans l'URL"
+│   │   ├── reduced-motion.ts          # préférence de mouvement réduit, voir "Accessibilité"
 │   │   └── viz-stage-height.ts        # hauteur de la zone de montage, voir "Règles communes à toutes les visualisations"
 │   ├── components/
 │   │   ├── Header.astro
 │   │   ├── Footer.astro
 │   │   ├── LanguageSelector.astro
+│   │   ├── ThemeFilter.astro          # chips de filtre thématique, voir home-page.md
 │   │   ├── VizCard.astro              # tuile de catalogue
+│   │   ├── RelatedVisualizations.astro # visualisations liées (réutilise VizCard.astro), voir functional-specifications.md
+│   │   ├── DataDownloads.astro        # téléchargement des données préparées, voir functional-specifications.md
 │   │   └── visualizations/
 │   │       └── <viz-slug>/
 │   │           └── ...                # composants propres à cette visualisation
 │   ├── pages/
 │   │   ├── index.astro                # accueil EN
 │   │   ├── 404.astro                  # message d'indisponibilité localisé
+│   │   ├── about.astro                # page "À propos" EN, voir about-page.md
 │   │   ├── [viz].astro                # page de visualisation EN
 │   │   └── fr/
 │   │       ├── index.astro            # accueil FR
+│   │       ├── about.astro            # page "À propos" FR
 │   │       └── [viz].astro            # page de visualisation FR
 │   └── styles/
 │       └── global.css                 # variables CSS (voir style-guide.md)
@@ -158,6 +169,8 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 // src/content/config.ts — à ajuster à l'implémentation
 import { defineCollection, z } from 'astro:content';
 
+const THEMES = ['living', 'climate', 'earth', 'territory', 'space'] as const; // voir "Thème" dans data-model.md
+
 const visualizations = defineCollection({
   type: 'content',
   schema: z.object({
@@ -171,7 +184,9 @@ const visualizations = defineCollection({
       license: z.string().optional(),
       retrieved: z.string().optional(),
     })),
+    themes: z.array(z.enum(THEMES)).min(1),
     'publication-date': z.string(),
+    downloads: z.array(z.string()).optional(), // noms de fichiers de public/data/<viz-slug>/
   }),
 });
 
@@ -194,6 +209,7 @@ Le site est entièrement statique, généré au build par Astro. Aucun rendu dyn
 - `/fr/` : accueil du site (français)
 - `/<viz-slug>/` : page d'une visualisation (EN)
 - `/fr/<viz-slug>/` : page d'une visualisation (FR)
+- `/about/`, `/fr/about/` : page "À propos" (voir `about-page.md`). Le slug `about` est donc réservé : aucune visualisation ne peut le prendre (voir "Contraintes et règles de validation" dans `data-model.md`).
 
 L'anglais, langue par défaut, n'a pas de préfixe ; le français est préfixé par `/fr/`.
 
@@ -201,6 +217,8 @@ L'anglais, langue par défaut, n'a pas de préfixe ; le français est préfixé 
 
 - `[viz].astro` et `fr/[viz].astro` génèrent chacun leurs chemins via `getStaticPaths`, à partir des entrées de la collection `visualizations` filtrées par `lang`.
 - Une visualisation non traduite dans une langue n'a tout simplement pas d'entrée de collection pour cette langue, donc pas de page générée à cette URL : la visite de cette URL tombe sur `404.astro`.
+- Les visualisations liées (voir "Visualisations liées" dans `functional-specifications.md`) sont sélectionnées au build par `src/components/RelatedVisualizations.astro`, à partir des entrées de la collection filtrées par la langue de la page : du HTML statique, sans JS client.
+- Les liens de téléchargement des données préparées (voir "Téléchargement des données préparées" dans `functional-specifications.md`) sont générés au build par `src/components/DataDownloads.astro` à partir de l'attribut `downloads`. La taille de chaque fichier est lue sur le disque (`public/data/<viz-slug>/`) et formatée selon la langue de la page (`Intl.NumberFormat`, unités décimales ko/Mo). Un fichier déclaré mais absent fait échouer le build. Les liens portent l'attribut `download` pour forcer l'enregistrement plutôt que l'affichage du JSON dans l'onglet.
 
 ### Contenu non traduit ("message d'indisponibilité")
 
@@ -208,7 +226,7 @@ L'anglais, langue par défaut, n'a pas de préfixe ; le français est préfixé 
 
 ### Textes d'interface
 
-Les textes d'interface (labels, messages dont le message d'indisponibilité) sont centralisés dans `src/i18n/fr.ts` et `src/i18n/en.ts`. Ils sont distincts du contenu des visualisations, qui suit le format documenté dans `data-model.md`.
+Les textes d'interface (labels, messages dont le message d'indisponibilité) sont centralisés dans `src/i18n/fr.ts` et `src/i18n/en.ts`. Ils sont distincts du contenu des visualisations, qui suit le format documenté dans `data-model.md`. Le dictionnaire français est déclaré `satisfies typeof en` : une clé présente d'un seul côté fait échouer la vérification de types, donc le build, au lieu d'afficher `undefined`.
 
 ### Détection et mémorisation de la langue
 
@@ -230,10 +248,46 @@ Au premier accès à une URL sans préfixe de langue (anglais par défaut), la l
 
 ---
 
+## État dans l'URL
+
+Mécanisme commun de l'état partageable (voir "État partageable dans l'URL" dans `functional-specifications.md`).
+
+- **Support :** query string (`?year=1964&zoom=3.2,142.3700,38.3200`). Noms de paramètres en anglais, courts, en kebab-case. Les listes sont des identifiants séparés par des virgules, identiques aux identifiants des données (ex : `regions=us,china`). Ces identifiants ne sont jamais des libellés traduits, pour que l'URL reste la même dans les deux langues.
+- **Module commun :** `src/scripts/url-state.ts`.
+  - `getUrlParam(name)` : lit un paramètre.
+  - `setUrlParams({ name: value | null })` : met à jour l'URL via `history.replaceState`. Il fusionne avec les paramètres existants, retire ceux qui valent `null` et conserve le fragment.
+  - `readZoomParam(projection, largeur, hauteur, scaleExtent)` / `writeZoomParam(transform, projection, largeur, hauteur)` : le format de cadrage ci-dessous, commun aux cartes zoomables.
+
+  Chaque visualisation reste propriétaire de ses paramètres : leur lecture, leur validation et leur application sont dans son propre `render.ts`, conformément à "Règles communes à toutes les visualisations" ci-dessus.
+- **Écriture :**
+  - seulement en réponse à une action du visiteur, jamais depuis la boucle d'animation ;
+  - pour les curseurs, sur `change` (relâchement) plutôt que sur `input` ;
+  - pour le zoom, sur l'événement `end` de `d3-zoom`, en fin de geste ;
+  - pour une recherche texte, après une temporisation.
+
+  Raison : les navigateurs limitent la fréquence de `history.replaceState` (Safari : une centaine d'appels par tranche de 30 secondes au-delà de laquelle il lève une exception).
+- **Lecture :** une fois, au montage, après le chargement des données et le premier dimensionnement, avant la première image. Chaque paramètre est validé séparément (identifiant connu, nombre fini, borne respectée) ; un paramètre invalide est ignoré. Appliquer l'état initial ne réécrit pas l'URL.
+- **Cadrage des cartes zoomables :** `zoom=<k>,<lon>,<lat>`.
+  - `k` : le facteur d'échelle `d3-zoom`, à deux décimales.
+  - `lon`, `lat` : les coordonnées géographiques (quatre décimales) du centre de la zone visible, soit `projection.invert(transform.invert([largeur / 2, hauteur / 2]))`.
+
+  Des coordonnées géographiques plutôt que des pixels, pour que le lien cadre la même zone quelle que soit la taille ou le ratio de l'écran du destinataire. À la lecture, `k` est borné au `scaleExtent` de la carte, le point est reprojeté, et la transformation `translate(largeur / 2 − k·x, hauteur / 2 − k·y).scale(k)` est appliquée via `zoomBehavior.transform`, qui borne aussi la translation au `translateExtent`. Paramètre absent quand `k = 1` (vue d'ensemble).
+- **Changement de langue :** `src/components/LanguageSelector.astro` reporte la query string et le fragment courants, à la fois dans la redirection automatique et dans les liens du sélecteur (lus au moment du clic, puisque l'URL change pendant la visite).
+- **SEO :** un `<link rel="canonical">` sans query string, dans `BaseLayout.astro`, ramène toutes les variantes partagées à l'URL de la page (voir "SEO" ci-dessous).
+
+---
+
 ## Validation des données
 
 - La validation de structure (présence et type des champs) est native aux content collections d'Astro via le schéma Zod (`src/content/config.ts`) : `astro build` échoue si un fichier de contenu ne respecte pas le schéma, sans script dédié.
-- Les règles qui dépassent un schéma de champ (ex : les valeurs des attributs non localisés doivent être identiques entre `<viz-slug>.fr.md` et `<viz-slug>.en.md`, voir "Contraintes et règles de validation" dans `data-model.md`) sont vérifiées manuellement avant publication à ce stade, faute de validation croisée native entre fichiers d'une même collection. Si le nombre de visualisations le justifie plus tard, un script de validation dédié pourra être introduit, à discuter avant ajout.
+- Les règles qui portent sur plusieurs fichiers, hors de portée d'un schéma par fichier (voir "Contraintes et règles de validation" dans `data-model.md`), sont vérifiées au build par `validateVisualizations` (`src/content/validation.ts`) :
+  - égalité des attributs non localisés entre `<viz-slug>.fr.md` et `<viz-slug>.en.md`, sans tenir compte de l'ordre des clés ;
+  - correspondance entre `lang` et le suffixe du nom de fichier ;
+  - slug réservé `about` ;
+  - présence d'un composant de visualisation monté pour chaque visualisation de la langue de la page.
+
+  Elle est appelée par `[viz].astro` et `fr/[viz].astro`, dans le corps de la page plutôt que dans `getStaticPaths`, qui s'exécute dans une portée isolée et ne voit pas la table des composants. Elle rassemble toutes les erreurs dans un seul message et fait échouer `astro build`, donc aussi le déploiement : pas de script séparé à penser à lancer, ni de dépendance ajoutée.
+- La présence de l'image de couverture n'est pas vérifiée : le repli sur le placeholder est voulu tant que la couverture n'existe pas (voir "Images" dans `style-guide.md`).
 
 ---
 
@@ -251,12 +305,14 @@ Au premier accès à une URL sans préfixe de langue (anglais par défaut), la l
 - HTML sémantique pour la structure des pages et du catalogue.
 - Texte alternatif sur les images de couverture.
 - Limite connue par défaut : le mode d'interaction propre à chaque visualisation n'est pas garanti nativement accessible ; voir "Règles communes à toutes les visualisations" ci-dessus.
+- **Mouvement réduit** (voir "Mouvement réduit" dans `functional-specifications.md`) : `prefersReducedMotion()` (`src/scripts/reduced-motion.ts`) lit `matchMedia('(prefers-reduced-motion: reduce)')` une fois, au montage de chaque visualisation. Une visualisation animée qui la voit active s'ouvre en pause sur son état final par le même chemin qu'une position temporelle restaurée depuis l'URL (voir "État dans l'URL" ci-dessus), sans écrire l'URL ; les transitions d3 qui déplacent des éléments prennent une durée nulle. Les transitions CSS du site ne portent que sur la couleur ou l'opacité : aucune règle `@media (prefers-reduced-motion)` globale n'est nécessaire.
 
 ## SEO
 
 - Rendu statique : chaque page existe indépendamment au moment du crawl, sans dépendre de JavaScript pour son contenu principal (à l'exception de la visualisation interactive elle-même).
 - Chaque visualisation a sa propre URL indexable (voir "Structure des URLs").
 - Liens `hreflang` / alternate entre les versions FR et EN d'une même page, dans `BaseLayout.astro`.
+- `<link rel="canonical">` vers l'URL de la page sans query string, dans `BaseLayout.astro` : les liens partagés porteurs d'état (voir "État dans l'URL" ci-dessus) restent des variantes d'une seule page indexée.
 - Balises meta et Open Graph (titre, description = `summary`, image = couverture) générées directement dans `BaseLayout.astro`, pas de plugin dédié nécessaire (à la différence de `jekyll-seo-tag`).
 - `@astrojs/sitemap` pour un `sitemap.xml` généré automatiquement.
 
@@ -266,7 +322,7 @@ Au premier accès à une URL sans préfixe de langue (anglais par défaut), la l
 
 | Élément | Convention | Exemple |
 |---|---|---|
-| Slugs (visualisation, catégorie) | kebab-case anglais | `air-pollution`, `environment` |
+| Slugs (visualisation, thème) | kebab-case anglais | `air-pollution`, `living` |
 | Composants Astro | PascalCase | `VizCard.astro`, `LanguageSelector.astro` |
 | Fichiers de contenu / données | kebab-case | `air-pollution.fr.md` |
 | Classes CSS custom | `.dv-` + kebab-case | `.dv-card`, `.dv-header` |

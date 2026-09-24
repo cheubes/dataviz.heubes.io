@@ -42,6 +42,8 @@ Faire voir, sur une grille de la France métropolitaine, l'évolution de l'inten
 - **Survol/tap d'une cellule :** fiche de détail donnant le palier de visibilité en toutes lettres (ex. « Vous pourriez y voir la Voie lactée à l'œil nu »), l'année affichée, et la valeur de radiance mesurée pour les visiteurs qui veulent la donnée brute.
 - **Pas de zoom ni de panoramique**, même décision que `biodiversity` (voir "Interactions" dans son `functional-specifications.md`) : la carte reste fixe, toujours cadrée sur la totalité de la silhouette de la France.
 - **Pas de filtre supplémentaire :** contrairement aux autres visualisations du site, il n'y a ici qu'une seule dimension à explorer (le temps, via le curseur d'année), pas de catégorie à filtrer.
+- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : une année choisie (pause ou curseur) est restaurée, la carte s'ouvrant alors en pause sur cette année.
+- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause sur la dernière année disponible.
 
 ## Lecture automatique
 

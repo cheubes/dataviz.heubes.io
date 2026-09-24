@@ -13,7 +13,9 @@ datasets:
     url: https://github.com/fraxen/tectonicplates
     license: Open Data Commons Attribution License (ODC-BY)
     retrieved: '2026-09-16'
+themes: [earth]
 publication-date: '2026-09-16'
+downloads: [earthquakes.json]
 ---
 
 Since the early twentieth century, seismographs worldwide have precisely recorded the magnitude and location of every major earthquake. This world map replays, on a continuous loop, over a century of these earthquakes (magnitude 6 and above), each pulsing at the real moment it occurred.

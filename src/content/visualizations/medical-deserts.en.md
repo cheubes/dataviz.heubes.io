@@ -9,11 +9,13 @@ datasets:
     license: Licence Ouverte v2.0
     retrieved: '2026-09-22'
   - name: Contours des communes de France simplifié
-    publisher: data.gouv.fr (derived from IGN ADMIN EXPRESS COG)
+    publisher: data.gouv.fr (dérivé d'IGN ADMIN EXPRESS COG)
     url: https://www.data.gouv.fr/datasets/contours-des-communes-de-france-simplifie-avec-regions-et-departement-doutre-mer-rapproches/
     license: Licence Ouverte v2.0
     retrieved: '2026-09-22'
+themes: [territory]
 publication-date: '2026-09-22'
+downloads: [communes.json]
 ---
 
 The APL indicator (accessibilité potentielle localisée) measures, commune by commune, the number of general practitioner consultations actually accessible per resident per year. Calculated annually by DREES, this indicator also exists in a version restricted to doctors under sixty-five: a snapshot of what healthcare access would become if the practitioners closest to retirement stopped working.

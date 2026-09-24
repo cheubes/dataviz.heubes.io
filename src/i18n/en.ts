@@ -7,10 +7,27 @@ export default {
     empty: 'No visualization has been published yet.',
     description:
       'A catalog of interactive, original data visualizations, each exploring an open data dataset with a form entirely its own.',
+    themeFilterLabel: 'Filter by theme',
+    noResults: 'No visualization matches this theme.',
+  },
+  about: {
+    title: 'About',
+    description: "Living Data's approach, where its data comes from, how it's made and its license.",
+  },
+  themes: {
+    living: 'Life',
+    climate: 'Climate',
+    earth: 'Earth',
+    territory: 'Territory & society',
+    space: 'Space',
   },
   viz: {
     sourcesHeading: 'Data sources',
     retrievedLabel: 'Retrieved',
+    relatedHeading: 'Related visualizations',
+    downloadsLabel: 'Download the prepared data:',
+    downloadsNote:
+      'Files as the visualization uses them. Reuse remains subject to the licenses of the sources above.',
     backToCatalog: 'Back to the catalog',
   },
   notFound: {
