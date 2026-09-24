@@ -10,6 +10,11 @@ export default {
     themeFilterLabel: 'Filtrer par thème',
     noResults: 'Aucune visualisation pour ce thème.',
   },
+  about: {
+    title: 'À propos',
+    description:
+      "La démarche de Données Vivantes, l'origine de ses données, sa fabrication et sa licence.",
+  },
   themes: {
     living: 'Vivant',
     climate: 'Climat',

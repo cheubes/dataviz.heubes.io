@@ -151,7 +151,7 @@ Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble d
 ### Pied de page
 
 - **Gauche** : mention de licence, quatre icônes Creative Commons (voir "Iconographie") suivies du texte "CC BY-NC-SA 4.0", lien vers `https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr` ou `.../deed.en` selon la langue courante, appliquée à la présentation et au code originaux du site ; la licence propre à chaque dataset source reste celle de sa source (voir "Dataset source" dans `data-model.md`), non affectée par celle-ci.
-- **Droite** : mention "Réalisée par Christophe Heubès" (FR) / "Created by Christophe Heubès" (EN), le nom en lien vers `https://christophe.heubes.org`.
+- **Droite** : lien "À propos" / "About" vers la page du même nom (voir `about-page.md`), puis, séparée par un point médian, la mention "Réalisée par Christophe Heubès" (FR) / "Created by Christophe Heubès" (EN), le nom en lien vers `https://christophe.heubes.org`.
 - Fond `--dv-footer-bg` (gris foncé), texte blanc, bordure haute `--dv-gridline`, liens en `--dv-gold` au survol.
 - Pied de page fixe (`position: fixed`, ancré en bas de viewport) sur toute la largeur, hauteur indicative `--dv-footer-height` ; le contenu principal réserve cet espace en bas de page pour ne jamais passer dessous. Padding vertical `--dv-space-2` et espacement `--dv-space-2` entre les icônes et le texte de la mention de licence.
 - Comme l'en-tête, largeur pleine sans le conteneur de page : ses éléments sont au plus près du bord de la fenêtre, avec seulement `--dv-gutter` d'espacement horizontal.

@@ -84,7 +84,7 @@ Les attributs non localisés (`datasets`, `themes`, `publication-date`, `downloa
 ## Contraintes et règles de validation
 
 - Le `slug` d'une visualisation est identique pour ses deux traductions.
-- Un `slug` de visualisation est unique globalement.
+- Un `slug` de visualisation est unique globalement, et ne peut pas être `about`, réservé à la page "À propos" (voir "Structure des URLs" dans `technical-specifications.md`).
 - L'attribut `lang` d'un fichier de visualisation doit correspondre au suffixe de langue de son nom de fichier (`.fr.md` → `fr`, `.en.md` → `en`).
 - Pour une langue donnée, `<viz-slug>.<lang>.md` n'existe que si la visualisation est disponible dans cette langue ; son absence retire la visualisation du catalogue de cette langue (voir "Multilingue" dans `functional-specifications.md`).
 - Chaque entrée de `datasets` d'une visualisation déclare au minimum `name`, `publisher` et `url`.
