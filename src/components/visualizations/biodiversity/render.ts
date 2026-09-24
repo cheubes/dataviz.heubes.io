@@ -4,9 +4,9 @@ import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
 
-type Group = 'birds' | 'mammals' | 'reptiles-amphibians' | 'insects' | 'plants' | 'fungi';
+export type Group = 'birds' | 'mammals' | 'reptiles-amphibians' | 'insects' | 'plants' | 'fungi';
 type GroupFilter = Group | 'all';
-type Season = 'winter' | 'spring' | 'summer' | 'autumn';
+export type Season = 'winter' | 'spring' | 'summer' | 'autumn';
 type SeasonFilter = Season | 'all';
 
 interface HexProperties {
@@ -60,7 +60,7 @@ export interface BiodiversityLabels {
   tooltipSpecies: string;
 }
 
-const GROUPS: Group[] = ['birds', 'mammals', 'reptiles-amphibians', 'insects', 'plants', 'fungi'];
+export const GROUPS: Group[] = ['birds', 'mammals', 'reptiles-amphibians', 'insects', 'plants', 'fungi'];
 const SEASONS: Season[] = ['winter', 'spring', 'summer', 'autumn'];
 
 const GROUP_COLOR: Record<Group, string> = {

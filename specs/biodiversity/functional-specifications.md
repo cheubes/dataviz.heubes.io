@@ -38,6 +38,16 @@ Donner à voir la répartition géographique du vivant observé en France métro
 - **Vue initiale (et unique) :** France métropolitaine entière visible, aucun filtre actif au-delà des valeurs par défaut ("Tous les groupes", "Toutes saisons"), mode par défaut (pas "données en direct").
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : le groupe et la saison sont restaurés. La bascule "Données en direct" ne l'est jamais, puisqu'elle interroge GBIF : un lien ouvre toujours la grille précalculée, et le destinataire active le mode lui-même s'il le souhaite (voir "État dans l'URL" dans `technical-specifications.md`).
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Observations recensées par GBIF, par groupe taxonomique et par saison" / "Occurrences recorded by GBIF, by taxonomic group and season".
+- **Lignes :** les six groupes taxonomiques, dans l'ordre des filtres.
+- **Colonnes :** Hiver ; Printemps ; Été ; Automne ; Total. Nombre d'observations, sommé sur toutes les cellules de la carte.
+- **Ligne de total :** "Tous les groupes".
+- Les données en direct (bascule GBIF) ne sont pas reprises : le tableau décrit l'instantané précalculé, comme la carte par défaut.
+
 ## États
 
 - **Chargement :** le temps que le JSON précalculé (`public/data/biodiversity/hexbins.json`) et la silhouette de fond soient récupérés et que la grille s'initialise ; zone de montage réservée sans saut de mise en page (voir "Page de visualisation" dans `style-guide.md`).
@@ -57,6 +67,8 @@ Version tactile adaptée (voir "Responsive" dans `technical-specifications.md` g
 ## Accessibilité (limite connue)
 
 L'interaction principale (carte, survol des cellules) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général).
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
 
 ## Contenu non traduit
 

@@ -5,6 +5,22 @@ import { join } from 'node:path';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import RelatedVisualizations from '../components/RelatedVisualizations.astro';
 import DataDownloads from '../components/DataDownloads.astro';
+import DataTable from '../components/DataTable.astro';
+import type { DataTableBuilder } from '../scripts/data-table';
+import { buildFlowerPhenologyTable } from '../components/visualizations/flower-phenology/table';
+import { buildForestFiresTable } from '../components/visualizations/forest-fires/table';
+import { buildMedicalDesertsTable } from '../components/visualizations/medical-deserts/table';
+import { buildBiodiversityTable } from '../components/visualizations/biodiversity/table';
+import { buildBirdMigrationsTable } from '../components/visualizations/bird-migrations/table';
+import { buildEarthquakesTable } from '../components/visualizations/earthquakes/table';
+import { buildEndangeredSpeciesTable } from '../components/visualizations/endangered-species/table';
+import { buildGrapeHarvestAlmanacTable } from '../components/visualizations/grape-harvest-almanac/table';
+import { buildLightPollutionTable } from '../components/visualizations/light-pollution/table';
+import { buildMonarchMigrationTable } from '../components/visualizations/monarch-migration/table';
+import { buildMonumentLayersTable } from '../components/visualizations/monument-layers/table';
+import { buildParisTreesTable } from '../components/visualizations/paris-trees/table';
+import { buildSatellitesInOrbitTable } from '../components/visualizations/satellites-in-orbit/table';
+import { buildVolcanicEruptionsTable } from '../components/visualizations/volcanic-eruptions/table';
 import { getVisualizationSlug } from '../content.config';
 import { validateVisualizations } from '../content/validation';
 import BirdMigrations from '../components/visualizations/bird-migrations/BirdMigrations.astro';
@@ -40,6 +56,23 @@ const VIZ_COMPONENTS: Record<string, typeof BirdMigrations> = {
   'medical-deserts': MedicalDeserts,
 };
 
+const VIZ_TABLES: Record<string, DataTableBuilder> = {
+  biodiversity: buildBiodiversityTable,
+  'bird-migrations': buildBirdMigrationsTable,
+  earthquakes: buildEarthquakesTable,
+  'endangered-species': buildEndangeredSpeciesTable,
+  'flower-phenology': buildFlowerPhenologyTable,
+  'forest-fires': buildForestFiresTable,
+  'grape-harvest-almanac': buildGrapeHarvestAlmanacTable,
+  'light-pollution': buildLightPollutionTable,
+  'medical-deserts': buildMedicalDesertsTable,
+  'monarch-migration': buildMonarchMigrationTable,
+  'monument-layers': buildMonumentLayersTable,
+  'paris-trees': buildParisTreesTable,
+  'satellites-in-orbit': buildSatellitesInOrbitTable,
+  'volcanic-eruptions': buildVolcanicEruptionsTable,
+};
+
 const LANG = 'en';
 
 export async function getStaticPaths() {
@@ -72,6 +105,7 @@ const coverExtension = ['jpg', 'png'].find((ext) =>
 const coverPath = coverExtension ? `/covers/${slug}.${coverExtension}` : '/cover-placeholder.svg';
 const alternatePath = hasTranslation ? `/fr/${slug}/` : undefined;
 const VizComponent = VIZ_COMPONENTS[slug];
+const buildTable = VIZ_TABLES[slug];
 
 const retrievedDateFormatter = new Intl.DateTimeFormat(LANG, {
   day: '2-digit',
@@ -99,6 +133,8 @@ const retrievedDateFormatter = new Intl.DateTimeFormat(LANG, {
     <div class="dv-viz-page__mount">
       {VizComponent && <VizComponent lang={LANG} />}
     </div>
+
+    {buildTable && <DataTable table={buildTable(LANG)} summary={en.viz.tableSummary} />}
 
     <section class="dv-viz-page__credits">
       <h2>{en.viz.sourcesHeading}</h2>

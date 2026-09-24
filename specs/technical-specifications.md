@@ -137,6 +137,7 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   │   ├── language.ts                # détection/mémorisation de la langue (Header.astro, LanguageSelector.astro)
 │   │   ├── theme-filter.ts            # filtre thématique du catalogue (ThemeFilter.astro, VizCard.astro)
 │   │   ├── url-state.ts               # état partageable dans l'URL, voir "État dans l'URL"
+│   │   ├── data-table.ts              # type commun des vues tableau, voir "Vue tableau des données"
 │   │   ├── reduced-motion.ts          # préférence de mouvement réduit, voir "Accessibilité"
 │   │   └── viz-stage-height.ts        # hauteur de la zone de montage, voir "Règles communes à toutes les visualisations"
 │   ├── components/
@@ -147,6 +148,7 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   │   ├── VizCard.astro              # tuile de catalogue
 │   │   ├── RelatedVisualizations.astro # visualisations liées (réutilise VizCard.astro), voir functional-specifications.md
 │   │   ├── DataDownloads.astro        # téléchargement des données préparées, voir functional-specifications.md
+│   │   ├── DataTable.astro            # vue tableau des données, voir "Vue tableau des données"
 │   │   └── visualizations/
 │   │       └── <viz-slug>/
 │   │           └── ...                # composants propres à cette visualisation
@@ -283,6 +285,15 @@ Mécanisme commun de l'état partageable (voir "État partageable dans l'URL" da
 - **Changement de langue :** `src/components/LanguageSelector.astro` reporte la query string et le fragment courants, à la fois dans la redirection automatique et dans les liens du sélecteur (lus au moment du clic, puisque l'URL change pendant la visite).
 - **SEO :** un `<link rel="canonical">` sans query string, dans `BaseLayout.astro`, ramène toutes les variantes partagées à l'URL de la page (voir "SEO" ci-dessous).
 
+## Vue tableau des données
+
+Mécanisme commun de la vue tableau (voir "Vue tableau des données" dans `functional-specifications.md`).
+
+- **Calcul au build :** chaque visualisation qui propose un tableau a un module `src/components/visualizations/<viz-slug>/table.ts`. Il lit ses fichiers de `public/data/<viz-slug>/` depuis la racine du projet (voir "Génération de site") et renvoie une description neutre du tableau (type `DataTable` de `src/scripts/data-table.ts`) : légende, colonnes (libellé, alignement), lignes, ligne de total éventuelle. Les valeurs y sont déjà formatées selon la langue (`Intl.NumberFormat`, `Intl.DateTimeFormat`). Le même module fournit trois outils communs : `readDataFile` (lecture d'un fichier de `public/data/`), `formatOrdinal` ("1er", "2e" / "1st", "2nd") et `formatDate`, qui ajoute le "1er" du premier jour du mois qu'`Intl` ne produit pas en français.
+- **Rendu :** un composant commun, `src/components/DataTable.astro`, affiche cette description dans un `<details>` replié, sous la zone de montage et avant le bloc de crédit des sources. Le HTML est entièrement statique : ni île, ni JavaScript client.
+- **Accessibilité :** `<table>` avec `<caption>`, en-têtes de colonnes en `<th scope="col">`, première cellule de chaque ligne en `<th scope="row">`, ligne de total dans un `<tfoot>`. Les cellules vides portent un libellé explicite ("n.d." / "n/a"), pas un tiret.
+- **Textes :** libellés des colonnes, légende et unités dans le dictionnaire i18n, sous la clé de la visualisation (voir "Textes d'interface").
+
 ---
 
 ## Validation des données
@@ -326,7 +337,7 @@ Les URL des jeux de données (attribut `url` de chaque entrée de `datasets`, vo
 - Contraste WCAG AA pour le texte du chrome (4,5:1 corps, 3:1 grand texte/UI), sur les rôles ink/surface de `style-guide.md`.
 - HTML sémantique pour la structure des pages et du catalogue.
 - Texte alternatif sur les images de couverture.
-- Limite connue par défaut : le mode d'interaction propre à chaque visualisation n'est pas garanti nativement accessible ; voir "Règles communes à toutes les visualisations" ci-dessus.
+- Limite connue par défaut : le mode d'interaction propre à chaque visualisation n'est pas garanti nativement accessible ; voir "Règles communes à toutes les visualisations" ci-dessus. Une visualisation qui propose une vue tableau (voir "Vue tableau des données" ci-dessus) en fait son repli : le tableau donne accès aux mêmes informations au clavier et au lecteur d'écran.
 - **Mouvement réduit** (voir "Mouvement réduit" dans `functional-specifications.md`) : `prefersReducedMotion()` (`src/scripts/reduced-motion.ts`) lit `matchMedia('(prefers-reduced-motion: reduce)')` une fois, au montage de chaque visualisation. Une visualisation animée qui la voit active s'ouvre en pause sur son état final par le même chemin qu'une position temporelle restaurée depuis l'URL (voir "État dans l'URL" ci-dessus), sans écrire l'URL ; les transitions d3 qui déplacent des éléments prennent une durée nulle. Les transitions CSS du site ne portent que sur la couleur ou l'opacité : aucune règle `@media (prefers-reduced-motion)` globale n'est nécessaire.
 
 ## SEO

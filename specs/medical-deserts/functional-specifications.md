@@ -42,6 +42,16 @@ Faire voir, sur une carte réelle des communes de France métropolitaine, l'éca
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : l'état de la bascule et le cadrage sont restaurés. Un lien pris sur l'état "Sans les médecins de 65 ans et plus" ouvre directement la carte dans cet état, sans rejouer le fondu de la bascule.
 - **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : les boutons de zoom recadrent la carte sans animation. Le fondu entre les cartes "aujourd'hui" et "demain" est conservé : il change l'opacité sans rien déplacer.
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Accès aux médecins généralistes par département, aujourd'hui et sans les médecins de 65 ans et plus" / "Access to general practitioners by department, today and without doctors aged 65+".
+- **Lignes :** les 96 départements de France métropolitaine, dans l'ordre de leur code (`01` à `95`, `2A` et `2B` à leur place). Première cellule : code et nom du département. Le département est la seule maille lisible entre la commune (34 728 lignes) et la région (13 lignes, trop grossière pour l'angle de la visualisation), d'où un tableau plus long que la moyenne.
+- **Colonnes :** Population ; APL aujourd'hui ; APL sans les 65 ans et plus ; Population sous le seuil aujourd'hui (%) ; Population sous le seuil demain (%). L'APL d'un département est la moyenne des APL de ses communes pondérée par leur population. Le seuil est celui qui structure la palette de la carte, 1,5 consultation par habitant et par an (voir "Palette" dans `technical-specifications.md`).
+- **Ligne de total :** "France métropolitaine", calculée de la même façon sur l'ensemble des communes.
+- **Noms des départements :** absents du fichier de données (seul le code y figure). Liste statique des 96 noms officiels (Code officiel géographique de l'INSEE) dans le module du tableau, non traduite, comme les noms de communes.
+
 ## États
 
 - **Chargement :** le temps que `communes.json` soit récupéré et que la carte s'initialise ; zone de montage réservée sans saut de mise en page. Fichier volumineux (9,0 Mo, 2,3 Mo compressé, voir "Poids du fichier" dans `data-model.md`) : un indicateur de progression du chargement (pourcentage, lecture du flux réseau) est affiché pendant le téléchargement, dans l'esprit de `paris-trees`.
@@ -56,6 +66,8 @@ Faire voir, sur une carte réelle des communes de France métropolitaine, l'éca
 ## Accessibilité (limite connue)
 
 L'interaction principale (carte choroplèthe, zoom/pan, survol des communes) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documentée comme limite connue, sans repli, conformément à la règle par défaut du projet. La bascule aujourd'hui/demain reste accessible au clavier (élément natif standard).
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
 
 ## Contenu non traduit
 

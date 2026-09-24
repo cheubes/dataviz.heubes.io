@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Vingt étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Vingt et une étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -463,4 +463,25 @@ public/), puis compare le site généré à celui d'Astro 5 (texte de chaque pag
 rejoue les scénarios d'interaction des visualisations.
 
 Critère de fin : npm audit sans vulnérabilité, build qui passe, rendu et comportement identiques.
+```
+
+## ✅ 21. Vue tableau des données
+
+Tableau de synthèse statique, calculé au build et replié sous la visualisation, pour les quatorze visualisations : d'abord un pilote de trois (`flower-phenology`, `forest-fires`, `medical-deserts`) pour caler le composant et le style, puis les onze autres. Voir "Vue tableau des données" dans `functional-specifications.md` et `technical-specifications.md`, "Tableau de données" dans `style-guide.md`, et la section "Vue tableau" de chacune des trois specs.
+
+**Critère :** chaque tableau s'affiche dans les deux langues, avec des valeurs conformes aux données, lisibles sans JavaScript, sans débordement horizontal de la page sur mobile ; les autres visualisations n'en affichent pas.
+
+**Statut :** fait. Chaque tableau a été spécifié et validé (section "Vue tableau" de sa spec) avant implémentation.
+
+**Prompt :**
+```
+Implémente l'étape 21 du plan de construction (BUILD-PLAN.md) : vue tableau des données.
+
+Crée src/scripts/data-table.ts et src/components/DataTable.astro, puis un table.ts pour
+chaque visualisation qui a une section "Vue tableau" dans sa spec, branchés sur les deux pages,
+en suivant "Vue tableau des données" (spec fonctionnelle et technique), "Tableau de données"
+dans style-guide.md et la section "Vue tableau" de chaque visualisation.
+
+Critère de fin : chaque tableau s'affiche dans les deux langues avec des valeurs justes,
+sans JavaScript et sans débordement de page sur mobile.
 ```

@@ -44,6 +44,15 @@ Chaque espèce dans son propre cadre, à sa propre échelle d'icônes (une icôn
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : une année choisie (pause ou curseur) est restaurée, les cartes s'ouvrant alors en pause sur cette année.
 - **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : les petits multiples s'ouvrent en pause sur la dernière année, celle des recensements les plus récents.
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Effectifs recensés, par espèce et par recensement" / "Recorded population, by species and census".
+- **Lignes :** un recensement par ligne (28), regroupés par espèce dans l'ordre des petits multiples, puis par année. Première cellule : nom de l'espèce.
+- **Colonnes :** Année ; Effectif ; Unité (individus, ou terriers actifs pour le grand hamster d'Alsace).
+- **Pas de ligne de total :** les unités et les méthodes de recensement diffèrent d'une espèce à l'autre.
+
 ## États
 
 - **Chargement :** le temps que le JSON des espèces soit récupéré et que les cartes s'initialisent ; zone de montage réservée sans saut de mise en page.
@@ -59,6 +68,8 @@ Chaque espèce dans son propre cadre, à sa propre échelle d'icônes (une icôn
 ## Accessibilité (limite connue)
 
 La fiche de détail par carte (survol/tap) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documentée comme limite connue, sans repli, conformément à la règle par défaut du projet. Le bouton Play/Pause et le curseur d'année restent accessibles au clavier (éléments `<button>`/`<input type="range">` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention.
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
 
 ## Contenu non traduit
 

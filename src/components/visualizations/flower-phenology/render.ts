@@ -13,10 +13,10 @@ interface DecadeStats {
   observationCount: number;
 }
 
-type Decade = '1970s' | '1980s' | '1990s' | '2000s' | '2010s' | '2020s';
+export type Decade = '1970s' | '1980s' | '1990s' | '2000s' | '2010s' | '2020s';
 type RingKey = 'inner' | 'outer';
 
-interface SpeciesEntry {
+export interface SpeciesEntry {
   species: string;
   nameFr: string;
   nameEn: string;
@@ -53,9 +53,9 @@ export interface FlowerPhenologyLabels {
   variationSame: string;
 }
 
-const DECADES: Decade[] = ['1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
+export const DECADES: Decade[] = ['1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
 
-const DECADE_RANGE_LABEL: Record<Decade, string> = {
+export const DECADE_RANGE_LABEL: Record<Decade, string> = {
   '1970s': '1970-1979',
   '1980s': '1980-1989',
   '1990s': '1990-1999',
@@ -77,9 +77,12 @@ function dayOfYear(monthIndex: number, day: number): number {
   return Math.round((current - start) / 86_400_000) + 1;
 }
 
-function formatDoy(doy: number, lang: 'fr' | 'en'): string {
+export function formatDoy(doy: number, lang: 'fr' | 'en'): string {
   const reference = new Date(Date.UTC(2001, 0, 1) + (doy - 1) * 86_400_000);
-  return new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(reference);
+  const formatted = new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(reference);
+  // French writes the first day of a month as an ordinal ("1er avril"), which
+  // Intl does not produce.
+  return lang === 'fr' && reference.getUTCDate() === 1 ? formatted.replace(/^1 /, '1er ') : formatted;
 }
 
 export async function mountFlowerPhenology(

@@ -36,6 +36,16 @@ Montrer, sur un calendrier circulaire, le moment de première floraison de plant
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les espèces affichées et la décennie de chaque anneau sont restaurées, y compris une sélection vide. Le tooltip n'est pas capturé (voir "État dans l'URL" dans `technical-specifications.md`).
 - **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : changer de décennie redessine les anneaux sans transition, au lieu de faire glisser les arcs.
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Date médiane de première floraison, par espèce et par décennie" / "Median first-flowering date, by species and decade".
+- **Lignes :** les douze espèces, dans l'ordre des cases à cocher. Première cellule : nom commun dans la langue de la page, suivi du nom scientifique en italique.
+- **Colonnes :** une par décennie, avec les mêmes libellés que les sélecteurs d'anneaux (`1970-1979`…), contenant la date médiane de première floraison en jour et mois ("6 avril" / "April 6"), écrite "1er" pour le premier jour du mois en français. Dernière colonne : **Écart**, différence en jours entre la dernière et la première décennie, signée ("−26 j" / "−26 d"), une valeur négative signifiant une floraison plus précoce.
+- **Pas de ligne de total :** une moyenne entre espèces n'aurait pas de sens botanique.
+- **Non repris :** les percentiles 10 et 90 et le nombre d'observations, qui doubleraient la largeur d'un tableau déjà dense ; ils restent dans le fichier téléchargeable.
+
 ## États
 
 - **Chargement :** le temps que le JSON de phénologie soit récupéré et que le calendrier s'initialise ; zone de montage réservée sans saut de mise en page.
@@ -53,6 +63,8 @@ Version tactile adaptée (voir "Responsive" dans `technical-specifications.md` g
 ## Accessibilité (limite connue)
 
 L'interaction principale (calendrier SVG, survol/tap des arcs) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général).
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
 
 ## Contenu non traduit
 

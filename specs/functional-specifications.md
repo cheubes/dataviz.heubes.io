@@ -101,6 +101,18 @@ Quand le visiteur a demandé à son système de réduire les animations (préfé
 - **Lien partagé :** une position temporelle portée par l'URL (voir "État partageable dans l'URL" ci-dessus) prime sur l'état final, et la visualisation reste en pause sur cette position, y compris quand elle relancerait sinon la lecture. L'état d'ouverture choisi pour le mouvement réduit n'est jamais écrit dans l'URL : ce n'est pas une action du visiteur.
 - La préférence est lue une fois, au chargement de la visualisation. La modifier pendant la visite ne change rien avant le rechargement de la page.
 
+### Vue tableau des données
+
+Sous la zone de montage, une visualisation peut proposer un tableau de synthèse des données qu'elle représente. C'est un repli pour les visiteurs qui ne peuvent pas lire la visualisation (lecteur d'écran, navigation au clavier), et un accès aux chiffres exacts pour tous les autres.
+
+- **Synthèse, pas données brutes :** une centaine de lignes au plus, agrégées selon ce que la visualisation donne à voir (par décennie, par année, par département…). Les données complètes restent disponibles par le téléchargement (voir "Téléchargement des données préparées" ci-dessus).
+- **Statique :** le tableau ne suit ni les filtres, ni l'année en cours, ni le cadrage. Il décrit l'ensemble des données, identique pour tous les visiteurs, et reste lisible sans JavaScript.
+- **Replié par défaut :** un bloc "Voir les données sous forme de tableau" / "Show the data as a table", que le visiteur déplie. La règle "contrôles toujours visibles" (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md`) vise les filtres et la légende, pas ce tableau.
+- **Au cas par cas :** chaque visualisation qui en propose un le définit dans son `functional-specifications.md` (section "Vue tableau") : lignes, colonnes, agrégation, ordre, légende du tableau. Une visualisation sans cette section n'affiche pas de tableau.
+- **Bilingue :** légende, en-têtes, unités et formats de nombres et de dates suivent la langue de la page. Les noms propres (communes, départements, noms scientifiques) restent non traduits, comme dans la visualisation.
+
+Affichage : voir "Tableau de données" dans `style-guide.md`.
+
 ## Hors périmètre
 
 - Comptes utilisateurs, authentification.
