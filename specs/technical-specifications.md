@@ -134,6 +134,7 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   │   ├── LanguageSelector.astro
 │   │   ├── ThemeFilter.astro          # chips de filtre thématique, voir home-page.md
 │   │   ├── VizCard.astro              # tuile de catalogue
+│   │   ├── RelatedVisualizations.astro # visualisations liées (réutilise VizCard.astro), voir functional-specifications.md
 │   │   └── visualizations/
 │   │       └── <viz-slug>/
 │   │           └── ...                # composants propres à cette visualisation
@@ -206,6 +207,7 @@ L'anglais, langue par défaut, n'a pas de préfixe ; le français est préfixé 
 
 - `[viz].astro` et `fr/[viz].astro` génèrent chacun leurs chemins via `getStaticPaths`, à partir des entrées de la collection `visualizations` filtrées par `lang`.
 - Une visualisation non traduite dans une langue n'a tout simplement pas d'entrée de collection pour cette langue, donc pas de page générée à cette URL : la visite de cette URL tombe sur `404.astro`.
+- Les visualisations liées (voir "Visualisations liées" dans `functional-specifications.md`) sont sélectionnées au build par `src/components/RelatedVisualizations.astro`, à partir des entrées de la collection filtrées par la langue de la page : du HTML statique, sans JS client.
 
 ### Contenu non traduit ("message d'indisponibilité")
 

@@ -13,6 +13,7 @@ Dans le périmètre :
 - Consultation du catalogue de visualisations, depuis la page d'accueil.
 - Filtrage du catalogue par thème, depuis la page d'accueil (voir `home-page.md`).
 - Consultation, pour chaque visualisation, de sa page dédiée : présentation du dataset source, du contexte de la mise en forme choisie, et interaction avec la visualisation elle-même.
+- Accès, depuis la page d'une visualisation, aux autres visualisations qui partagent un thème avec elle (voir "Visualisations liées" ci-dessous).
 - Site multilingue (français, anglais).
 
 Voir aussi "Hors périmètre" ci-dessous.
@@ -28,7 +29,7 @@ Le contenu (catalogue, visualisations) est produit par l'auteur du site directem
 1. Un visiteur arrive sur la page d'accueil, parcourt le catalogue de visualisations (voir `home-page.md`).
 2. Il choisit une visualisation qui l'intéresse et accède à sa page dédiée.
 3. Il découvre le contexte du dataset (source, licence, angle choisi) puis interagit avec la visualisation.
-4. Il revient au catalogue pour explorer une autre visualisation.
+4. Il revient au catalogue, ou poursuit directement vers l'une des visualisations liées proposées en bas de page (voir "Visualisations liées" ci-dessous), pour explorer une autre visualisation.
 5. Un visiteur peut aussi arriver directement sur la page d'une visualisation via un lien partagé, sans passer par l'accueil.
 
 ## Règles transverses
@@ -44,6 +45,17 @@ Le contenu (catalogue, visualisations) est produit par l'auteur du site directem
 ### Navigation
 
 - Chaque page permet de revenir à la page d'accueil du site.
+
+### Visualisations liées
+
+En bas de la page d'une visualisation, une section propose jusqu'à trois autres visualisations qui partagent au moins un thème avec elle (voir "Thème" dans `data-model.md`). Elle sert notamment le visiteur arrivé par un lien partagé (parcours 5), qui n'est pas passé par le catalogue.
+
+- Candidates : les visualisations disponibles dans la langue courante, hors visualisation courante, partageant au moins un thème avec elle. Une visualisation non traduite dans la langue courante n'est jamais proposée : une tuile liée ne mène jamais au message d'indisponibilité.
+- Ordre : nombre de thèmes partagés décroissant, puis date de publication (`publication-date`) décroissante, puis `slug` alphabétique pour départager de façon stable. Les trois premières sont retenues.
+- Aucune candidate (ex : seule visualisation de son thème) : la section est entièrement absente, titre compris. On ne la complète pas avec des visualisations sans rapport thématique.
+- La sélection est déterminée à la génération du site : identique pour tous les visiteurs, ni aléatoire ni personnalisée.
+
+Affichage : voir "Page de visualisation" dans `style-guide.md`.
 
 ## Hors périmètre
 

@@ -1,0 +1,60 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import VizCard from './VizCard.astro';
+import { getVisualizationSlug } from '../content/config';
+
+interface Props {
+  viz: CollectionEntry<'visualizations'>;
+  heading: string;
+}
+
+const MAX_RELATED = 3;
+
+const { viz, heading } = Astro.props;
+const { lang, themes } = viz.data;
+
+const candidates = await getCollection(
+  'visualizations',
+  (entry) => entry.data.lang === lang && entry.id !== viz.id
+);
+
+const countSharedThemes = (entry: CollectionEntry<'visualizations'>) =>
+  entry.data.themes.filter((theme) => themes.includes(theme)).length;
+
+const related = candidates
+  .map((entry) => ({ entry, sharedThemes: countSharedThemes(entry) }))
+  .filter(({ sharedThemes }) => sharedThemes > 0)
+  .sort(
+    (a, b) =>
+      b.sharedThemes - a.sharedThemes ||
+      b.entry.data['publication-date'].localeCompare(a.entry.data['publication-date']) ||
+      getVisualizationSlug(a.entry.id, lang).localeCompare(getVisualizationSlug(b.entry.id, lang))
+  )
+  .slice(0, MAX_RELATED)
+  .map(({ entry }) => entry);
+---
+
+{
+  related.length > 0 && (
+    <section class="dv-related">
+      <h2>{heading}</h2>
+      <div class="dv-related__grid">
+        {related.map((entry) => (
+          <VizCard viz={entry} />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .dv-related h2 {
+    margin-bottom: var(--dv-space-2);
+  }
+
+  .dv-related__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--dv-space-4);
+  }
+</style>

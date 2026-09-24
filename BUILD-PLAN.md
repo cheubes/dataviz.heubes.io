@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Neuf étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Dix étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -225,6 +225,26 @@ repository sur "GitHub Actions" (paramètre du repository, pas modifiable depuis
 
 Critère de fin : après un push sur main, le site est accessible sur https://dataviz.heubes.io
 avec la première visualisation réelle de l'étape 8.
+```
+
+## ✅ 10. Visualisations liées
+
+Section de tuiles en bas de chaque page de visualisation, proposant jusqu'à trois autres visualisations du même thème. Voir "Visualisations liées" dans `functional-specifications.md` et "Page de visualisation" dans `style-guide.md`.
+
+**Critère :** chaque page de visualisation affiche, après le bloc de crédit, les visualisations partageant un thème avec elle, dans l'ordre spécifié ; la section est absente sur une visualisation seule de son thème.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 10 du plan de construction (BUILD-PLAN.md) : visualisations liées.
+
+Crée src/components/RelatedVisualizations.astro (sélection au build, réutilise VizCard.astro)
+et monte-le dans src/pages/[viz].astro et src/pages/fr/[viz].astro, en suivant "Visualisations
+liées" dans functional-specifications.md et "Page de visualisation" dans style-guide.md.
+
+Critère de fin : sur chaque page, les tuiles liées respectent la règle de sélection et d'ordre
+dans les deux langues ; une visualisation seule de son thème n'affiche aucune section.
 ```
 
 ---
