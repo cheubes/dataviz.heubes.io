@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Seize étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Dix-sept étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -382,4 +382,24 @@ BaseLayout.astro, en suivant "Polices" dans technical-specifications.md et "Icon
 style-guide.md.
 
 Critère de fin : aucune requête vers un autre domaine à l'affichage d'une page, rendu inchangé.
+```
+
+## ✅ 17. Vérification des types au build
+
+Le script `build` enchaîne `astro check && astro build` : une erreur de type dans un fichier `.ts` ou `.astro` fait échouer le build, donc le déploiement, avant toute publication. Le dictionnaire français est vérifié contre l'anglais (`satisfies typeof en`). Voir "Hébergement et déploiement", "Dépendances" et "Textes d'interface" dans `technical-specifications.md`.
+
+**Critère :** une erreur de type volontaire dans un fichier `.astro`, ou une clé présente dans un seul des deux dictionnaires, fait échouer `npm run build` ; le code réel passe.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 17 du plan de construction (BUILD-PLAN.md) : vérification des types au build.
+
+Ajoute @astrojs/check en dépendance de développement, fais précéder astro build de astro check
+dans le script build du package.json, et déclare le dictionnaire français satisfies typeof en,
+en suivant "Hébergement et déploiement" et "Textes d'interface" dans technical-specifications.md.
+
+Critère de fin : une erreur de type volontaire (fichier .astro, clé i18n manquante) fait échouer
+npm run build ; le code réel passe.
 ```

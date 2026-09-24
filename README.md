@@ -24,7 +24,8 @@ A catalogue of interactive, hand-built data visualizations. Each entry explores 
 ```bash
 npm install
 npm run dev       # local dev server
-npm run build     # static build to dist/
+npm run check     # type-check .ts and .astro files (astro check)
+npm run build     # type-check, then static build to dist/
 npm run preview   # preview the production build
 ```
 
