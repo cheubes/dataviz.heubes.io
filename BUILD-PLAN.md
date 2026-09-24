@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Vingt et une étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Vingt-deux étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -484,4 +484,24 @@ dans style-guide.md et la section "Vue tableau" de chaque visualisation.
 
 Critère de fin : chaque tableau s'affiche dans les deux langues avec des valeurs justes,
 sans JavaScript et sans débordement de page sur mobile.
+```
+
+## ✅ 22. Données structurées schema.org
+
+Chaque page de visualisation décrit en JSON-LD la visualisation (`CreativeWork`, sources en `isBasedOn`) et, quand elle en propose, ses fichiers téléchargeables comme `Dataset` dérivé, éligible à Google Dataset Search. Voir "SEO" dans `technical-specifications.md`.
+
+**Critère :** les 28 pages de visualisation portent un bloc JSON-LD valide ; un `Dataset` n'y figure que si la visualisation propose des téléchargements, avec une description de 50 à 5 000 caractères et des URL de fichiers qui existent.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 22 du plan de construction (BUILD-PLAN.md) : données structurées schema.org.
+
+Crée src/scripts/structured-data.ts et rends son résultat dans le <head> via une propriété de
+BaseLayout.astro, depuis les deux pages de visualisation, en suivant "SEO" dans
+technical-specifications.md.
+
+Critère de fin : JSON-LD valide sur chaque page de visualisation, Dataset présent uniquement avec
+des téléchargements, descriptions et URL conformes.
 ```

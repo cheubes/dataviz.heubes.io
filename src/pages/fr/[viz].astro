@@ -6,6 +6,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import RelatedVisualizations from '../../components/RelatedVisualizations.astro';
 import DataDownloads from '../../components/DataDownloads.astro';
 import DataTable from '../../components/DataTable.astro';
+import { buildVisualizationStructuredData } from '../../scripts/structured-data';
 import type { DataTableBuilder } from '../../scripts/data-table';
 import { buildFlowerPhenologyTable } from '../../components/visualizations/flower-phenology/table';
 import { buildForestFiresTable } from '../../components/visualizations/forest-fires/table';
@@ -103,6 +104,13 @@ const coverExtension = ['jpg', 'png'].find((ext) =>
   existsSync(join(process.cwd(), 'public', 'covers', `${slug}.${ext}`))
 );
 const coverPath = coverExtension ? `/covers/${slug}.${coverExtension}` : '/cover-placeholder.svg';
+const structuredData = buildVisualizationStructuredData({
+  viz,
+  slug,
+  pageUrl: new URL(Astro.url.pathname, Astro.site),
+  coverUrl: new URL(coverPath, Astro.site),
+  site: Astro.site!,
+});
 const alternatePath = hasTranslation ? `/${slug}/` : undefined;
 const VizComponent = VIZ_COMPONENTS[slug];
 const buildTable = VIZ_TABLES[slug];
@@ -121,6 +129,7 @@ const retrievedDateFormatter = new Intl.DateTimeFormat(LANG, {
   lang={LANG}
   cover={coverPath}
   alternatePath={alternatePath}
+  structuredData={structuredData}
 >
   <article class="dv-viz-page">
     <h1>{title}</h1>

@@ -30,6 +30,7 @@ export default {
       'Files as the visualization uses them. Reuse remains subject to the licenses of the sources above.',
     backToCatalog: 'Back to the catalog',
     tableSummary: 'Show the data as a table',
+    preparedDataName: '{title}: prepared data',
     tableTotal: 'Total',
     notAvailable: 'n/a',
   },
