@@ -7,7 +7,11 @@ import en from '../i18n/en';
 
 const LANG = 'en';
 
-const visualizations = await getCollection('visualizations', (viz) => viz.data.lang === LANG);
+// Alphabetical by slug (home-page.md), made explicit rather than left to the
+// collection's own order, which changed between Astro 5 and 7.
+const visualizations = (await getCollection('visualizations', (viz) => viz.data.lang === LANG)).sort((a, b) =>
+  a.id.localeCompare(b.id)
+);
 ---
 
 <BaseLayout

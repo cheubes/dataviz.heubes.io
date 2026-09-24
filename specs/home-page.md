@@ -8,7 +8,7 @@ Donner au visiteur un aperçu du catalogue de visualisations disponibles et lui 
 
 - En-tête du site (voir "En-tête" dans `style-guide.md`).
 - Filtre thématique : une chip par thème (voir "Thème" dans `data-model.md` et "Chips de filtre (catalogue)" dans `style-guide.md`), au-dessus de la grille de tuiles, sélection unique.
-- Une grille de tuiles de toutes les visualisations disponibles dans la langue courante (voir "Tuiles (catalogue)" dans `style-guide.md`).
+- Une grille de tuiles de toutes les visualisations disponibles dans la langue courante (voir "Tuiles (catalogue)" dans `style-guide.md`), triées par ordre alphabétique de `slug` : un ordre stable et prévisible, indépendant de la date de publication ou de l'ordre interne des collections d'Astro (qui a changé entre Astro 5 et 7).
 - Tuile de visualisation (voir "Tuiles (catalogue)" dans `style-guide.md`) : couverture, titre, résumé.
 - Pied de page (voir "Pied de page" dans `style-guide.md`).
 
