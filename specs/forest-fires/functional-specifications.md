@@ -47,6 +47,15 @@ Faire voir, par la reconstitution année par année sur une carte réelle de la 
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : l'année et le cadrage sont restaurés. Une année partagée ouvre la carte en pause sur cette année (voir "État dans l'URL" dans `technical-specifications.md`).
 - **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause sur la dernière année couverte.
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Incendies de forêt recensés par la BDIFF, par année" / "Forest fires recorded by the BDIFF, by year".
+- **Lignes :** une par année couverte (2006 à 2025), dans l'ordre chronologique.
+- **Colonnes :** Année ; Incendies (nombre) ; Surface brûlée (somme de l'année, en hectares, arrondie à l'hectare) ; Plus grand incendie (commune, code du département entre parenthèses, et surface en hectares).
+- **Ligne de total :** "2006-2025" : nombre total d'incendies, surface totale, et plus grand incendie de toute la période.
+
 ## États
 
 - **Chargement :** le temps que `fires.json` et le fond de carte soient récupérés et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
@@ -61,6 +70,8 @@ Faire voir, par la reconstitution année par année sur une carte réelle de la 
 ## Accessibilité (limite connue)
 
 L'interaction principale (carte animée, zoom/pan, survol des incendies) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général). Le bouton Play/Pause, le sélecteur de vitesse, le curseur d'année et les boutons de zoom restent accessibles au clavier (éléments `<button>`/`<select>`/`<input type="range">` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention (la lecture boucle indéfiniment, même rationale que `satellites-in-orbit`) et de parcourir la chronologie sans dépendre de la carte animée elle-même.
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
 
 ## Contenu non traduit
 

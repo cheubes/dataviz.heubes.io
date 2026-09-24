@@ -9,6 +9,7 @@ interface Props {
   lang?: 'fr' | 'en';
   cover?: string;
   alternatePath?: string;
+  structuredData?: object;
 }
 
 const {
@@ -17,6 +18,7 @@ const {
   lang = 'en',
   cover = '/cover-placeholder.svg',
   alternatePath,
+  structuredData,
 } = Astro.props;
 
 const otherLang = lang === 'fr' ? 'en' : 'fr';
@@ -50,6 +52,16 @@ const alternateUrl = alternatePath ? new URL(alternatePath, Astro.site) : undefi
     }
 
     <link rel="icon" type="image/png" href="/logo.png" />
+
+    {
+      structuredData && (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')}
+        />
+      )
+    }
   </head>
   <body>
     <Header />

@@ -41,7 +41,7 @@ Un jeu de données open data utilisé par une visualisation. Une visualisation p
 |---|---|---|
 | `name` | Non | Nom affiché du jeu de données |
 | `publisher` | Non | Organisme producteur (ex : INSEE, data.gouv.fr, Eurostat) |
-| `url` | Non | URL de la page source du jeu de données |
+| `url` | Non | URL de la page source du jeu de données, vérifiée chaque semaine (voir "Surveillance des sources" dans `technical-specifications.md`) |
 | `license` | Non | Licence du jeu de données telle que publiée par la source (ex : Licence Ouverte 2.0, ODbL) |
 | `retrieved` | Non | Date à laquelle le jeu de données a été récupéré : les open data évoluent, cette date documente la version réellement utilisée |
 

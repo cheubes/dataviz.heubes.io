@@ -46,6 +46,15 @@ Faire voir, par l'accumulation progressive de points autour d'un globe habillé 
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les zones actives et l'année choisie (pause ou curseur) sont restaurées, la visualisation s'ouvrant alors en pause sur cette année. La rotation du globe, purement décorative, n'est pas conservée.
 - **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la visualisation s'ouvre en pause sur la dernière année, nuée complète et globe immobile.
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Satellites encore en orbite, par décennie de lancement et par zone" / "Satellites still in orbit, by launch decade and region".
+- **Lignes :** une par décennie de lancement (1950-1959 à la décennie en cours).
+- **Colonnes :** les cinq zones de lancement, dans l'ordre des filtres, puis Total.
+- **Ligne de total :** toutes décennies confondues.
+
 ## États
 
 - **Chargement :** le temps que `satellites.json` soit récupéré et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
@@ -60,6 +69,8 @@ Faire voir, par l'accumulation progressive de points autour d'un globe habillé 
 ## Accessibilité (limite connue)
 
 L'interaction principale (globe animé en rotation continue, accumulation de points) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général). Les boutons Play/Pause, les entrées de la légende/filtre et le curseur d'année restent accessibles au clavier (éléments `<button>`/`<input type="range">` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention (rotation du globe comprise, voir "Play/Pause" dans "Interactions" ci-dessus), de filtrer et de parcourir la chronologie sans dépendre du globe animé lui-même.
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
 
 ## Contenu non traduit
 

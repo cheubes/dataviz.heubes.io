@@ -3,8 +3,6 @@ import { scaleSqrt } from 'd3-scale';
 import { select } from 'd3-selection';
 import { timer as d3Timer } from 'd3-timer';
 import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
-// topojson-client ships no bundled types; resolves to `any` under this project's
-// moduleResolution setting, same accepted gap as monument-layers/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
@@ -323,7 +321,7 @@ export async function mountForestFires(root: HTMLElement, lang: 'fr' | 'en', lab
         [16, 16],
         [width - 16, height - 16],
       ],
-      landFeature as any
+      landFeature
     );
     zoomBehavior.translateExtent([
       [0, 0],
@@ -341,7 +339,7 @@ export async function mountForestFires(root: HTMLElement, lang: 'fr' | 'en', lab
     basemapCtx.translate(transform.x, transform.y);
     basemapCtx.scale(transform.k, transform.k);
     basemapCtx.beginPath();
-    path(landFeature as any);
+    path(landFeature);
     basemapCtx.fillStyle = BASEMAP_FILL;
     basemapCtx.fill();
     basemapCtx.strokeStyle = BASEMAP_STROKE;
@@ -364,7 +362,7 @@ export async function mountForestFires(root: HTMLElement, lang: 'fr' | 'en', lab
     .on('end', () => {
       if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
-  select(firesCanvas).call(zoomBehavior as any);
+  select(firesCanvas).call(zoomBehavior);
 
   function updateZoomButtons() {
     zoomOutButton.disabled = transform.k <= MIN_ZOOM;
@@ -373,13 +371,13 @@ export async function mountForestFires(root: HTMLElement, lang: 'fr' | 'en', lab
   updateZoomButtons();
 
   zoomInButton.addEventListener('click', () => {
-    select(firesCanvas).call(zoomBehavior.scaleBy as any, ZOOM_BUTTON_STEP);
+    zoomBehavior.scaleBy(select(firesCanvas), ZOOM_BUTTON_STEP);
   });
   zoomOutButton.addEventListener('click', () => {
-    select(firesCanvas).call(zoomBehavior.scaleBy as any, 1 / ZOOM_BUTTON_STEP);
+    zoomBehavior.scaleBy(select(firesCanvas), 1 / ZOOM_BUTTON_STEP);
   });
   zoomResetButton.addEventListener('click', () => {
-    select(firesCanvas).call(zoomBehavior.transform as any, zoomIdentity);
+    zoomBehavior.transform(select(firesCanvas), zoomIdentity);
   });
 
   const resizeObserver = new ResizeObserver(() => resize());
@@ -588,7 +586,7 @@ export async function mountForestFires(root: HTMLElement, lang: 'fr' | 'en', lab
   const initialTransform = readZoomParam(projection, width, height, [MIN_ZOOM, MAX_ZOOM]);
   if (initialTransform) {
     restoringUrlState = true;
-    select(firesCanvas).call(zoomBehavior.transform as any, initialTransform);
+    zoomBehavior.transform(select(firesCanvas), initialTransform);
     restoringUrlState = false;
   }
 

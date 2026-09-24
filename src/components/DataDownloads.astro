@@ -1,6 +1,6 @@
 ---
 import { existsSync, statSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 
 interface Props {
   slug: string;
@@ -26,7 +26,7 @@ const formatSize = (bytes: number) => {
 };
 
 const downloads = files.map((file) => {
-  const path = fileURLToPath(new URL(`../../public/data/${slug}/${file}`, import.meta.url));
+  const path = join(process.cwd(), 'public', 'data', slug, file);
   if (!existsSync(path)) {
     throw new Error(`Declared download "${file}" not found in public/data/${slug}/`);
   }

@@ -235,7 +235,7 @@ export async function mountMedicalDeserts(
     ctx.clearRect(0, 0, width, height);
     for (const commune of communes) {
       ctx.beginPath();
-      path(commune as any);
+      path(commune);
       ctx.fillStyle = colorScale(commune.properties[key]);
       ctx.fill();
     }
@@ -249,7 +249,7 @@ export async function mountMedicalDeserts(
     communes.forEach((commune, i) => {
       const [r, g, b] = indexToColor(i + 1); // +1: keep 0 reserved for "no commune"
       ctx.beginPath();
-      path(commune as any);
+      path(commune);
       ctx.fillStyle = `rgb(${r},${g},${b})`;
       ctx.fill();
     });
@@ -277,7 +277,7 @@ export async function mountMedicalDeserts(
         [8, 8],
         [width - 8, height - 8],
       ],
-      collection as any
+      collection
     );
 
     drawStateCanvas(canvasToday, 'apl');
@@ -297,8 +297,11 @@ export async function mountMedicalDeserts(
 
   let restoringUrlState = false;
 
-  const zoomBehavior = d3Zoom<HTMLCanvasElement, unknown>()
+  const zoomBehavior = d3Zoom<HTMLDivElement, unknown>()
     .scaleExtent(ZOOM_EXTENT)
+    // Gestures only count on the map itself, not on the zoom buttons that share
+    // the stage; the rest is d3-zoom's default filter.
+    .filter((event) => event.target === interactionCanvas && (!event.ctrlKey || event.type === 'wheel') && !event.button)
     .on('zoom', (event) => {
       transform = event.transform;
       applyTransform();
@@ -306,20 +309,23 @@ export async function mountMedicalDeserts(
     .on('end', () => {
       if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
-  select(interactionCanvas).call(zoomBehavior as any);
+  // Bound to the stage rather than the canvas: the canvas sits inside zoomLayer,
+  // whose CSS transform would skew d3-zoom's pointer coordinates once zoomed
+  // (wheel no longer anchored under the cursor, drag lagging behind the mouse).
+  select(stage).call(zoomBehavior);
 
   const reducedMotion = prefersReducedMotion();
   const zoomTransitionMs = reducedMotion ? 0 : 200;
   const resetTransitionMs = reducedMotion ? 0 : 300;
 
   zoomInButton.addEventListener('click', () => {
-    select(interactionCanvas).transition().duration(zoomTransitionMs).call(zoomBehavior.scaleBy as any, 1.5);
+    zoomBehavior.scaleBy(select(stage).transition().duration(zoomTransitionMs), 1.5);
   });
   zoomOutButton.addEventListener('click', () => {
-    select(interactionCanvas).transition().duration(zoomTransitionMs).call(zoomBehavior.scaleBy as any, 1 / 1.5);
+    zoomBehavior.scaleBy(select(stage).transition().duration(zoomTransitionMs), 1 / 1.5);
   });
   zoomResetButton.addEventListener('click', () => {
-    select(interactionCanvas).transition().duration(resetTransitionMs).call(zoomBehavior.transform as any, zoomIdentity);
+    zoomBehavior.transform(select(stage).transition().duration(resetTransitionMs), zoomIdentity);
   });
 
   let resizeTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -344,7 +350,7 @@ export async function mountMedicalDeserts(
   const initialTransform = readZoomParam(projection, width, height, ZOOM_EXTENT);
   if (initialTransform) {
     restoringUrlState = true;
-    select(interactionCanvas).call(zoomBehavior.transform as any, initialTransform);
+    zoomBehavior.transform(select(stage), initialTransform);
     restoringUrlState = false;
   }
 

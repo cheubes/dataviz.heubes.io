@@ -5,7 +5,9 @@
 ### Génération de site
 
 - **Astro**, sortie statique (`output: 'static'`), pas de rendu serveur.
-- **Content collections** (`src/content/config.ts`, schéma Zod) pour les visualisations (voir "Structure des fichiers" ci-dessous). Les thèmes (voir "Thème" dans `data-model.md`) sont un enum fermé porté par le schéma de cette collection, pas une collection à part : ils n'ont pas de contenu ni de page propres (voir "Filtre thématique" dans `home-page.md`).
+- `compressHTML: true` dans `astro.config.mjs` : Astro 7 est passé par défaut au mode `'jsx'`, qui supprime les blancs entre éléments en ligne ("À propos · Réalisée par…", liens de téléchargement séparés par des virgules). La valeur `true` garde le comportement d'Astro 5 : le texte rendu est resté identique mot pour mot lors de la montée de version.
+- Les fichiers de `public/` lus au build (couvertures, données téléchargeables) sont localisés depuis la racine du projet (`process.cwd()`), pas depuis `import.meta.url` : ce dernier désigne l'emplacement du fichier compilé, qui change d'une version de Vite à l'autre (cassé lors du passage à Astro 7).
+- **Content collections** (`src/content.config.ts`, schéma Zod) pour les visualisations (voir "Structure des fichiers" ci-dessous). Les thèmes (voir "Thème" dans `data-model.md`) sont un enum fermé porté par le schéma de cette collection, pas une collection à part : ils n'ont pas de contenu ni de page propres (voir "Filtre thématique" dans `home-page.md`).
 - Composants `.astro` pour le chrome partagé (layout, en-tête, pied de page, sélecteur de langue, tuile de catalogue). Chaque visualisation ajoute ses propres composants (voir "Règles communes à toutes les visualisations").
 
 ### CSS / UI
@@ -84,10 +86,12 @@ jobs:
 
 Indicatif, à reconfirmer au moment de l'implémentation :
 
-- `astro` (dernière version stable 5.x)
+- `astro` (7.x, qui demande Node.js 22.12 ou plus récent ; le workflow de déploiement tourne sous Node 24, valeur par défaut de `withastro/action@v6`)
 - `@astrojs/sitemap` (voir "SEO")
 - `typescript` et `@astrojs/check` (dépendances de développement : vérification de types par `astro check`, pas un framework UI, voir "Hébergement et déploiement")
-  - Limite connue : les modules `d3-*` et `topojson-client` n'embarquent pas de déclarations de types. Leurs imports sont typés `any` et échappent à la vérification (`astro check` les signale en simple indication, sans erreur). Les paquets `@types/d3-*` qui combleraient ce trou seraient de nouvelles dépendances, à discuter avant ajout.
+  - Les modules `d3-*` et `topojson-client` n'embarquent pas leurs déclarations de types : elles viennent des paquets `@types/d3-*` (un par module d3 utilisé) et `@types/topojson-client`, en dépendances de développement. Toute nouvelle dépendance d3 ajoute son paquet `@types` correspondant.
+  - Aucun `as any` aux appels d3 : les appels de zoom s'écrivent `zoomBehavior.scaleBy(select(...), k)` plutôt que `select(...).call(zoomBehavior.scaleBy, k)`, dont les surcharges ne se typent pas sans cast ; les géométries constantes passées à `fitExtent`/`path` sont typées `Polygon` (`geojson`) plutôt que déclarées `as const`, dont les tableaux en lecture seule sont refusés ; les générateurs d'arcs à accesseurs constants sont typés `d3Arc<null>()` et appelés avec `null`.
+  - Limite connue : les fonds de carte TopoJSON chargés à l'exécution restent annotés `any` (`basemapTopology: any`, `fetchJson<any>`), si bien que les géométries qui en sont extraites échappent en partie à la vérification. Les typer (`Topology` de `topojson-specification`) se fera au fil des modifications de chaque visualisation.
 - Aucune dépendance CSS ni bibliothèque d'icônes : les quatre icônes Creative Commons du pied de page sont des SVG inline (voir "Iconographie" dans `style-guide.md`).
 - Pas de dépendance JS de chrome au-delà de vanilla.
 - Dépendances propres à une visualisation : ajoutées et documentées au cas par cas, discutées avant ajout (voir "Règles communes à toutes les visualisations" et les règles globales de sécurité du projet).
@@ -100,6 +104,8 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 /
 ├── astro.config.mjs
 ├── package.json
+├── scripts/
+│   └── check-source-links.mjs         # vérification hebdomadaire des URL des sources, voir "Surveillance des sources"
 ├── public/
 │   ├── CNAME
 │   ├── logo.png                       # favicon et logo de l'en-tête, voir style-guide.md
@@ -113,8 +119,8 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │           └── ...                    # données statifiées consommées par la visualisation,
 │                                       # voir specs/<viz-slug>/data-model.md
 ├── src/
+│   ├── content.config.ts              # schémas des content collections
 │   ├── content/
-│   │   ├── config.ts                  # schémas des content collections
 │   │   ├── validation.ts              # règles de validation entre fichiers, voir "Validation des données"
 │   │   ├── about/
 │   │   │   ├── about.fr.md            # texte de la page "À propos", hors collection, voir about-page.md
@@ -131,7 +137,9 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   │   ├── language.ts                # détection/mémorisation de la langue (Header.astro, LanguageSelector.astro)
 │   │   ├── theme-filter.ts            # filtre thématique du catalogue (ThemeFilter.astro, VizCard.astro)
 │   │   ├── url-state.ts               # état partageable dans l'URL, voir "État dans l'URL"
+│   │   ├── data-table.ts              # type commun des vues tableau, voir "Vue tableau des données"
 │   │   ├── reduced-motion.ts          # préférence de mouvement réduit, voir "Accessibilité"
+│   │   ├── structured-data.ts         # données structurées schema.org, voir "SEO"
 │   │   └── viz-stage-height.ts        # hauteur de la zone de montage, voir "Règles communes à toutes les visualisations"
 │   ├── components/
 │   │   ├── Header.astro
@@ -141,6 +149,7 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   │   ├── VizCard.astro              # tuile de catalogue
 │   │   ├── RelatedVisualizations.astro # visualisations liées (réutilise VizCard.astro), voir functional-specifications.md
 │   │   ├── DataDownloads.astro        # téléchargement des données préparées, voir functional-specifications.md
+│   │   ├── DataTable.astro            # vue tableau des données, voir "Vue tableau des données"
 │   │   └── visualizations/
 │   │       └── <viz-slug>/
 │   │           └── ...                # composants propres à cette visualisation
@@ -166,13 +175,15 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 ### Schéma des content collections (indicatif)
 
 ```ts
-// src/content/config.ts — à ajuster à l'implémentation
-import { defineCollection, z } from 'astro:content';
+// src/content.config.ts — à ajuster à l'implémentation
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
+import { glob } from 'astro/loaders';
 
 const THEMES = ['living', 'climate', 'earth', 'territory', 'space'] as const; // voir "Thème" dans data-model.md
 
 const visualizations = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/visualizations' }), // generateId propre, voir ci-dessous
   schema: z.object({
     lang: z.enum(['fr', 'en']),
     title: z.string(),
@@ -180,7 +191,7 @@ const visualizations = defineCollection({
     datasets: z.array(z.object({
       name: z.string(),
       publisher: z.string(),
-      url: z.string().url(),
+      url: z.url(),
       license: z.string().optional(),
       retrieved: z.string().optional(),
     })),
@@ -193,7 +204,7 @@ const visualizations = defineCollection({
 export const collections = { visualizations };
 ```
 
-La correspondance exacte entre le nom de fichier (`<viz-slug>.<lang>.md`) et le `slug`/`lang` exposés par la collection (extraction, `getStaticPaths`) est un détail d'implémentation confirmé à l'étape 3 du plan de construction (voir `BUILD-PLAN.md`) : le `generateId` par défaut du loader `glob` concatène le nom de base et le suffixe de langue sans séparateur (ex : `test-viz.fr.md` → `test-vizfr`), impropre à en extraire le `slug`. La collection `visualizations` déclare donc un `generateId` propre qui ne retire que l'extension `.md` (ex : `test-viz.fr.md` → id `test-viz.fr`), et une fonction `getVisualizationSlug` (exportée depuis `src/content/config.ts`) retire le suffixe `.<lang>` de cet id pour obtenir le `slug` utilisé dans les URLs.
+La correspondance exacte entre le nom de fichier (`<viz-slug>.<lang>.md`) et le `slug`/`lang` exposés par la collection (extraction, `getStaticPaths`) est un détail d'implémentation confirmé à l'étape 3 du plan de construction (voir `BUILD-PLAN.md`) : le `generateId` par défaut du loader `glob` concatène le nom de base et le suffixe de langue sans séparateur (ex : `test-viz.fr.md` → `test-vizfr`), impropre à en extraire le `slug`. La collection `visualizations` déclare donc un `generateId` propre qui ne retire que l'extension `.md` (ex : `test-viz.fr.md` → id `test-viz.fr`), et une fonction `getVisualizationSlug` (exportée depuis `src/content.config.ts`) retire le suffixe `.<lang>` de cet id pour obtenir le `slug` utilisé dans les URLs.
 
 ---
 
@@ -275,11 +286,20 @@ Mécanisme commun de l'état partageable (voir "État partageable dans l'URL" da
 - **Changement de langue :** `src/components/LanguageSelector.astro` reporte la query string et le fragment courants, à la fois dans la redirection automatique et dans les liens du sélecteur (lus au moment du clic, puisque l'URL change pendant la visite).
 - **SEO :** un `<link rel="canonical">` sans query string, dans `BaseLayout.astro`, ramène toutes les variantes partagées à l'URL de la page (voir "SEO" ci-dessous).
 
+## Vue tableau des données
+
+Mécanisme commun de la vue tableau (voir "Vue tableau des données" dans `functional-specifications.md`).
+
+- **Calcul au build :** chaque visualisation qui propose un tableau a un module `src/components/visualizations/<viz-slug>/table.ts`. Il lit ses fichiers de `public/data/<viz-slug>/` depuis la racine du projet (voir "Génération de site") et renvoie une description neutre du tableau (type `DataTable` de `src/scripts/data-table.ts`) : légende, colonnes (libellé, alignement), lignes, ligne de total éventuelle. Les valeurs y sont déjà formatées selon la langue (`Intl.NumberFormat`, `Intl.DateTimeFormat`). Le même module fournit trois outils communs : `readDataFile` (lecture d'un fichier de `public/data/`), `formatOrdinal` ("1er", "2e" / "1st", "2nd") et `formatDate`, qui ajoute le "1er" du premier jour du mois qu'`Intl` ne produit pas en français.
+- **Rendu :** un composant commun, `src/components/DataTable.astro`, affiche cette description dans un `<details>` replié, sous la zone de montage et avant le bloc de crédit des sources. Le HTML est entièrement statique : ni île, ni JavaScript client.
+- **Accessibilité :** `<table>` avec `<caption>`, en-têtes de colonnes en `<th scope="col">`, première cellule de chaque ligne en `<th scope="row">`, ligne de total dans un `<tfoot>`. Les cellules vides portent un libellé explicite ("n.d." / "n/a"), pas un tiret.
+- **Textes :** libellés des colonnes, légende et unités dans le dictionnaire i18n, sous la clé de la visualisation (voir "Textes d'interface").
+
 ---
 
 ## Validation des données
 
-- La validation de structure (présence et type des champs) est native aux content collections d'Astro via le schéma Zod (`src/content/config.ts`) : `astro build` échoue si un fichier de contenu ne respecte pas le schéma, sans script dédié.
+- La validation de structure (présence et type des champs) est native aux content collections d'Astro via le schéma Zod (`src/content.config.ts`) : `astro build` échoue si un fichier de contenu ne respecte pas le schéma, sans script dédié.
 - Les règles qui portent sur plusieurs fichiers, hors de portée d'un schéma par fichier (voir "Contraintes et règles de validation" dans `data-model.md`), sont vérifiées au build par `validateVisualizations` (`src/content/validation.ts`) :
   - égalité des attributs non localisés entre `<viz-slug>.fr.md` et `<viz-slug>.en.md`, sans tenir compte de l'ordre des clés ;
   - correspondance entre `lang` et le suffixe du nom de fichier ;
@@ -288,6 +308,20 @@ Mécanisme commun de l'état partageable (voir "État partageable dans l'URL" da
 
   Elle est appelée par `[viz].astro` et `fr/[viz].astro`, dans le corps de la page plutôt que dans `getStaticPaths`, qui s'exécute dans une portée isolée et ne voit pas la table des composants. Elle rassemble toutes les erreurs dans un seul message et fait échouer `astro build`, donc aussi le déploiement : pas de script séparé à penser à lancer, ni de dépendance ajoutée.
 - La présence de l'image de couverture n'est pas vérifiée : le repli sur le placeholder est voulu tant que la couverture n'existe pas (voir "Images" dans `style-guide.md`).
+
+---
+
+## Surveillance des sources
+
+Les URL des jeux de données (attribut `url` de chaque entrée de `datasets`, voir "Dataset source" dans `data-model.md`) pointent vers des sites tiers qui évoluent sans prévenir. Elles sont vérifiées chaque semaine, hors du build : une vérification réseau dans le build le rendrait dépendant de la disponibilité de sites tiers.
+
+- **Script :** `scripts/check-source-links.mjs` (Node, sans dépendance), lancé en local par `npm run check-links`. Il lit les URL dans le frontmatter des fichiers de contenu, les dédoublonne et les interroge en GET, en suivant les redirections, avec un délai de 60 s et un nouvel essai après une réponse 5xx, un délai dépassé ou une connexion interrompue.
+- **Trois verdicts :**
+  - **OK** : réponse inférieure à 400.
+  - **Cassé** : 404, 410, erreur 5xx persistante, domaine introuvable ou connexion refusée.
+  - **Indéterminé** : toute autre réponse (401, 403, 429…), erreur de certificat, délai dépassé. Ces réponses ne disent rien de l'existence de la source. Mesuré à la mise en place : GBIF et la Smithsonian bloquent les robots derrière Cloudflare (403), la BDIFF sert une chaîne de certificats incomplète que Node rejette et que les navigateurs complètent, la NOAA dépasse régulièrement le délai. Toutes répondent normalement dans un navigateur.
+- **Workflow :** `.github/workflows/check-source-links.yml`, chaque lundi à 6 h UTC et à la demande (`workflow_dispatch`), sans autre permission que la lecture du dépôt. Il échoue uniquement s'il trouve un lien cassé : GitHub envoie alors son e-mail d'échec habituel. Le détail des liens cassés et indéterminés, par visualisation, figure dans le résumé du run. Un lien indéterminé qui le reste plusieurs semaines est à vérifier à la main.
+- **Limite connue :** GitHub désactive les workflows planifiés d'un dépôt resté sans activité pendant 60 jours. Il faut alors les réactiver dans l'onglet Actions.
 
 ---
 
@@ -304,7 +338,7 @@ Mécanisme commun de l'état partageable (voir "État partageable dans l'URL" da
 - Contraste WCAG AA pour le texte du chrome (4,5:1 corps, 3:1 grand texte/UI), sur les rôles ink/surface de `style-guide.md`.
 - HTML sémantique pour la structure des pages et du catalogue.
 - Texte alternatif sur les images de couverture.
-- Limite connue par défaut : le mode d'interaction propre à chaque visualisation n'est pas garanti nativement accessible ; voir "Règles communes à toutes les visualisations" ci-dessus.
+- Limite connue par défaut : le mode d'interaction propre à chaque visualisation n'est pas garanti nativement accessible ; voir "Règles communes à toutes les visualisations" ci-dessus. Une visualisation qui propose une vue tableau (voir "Vue tableau des données" ci-dessus) en fait son repli : le tableau donne accès aux mêmes informations au clavier et au lecteur d'écran.
 - **Mouvement réduit** (voir "Mouvement réduit" dans `functional-specifications.md`) : `prefersReducedMotion()` (`src/scripts/reduced-motion.ts`) lit `matchMedia('(prefers-reduced-motion: reduce)')` une fois, au montage de chaque visualisation. Une visualisation animée qui la voit active s'ouvre en pause sur son état final par le même chemin qu'une position temporelle restaurée depuis l'URL (voir "État dans l'URL" ci-dessus), sans écrire l'URL ; les transitions d3 qui déplacent des éléments prennent une durée nulle. Les transitions CSS du site ne portent que sur la couleur ou l'opacité : aucune règle `@media (prefers-reduced-motion)` globale n'est nécessaire.
 
 ## SEO
@@ -315,6 +349,11 @@ Mécanisme commun de l'état partageable (voir "État partageable dans l'URL" da
 - `<link rel="canonical">` vers l'URL de la page sans query string, dans `BaseLayout.astro` : les liens partagés porteurs d'état (voir "État dans l'URL" ci-dessus) restent des variantes d'une seule page indexée.
 - Balises meta et Open Graph (titre, description = `summary`, image = couverture) générées directement dans `BaseLayout.astro`, pas de plugin dédié nécessaire (à la différence de `jekyll-seo-tag`).
 - `@astrojs/sitemap` pour un `sitemap.xml` généré automatiquement.
+- **Données structurées schema.org** (JSON-LD), dans le `<head>` de chaque page de visualisation, construites au build par `src/scripts/structured-data.ts` à partir du frontmatter :
+  - la visualisation, en `CreativeWork` : titre, résumé, date de publication, auteur, couverture, thèmes, licence du site (CC BY-NC-SA 4.0), et ses sources citées en `isBasedOn` (chacune en `Dataset` avec éditeur, URL et licence) ;
+  - quand la visualisation déclare des fichiers téléchargeables (voir "Téléchargement des données préparées" dans `functional-specifications.md`), ces fichiers en `Dataset` dérivé : le résumé en description (entre 50 et 5 000 caractères, comme l'exige Google Dataset Search), un `DataDownload` par fichier, les mêmes sources en `isBasedOn`, et pour licence la liste des licences de ces sources, puisque les fichiers restent soumis à chacune (même règle que la mention affichée sous les liens de téléchargement).
+
+  Rendu par `BaseLayout.astro` (propriété `structuredData`) dans un `<script type="application/ld+json">`, les `<` échappés pour qu'aucun texte de contenu ne puisse fermer la balise.
 
 ---
 

@@ -29,12 +29,24 @@ export default {
     downloadsNote:
       'Files as the visualization uses them. Reuse remains subject to the licenses of the sources above.',
     backToCatalog: 'Back to the catalog',
+    tableSummary: 'Show the data as a table',
+    preparedDataName: '{title}: prepared data',
+    tableTotal: 'Total',
+    notAvailable: 'n/a',
   },
   notFound: {
     title: 'Content not available',
     message: "This page doesn't exist, or this visualization isn't available in English yet.",
   },
   birdMigrations: {
+    table: {
+      caption: 'Tracked migration journeys, by individual',
+      individual: 'Individual',
+      departure: 'Departure',
+      arrival: 'Arrival',
+      duration: 'Duration (days)',
+      distance: 'Distance (km)',
+    },
     loading: 'Loading migration routes…',
     error: 'Could not load the migration routes. Please try again later.',
     empty: 'No route for this combination of filters.',
@@ -57,6 +69,12 @@ export default {
     durationUnit: 'days',
   },
   flowerPhenology: {
+    table: {
+      caption: 'Median first-flowering date, by species and decade',
+      species: 'Species',
+      shift: 'Shift',
+      dayUnit: 'd',
+    },
     loading: 'Loading the flower calendar…',
     error: 'Could not load the flowering data. Please try again later.',
     empty: 'Select at least one species to display the calendar.',
@@ -71,6 +89,10 @@ export default {
     variationSame: 'Same',
   },
   biodiversity: {
+    table: {
+      caption: 'Occurrences recorded by GBIF, by taxonomic group and season',
+      group: 'Group',
+    },
     loading: 'Loading the biodiversity map…',
     error: 'Could not load the biodiversity data. Please try again later.',
     empty: 'No observation for this combination of filters.',
@@ -99,6 +121,10 @@ export default {
     tooltipSpecies: 'Frequent species:',
   },
   lightPollution: {
+    table: {
+      caption: 'Share of the territory by sky visibility level, by year',
+      year: 'Year',
+    },
     loading: 'Loading the light pollution map…',
     error: 'Could not load the light pollution data. Please try again later.',
     yearLabel: 'Year',
@@ -113,6 +139,14 @@ export default {
     speedFast: 'Fast',
   },
   parisTrees: {
+    table: {
+      caption: 'Trees in the municipal inventory, by district',
+      district: 'District',
+      trees: 'Trees',
+      dominant: 'Dominant genus',
+      remarkable: 'Remarkable trees',
+      city: 'Paris',
+    },
     loading: 'Loading the trees…',
     loadingProgress: 'Loading the trees… {percent}%',
     error: 'Could not load the data. Please try again later.',
@@ -137,6 +171,10 @@ export default {
     nationalGardensLabel: 'Garden:',
   },
   satellitesInOrbit: {
+    table: {
+      caption: 'Satellites still in orbit, by launch decade and region',
+      decade: 'Decade',
+    },
     loading: 'Loading satellites…',
     error: 'Could not load the satellite data. Please try again later.',
     empty: 'No region selected.',
@@ -150,6 +188,12 @@ export default {
     yearLabel: 'Year',
   },
   monumentLayers: {
+    table: {
+      caption: 'Historic monuments by construction period and protection',
+      period: 'Period',
+      classified: 'Classified',
+      registered: 'Registered',
+    },
     loading: 'Loading monuments…',
     error: 'Could not load the monument data. Please try again later.',
     empty: 'No monument for this filter at this point in time.',
@@ -183,12 +227,26 @@ export default {
     eraEarlyModern: 'Early modern period',
   },
   grapeHarvestAlmanac: {
+    table: {
+      caption: 'Average harvest date, by century and region (number of recorded years in brackets)',
+      century: 'Century',
+    },
     loading: 'Loading grape harvest dates…',
     error: 'Could not load grape harvest data. Please try again later.',
     empty: 'Select at least one region to display the chart.',
     regionGroupLabel: 'Regions shown',
   },
   medicalDeserts: {
+    table: {
+      caption: 'Access to general practitioners by department, today and without doctors aged 65+',
+      department: 'Department',
+      population: 'Population',
+      aplToday: 'APL today',
+      aplTomorrow: 'APL without doctors aged 65+',
+      belowToday: 'Population below {threshold} today',
+      belowTomorrow: 'Population below {threshold} tomorrow',
+      total: 'Metropolitan France',
+    },
     loading: 'Loading map…',
     loadingProgress: 'Loading map… {percent}%',
     error: 'Could not load the data. Please try again later.',
@@ -205,6 +263,13 @@ export default {
     zoomReset: 'Reset zoom',
   },
   endangeredSpecies: {
+    table: {
+      caption: 'Recorded population, by species and census',
+      species: 'Species',
+      year: 'Year',
+      population: 'Population',
+      unit: 'Unit',
+    },
     loading: 'Loading species trajectories…',
     error: 'Unable to load the endangered species data. Please try again later.',
     play: 'Play',
@@ -222,6 +287,14 @@ export default {
     trendStable: 'stable since {year}',
   },
   earthquakes: {
+    table: {
+      caption: 'Earthquakes of magnitude 6 or more, by decade',
+      decade: 'Decade',
+      count: 'Earthquakes',
+      magnitude7: 'Magnitude 7 or more',
+      magnitude8: 'Magnitude 8 or more',
+      strongest: 'Strongest earthquake',
+    },
     loading: 'Loading earthquakes…',
     error: 'Could not load the earthquake data. Please try again later.',
     play: 'Play',
@@ -240,6 +313,15 @@ export default {
     zoomReset: 'Reset zoom',
   },
   monarchMigration: {
+    table: {
+      caption: 'Monarch observations by month, in North America',
+      month: 'Month',
+      observations: 'Observations',
+      cells: 'Occupied cells',
+      meanLatitude: 'Mean latitude (°N)',
+      northernmost: 'Northernmost cell (°N)',
+      year: 'Year',
+    },
     loading: 'Loading observations…',
     error: 'Could not load the migration data. Please try again later.',
     play: 'Play',
@@ -251,6 +333,13 @@ export default {
     tooltip: 'Observations in {month}: {percent}% of the annual peak here',
   },
   forestFires: {
+    table: {
+      caption: 'Forest fires recorded by the BDIFF, by year',
+      year: 'Year',
+      count: 'Fires',
+      area: 'Area burned (ha)',
+      largest: 'Largest fire',
+    },
     loading: 'Loading forest fires…',
     error: 'Could not load the forest fire data. Please try again later.',
     countLabel: '{count} fires',
@@ -275,6 +364,14 @@ export default {
     viewRecordLabel: 'View BDIFF record',
   },
   volcanicEruptions: {
+    table: {
+      caption: 'Recorded eruptions by millennium',
+      millennium: 'Millennium',
+      eruptions: 'Eruptions',
+      vei4: 'Explosivity index 4 or more',
+      activeVolcanoes: 'Active volcanoes',
+      to: 'to',
+    },
     loading: 'Loading volcanic eruptions…',
     error: 'Could not load the volcanic eruption data. Please try again later.',
     play: 'Play',

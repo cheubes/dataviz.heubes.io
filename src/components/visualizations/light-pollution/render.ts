@@ -1,8 +1,6 @@
 import { geoMercator, geoPath } from 'd3-geo';
 import { scaleLinear } from 'd3-scale';
 import { timer as d3Timer } from 'd3-timer';
-// topojson-client ships no bundled types; resolves to `any` under this project's
-// moduleResolution setting, same accepted gap as bird-migrations/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
@@ -234,12 +232,12 @@ export async function mountLightPollution(root: HTMLElement, lang: 'fr' | 'en', 
         [16, 16],
         [width - 16, height - 16],
       ],
-      franceFeature as any
+      franceFeature
     );
 
     basemapLayer.innerHTML = '';
     const basemapPath = document.createElementNS(svgNS, 'path');
-    basemapPath.setAttribute('d', path(franceFeature as any) ?? '');
+    basemapPath.setAttribute('d', path(franceFeature) ?? '');
     basemapPath.setAttribute('class', 'dv-light-pollution__basemap');
     basemapLayer.appendChild(basemapPath);
 
@@ -287,7 +285,7 @@ export async function mountLightPollution(root: HTMLElement, lang: 'fr' | 'en', 
     data.features.forEach((f) => {
       const value = f.properties.byYear[String(year)];
       const hexPath = document.createElementNS(svgNS, 'path');
-      hexPath.setAttribute('d', path(f.geometry as any) ?? '');
+      hexPath.setAttribute('d', path(f.geometry) ?? '');
       hexPath.setAttribute('class', 'dv-light-pollution__hex');
       hexPath.setAttribute('fill', value ? colorForTier(value.scale) : 'var(--dv-surface)');
 

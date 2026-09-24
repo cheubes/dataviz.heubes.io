@@ -34,12 +34,24 @@ export default {
     downloadsNote:
       'Fichiers tels que la visualisation les utilise. Leur réutilisation reste soumise aux licences des sources ci-dessus.',
     backToCatalog: 'Retour au catalogue',
+    tableSummary: 'Voir les données sous forme de tableau',
+    preparedDataName: '{title} : données préparées',
+    tableTotal: 'Total',
+    notAvailable: 'n.d.',
   },
   notFound: {
     title: 'Contenu indisponible',
     message: "Cette page n'existe pas, ou cette visualisation n'est pas encore disponible en français.",
   },
   birdMigrations: {
+    table: {
+      caption: 'Trajets de migration suivis, par individu',
+      individual: 'Individu',
+      departure: 'Départ',
+      arrival: 'Arrivée',
+      duration: 'Durée (jours)',
+      distance: 'Distance (km)',
+    },
     loading: 'Chargement des trajectoires …',
     error: 'Impossible de charger les trajectoires. Réessayez plus tard.',
     empty: 'Aucune trajectoire pour cette combinaison de filtres.',
@@ -62,6 +74,12 @@ export default {
     durationUnit: 'jours',
   },
   flowerPhenology: {
+    table: {
+      caption: 'Date médiane de première floraison, par espèce et par décennie',
+      species: 'Espèce',
+      shift: 'Écart',
+      dayUnit: 'j',
+    },
     loading: 'Chargement du calendrier des fleurs …',
     error: 'Impossible de charger les données de floraison. Réessayez plus tard.',
     empty: 'Sélectionnez au moins une espèce pour afficher le calendrier.',
@@ -76,6 +94,10 @@ export default {
     variationSame: 'Identique',
   },
   biodiversity: {
+    table: {
+      caption: 'Observations recensées par GBIF, par groupe taxonomique et par saison',
+      group: 'Groupe',
+    },
     loading: 'Chargement de la carte de la biodiversité …',
     error: 'Impossible de charger les données de biodiversité. Réessayez plus tard.',
     empty: 'Aucune observation pour cette combinaison de filtres.',
@@ -104,6 +126,10 @@ export default {
     tooltipSpecies: 'Espèce fréquente :',
   },
   lightPollution: {
+    table: {
+      caption: 'Part du territoire par niveau de visibilité du ciel, par année',
+      year: 'Année',
+    },
     loading: 'Chargement de la carte de pollution lumineuse …',
     error: 'Impossible de charger les données de pollution lumineuse. Réessayez plus tard.',
     yearLabel: 'Année',
@@ -118,6 +144,14 @@ export default {
     speedFast: 'Rapide',
   },
   parisTrees: {
+    table: {
+      caption: "Arbres de l'inventaire municipal, par arrondissement",
+      district: 'Arrondissement',
+      trees: 'Arbres',
+      dominant: 'Genre dominant',
+      remarkable: 'Arbres remarquables',
+      city: 'Paris',
+    },
     loading: 'Chargement des arbres …',
     loadingProgress: 'Chargement des arbres … {percent} %',
     error: 'Impossible de charger les données. Réessayez plus tard.',
@@ -142,6 +176,10 @@ export default {
     nationalGardensLabel: 'Jardin :',
   },
   satellitesInOrbit: {
+    table: {
+      caption: 'Satellites encore en orbite, par décennie de lancement et par zone',
+      decade: 'Décennie',
+    },
     loading: 'Chargement des satellites …',
     error: 'Impossible de charger les données de satellites. Réessayez plus tard.',
     empty: 'Aucune zone sélectionnée.',
@@ -155,6 +193,12 @@ export default {
     yearLabel: 'Année',
   },
   monumentLayers: {
+    table: {
+      caption: 'Monuments historiques par période de construction et par protection',
+      period: 'Période',
+      classified: 'Classés',
+      registered: 'Inscrits',
+    },
     loading: 'Chargement des monuments …',
     error: 'Impossible de charger les données de monuments. Réessayez plus tard.',
     empty: 'Aucun monument pour ce filtre à cet instant.',
@@ -188,12 +232,26 @@ export default {
     eraEarlyModern: 'Temps modernes',
   },
   grapeHarvestAlmanac: {
+    table: {
+      caption: "Date moyenne des vendanges, par siècle et par région (nombre d'années renseignées entre parenthèses)",
+      century: 'Siècle',
+    },
     loading: 'Chargement des dates de vendanges …',
     error: 'Impossible de charger les données de vendanges. Réessayez plus tard.',
     empty: 'Sélectionnez au moins une région pour afficher la courbe.',
     regionGroupLabel: 'Régions affichées',
   },
   medicalDeserts: {
+    table: {
+      caption: "Accès aux médecins généralistes par département, aujourd'hui et sans les médecins de 65 ans et plus",
+      department: 'Département',
+      population: 'Population',
+      aplToday: "APL aujourd'hui",
+      aplTomorrow: 'APL sans les 65 ans et plus',
+      belowToday: "Population sous {threshold} aujourd'hui",
+      belowTomorrow: 'Population sous {threshold} demain',
+      total: 'France métropolitaine',
+    },
     loading: 'Chargement de la carte …',
     loadingProgress: 'Chargement de la carte … {percent} %',
     error: 'Impossible de charger les données. Réessayez plus tard.',
@@ -210,6 +268,13 @@ export default {
     zoomReset: 'Réinitialiser le zoom',
   },
   endangeredSpecies: {
+    table: {
+      caption: 'Effectifs recensés, par espèce et par recensement',
+      species: 'Espèce',
+      year: 'Année',
+      population: 'Effectif',
+      unit: 'Unité',
+    },
     loading: 'Chargement des trajectoires d’espèces …',
     error: 'Impossible de charger les données des espèces menacées. Réessayez plus tard.',
     play: 'Lecture',
@@ -227,6 +292,14 @@ export default {
     trendStable: 'stable depuis {year}',
   },
   earthquakes: {
+    table: {
+      caption: 'Séismes de magnitude 6 ou plus, par décennie',
+      decade: 'Décennie',
+      count: 'Séismes',
+      magnitude7: 'Magnitude 7 ou plus',
+      magnitude8: 'Magnitude 8 ou plus',
+      strongest: 'Plus fort séisme',
+    },
     loading: 'Chargement des séismes …',
     error: 'Impossible de charger les données de séismes. Réessayez plus tard.',
     play: 'Lecture',
@@ -245,6 +318,15 @@ export default {
     zoomReset: 'Réinitialiser le zoom',
   },
   monarchMigration: {
+    table: {
+      caption: 'Observations de monarques par mois, en Amérique du Nord',
+      month: 'Mois',
+      observations: 'Observations',
+      cells: 'Cases occupées',
+      meanLatitude: 'Latitude moyenne (°N)',
+      northernmost: 'Case la plus au nord (°N)',
+      year: 'Année',
+    },
     loading: 'Chargement des observations …',
     error: 'Impossible de charger les données de migration. Réessayez plus tard.',
     play: 'Lecture',
@@ -256,6 +338,13 @@ export default {
     tooltip: 'Observations en {month} : {percent} % du pic annuel ici',
   },
   forestFires: {
+    table: {
+      caption: 'Incendies de forêt recensés par la BDIFF, par année',
+      year: 'Année',
+      count: 'Incendies',
+      area: 'Surface brûlée (ha)',
+      largest: 'Plus grand incendie',
+    },
     loading: 'Chargement des incendies …',
     error: "Impossible de charger les données d'incendies. Réessayez plus tard.",
     countLabel: '{count} incendies',
@@ -280,6 +369,14 @@ export default {
     viewRecordLabel: 'Voir la fiche BDIFF',
   },
   volcanicEruptions: {
+    table: {
+      caption: 'Éruptions recensées par millénaire',
+      millennium: 'Millénaire',
+      eruptions: 'Éruptions',
+      vei4: "Indice d'explosivité 4 ou plus",
+      activeVolcanoes: 'Volcans actifs',
+      to: 'à',
+    },
     loading: 'Chargement des éruptions volcaniques …',
     error: "Impossible de charger les données d'éruptions volcaniques. Réessayez plus tard.",
     play: 'Lecture',

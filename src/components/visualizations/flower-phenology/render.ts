@@ -13,10 +13,10 @@ interface DecadeStats {
   observationCount: number;
 }
 
-type Decade = '1970s' | '1980s' | '1990s' | '2000s' | '2010s' | '2020s';
+export type Decade = '1970s' | '1980s' | '1990s' | '2000s' | '2010s' | '2020s';
 type RingKey = 'inner' | 'outer';
 
-interface SpeciesEntry {
+export interface SpeciesEntry {
   species: string;
   nameFr: string;
   nameEn: string;
@@ -53,9 +53,9 @@ export interface FlowerPhenologyLabels {
   variationSame: string;
 }
 
-const DECADES: Decade[] = ['1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
+export const DECADES: Decade[] = ['1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
 
-const DECADE_RANGE_LABEL: Record<Decade, string> = {
+export const DECADE_RANGE_LABEL: Record<Decade, string> = {
   '1970s': '1970-1979',
   '1980s': '1980-1989',
   '1990s': '1990-1999',
@@ -77,9 +77,12 @@ function dayOfYear(monthIndex: number, day: number): number {
   return Math.round((current - start) / 86_400_000) + 1;
 }
 
-function formatDoy(doy: number, lang: 'fr' | 'en'): string {
+export function formatDoy(doy: number, lang: 'fr' | 'en'): string {
   const reference = new Date(Date.UTC(2001, 0, 1) + (doy - 1) * 86_400_000);
-  return new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(reference);
+  const formatted = new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(reference);
+  // French writes the first day of a month as an ordinal ("1er avril"), which
+  // Intl does not produce.
+  return lang === 'fr' && reference.getUTCDate() === 1 ? formatted.replace(/^1 /, '1er ') : formatted;
 }
 
 export async function mountFlowerPhenology(
@@ -356,7 +359,7 @@ export async function mountFlowerPhenology(
         const { inner, outer } = laneRadii(ringStart, laneIndex);
         const { band, median } = arcAngles(stats);
 
-        const bandGenerator = d3Arc()
+        const bandGenerator = d3Arc<null>()
           .innerRadius(inner)
           .outerRadius(outer)
           .cornerRadius(cornerRadius)
@@ -365,20 +368,20 @@ export async function mountFlowerPhenology(
 
         const bandPath = document.createElementNS(svgNS, 'path');
         bandPath.setAttribute('class', 'dv-flower-phenology__arc');
-        bandPath.setAttribute('d', bandGenerator({} as any) ?? '');
+        bandPath.setAttribute('d', bandGenerator(null) ?? '');
         bandPath.setAttribute('fill', entry.flowerColor);
         bandPath.setAttribute('fill-opacity', '0.75');
         bandPath.setAttribute('stroke', 'var(--dv-gridline)');
         bandPath.setAttribute('stroke-width', '1');
 
-        const medianGenerator = d3Arc()
+        const medianGenerator = d3Arc<null>()
           .innerRadius(inner)
           .outerRadius(outer)
           .startAngle(median.start)
           .endAngle(median.end);
 
         const medianPath = document.createElementNS(svgNS, 'path');
-        medianPath.setAttribute('d', medianGenerator({} as any) ?? '');
+        medianPath.setAttribute('d', medianGenerator(null) ?? '');
         medianPath.setAttribute('fill', entry.flowerColor);
         medianPath.setAttribute('pointer-events', 'none');
 
@@ -498,13 +501,13 @@ export async function mountFlowerPhenology(
     from: ArcAngles,
     to: ArcAngles
   ) {
-    const generator = d3Arc().innerRadius(innerR).outerRadius(outerR).cornerRadius(cornerRadius);
+    const generator = d3Arc<null>().innerRadius(innerR).outerRadius(outerR).cornerRadius(cornerRadius);
     select(path)
       .transition()
       .duration(ringTransitionMs)
       .attrTween('d', () => (t: number) => {
         generator.startAngle(from.start + (to.start - from.start) * t).endAngle(from.end + (to.end - from.end) * t);
-        return generator({} as any) ?? '';
+        return generator(null) ?? '';
       });
   }
 

@@ -3,33 +3,32 @@ import { scaleOrdinal } from 'd3-scale';
 import { select } from 'd3-selection';
 import { timer as d3Timer } from 'd3-timer';
 import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
-// topojson-client ships no bundled types; resolves to `any` under this project's
-// non-strict tsconfig (no noImplicitAny), which is narrow enough for the shape used below.
 import { feature as topojsonFeature } from 'topojson-client';
+import type { Polygon } from 'geojson';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
 import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
-interface TrackPoint {
+export interface TrackPoint {
   lat: number;
   lng: number;
   date: string;
 }
 
-interface Track {
+export interface Track {
   individualId: string;
   speciesId: string;
   direction: 'autumn' | 'spring';
   points: TrackPoint[];
 }
 
-interface Species {
+export interface Species {
   id: string;
   nameFr: string;
   nameEn: string;
 }
 
-interface TracksData {
+export interface TracksData {
   species: Species[];
   tracks: Track[];
 }
@@ -128,13 +127,13 @@ function haversineKm(a: TrackPoint, b: TrackPoint): number {
   return EARTH_RADIUS_KM * geoDistance([a.lng, a.lat], [b.lng, b.lat]);
 }
 
-function totalDistanceKm(points: TrackPoint[]): number {
+export function totalDistanceKm(points: TrackPoint[]): number {
   let total = 0;
   for (let i = 1; i < points.length; i++) total += haversineKm(points[i - 1], points[i]);
   return total;
 }
 
-function durationDays(points: TrackPoint[]): number {
+export function durationDays(points: TrackPoint[]): number {
   const [y1, m1, d1] = points[0].date.split('-').map(Number);
   const last = points[points.length - 1];
   const [y2, m2, d2] = last.date.split('-').map(Number);
@@ -384,7 +383,7 @@ export async function mountBirdMigrations(
   // Ring wound clockwise (not the RFC 7946 counter-clockwise convention): d3-geo's
   // spherical winding rule is the inverse, and a counter-clockwise ring here gets
   // read as "everything except this box", fitting to the whole world instead of it.
-  const viewBounds = {
+  const viewBounds: Polygon = {
     type: 'Polygon',
     coordinates: [
       densifiedRing(
@@ -397,7 +396,7 @@ export async function mountBirdMigrations(
         20
       ),
     ],
-  } as const;
+  };
 
   const basemapCtx = basemapCanvas.getContext('2d')!;
   const trailsCtx = trailsCanvas.getContext('2d')!;
@@ -434,7 +433,7 @@ export async function mountBirdMigrations(
         [24, 24],
         [RELIEF_REF_WIDTH - 24, RELIEF_REF_HEIGHT - 24],
       ],
-      viewBounds as any
+      viewBounds
     );
     const refScale = projection.scale();
     const refTranslate = projection.translate();
@@ -444,7 +443,7 @@ export async function mountBirdMigrations(
         [24, 24],
         [width - 24, height - 24],
       ],
-      viewBounds as any
+      viewBounds
     );
     // relief.webp's own pixel (0,0) sits at (REF_ORIGIN_X, REF_ORIGIN_Y) in the
     // reference frame (see RELIEF_ORIGIN_X/Y above), not at the reference frame's
@@ -469,7 +468,7 @@ export async function mountBirdMigrations(
     basemapCtx.translate(transform.x, transform.y);
     basemapCtx.scale(transform.k, transform.k);
     basemapCtx.beginPath();
-    path(landFeature as any);
+    path(landFeature);
     basemapCtx.fillStyle = '#e4e2da';
     basemapCtx.fill();
     basemapCtx.clip();
@@ -487,7 +486,7 @@ export async function mountBirdMigrations(
     basemapCtx.lineCap = 'round';
     basemapCtx.lineJoin = 'round';
     basemapCtx.beginPath();
-    path(riversData as any);
+    path(riversData);
     basemapCtx.stroke();
 
     basemapCtx.restore();
@@ -511,7 +510,7 @@ export async function mountBirdMigrations(
     .on('end', () => {
       if (!restoringUrlState) writeZoomParam(transform, projection, width, height);
     });
-  select(trailsCanvas).call(zoomBehavior as any);
+  select(trailsCanvas).call(zoomBehavior);
 
   let resizeTimeout: ReturnType<typeof setTimeout> | undefined;
   window.addEventListener('resize', () => {
@@ -840,7 +839,7 @@ export async function mountBirdMigrations(
   const initialTransform = readZoomParam(projection, width, height, ZOOM_EXTENT);
   if (initialTransform) {
     restoringUrlState = true;
-    select(trailsCanvas).call(zoomBehavior.transform as any, initialTransform);
+    zoomBehavior.transform(select(trailsCanvas), initialTransform);
     restoringUrlState = false;
   }
 

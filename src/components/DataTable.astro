@@ -1,0 +1,112 @@
+---
+import type { DataTable, DataTableRow } from '../scripts/data-table';
+
+interface Props {
+  table: DataTable;
+  summary: string;
+}
+
+const { table, summary } = Astro.props;
+const [headerColumn, ...valueColumns] = table.columns;
+
+const cellClass = (index: number) => (valueColumns[index]?.numeric ? 'dv-data-table__numeric' : undefined);
+---
+
+<details class="dv-data-table">
+  <summary>{summary}</summary>
+  <div class="dv-data-table__scroll">
+    <table>
+      <caption>{table.caption}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{headerColumn.label}</th>
+          {valueColumns.map((column) => <th scope="col" class={column.numeric ? 'dv-data-table__numeric' : undefined}>{column.label}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {
+          table.rows.map((row: DataTableRow) => (
+            <tr>
+              <th scope="row">
+                {row.header}
+                {row.headerNote && (
+                  <>
+                    {' '}
+                    <i>{row.headerNote}</i>
+                  </>
+                )}
+              </th>
+              {row.cells.map((cell, index) => <td class={cellClass(index)}>{cell}</td>)}
+            </tr>
+          ))
+        }
+      </tbody>
+      {
+        table.total && (
+          <tfoot>
+            <tr>
+              <th scope="row">{table.total.header}</th>
+              {table.total.cells.map((cell, index) => <td class={cellClass(index)}>{cell}</td>)}
+            </tr>
+          </tfoot>
+        )
+      }
+    </table>
+  </div>
+</details>
+
+<style>
+  .dv-data-table {
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: var(--dv-ink-secondary);
+  }
+
+  .dv-data-table summary {
+    cursor: pointer;
+    color: var(--dv-accent);
+  }
+
+  .dv-data-table__scroll {
+    overflow-x: auto;
+    margin-top: var(--dv-space-2);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  caption {
+    text-align: left;
+    padding-bottom: var(--dv-space-2);
+  }
+
+  th,
+  td {
+    padding: var(--dv-space-1) var(--dv-space-2);
+    border-bottom: 1px solid var(--dv-gridline);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    font-weight: 500;
+    color: var(--dv-ink-primary);
+  }
+
+  thead th {
+    vertical-align: bottom;
+  }
+
+  tfoot th,
+  tfoot td {
+    border-top: 2px solid var(--dv-gridline);
+  }
+
+  .dv-data-table__numeric {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+</style>

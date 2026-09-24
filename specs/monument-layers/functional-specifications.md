@@ -46,6 +46,15 @@ Faire voir, par l'accumulation chronologique de points sur une carte réelle de 
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : le filtre protection, l'année et le cadrage sont restaurés. Une année partagée ouvre la carte en pause sur l'accumulation atteinte à cette année (voir "État dans l'URL" dans `technical-specifications.md`).
 - **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause sur l'accumulation complète, à la dernière année de construction du jeu de données.
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Monuments historiques par période de construction et par protection" / "Historic monuments by construction period and protection".
+- **Lignes :** dans l'ordre chronologique, une par période pour les monuments qui en ont une (paléolithique à époque gallo-romaine), puis une par siècle pour les monuments datés par siècle, avec les mêmes libellés que la visualisation.
+- **Colonnes :** Classés ; Inscrits ; Total.
+- **Ligne de total :** tous les monuments.
+
 ## États
 
 - **Chargement :** le temps que `monuments.json` et le fond de carte soient récupérés et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
@@ -60,6 +69,8 @@ Faire voir, par l'accumulation chronologique de points sur une carte réelle de 
 ## Accessibilité (limite connue)
 
 L'interaction principale (carte animée, zoom/pan, survol des monuments) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général). Le bouton Play/Pause, le sélecteur de vitesse, le filtre protection, le curseur d'année et les boutons de zoom restent accessibles au clavier (éléments `<button>`/`<select>`/`<input type="range">` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention (nécessaire dès lors que la lecture boucle indéfiniment, même rationale que `satellites-in-orbit`), de parcourir la chronologie et de zoomer sans dépendre de la carte animée elle-même.
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
 
 ## Contenu non traduit
 

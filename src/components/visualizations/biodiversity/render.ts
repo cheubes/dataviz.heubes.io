@@ -1,14 +1,12 @@
 import { geoMercator, geoPath } from 'd3-geo';
 import { scaleSqrt } from 'd3-scale';
-// topojson-client ships no bundled types; resolves to `any` under this project's
-// moduleResolution setting, same accepted gap as bird-migrations/render.ts.
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
 
-type Group = 'birds' | 'mammals' | 'reptiles-amphibians' | 'insects' | 'plants' | 'fungi';
+export type Group = 'birds' | 'mammals' | 'reptiles-amphibians' | 'insects' | 'plants' | 'fungi';
 type GroupFilter = Group | 'all';
-type Season = 'winter' | 'spring' | 'summer' | 'autumn';
+export type Season = 'winter' | 'spring' | 'summer' | 'autumn';
 type SeasonFilter = Season | 'all';
 
 interface HexProperties {
@@ -62,7 +60,7 @@ export interface BiodiversityLabels {
   tooltipSpecies: string;
 }
 
-const GROUPS: Group[] = ['birds', 'mammals', 'reptiles-amphibians', 'insects', 'plants', 'fungi'];
+export const GROUPS: Group[] = ['birds', 'mammals', 'reptiles-amphibians', 'insects', 'plants', 'fungi'];
 const SEASONS: Season[] = ['winter', 'spring', 'summer', 'autumn'];
 
 const GROUP_COLOR: Record<Group, string> = {
@@ -313,12 +311,12 @@ export async function mountBiodiversity(root: HTMLElement, lang: 'fr' | 'en', la
         [16, 16],
         [width - 16, height - 16],
       ],
-      franceFeature as any
+      franceFeature
     );
 
     basemapLayer.innerHTML = '';
     const basemapPath = document.createElementNS(svgNS, 'path');
-    basemapPath.setAttribute('d', path(franceFeature as any) ?? '');
+    basemapPath.setAttribute('d', path(franceFeature) ?? '');
     basemapPath.setAttribute('class', 'dv-biodiversity__basemap');
     basemapLayer.appendChild(basemapPath);
 
@@ -378,7 +376,7 @@ export async function mountBiodiversity(root: HTMLElement, lang: 'fr' | 'en', la
     data.features.forEach((f) => {
       const value = cellValue(f.properties.counts, activeGroup, activeSeason);
       const hexPath = document.createElementNS(svgNS, 'path');
-      hexPath.setAttribute('d', path(f.geometry as any) ?? '');
+      hexPath.setAttribute('d', path(f.geometry) ?? '');
       hexPath.setAttribute('class', 'dv-biodiversity__hex');
       hexPath.setAttribute('fill', value === 0 ? 'var(--dv-surface)' : colorScale(value));
       hexPath.setAttribute('stroke', 'var(--dv-gridline)');

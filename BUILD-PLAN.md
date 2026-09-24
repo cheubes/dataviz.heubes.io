@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Dix-sept étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Vingt-deux étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -402,4 +402,106 @@ en suivant "Hébergement et déploiement" et "Textes d'interface" dans technical
 
 Critère de fin : une erreur de type volontaire (fichier .astro, clé i18n manquante) fait échouer
 npm run build ; le code réel passe.
+```
+
+## ✅ 18. Surveillance des liens des sources
+
+Chaque semaine, un workflow GitHub vérifie les URL des jeux de données et échoue si l'une est cassée (404, 410, 5xx persistant, domaine introuvable). Les réponses qui ne disent rien de l'existence de la source (anti-robots, limitation, certificat, délai) sont listées sans faire échouer le run. Voir "Surveillance des sources" dans `technical-specifications.md`.
+
+**Critère :** `npm run check-links` classe correctement les URL réelles (aucune cassée, les indéterminées identifiées) ; une URL volontairement cassée fait sortir le script en erreur.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 18 du plan de construction (BUILD-PLAN.md) : surveillance des liens des
+sources.
+
+Crée scripts/check-source-links.mjs (Node, sans dépendance) et
+.github/workflows/check-source-links.yml (hebdomadaire et à la demande), en suivant
+"Surveillance des sources" dans technical-specifications.md.
+
+Critère de fin : les URL réelles sont correctement classées, et une URL volontairement cassée
+fait échouer le script.
+```
+
+## ✅ 19. Types des modules d3
+
+Déclarations de types des modules `d3-*` et de `topojson-client` (`@types/*`, dépendances de développement), pour que `astro check` vérifie les appels d3 au lieu de les laisser en `any`, et retrait des 81 `as any` qui court-circuitaient cette vérification aux appels d3. Voir "Dépendances" dans `technical-specifications.md`.
+
+**Critère :** `astro check` ne signale plus aucune déclaration de types manquante, le code de rendu ne contient plus de `as any`, et les interactions (zoom, molette, glisser, transitions) se comportent comme avant.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 19 du plan de construction (BUILD-PLAN.md) : types des modules d3.
+
+Ajoute en dépendances de développement les paquets @types correspondant à chaque module d3
+utilisé et à topojson-client, retire les `as any` des appels d3 en corrigeant les types au lieu
+de les contourner, et retire les commentaires devenus faux sur l'absence de types, en suivant "Dépendances" dans
+technical-specifications.md.
+
+Critère de fin : astro check ne signale plus de déclaration manquante et passe sans erreur.
+```
+
+## ✅ 20. Passage à Astro 7
+
+Montée de version d'Astro 5 à 7, qui lève les vulnérabilités signalées par `npm audit` (Astro, `sharp`, `esbuild`). Configuration des collections déplacée vers `src/content.config.ts`, `z` importé depuis `astro/zod`, `compressHTML: true` pour garder le rendu d'Astro 5, fichiers de `public/` localisés depuis la racine du projet. Voir "Génération de site" et "Dépendances" dans `technical-specifications.md`.
+
+**Critère :** `npm audit` ne signale plus de vulnérabilité, `npm run build` passe, le texte rendu de chaque page est identique à celui d'Astro 5 (hors ordre du catalogue, voir ci-dessous), et les visualisations se comportent comme avant.
+
+**Statut :** fait. Seul écart constaté : Astro 7 liste les entrées de collection par ordre alphabétique, alors qu'Astro 5 suivait un ordre de fichiers quelconque. L'ordre des tuiles du catalogue a donc changé. Décision ensuite : garder l'ordre alphabétique de slug, désormais imposé explicitement dans le code et spécifié dans `home-page.md`.
+
+**Prompt :**
+```
+Implémente l'étape 20 du plan de construction (BUILD-PLAN.md) : passage à Astro 7.
+
+Monte astro en 7.x, applique les changements cassants des guides de migration v6 et v7
+(emplacement de la configuration des collections, import de Zod, compressHTML, chemins vers
+public/), puis compare le site généré à celui d'Astro 5 (texte de chaque page, captures) et
+rejoue les scénarios d'interaction des visualisations.
+
+Critère de fin : npm audit sans vulnérabilité, build qui passe, rendu et comportement identiques.
+```
+
+## ✅ 21. Vue tableau des données
+
+Tableau de synthèse statique, calculé au build et replié sous la visualisation, pour les quatorze visualisations : d'abord un pilote de trois (`flower-phenology`, `forest-fires`, `medical-deserts`) pour caler le composant et le style, puis les onze autres. Voir "Vue tableau des données" dans `functional-specifications.md` et `technical-specifications.md`, "Tableau de données" dans `style-guide.md`, et la section "Vue tableau" de chacune des trois specs.
+
+**Critère :** chaque tableau s'affiche dans les deux langues, avec des valeurs conformes aux données, lisibles sans JavaScript, sans débordement horizontal de la page sur mobile ; les autres visualisations n'en affichent pas.
+
+**Statut :** fait. Chaque tableau a été spécifié et validé (section "Vue tableau" de sa spec) avant implémentation.
+
+**Prompt :**
+```
+Implémente l'étape 21 du plan de construction (BUILD-PLAN.md) : vue tableau des données.
+
+Crée src/scripts/data-table.ts et src/components/DataTable.astro, puis un table.ts pour
+chaque visualisation qui a une section "Vue tableau" dans sa spec, branchés sur les deux pages,
+en suivant "Vue tableau des données" (spec fonctionnelle et technique), "Tableau de données"
+dans style-guide.md et la section "Vue tableau" de chaque visualisation.
+
+Critère de fin : chaque tableau s'affiche dans les deux langues avec des valeurs justes,
+sans JavaScript et sans débordement de page sur mobile.
+```
+
+## ✅ 22. Données structurées schema.org
+
+Chaque page de visualisation décrit en JSON-LD la visualisation (`CreativeWork`, sources en `isBasedOn`) et, quand elle en propose, ses fichiers téléchargeables comme `Dataset` dérivé, éligible à Google Dataset Search. Voir "SEO" dans `technical-specifications.md`.
+
+**Critère :** les 28 pages de visualisation portent un bloc JSON-LD valide ; un `Dataset` n'y figure que si la visualisation propose des téléchargements, avec une description de 50 à 5 000 caractères et des URL de fichiers qui existent.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 22 du plan de construction (BUILD-PLAN.md) : données structurées schema.org.
+
+Crée src/scripts/structured-data.ts et rends son résultat dans le <head> via une propriété de
+BaseLayout.astro, depuis les deux pages de visualisation, en suivant "SEO" dans
+technical-specifications.md.
+
+Critère de fin : JSON-LD valide sur chaque page de visualisation, Dataset présent uniquement avec
+des téléchargements, descriptions et URL conformes.
 ```

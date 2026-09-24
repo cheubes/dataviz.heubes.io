@@ -53,6 +53,15 @@ Faire voir, par l'animation de trajectoires GPS réelles, les couloirs de migrat
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les espèces actives, la direction, la vue, le cadrage et, si la lecture était en pause, le jour simulé sont restaurés ; un lien pris en pause ouvre l'animation en pause sur ce jour. Ni la vitesse ni l'individu surligné ne sont partagés.
 - **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la visualisation s'ouvre sur la vue statique, trajets complets dessinés, sans lecture : une image en pause de la vue animée ne montrerait que la position de chaque oiseau. Un lien porteur d'un jour garde la vue animée, en pause sur ce jour.
 
+## Vue tableau
+
+Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+
+- **Légende :** "Trajets de migration suivis, par individu" / "Tracked migration journeys, by individual".
+- **Lignes :** un trajet par ligne (32), regroupés par espèce dans l'ordre des filtres, puis par individu, l'automne avant le printemps. Première cellule : nom commun de l'espèce suivi de l'identifiant de l'individu.
+- **Colonnes :** Sens (automne, printemps) ; Départ (date) ; Arrivée (date) ; Durée (jours) ; Distance parcourue (km). Durée et distance sont calculées comme dans la fiche de détail de la visualisation.
+- **Pas de ligne de total :** additionner des trajets d'espèces différentes n'aurait pas de sens.
+
 ## États
 
 - **Chargement :** le temps que les trajectoires, le fond de carte (silhouette, cours d'eau, relief, voir `data-model.md` et `technical-specifications.md`) soient récupérés et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
@@ -70,6 +79,8 @@ Version tactile adaptée (voir "Responsive" dans `technical-specifications.md` g
 ## Accessibilité (limite connue)
 
 L'interaction principale (carte animée, zoom/pan, survol des trajectoires) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général). Le bouton Play/Pause (voir "Interactions") reste néanmoins accessible au clavier (élément `<button>` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention.
+
+Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
 
 ## Contenu non traduit
 
