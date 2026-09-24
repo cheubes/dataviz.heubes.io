@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import RelatedVisualizations from '../components/RelatedVisualizations.astro';
 import { getVisualizationSlug } from '../content/config';
 import BirdMigrations from '../components/visualizations/bird-migrations/BirdMigrations.astro';
 import FlowerPhenology from '../components/visualizations/flower-phenology/FlowerPhenology.astro';
@@ -119,6 +120,8 @@ const retrievedDateFormatter = new Intl.DateTimeFormat(LANG, {
         }
       </ul>
     </section>
+
+    <RelatedVisualizations viz={viz} heading={en.viz.relatedHeading} />
   </article>
 </BaseLayout>
 

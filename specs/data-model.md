@@ -13,14 +13,14 @@ Une visualisation correspond à une pièce interactive dédiée à un dataset op
 | `title` | Oui | Titre affiché |
 | `summary` | Oui | Texte court affiché sur la tuile du catalogue (voir "Tuiles (catalogue)" dans `style-guide.md`) et en tête de la page de la visualisation |
 | `datasets` | — | Liste des jeux de données open data utilisés (voir "Dataset source" ci-dessous) |
-| `themes` | Non | Un ou plusieurs identifiants de thème, utilisés pour le filtrage du catalogue (voir "Thème" ci-dessous et "Filtre thématique" dans `home-page.md`) |
-| `publication-date` | Non | Date de première publication de la visualisation |
+| `themes` | Non | Un ou plusieurs identifiants de thème, utilisés pour le filtrage du catalogue et la sélection des visualisations liées (voir "Thème" ci-dessous, "Filtre thématique" dans `home-page.md` et "Visualisations liées" dans `functional-specifications.md`) |
+| `publication-date` | Non | Date de première publication de la visualisation, utilisée pour ordonner les visualisations liées (voir "Visualisations liées" dans `functional-specifications.md`) |
 
 L'image de couverture n'est pas un attribut : elle est associée à la visualisation par convention de nommage (voir "Images" ci-dessous).
 
 ### Thème
 
-Catégorie thématique associée à une visualisation, utilisée pour le filtrage du catalogue (voir "Filtre thématique" dans `home-page.md`). Liste fermée, pas de vocabulaire libre : toute nouvelle valeur est ajoutée ici avant d'être utilisée dans le frontmatter d'une visualisation.
+Catégorie thématique associée à une visualisation, utilisée pour le filtrage du catalogue (voir "Filtre thématique" dans `home-page.md`) et pour la sélection des visualisations liées sur la page d'une visualisation (voir "Visualisations liées" dans `functional-specifications.md`). Liste fermée, pas de vocabulaire libre : toute nouvelle valeur est ajoutée ici avant d'être utilisée dans le frontmatter d'une visualisation.
 
 | `id` | Français | English |
 |---|---|---|

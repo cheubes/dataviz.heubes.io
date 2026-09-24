@@ -20,6 +20,7 @@ export default {
   viz: {
     sourcesHeading: 'Data sources',
     retrievedLabel: 'Retrieved',
+    relatedHeading: 'Related visualizations',
     backToCatalog: 'Back to the catalog',
   },
   notFound: {
