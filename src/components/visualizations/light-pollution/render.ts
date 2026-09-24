@@ -6,6 +6,7 @@ import { timer as d3Timer } from 'd3-timer';
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
+import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
 interface SkyScaleTier {
   id: number;
@@ -397,10 +398,11 @@ export async function mountLightPollution(root: HTMLElement, lang: 'fr' | 'en', 
   resize();
 
   const urlYearIndex = years.indexOf(Number(getUrlParam('year')));
-  if (urlYearIndex !== -1) {
+  const initialYearIndex = urlYearIndex !== -1 ? urlYearIndex : prefersReducedMotion() ? years.length - 1 : -1;
+  if (initialYearIndex !== -1) {
     playing = false;
     updatePlayButton();
-    holding = urlYearIndex === years.length - 1;
-    setYearIndex(urlYearIndex);
+    holding = initialYearIndex === years.length - 1;
+    setYearIndex(initialYearIndex);
   }
 }

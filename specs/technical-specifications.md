@@ -132,6 +132,7 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   │   ├── language.ts                # détection/mémorisation de la langue (Header.astro, LanguageSelector.astro)
 │   │   ├── theme-filter.ts            # filtre thématique du catalogue (ThemeFilter.astro, VizCard.astro)
 │   │   ├── url-state.ts               # état partageable dans l'URL, voir "État dans l'URL"
+│   │   ├── reduced-motion.ts          # préférence de mouvement réduit, voir "Accessibilité"
 │   │   └── viz-stage-height.ts        # hauteur de la zone de montage, voir "Règles communes à toutes les visualisations"
 │   ├── components/
 │   │   ├── Header.astro
@@ -305,6 +306,7 @@ Mécanisme commun de l'état partageable (voir "État partageable dans l'URL" da
 - HTML sémantique pour la structure des pages et du catalogue.
 - Texte alternatif sur les images de couverture.
 - Limite connue par défaut : le mode d'interaction propre à chaque visualisation n'est pas garanti nativement accessible ; voir "Règles communes à toutes les visualisations" ci-dessus.
+- **Mouvement réduit** (voir "Mouvement réduit" dans `functional-specifications.md`) : `prefersReducedMotion()` (`src/scripts/reduced-motion.ts`) lit `matchMedia('(prefers-reduced-motion: reduce)')` une fois, au montage de chaque visualisation. Une visualisation animée qui la voit active s'ouvre en pause sur son état final par le même chemin qu'une position temporelle restaurée depuis l'URL (voir "État dans l'URL" ci-dessus), sans écrire l'URL ; les transitions d3 qui déplacent des éléments prennent une durée nulle. Les transitions CSS du site ne portent que sur la couleur ou l'opacité : aucune règle `@media (prefers-reduced-motion)` globale n'est nécessaire.
 
 ## SEO
 

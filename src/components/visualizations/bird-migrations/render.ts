@@ -8,6 +8,7 @@ import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
+import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
 interface TrackPoint {
   lat: number;
@@ -820,7 +821,8 @@ export async function mountBirdMigrations(
   }
 
   const dayParam = Number(getUrlParam('day') || NaN);
-  if (Number.isInteger(dayParam) && dayParam >= 0 && dayParam < 365) {
+  const hasUrlDay = Number.isInteger(dayParam) && dayParam >= 0 && dayParam < 365;
+  if (hasUrlDay) {
     simDay = dayParam;
     playing = false;
     playButton.textContent = labels.play;
@@ -828,7 +830,9 @@ export async function mountBirdMigrations(
     updateDateIndicator();
   }
 
-  if (getUrlParam('view') === 'static') {
+  // Reduced motion opens on the static view (every track drawn in full) rather
+  // than a paused animated frame, which would only show the birds' heads.
+  if (getUrlParam('view') === 'static' || (!hasUrlDay && prefersReducedMotion())) {
     viewModeInputs.get('static')!.checked = true;
     setViewMode('static');
   }

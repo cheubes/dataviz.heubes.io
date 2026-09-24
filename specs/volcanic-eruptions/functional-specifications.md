@@ -45,6 +45,7 @@ Faire voir, sur un planisphère animé en boucle continue sur dix mille ans, le 
 - **Zoom/pan :** libre sur l'ensemble du planisphère (souris/molette, tactile, boutons zoomer/dézoomer/réinitialiser), utile pour distinguer les volcans rapprochés le long d'une même ceinture (Indonésie, Japon, Amérique centrale notamment).
 - **Vue initiale :** planisphère entier visible, lecture automatique déjà en cours, quelque part dans le cycle (pas nécessairement au tout début des dix mille ans).
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : l'année et le cadrage sont restaurés. Comme pour `earthquakes`, une année partagée relance la lecture à partir de cette année au lieu de figer la carte en pause, puisqu'une image en pause ne montrerait que les volcans au repos, identiques à toute année (voir "État dans l'URL" dans `technical-specifications.md`).
+- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause au début de la période, avec les volcans au repos et leurs fiches de détail disponibles. Une année partagée reste alors en pause au lieu de relancer la lecture.
 
 ## États
 

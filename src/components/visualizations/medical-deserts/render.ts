@@ -5,6 +5,7 @@ import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
+import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
 interface CommuneFeature {
   type: 'Feature';
@@ -307,14 +308,18 @@ export async function mountMedicalDeserts(
     });
   select(interactionCanvas).call(zoomBehavior as any);
 
+  const reducedMotion = prefersReducedMotion();
+  const zoomTransitionMs = reducedMotion ? 0 : 200;
+  const resetTransitionMs = reducedMotion ? 0 : 300;
+
   zoomInButton.addEventListener('click', () => {
-    select(interactionCanvas).transition().duration(200).call(zoomBehavior.scaleBy as any, 1.5);
+    select(interactionCanvas).transition().duration(zoomTransitionMs).call(zoomBehavior.scaleBy as any, 1.5);
   });
   zoomOutButton.addEventListener('click', () => {
-    select(interactionCanvas).transition().duration(200).call(zoomBehavior.scaleBy as any, 1 / 1.5);
+    select(interactionCanvas).transition().duration(zoomTransitionMs).call(zoomBehavior.scaleBy as any, 1 / 1.5);
   });
   zoomResetButton.addEventListener('click', () => {
-    select(interactionCanvas).transition().duration(300).call(zoomBehavior.transform as any, zoomIdentity);
+    select(interactionCanvas).transition().duration(resetTransitionMs).call(zoomBehavior.transform as any, zoomIdentity);
   });
 
   let resizeTimeout: ReturnType<typeof setTimeout> | undefined;

@@ -8,6 +8,7 @@ import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
+import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
 interface DensityEntry {
   month: number; // 1-12
@@ -36,6 +37,9 @@ interface DensityCell {
 }
 
 const CYCLE_MS_NORMAL = 36_000;
+// The cycle has no end state to pause on: August is the month where the
+// density covers the most cells and totals the most observations.
+const REDUCED_MOTION_MONTH = 8;
 const SPEED_FACTORS: Record<'slow' | 'normal' | 'fast', number> = {
   slow: 0.5,
   normal: 1,
@@ -481,8 +485,14 @@ export async function mountMonarchMigration(
   // The data is monthly, so a shared month opens on its first day: the frame
   // then shows that month's counts exactly, not an interpolation towards the next.
   const urlMonth = Number(getUrlParam('month'));
-  if (Number.isInteger(urlMonth) && urlMonth >= 1 && urlMonth <= 12) {
-    simDay = (Date.UTC(2001, urlMonth - 1, 1) - Date.UTC(2001, 0, 1)) / 86_400_000;
+  const initialMonth =
+    Number.isInteger(urlMonth) && urlMonth >= 1 && urlMonth <= 12
+      ? urlMonth
+      : prefersReducedMotion()
+        ? REDUCED_MOTION_MONTH
+        : null;
+  if (initialMonth !== null) {
+    simDay = (Date.UTC(2001, initialMonth - 1, 1) - Date.UTC(2001, 0, 1)) / 86_400_000;
     setPlaying(false);
   }
 

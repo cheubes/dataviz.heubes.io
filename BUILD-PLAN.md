@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Quatorze étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Quinze étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -338,4 +338,26 @@ technical-specifications.md et "Contraintes et règles de validation" dans data-
 
 Critère de fin : enfreindre volontairement chaque règle fait échouer le build avec un message
 précis ; le contenu réel passe.
+```
+
+## ✅ 15. Mouvement réduit
+
+Avec la préférence système `prefers-reduced-motion`, les visualisations animées s'ouvrent en pause sur leur état final (ou sur un état documenté quand elles n'en ont pas) et les transitions qui déplacent des éléments deviennent immédiates. Voir "Mouvement réduit" dans `functional-specifications.md`, "Accessibilité" dans `technical-specifications.md` et la puce du même nom dans chaque `specs/<viz-slug>/functional-specifications.md` concerné.
+
+**Critère :** préférence émulée, aucune visualisation ne se met en mouvement d'elle-même, chacune s'ouvre sur l'état documenté sans écrire l'URL, et Lecture relance l'animation ; sans la préférence, rien ne change.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 15 du plan de construction (BUILD-PLAN.md) : mouvement réduit.
+
+Crée src/scripts/reduced-motion.ts (prefersReducedMotion) et branche chaque visualisation animée
+sur le chemin déjà utilisé pour restaurer une position temporelle depuis l'URL, en suivant
+"Mouvement réduit" dans functional-specifications.md. Rends immédiates les transitions d3 qui
+déplacent des éléments. Documente l'état d'ouverture de chaque visualisation dans son
+functional-specifications.md.
+
+Critère de fin : préférence émulée, aucune visualisation ne bouge d'elle-même et chacune
+s'ouvre sur l'état documenté ; sans la préférence, rien ne change.
 ```

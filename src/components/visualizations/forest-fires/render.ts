@@ -8,6 +8,7 @@ import { zoom as d3Zoom, zoomIdentity, type ZoomTransform } from 'd3-zoom';
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, readZoomParam, setUrlParams, writeZoomParam } from '../../../scripts/url-state';
+import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
 type Cause = 'natural' | 'human' | 'malicious' | 'unknown';
 
@@ -592,10 +593,11 @@ export async function mountForestFires(root: HTMLElement, lang: 'fr' | 'en', lab
   }
 
   const urlYearIndex = years.indexOf(Number(getUrlParam('year')));
-  if (urlYearIndex !== -1) {
+  const initialYearIndex = urlYearIndex !== -1 ? urlYearIndex : prefersReducedMotion() ? years.length - 1 : -1;
+  if (initialYearIndex !== -1) {
     playing = false;
     updatePlayButton();
-    holding = urlYearIndex === years.length - 1;
-    setYearIndex(urlYearIndex);
+    holding = initialYearIndex === years.length - 1;
+    setYearIndex(initialYearIndex);
   }
 }

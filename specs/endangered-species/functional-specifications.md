@@ -42,6 +42,7 @@ Chaque espèce dans son propre cadre, à sa propre échelle d'icônes (une icôn
 - **Pas de filtre, pas de zoom/pan :** contrairement aux visualisations à carte réelle du site, celle-ci n'est pas une carte géographique (voir "Rendu" dans `technical-specifications.md`) : un petit nombre d'espèces, toutes visibles en permanence.
 - **Vue initiale :** toutes les cartes à leur point de mesure le plus ancien, lecture automatique déjà en cours.
 - **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : une année choisie (pause ou curseur) est restaurée, les cartes s'ouvrant alors en pause sur cette année.
+- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : les petits multiples s'ouvrent en pause sur la dernière année, celle des recensements les plus récents.
 
 ## États
 

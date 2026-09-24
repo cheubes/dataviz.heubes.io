@@ -6,6 +6,7 @@ import { timer as d3Timer } from 'd3-timer';
 import { feature as topojsonFeature } from 'topojson-client';
 import { getMaxStageBlockHeight } from '../../../scripts/viz-stage-height';
 import { getUrlParam, setUrlParams } from '../../../scripts/url-state';
+import { prefersReducedMotion } from '../../../scripts/reduced-motion';
 
 interface Region {
   id: string;
@@ -530,6 +531,7 @@ export async function mountSatellitesInOrbit(
 
   const urlYear = Number(getUrlParam('year'));
   if (Number.isInteger(urlYear) && urlYear >= firstYear && urlYear <= lastYear) seekToYear(urlYear);
+  else if (prefersReducedMotion()) seekToYear(lastYear);
 
   applyRegionFilter();
   startAnimationLoop();
