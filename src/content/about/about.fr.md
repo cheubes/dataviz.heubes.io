@@ -20,7 +20,7 @@ L'adresse d'une visualisation suit ce que vous en faites : filtres, année mise
 
 Le site est statique, généré avec [Astro](https://astro.build) et hébergé sur GitHub Pages. Les visualisations sont codées une par une, principalement avec [D3](https://d3js.org) et Canvas. Le code source est public sur [GitHub](https://github.com/cheubes/dataviz.heubes.io).
 
-Aucune mesure d'audience, aucun cookie : seule votre préférence de langue est mémorisée, dans votre navigateur.
+Aucune mesure d'audience, aucun cookie : seule votre préférence de langue est mémorisée, dans votre navigateur. Polices et icônes sont servies par le site lui-même : afficher une page ne contacte aucun service tiers.
 
 ## Licence
 
