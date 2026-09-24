@@ -10,6 +10,7 @@ datasets:
     retrieved: '2026-09-21'
 themes: [living]
 publication-date: '2026-09-21'
+downloads: [density.json]
 ---
 
 Un papillon monarque ne fait jamais le trajet complet. La migration qui le porte du Mexique jusqu'au Canada et retour est un relais entre plusieurs générations successives, dont aucune ne connaît le point de départ ni le point d'arrivée du voyage entier.

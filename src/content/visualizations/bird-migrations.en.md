@@ -25,6 +25,7 @@ datasets:
     retrieved: '2026-09-08'
 themes: [living]
 publication-date: '2026-09-07'
+downloads: [tracks.json]
 ---
 
 Every year, GPS-tagged raptors, storks and other birds leave Europe for Africa, before making the return trip in spring. This map animates the real trajectories of individuals tracked as part of four scientific studies: the white stork (*Ciconia ciconia*, "LifeTrack White Stork Bavaria" study, Max Planck Institute of Animal Behavior, 2014-2023), Montagu's harrier (*Circus pygargus*, Trierweiler et al. 2014), the common cuckoo (*Cuculus canorus*, Thorup et al. 2020) and the European honey buzzard (*Pernis apivorus*, Byholm et al. 2025).

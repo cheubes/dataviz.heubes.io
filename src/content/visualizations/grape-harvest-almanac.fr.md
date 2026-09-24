@@ -10,6 +10,7 @@ datasets:
     retrieved: '2026-09-10'
 themes: [climate]
 publication-date: '2026-09-10'
+downloads: [harvest-dates.json]
 ---
 
 Chaque année depuis le quatorzième siècle, des viticulteurs ont noté la date à laquelle ils vendangeaient. Mises bout à bout, ces dates composent l'une des plus longues séries climatiques directement observées au monde : six cent cinquante ans d'étés plus ou moins chauds, racontés depuis sept régions viticoles françaises.

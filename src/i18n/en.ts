@@ -21,6 +21,9 @@ export default {
     sourcesHeading: 'Data sources',
     retrievedLabel: 'Retrieved',
     relatedHeading: 'Related visualizations',
+    downloadsLabel: 'Download the prepared data:',
+    downloadsNote:
+      'Files as the visualization uses them. Reuse remains subject to the licenses of the sources above.',
     backToCatalog: 'Back to the catalog',
   },
   notFound: {

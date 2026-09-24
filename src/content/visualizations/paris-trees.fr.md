@@ -30,6 +30,7 @@ datasets:
     retrieved: '2026-09-09'
 themes: [territory]
 publication-date: '2026-09-08'
+downloads: [trees.json, national-gardens.json]
 ---
 
 La Ville de Paris tient un inventaire de son patrimoine arboré : arbres d'alignement le long des rues, arbres des jardins, des bois et des équipements municipaux. Cette carte affiche 194 000 arbres de cet inventaire, chacun positionné à son emplacement réel dans les vingt arrondissements de la ville (le jeu source recense aussi environ 25 000 arbres plantés dans des cimetières parisiens extraterritoriaux, en dehors de la ville elle-même ; ils ne sont pas repris ici, hors du périmètre géographique de cette carte).

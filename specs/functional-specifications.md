@@ -14,6 +14,7 @@ Dans le périmètre :
 - Filtrage du catalogue par thème, depuis la page d'accueil (voir `home-page.md`).
 - Consultation, pour chaque visualisation, de sa page dédiée : présentation du dataset source, du contexte de la mise en forme choisie, et interaction avec la visualisation elle-même.
 - Accès, depuis la page d'une visualisation, aux autres visualisations qui partagent un thème avec elle (voir "Visualisations liées" ci-dessous).
+- Téléchargement, depuis la page d'une visualisation, des données préparées qu'elle consomme, quand l'auteur les déclare téléchargeables (voir "Téléchargement des données préparées" ci-dessous).
 - Site multilingue (français, anglais).
 
 Voir aussi "Hors périmètre" ci-dessous.
@@ -54,6 +55,18 @@ En bas de la page d'une visualisation, une section propose jusqu'à trois autres
 - Ordre : nombre de thèmes partagés décroissant, puis date de publication (`publication-date`) décroissante, puis `slug` alphabétique pour départager de façon stable. Les trois premières sont retenues.
 - Aucune candidate (ex : seule visualisation de son thème) : la section est entièrement absente, titre compris. On ne la complète pas avec des visualisations sans rapport thématique.
 - La sélection est déterminée à la génération du site : identique pour tous les visiteurs, ni aléatoire ni personnalisée.
+
+Affichage : voir "Page de visualisation" dans `style-guide.md`.
+
+### Téléchargement des données préparées
+
+La page d'une visualisation peut proposer au téléchargement les fichiers de données préparées qu'elle consomme (sous `public/data/<viz-slug>/`, voir `data-model.md`), pour prolonger l'exploration hors du site.
+
+- Opt-in explicite : seuls les fichiers listés dans l'attribut `downloads` de la visualisation sont proposés (voir "Visualisation" dans `data-model.md`). Une visualisation sans `downloads` n'affiche aucun lien.
+- Ce qui est proposé : les fichiers de données principaux, pas les couches de contexte (fond de carte, cours d'eau, routes, relief, illustrations), qui relèvent du décor et ne sont pas toujours créditées dans `datasets`.
+- Licences : avant de déclarer un fichier, l'auteur vérifie que les licences des sources dont il dérive autorisent sa redistribution. Une source sous droits réservés exclut la visualisation (ex : `endangered-species`). Une source non commerciale ou sans licence formalisée mais autorisant la redistribution avec citation reste acceptable : le site est lui-même non commercial, et les licences sont affichées juste au-dessus, dans le bloc de crédit des sources. Une mention rappelle que la réutilisation reste soumise à ces licences.
+- Format : les fichiers sont proposés tels que la visualisation les consomme, sans conversion (pas d'export CSV dédié) ni documentation de leur format côté site. Leur structure est pensée pour le rendu, pas pour la réutilisation.
+- Chaque fichier est présenté avec son nom et sa taille, pour que le visiteur sache ce qu'il télécharge avant de cliquer (certains fichiers dépassent 10 Mo).
 
 Affichage : voir "Page de visualisation" dans `style-guide.md`.
 

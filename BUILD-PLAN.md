@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Dix étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Onze étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -252,3 +252,26 @@ dans les deux langues ; une visualisation seule de son thème n'affiche aucune s
 Les trois candidates spécifiées initialement (`specs/biodiversity/`, `specs/bird-migrations/`, `specs/flower-phenology/`) ont été les trois premières implémentées (étape 8, dans l'ordre `bird-migrations` → `flower-phenology` → `biodiversity`), suivies de dix autres (voir la liste ci-dessus).
 
 Chaque étape est un point de commit naturel. Avant de committer, vérifier que l'ensemble de `specs/` reste cohérent avec ce qui vient d'être implémenté (voir "Avant chaque commit" dans `CLAUDE.md`) ; si l'implémentation révèle qu'une spec doit changer, le signaler avant d'appliquer la mise à jour.
+
+## ✅ 11. Téléchargement des données préparées
+
+Liens de téléchargement des fichiers de données principaux, en fin de bloc de crédit des sources, déclarés visualisation par visualisation (attribut `downloads`). Voir "Téléchargement des données préparées" dans `functional-specifications.md`, "Visualisation" dans `data-model.md` et "Page de visualisation" dans `style-guide.md`.
+
+**Critère :** chaque visualisation qui déclare `downloads` affiche un lien par fichier avec sa taille, dans les deux langues ; une visualisation sans `downloads` n'affiche rien ; un fichier déclaré mais absent fait échouer le build.
+
+**Statut :** fait.
+
+**Prompt :**
+```
+Implémente l'étape 11 du plan de construction (BUILD-PLAN.md) : téléchargement des données
+préparées.
+
+Ajoute l'attribut optionnel downloads au schéma (src/content/config.ts), crée
+src/components/DataDownloads.astro et monte-le en fin de bloc de crédit dans
+src/pages/[viz].astro et src/pages/fr/[viz].astro, en suivant "Téléchargement des données
+préparées" dans functional-specifications.md et "Page de visualisation" dans style-guide.md.
+Déclare les fichiers principaux de chaque visualisation dont les licences le permettent.
+
+Critère de fin : les liens et tailles s'affichent correctement dans les deux langues ; retirer
+volontairement un fichier déclaré fait échouer le build.
+```

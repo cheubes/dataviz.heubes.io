@@ -15,6 +15,7 @@ datasets:
     retrieved: '2026-09-08'
 themes: [living]
 publication-date: '2026-09-08'
+downloads: [hexbins.json]
 ---
 
 Chaque année, des millions d'observations d'espèces sont consignées en France par des naturalistes amateurs et professionnels, puis versées dans des bases de données mondiales. Visualisées ensemble, elles révèlent des concentrations, des absences, des corridors écologiques. Cette carte invite à filtrer par grand groupe taxonomique et par saison, pour voir comment le vivant occupe et traverse le territoire.

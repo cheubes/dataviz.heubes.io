@@ -15,6 +15,7 @@ Une visualisation correspond à une pièce interactive dédiée à un dataset op
 | `datasets` | — | Liste des jeux de données open data utilisés (voir "Dataset source" ci-dessous) |
 | `themes` | Non | Un ou plusieurs identifiants de thème, utilisés pour le filtrage du catalogue et la sélection des visualisations liées (voir "Thème" ci-dessous, "Filtre thématique" dans `home-page.md` et "Visualisations liées" dans `functional-specifications.md`) |
 | `publication-date` | Non | Date de première publication de la visualisation, utilisée pour ordonner les visualisations liées (voir "Visualisations liées" dans `functional-specifications.md`) |
+| `downloads` | Non | Optionnel. Noms des fichiers de `public/data/<viz-slug>/` proposés au téléchargement sur la page de la visualisation (ex : `[trees.json, national-gardens.json]`). Absent : aucun lien de téléchargement (voir "Téléchargement des données préparées" dans `functional-specifications.md`) |
 
 L'image de couverture n'est pas un attribut : elle est associée à la visualisation par convention de nommage (voir "Images" ci-dessous).
 
@@ -65,10 +66,10 @@ Format, dimensions et ratio recommandés : voir "Images" dans `style-guide.md`.
 
 Le site est généré avec Astro, en content collections (voir "Structure des fichiers" dans `technical-specifications.md` pour la configuration et le schéma exact). Chaque visualisation a ses attributs de présentation (localisés et non localisés) portés par deux fichiers de contenu, un par langue ; les données qui alimentent la visualisation elle-même vivent à part, propres à chaque visualisation et documentées dans `specs/<viz-slug>/data-model.md`.
 
-- `src/content/visualizations/<viz-slug>.fr.md`, `<viz-slug>.en.md` : présentation de la visualisation, un fichier par langue. Frontmatter : `lang`, `title`, `summary`, `datasets`, `themes`, `publication-date`. Corps de texte : présentation longue (contexte du dataset, angle choisi).
+- `src/content/visualizations/<viz-slug>.fr.md`, `<viz-slug>.en.md` : présentation de la visualisation, un fichier par langue. Frontmatter : `lang`, `title`, `summary`, `datasets`, `themes`, `publication-date`, `downloads` (optionnel). Corps de texte : présentation longue (contexte du dataset, angle choisi).
 - `public/covers/<viz-slug>.jpg` / `.png` : image de couverture (voir "Images" ci-dessus).
 
-Les attributs non localisés (`datasets`, `themes`, `publication-date`) sont répétés à l'identique dans le frontmatter des deux fichiers de langue plutôt que centralisés à part : le nombre de champs concernés reste faible, la duplication reste donc limitée.
+Les attributs non localisés (`datasets`, `themes`, `publication-date`, `downloads`) sont répétés à l'identique dans le frontmatter des deux fichiers de langue plutôt que centralisés à part : le nombre de champs concernés reste faible, la duplication reste donc limitée.
 
 ### Workflow d'ajout d'une visualisation
 
@@ -76,8 +77,9 @@ Les attributs non localisés (`datasets`, `themes`, `publication-date`) sont ré
 2. Créer `src/content/visualizations/<viz-slug>.fr.md` et `<viz-slug>.en.md`, avec leur frontmatter complet.
 3. Ajouter l'image de couverture (`public/covers/<viz-slug>.jpg` ou `.png`).
 4. Implémenter la visualisation elle-même selon `specs/<viz-slug>/functional-specifications.md`, `data-model.md` et `technical-specifications.md`.
-5. Valider (voir "Contraintes et règles de validation" ci-dessous et "Validation des données" dans `technical-specifications.md`).
-6. Publier.
+5. Le cas échéant, déclarer les fichiers de données principaux dans `downloads`, après vérification des licences des sources (voir "Téléchargement des données préparées" dans `functional-specifications.md`).
+6. Valider (voir "Contraintes et règles de validation" ci-dessous et "Validation des données" dans `technical-specifications.md`).
+7. Publier.
 
 ## Contraintes et règles de validation
 
@@ -87,4 +89,5 @@ Les attributs non localisés (`datasets`, `themes`, `publication-date`) sont ré
 - Pour une langue donnée, `<viz-slug>.<lang>.md` n'existe que si la visualisation est disponible dans cette langue ; son absence retire la visualisation du catalogue de cette langue (voir "Multilingue" dans `functional-specifications.md`).
 - Chaque entrée de `datasets` d'une visualisation déclare au minimum `name`, `publisher` et `url`.
 - Une visualisation déclare au moins un thème, choisi dans la liste fermée définie dans "Thème" ci-dessus.
-- Les valeurs des attributs non localisés (`datasets`, `themes`, `publication-date`) sont identiques entre `<viz-slug>.fr.md` et `<viz-slug>.en.md` d'une même visualisation.
+- Chaque entrée de `downloads` correspond à un fichier existant de `public/data/<viz-slug>/` : le build échoue sinon.
+- Les valeurs des attributs non localisés (`datasets`, `themes`, `publication-date`, `downloads`) sont identiques entre `<viz-slug>.fr.md` et `<viz-slug>.en.md` d'une même visualisation.

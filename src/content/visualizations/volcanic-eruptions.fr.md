@@ -10,6 +10,7 @@ datasets:
     retrieved: '2026-09-22'
 themes: [earth]
 publication-date: '2026-09-22'
+downloads: [eruptions.json]
 ---
 
 Le Global Volcanism Program de la Smithsonian Institution recense chaque éruption volcanique connue depuis le début de l'Holocène, il y a environ dix mille ans : mille deux cent quatorze volcans, plus de onze mille éruptions documentées, de l'observation directe la plus récente à la trace géologique la plus ancienne.

@@ -10,6 +10,7 @@ datasets:
     retrieved: '2026-09-09'
 themes: [space]
 publication-date: '2026-09-09'
+downloads: [satellites.json]
 ---
 
 Depuis Spoutnik en 1957, des milliers de satellites ont rejoint l'orbite terrestre : stations de navigation, satellites météo, télescopes, engins scientifiques, constellations de télécommunication. Cette visualisation anime, année par année, l'accumulation réelle des satellites toujours en orbite aujourd'hui (actifs ou non), à partir du catalogue tenu par le réseau de surveillance spatiale de l'US Space Force.

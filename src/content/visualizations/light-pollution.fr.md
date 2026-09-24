@@ -10,6 +10,7 @@ datasets:
     retrieved: '2026-09-09'
 themes: [earth]
 publication-date: '2026-09-09'
+downloads: [skybins.json]
 ---
 
 Chaque nuit, des satellites américains mesurent la lumière artificielle émise depuis le sol. Ces données, collectées par le programme VIIRS de la NOAA, permettent de suivre année après année l'intensité de l'éclairage nocturne partout sur Terre.

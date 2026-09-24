@@ -30,6 +30,7 @@ datasets:
     retrieved: '2026-09-09'
 themes: [territory]
 publication-date: '2026-09-08'
+downloads: [trees.json, national-gardens.json]
 ---
 
 The City of Paris maintains an inventory of its tree stock : street trees, park trees, woodland trees, and trees on municipal grounds. This map displays 194,000 trees from that inventory, each placed at its real location within the city's twenty districts (the source dataset also lists about 25,000 trees planted in extraterritorial Paris-owned cemeteries, outside the city itself ; they aren't included here, outside this map's geographic scope).

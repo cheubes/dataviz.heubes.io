@@ -15,6 +15,7 @@ datasets:
     retrieved: '2026-09-22'
 themes: [territory]
 publication-date: '2026-09-22'
+downloads: [communes.json]
 ---
 
 The APL indicator (accessibilité potentielle localisée) measures, commune by commune, the number of general practitioner consultations actually accessible per resident per year. Calculated annually by DREES, this indicator also exists in a version restricted to doctors under sixty-five: a snapshot of what healthcare access would become if the practitioners closest to retirement stopped working.

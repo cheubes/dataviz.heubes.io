@@ -15,6 +15,7 @@ datasets:
     retrieved: '2026-09-22'
 themes: [earth]
 publication-date: '2026-09-22'
+downloads: [fires.json]
 ---
 
 Depuis 2006, la Base de Données sur les Incendies de Forêts en France (BDIFF) recense chaque incendie de forêt survenu sur le territoire : sa commune, sa date, la surface qu'il a parcourue. Plus de cinquante mille foyers y sont aujourd'hui répertoriés, très majoritairement concentrés sur le pourtour méditerranéen.
