@@ -112,13 +112,14 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   ├── cover-placeholder.svg          # couverture de repli, voir "Images" dans style-guide.md
 │   ├── fonts/
 │   │   └── ubuntu/                    # woff2 auto-hébergés et licence UFL.txt, voir "Polices"
-│   ├── covers/
-│   │   └── <viz-slug>.jpg            # ou .png, voir data-model.md
 │   └── data/
 │       └── <viz-slug>/
 │           └── ...                    # données statifiées consommées par la visualisation,
 │                                       # voir specs/<viz-slug>/data-model.md
 ├── src/
+│   ├── assets/
+│   │   └── covers/
+│   │       └── <viz-slug>.jpg         # ou .png, source des couvertures, voir data-model.md et "Performance"
 │   ├── content.config.ts              # schémas des content collections
 │   ├── content/
 │   │   ├── validation.ts              # règles de validation entre fichiers, voir "Validation des données"
@@ -140,6 +141,7 @@ Indicatif, à reconfirmer au moment de l'implémentation :
 │   │   ├── data-table.ts              # type commun des vues tableau, voir "Vue tableau des données"
 │   │   ├── reduced-motion.ts          # préférence de mouvement réduit, voir "Accessibilité"
 │   │   ├── structured-data.ts         # données structurées schema.org, voir "SEO"
+│   │   ├── covers.ts                  # couvertures WebP et image de partage, voir "Performance"
 │   │   └── viz-stage-height.ts        # hauteur de la zone de montage, voir "Règles communes à toutes les visualisations"
 │   ├── components/
 │   │   ├── Header.astro
@@ -327,10 +329,11 @@ Les URL des jeux de données (attribut `url` de chaque entrée de `datasets`, vo
 
 ## Performance
 
-- Images de couverture en lazy loading via l'attribut natif `loading="lazy"`.
+- Couvertures du catalogue dérivées au build par le service d'images d'Astro (`sharp`, dépendance d'Astro), via `src/scripts/covers.ts` : WebP en trois largeurs (400, 800 et 1200 px) avec un `srcset` et un `sizes` calés sur la grille du catalogue, pour que le navigateur télécharge la plus petite version suffisante ; lazy loading natif (`loading="lazy"`). WebP seul, sans repli JPEG : tous les navigateurs cibles le lisent (voir "Accessibilité"). Mesuré à la mise en place, sur l'accueil toutes tuiles chargées : 3 559 Ko en JPEG contre 658 Ko en WebP sur desktop et 204 Ko sur mobile.
+- Image de partage (Open Graph, donnée structurée `image`) : une copie JPEG en pleine taille dérivée du même fichier source, les réseaux sociaux attendant ce format. Son URL est un nom haché sous `/_astro/`, qui change si la couverture change.
 - Chaque île Astro (visualisation) hydrate son propre JS, sans charger le JS d'une autre visualisation ni du catalogue.
 - Directives d'hydratation non bloquantes privilégiées (`client:idle` / `client:visible`) plutôt que `client:load` quand l'interaction n'est pas immédiatement nécessaire.
-- Images optimisées à l'ajout de contenu (JPEG qualité ~82 progressif, ou PNG recompressé pour les captures/illustrations), dimensions au plus proche des minimums recommandés dans `style-guide.md`.
+- Fichier source de couverture préparé à l'ajout de contenu (JPEG qualité ~82 progressif, ou PNG recompressé pour les captures/illustrations), dimensions au plus proche des minimums recommandés dans `style-guide.md` : c'est lui qui sert de base à toutes les images dérivées.
 
 ## Accessibilité
 

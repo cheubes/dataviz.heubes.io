@@ -195,7 +195,7 @@ Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble d
 
 Format `.jpg` (photo) ou `.png` (illustration, capture d'écran), selon la nature de la visualisation ; pas de contrainte de format imposée au-delà du ratio et des dimensions minimales. `object-fit: cover` en CSS pour absorber les écarts plutôt que d'imposer un recadrage strict.
 
-Tant que la couverture propre d'une visualisation (`public/covers/<viz-slug>.jpg`/`.png`, voir `data-model.md`) n'existe pas, un placeholder partagé (`public/cover-placeholder.svg`) s'affiche à sa place sur sa tuile (et sert de repli pour l'image de partage de sa page, voir "Page de visualisation" ci-dessus).
+Tant que la couverture propre d'une visualisation (`src/assets/covers/<viz-slug>.jpg`/`.png`, voir `data-model.md`) n'existe pas, un placeholder partagé (`public/cover-placeholder.svg`) s'affiche à sa place sur sa tuile (et sert de repli pour l'image de partage de sa page, voir "Page de visualisation" ci-dessus).
 
 ## Iconographie
 

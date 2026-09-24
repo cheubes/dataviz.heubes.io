@@ -57,7 +57,7 @@ Le schéma détaillé des données réellement consommées par une visualisation
 
 ### Images
 
-- Image de couverture d'une visualisation : `public/covers/<viz-slug>.jpg` ou `.png` selon sa nature (photo ou illustration/capture, voir "Images" dans `style-guide.md`).
+- Image de couverture d'une visualisation : `src/assets/covers/<viz-slug>.jpg` ou `.png` selon sa nature (photo ou illustration/capture, voir "Images" dans `style-guide.md`). Elle vit dans `src/` et non dans `public/` : c'est le fichier source dont le build dérive les images réellement servies (voir "Performance" dans `technical-specifications.md`).
 - Un seul fichier de couverture par visualisation, partagé par les deux langues (pas de déclinaison par locale).
 
 Format, dimensions et ratio recommandés : voir "Images" dans `style-guide.md`.
@@ -67,7 +67,7 @@ Format, dimensions et ratio recommandés : voir "Images" dans `style-guide.md`.
 Le site est généré avec Astro, en content collections (voir "Structure des fichiers" dans `technical-specifications.md` pour la configuration et le schéma exact). Chaque visualisation a ses attributs de présentation (localisés et non localisés) portés par deux fichiers de contenu, un par langue ; les données qui alimentent la visualisation elle-même vivent à part, propres à chaque visualisation et documentées dans `specs/<viz-slug>/data-model.md`.
 
 - `src/content/visualizations/<viz-slug>.fr.md`, `<viz-slug>.en.md` : présentation de la visualisation, un fichier par langue. Frontmatter : `lang`, `title`, `summary`, `datasets`, `themes`, `publication-date`, `downloads` (optionnel). Corps de texte : présentation longue (contexte du dataset, angle choisi).
-- `public/covers/<viz-slug>.jpg` / `.png` : image de couverture (voir "Images" ci-dessus).
+- `src/assets/covers/<viz-slug>.jpg` / `.png` : image de couverture (voir "Images" ci-dessus).
 
 Les attributs non localisés (`datasets`, `themes`, `publication-date`, `downloads`) sont répétés à l'identique dans le frontmatter des deux fichiers de langue plutôt que centralisés à part : le nombre de champs concernés reste faible, la duplication reste donc limitée.
 
@@ -75,7 +75,7 @@ Les attributs non localisés (`datasets`, `themes`, `publication-date`, `downloa
 
 1. Choisir le `slug` de la visualisation (construit à partir de son titre anglais) et créer `specs/<viz-slug>/` avec ses trois fichiers (voir `CLAUDE.md` pour le contenu attendu de chacun).
 2. Créer `src/content/visualizations/<viz-slug>.fr.md` et `<viz-slug>.en.md`, avec leur frontmatter complet.
-3. Ajouter l'image de couverture (`public/covers/<viz-slug>.jpg` ou `.png`).
+3. Ajouter l'image de couverture (`src/assets/covers/<viz-slug>.jpg` ou `.png`).
 4. Implémenter la visualisation elle-même selon `specs/<viz-slug>/functional-specifications.md`, `data-model.md` et `technical-specifications.md`.
 5. Le cas échéant, déclarer les fichiers de données principaux dans `downloads`, après vérification des licences des sources (voir "Téléchargement des données préparées" dans `functional-specifications.md`).
 6. Valider en lançant `npm run build`, qui échoue sur toute règle non respectée (voir "Contraintes et règles de validation" ci-dessous et "Validation des données" dans `technical-specifications.md`).
