@@ -1,6 +1,6 @@
 # Plan de construction incrémental
 
-Vingt-trois étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Vingt-quatre étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
 
 Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
 
@@ -525,3 +525,17 @@ technical-specifications.md.
 
 Critère de fin : WebP adaptés sur les tuiles, JPEG pour le partage, poids de l'accueil mesuré.
 ```
+
+## 24. Cinq nouvelles visualisations
+
+Specs complètes (`data-model.md`, `functional-specifications.md`, `technical-specifications.md`) de cinq nouvelles visualisations, pour renforcer les thèmes Espace et Climat, les moins fournis du catalogue. Chaque spec repose sur une vérification réelle de sa source (accès, champs, volume, licence) et se termine par une section "Points à valider".
+
+- `exoplanets` (Les mondes découverts), thème `space` : 6 366 exoplanètes confirmées (NASA Exoplanet Archive), nuage masse × distance à l'étoile qui se remplit année par année, frise des découvertes par méthode.
+- `meteorites` (Ce qui nous tombe du ciel), thèmes `space` et `earth` : 45 716 météorites (catalogue de la Meteoritical Society, copie NASA figée en 2013), planisphère vues tomber / trouvées, profil latitudinal et encart antarctique.
+- `sunspots` (Le cœur battant du Soleil), thème `space` : nombre de taches solaires mensuel depuis 1749 (WDC-SILSO), spirale d'un tour par cycle.
+- `brest-sea-level` (La mer monte à Brest), thème `climate` : niveau moyen annuel du marégraphe de Brest depuis 1807 (PSMSL), quai de pierre déroulé et trois droites de tendance.
+- `tropical-nights` (Les nuits tropicales), thème `climate` : nuits à 20 °C ou plus depuis 1950 dans huit villes (Météo-France), calendriers empilés en petits multiples.
+
+**Critère :** chaque spec validée par l'auteur, "Points à valider" tranchés, avant implémentation.
+
+**Statut :** specs écrites, en attente de validation ; aucune implémentation.

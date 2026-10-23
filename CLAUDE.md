@@ -19,7 +19,7 @@ L'implémentation suit `BUILD-PLAN.md`, qui définit l'ordre en étapes incréme
   - `functional-specifications.md` : spécification fonctionnelle de la visualisation, y compris son écran (objectif, contenu, interactions, états, responsive).
   - `technical-specifications.md` : règles techniques propres à cette visualisation (librairie de rendu, technique d'interaction, contraintes de performance ou d'accessibilité spécifiques) qui vont au-delà des règles communes du fichier général. Presque systématique plutôt qu'exceptionnel : chaque visualisation étant une pièce de code originale (pas un gabarit générique rejoué), elle a presque toujours un choix technique propre à documenter.
 
-Quatorze dossiers `<viz-slug>/` existent à ce stade (voir la liste à l'étape 8 de `BUILD-PLAN.md`, fait).
+Dix-neuf dossiers `<viz-slug>/` existent à ce stade : quatorze visualisations publiées (voir la liste à l'étape 8 de `BUILD-PLAN.md`, fait), et cinq spécifiées mais pas encore implémentées (`exoplanets`, `meteorites`, `sunspots`, `brest-sea-level`, `tropical-nights`, voir l'étape 24 de `BUILD-PLAN.md`).
 
 ## Quand et comment utiliser ces specs
 
