@@ -10,6 +10,7 @@ const TIMEOUT_MS = 60_000;
 const RETRY_DELAY_MS = 5_000;
 const CONCURRENCY = 6;
 const USER_AGENT = 'Mozilla/5.0 (compatible; dataviz.heubes.io source link check)';
+const TEMPORARILY_UNAVAILABLE = [502, 503, 504];
 
 function collectUrls() {
   const urls = new Map();
@@ -26,11 +27,13 @@ function collectUrls() {
 }
 
 // 'broken' fails the run; 'unverified' covers answers that say nothing about
-// whether the source still exists (anti-bot 403, rate limiting, TLS quirks).
+// whether the source still exists (anti-bot 403, rate limiting, TLS quirks,
+// a server or gateway briefly unavailable).
 function classify(outcome) {
   if (outcome.status !== undefined) {
     if (outcome.status < 400) return 'ok';
-    if (outcome.status === 404 || outcome.status === 410 || outcome.status >= 500) return 'broken';
+    if (outcome.status === 404 || outcome.status === 410) return 'broken';
+    if (outcome.status >= 500 && !TEMPORARILY_UNAVAILABLE.includes(outcome.status)) return 'broken';
     return 'unverified';
   }
   if (outcome.code === 'ENOTFOUND' || outcome.code === 'ECONNREFUSED') return 'broken';
@@ -85,7 +88,7 @@ const report = [
   `## Source links: ${results.length} checked, ${broken.length} broken, ${unverified.length} unverified`,
   '',
   ...(broken.length ? ['### Broken', ...broken.map(line), ''] : []),
-  ...(unverified.length ? ['### Unverified (blocked, rate-limited or TLS issue, check by hand if it persists)', ...unverified.map(line), ''] : []),
+  ...(unverified.length ? ['### Unverified (blocked, rate-limited, unavailable or TLS issue, check by hand if it persists)', ...unverified.map(line), ''] : []),
 ].join('\n');
 
 console.log(report);

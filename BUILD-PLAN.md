@@ -406,7 +406,7 @@ npm run build ; le code réel passe.
 
 ## ✅ 18. Surveillance des liens des sources
 
-Chaque semaine, un workflow GitHub vérifie les URL des jeux de données et échoue si l'une est cassée (404, 410, 5xx persistant, domaine introuvable). Les réponses qui ne disent rien de l'existence de la source (anti-robots, limitation, certificat, délai) sont listées sans faire échouer le run. Voir "Surveillance des sources" dans `technical-specifications.md`.
+Chaque semaine, un workflow GitHub vérifie les URL des jeux de données et échoue si l'une est cassée (404, 410, 5xx persistant hors 502, 503 et 504, domaine introuvable). Les réponses qui ne disent rien de l'existence de la source (anti-robots, limitation, indisponibilité passagère, certificat, délai) sont listées sans faire échouer le run. Voir "Surveillance des sources" dans `technical-specifications.md`.
 
 **Critère :** `npm run check-links` classe correctement les URL réelles (aucune cassée, les indéterminées identifiées) ; une URL volontairement cassée fait sortir le script en erreur.
 
