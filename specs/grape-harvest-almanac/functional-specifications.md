@@ -1,64 +1,64 @@
-# Spécification fonctionnelle : L'almanach des vendanges
+# Functional specification: The Grape Harvest Almanac
 
-Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
+Supplements the general `functional-specifications.md`: screen of this visualization (goal, content, interactions, states, responsive).
 
-## Angle éditorial
+## Editorial angle
 
-| Langue | Titre | Résumé |
+| Language | Title | Summary |
 |---|---|---|
 | FR | L'almanach des vendanges | Depuis 1354, la date des vendanges raconte l'histoire du climat en France : sécheresses extrêmes, étés sans fin, crises viticoles et records de précocité. |
 | EN | The Grape Harvest Almanac | Since 1354, French grape harvest dates have traced the history of climate in France: extreme droughts, summers that never came, vineyard crises, and record-breaking early harvests. |
 
-**Présentation longue FR :**
+**Long FR presentation:**
 > Chaque année depuis le quatorzième siècle, des viticulteurs ont noté la date à laquelle ils vendangeaient. Mises bout à bout, ces dates composent l'une des plus longues séries climatiques directement observées au monde : six cent cinquante ans d'étés plus ou moins chauds, racontés depuis sept régions viticoles françaises. On y lit des sécheresses qui ont vidé les rivières, un été qui n'a jamais eu lieu, une crise qui a failli faire disparaître le vignoble, et des records de précocité tout récents.
 
-**Présentation longue EN :**
+**Long EN presentation:**
 > Every year since the fourteenth century, winegrowers have recorded the date they started picking grapes. Strung together, these dates form one of the longest directly observed climate series in the world: six hundred and fifty years of warmer or cooler summers, told through seven French winegrowing regions. They record droughts that emptied rivers, a summer that never came, a crisis that nearly wiped out French vineyards, and very recent records for early harvests.
 
-## Objectif
+## Goal
 
-Montrer, sur une ligne temporelle continue, l'évolution des dates de vendanges dans sept régions viticoles françaises depuis 1354, et donner à lire quatre épisodes historiques qui l'expliquent.
+Show, on a continuous timeline, the evolution of grape harvest dates in seven French winegrowing regions since 1354, and let the reader explore four historical episodes that explain it.
 
-## Contenu (zone de montage)
+## Content (mount area)
 
-- Ligne temporelle horizontale (SVG), axe des années gradué (1354-2007) en abscisse ; jour de vendange en ordonnée, sans graduation affichée (valeur exacte lue via le survol/tap, voir "Interactions" ci-dessous).
-- Une courbe fine par région (valeurs brutes annuelles) et une courbe plus marquée superposée (moyenne mobile sur vingt ans), sept régions au total.
-- Quatre repères historiques sur l'axe des années (voir "Repères historiques" dans `data-model.md`) : trait vertical, cliquable/tap.
-- Légende doublée d'un filtre par région (voir "Sélection des régions" ci-dessous).
-- Tooltip contextuel au survol/tap d'une courbe.
+- Horizontal timeline (SVG), graduated year axis (1354-2007) on the x-axis; harvest day on the y-axis, with no ticks displayed (exact value read via hover/tap, see "Interactions" below).
+- One thin curve per region (raw annual values) and a bolder overlaid curve (twenty-year moving average), seven regions in total.
+- Four historical landmarks on the year axis (see "Historical landmarks" in `data-model.md`): vertical line, clickable/tappable.
+- Legend doubling as a region filter (see "Region selection" below).
+- Contextual tooltip on hover/tap of a curve.
 
 ## Interactions
 
-- **Vue :** plage complète 1354-2007 toujours visible (pas de zoom ni de défilement), sept régions actives, courbes brutes et moyennes mobiles toutes affichées.
-- **Survol / tap d'une courbe :** curseur vertical (crosshair) accroché à l'année la plus proche, tooltip listant, pour chaque région active ayant une donnée cette année-là, sa date de vendange exacte (ex. "Bourgogne : 22 octobre").
-- **Sélection des régions :** sept cases à cocher (une par région), doublant la légende. Décocher une région masque ses deux courbes (brute et moyenne mobile). Les sept régions sont cochées par défaut.
-- **Clic/tap sur un repère historique :** ouvre un panneau de détail (titre, description, voir "Repères historiques" dans `data-model.md`) ; un second tap ailleurs (mobile) ou un nouveau clic sur le repère (desktop, pour le refermer) le referme, même comportement que le tooltip de `flower-phenology`.
-- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les régions cochées sont restaurées, y compris une sélection vide. Le tooltip et le panneau d'un repère historique ne sont pas capturés (voir "État dans l'URL" dans `technical-specifications.md`).
+- **View:** full 1354-2007 range always visible (no zoom or scrolling), seven regions active, raw curves and moving averages all displayed.
+- **Hover / tap on a curve:** vertical cursor (crosshair) snapped to the nearest year, tooltip listing, for each active region with data that year, its exact harvest date (e.g. "Bourgogne : 22 octobre").
+- **Region selection:** seven checkboxes (one per region), doubling the legend. Unchecking a region hides both its curves (raw and moving average). All seven regions are checked by default.
+- **Click/tap on a historical landmark:** opens a detail panel (title, description, see "Historical landmarks" in `data-model.md`); a second tap elsewhere (mobile) or a new click on the landmark (desktop, to close it) closes it, same behavior as the `flower-phenology` tooltip.
+- **Shared link** (see "Shareable state in the URL" in the general `functional-specifications.md`): the checked regions are restored, including an empty selection. The tooltip and the panel of a historical landmark are not captured (see "State in the URL" in `technical-specifications.md`).
 
-## Vue tableau
+## Table view
 
-Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+See "Data table view" in the general `functional-specifications.md`.
 
-- **Légende :** "Date moyenne des vendanges, par siècle et par région (nombre d'années renseignées entre parenthèses)" / "Average harvest date, by century and region (number of recorded years in brackets)".
-- **Lignes :** un siècle par ligne, du 14e au 21e.
-- **Colonnes :** une par région, dans l'ordre des cases à cocher. Cellule : date moyenne des vendanges sur les années renseignées du siècle (31 août + décalage moyen), suivie du nombre d'années entre parenthèses ("26 septembre (99)"), pour que le lecteur juge la fiabilité d'une moyenne qui ne repose parfois que sur une poignée d'années. "n.d." quand la région n'a aucune année dans le siècle.
-- **Pas de ligne de total :** une moyenne toutes périodes confondues effacerait l'avancée des vendanges, qui est l'objet de la visualisation.
+- **Caption:** "Date moyenne des vendanges, par siècle et par région (nombre d'années renseignées entre parenthèses)" / "Average harvest date, by century and region (number of recorded years in brackets)".
+- **Rows:** one century per row, from the 14th to the 21st.
+- **Columns:** one per region, in checkbox order. Cell: average harvest date over the years with data in the century (August 31 + average offset), followed by the number of years in brackets ("26 septembre (99)"), so that the reader can judge the reliability of an average that sometimes rests on only a handful of years. "n.d." when the region has no year in the century.
+- **No total row:** an average across all periods would erase the advance of the harvests, which is the subject of the visualization.
 
-## États
+## States
 
-- **Chargement :** le temps que le JSON de vendanges soit récupéré et que la ligne temporelle s'initialise ; zone de montage réservée sans saut de mise en page.
-- **Erreur :** échec de récupération du JSON → message d'erreur, pas de ligne temporelle vide silencieuse.
-- **Vide :** aucune région cochée (si le visiteur décoche tout) → message invitant à en cocher au moins une, plutôt qu'une ligne temporelle sans courbe sans explication.
+- **Loading:** the time for the harvest JSON to be fetched and the timeline to initialize; mount area reserved with no layout shift.
+- **Error:** JSON fetch failure → error message, no silent empty timeline.
+- **Empty:** no region checked (if the visitor unchecks everything) → message inviting them to check at least one, rather than a timeline with no curve and no explanation.
 
 ## Responsive
 
-Version tactile adaptée (voir "Responsive" dans `technical-specifications.md` général, appliquée ici) :
+Adapted touch version (see "Responsive" in the general `technical-specifications.md`, applied here):
 
-- Tap sur une courbe pour le curseur/tooltip plutôt que survol ; un second tap ailleurs le referme.
-- Sélecteur de régions en puces défilantes horizontalement sous un certain seuil de largeur, plutôt qu'une rangée de cases à cocher qui prendrait trop de place à côté de la légende.
+- Tap on a curve for the cursor/tooltip rather than hover; a second tap elsewhere closes it.
+- Region selector as horizontally scrolling chips below a certain width threshold, rather than a row of checkboxes that would take too much room next to the legend.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-L'interaction principale (ligne temporelle SVG, survol/tap des courbes et des repères) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général).
+The main interaction (SVG timeline, hover/tap on curves and landmarks) is not natively accessible by keyboard or screen reader. Documented as a known limitation, without fallback, in line with the project's default rule (see "Rules common to all visualizations" in the general `technical-specifications.md`).
 
-Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
+Fallback: the table view (see "Table view" above) gives access to the same data, in summary form, by keyboard and screen reader.

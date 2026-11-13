@@ -48,7 +48,7 @@ const MONARCH_COLOR = '#eb6834';
 const RIVER_COLOR = '#a8c5da';
 const RIVER_LINE_WIDTH_PX = 1.5;
 // Must match the grid step used by the density preprocessing script
-// (see "Prétraitement" in specs/monarch-migration/data-model.md): each cell is
+// (see "Preprocessing" in specs/monarch-migration/data-model.md): each cell is
 // centered on its own [lat, lng] with this size in each direction.
 const DENSITY_CELL_DEGREES = 1;
 // Counts are heavy-tailed (median cell: 28 per year, max: 4 904): a square root left most cells near-invisible.
@@ -56,8 +56,8 @@ const DENSITY_ALPHA_EXPONENT = 0.25;
 const DENSITY_MAX_ALPHA = 0.95;
 const ZOOM_SCALE_EXTENT: [number, number] = [1, 6];
 
-// relief.webp (see bird-migrations/technical-specifications.md, "Relief : alignement au
-// redimensionnement") is reused unmodified: it is a single fixed raster covering the whole
+// relief.webp (see bird-migrations/technical-specifications.md, "Relief: alignment on
+// resize") is reused unmodified: it is a single fixed raster covering the whole
 // world at a pixel density calibrated once by fitting bird-migrations' Europe/Africa
 // rectangle into a 2600x4348 reference frame. That calibration is independent of whatever
 // geometry is actually displayed live (the projection's rotate/center never change), so the

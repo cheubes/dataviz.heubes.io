@@ -36,4 +36,10 @@ Implementation follows `BUILD-PLAN.md`, which lays out the build in incremental 
 
 ## License
 
-Code and content are licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+Code and content are dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/) (see [`LICENSE`](LICENSE)).
+
+This does not cover third-party material, which keeps its own license:
+
+- the source datasets and the data files derived from them (`public/data/`), under the license of their source, shown on each visualization's page;
+- the Ubuntu font (`public/fonts/ubuntu/`), under the [Ubuntu Font Licence 1.0](public/fonts/ubuntu/UFL.txt);
+- the Creative Commons icons of the footer, from [Font Awesome Free](https://fontawesome.com) under CC BY 4.0.

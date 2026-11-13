@@ -55,8 +55,8 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 const PAW_SYMBOL_ID = 'dv-endangered-species-paw';
 
 // Generic animal silhouette (paw print), reused for all six species rather
-// than one icon per species (see "Rendu" in technical-specifications.md and
-// "Iconographie" in style-guide.md: no icon library, minimal inline SVG).
+// than one icon per species (see "Rendering" in technical-specifications.md and
+// "Iconography" in style-guide.md: no icon library, minimal inline SVG).
 function buildPawSymbol(): SVGSymbolElement {
   const symbol = document.createElementNS(SVG_NS, 'symbol');
   symbol.setAttribute('id', PAW_SYMBOL_ID);
@@ -184,7 +184,7 @@ export async function mountEndangeredSpecies(
   root.appendChild(defsSvg);
 
   // Created (and placed) above the cards now, populated further down once
-  // the cards/render loop exist (see "Contrôles de lecture" in
+  // the cards/render loop exist (see "Playback controls" in
   // functional-specifications.md : moved above after user feedback).
   const controls = document.createElement('div');
   controls.className = 'dv-endangered-species__controls';

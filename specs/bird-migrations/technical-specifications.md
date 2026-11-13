@@ -1,120 +1,120 @@
-# Spécifications techniques : Les routes de migration
+# Technical specifications: The Migration Routes
 
-Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
+Complements the general `technical-specifications.md`: technical choices specific to this visualization, beyond the common rules.
 
-## Techno carte
+## Map technology
 
-D3 v7 seul, pas de Leaflet (voir échanges de cadrage : cohérence entre les trois visualisations, pas de dépendance à un serveur de tuiles tiers en runtime).
+D3 v7 only, no Leaflet (see scoping discussions: consistency across the three visualizations, no dependency on a third-party tile server at runtime).
 
-- **Fond de carte :** silhouette terrestre mondiale (`public/data/bird-migrations/basemap.json`, voir "Prétraitement" dans `data-model.md`), objet TopoJSON `land` (une seule géométrie fusionnée, sans frontières par pays) issu du paquet `world-atlas` (données Natural Earth, domaine public), converti en GeoJSON côté client via `topojson-client`. Pas de découpage aux seuls contours Europe/Afrique : la projection est cadrée sur cette zone (voir "Projection" ci-dessous), le reste du monde existe dans les données mais déborde hors du cadre visible sur les côtés.
-- **Projection :** `d3.geoNaturalEarth1`, cadrée via `fitExtent` sur un rectangle géographique (lng -25 à 45, lat -36 à 68) couvrant l'Europe (jusqu'à la Scandinavie) et l'Afrique. Borne nord relevée de 55 à 68° pour inclure les aires de reproduction réelles des espèces ajoutées après la cigogne (voir "Historique" dans `data-model.md`).
-- **Proportions de la zone de montage :** le rectangle géographique ci-dessus est nettement plus haut que large (ratio largeur/hauteur ≈ 0,59 sous cette projection), mais la hauteur de la zone de montage suit la hauteur par défaut du site (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général), pas un ajustement pixel-perfect à ce ratio (qui demanderait une hauteur ≈ 1,7 fois la largeur, disproportionnée dans la mise en page du site) : compromis en faveur d'une carte courte plutôt que d'un cadrage large-écran ou de la fidélité totale au ratio géographique, au prix d'une bande de mer/désert supplémentaire visible de part et d'autre de l'Europe et l'Afrique.
-- **Piège rencontré :** le rectangle de cadrage passé à `fitExtent` doit être un anneau **horaire** (Nord, Est, Sud, Ouest en partant du coin sud-ouest). Un anneau antihoraire (la convention GeoJSON RFC 7946 standard) est interprété par d3-geo comme "tout sauf ce rectangle" et cadre sur le monde entier au lieu de la zone voulue — silencieux, sans erreur, à surveiller si ce rectangle est modifié.
-- **Cours d'eau (v5) :** `public/data/bird-migrations/rivers.json` (voir "Cours d'eau (fond de carte)" dans `data-model.md`), géométrie `MultiLineString` brute, **couverture mondiale** (pas seulement le rectangle de cadrage Europe/Afrique, voir "Fond de carte" ci-dessus pour la même remarque sur la silhouette), dessinée sur le canvas de fond dans le même clip que la silhouette terrestre (`ctx.clip()` au tracé `landFeature`, avant tout tracé de relief ou de rivière, voir "Relief" ci-dessous), teinte `#a8c5da`, épaisseur `1.5px` divisée par `transform.k` pour rester visuellement constante au zoom — même teinte et même traitement que les cours d'eau de `paris-trees`/`monument-layers`, aucun filtre géographique ni curation par nom (voir "Cours d'eau (fond de carte)" dans `data-model.md` pour la raison).
-- **Relief (v5) :** `public/data/bird-migrations/relief.webp`, image raster préteintée (voir "Relief (fond de carte)" dans `data-model.md`), dessinée par-dessus le remplissage plat de la silhouette et sous les cours d'eau, dans le même clip. Voir "Relief : alignement au redimensionnement" ci-dessous pour la technique d'alignement avec la projection dynamique — premier asset raster du site, à la différence des trois autres cartes (silhouette 100 % vectorielle).
+- **Basemap:** worldwide land silhouette (`public/data/bird-migrations/basemap.json`, see "Preprocessing" in `data-model.md`), TopoJSON `land` object (a single merged geometry, without country borders) from the `world-atlas` package (Natural Earth data, public domain), converted to GeoJSON client-side via `topojson-client`. No clipping to the Europe/Africa outlines alone: the projection is framed on this area (see "Projection" below), the rest of the world exists in the data but overflows outside the visible frame on the sides.
+- **Projection:** `d3.geoNaturalEarth1`, framed via `fitExtent` on a geographic rectangle (lng -25 to 45, lat -36 to 68) covering Europe (up to Scandinavia) and Africa. Northern bound raised from 55 to 68° to include the actual breeding grounds of the species added after the stork (see "History" in `data-model.md`).
+- **Mount area proportions:** the geographic rectangle above is much taller than it is wide (width/height ratio ≈ 0.59 under this projection), but the mount area height follows the site's default height (see "Rules common to all visualizations" in the general `technical-specifications.md`), not a pixel-perfect fit to this ratio (which would require a height ≈ 1.7 times the width, disproportionate within the site layout): a compromise in favor of a short map rather than a widescreen framing or full fidelity to the geographic ratio, at the cost of an extra band of sea/desert visible on either side of Europe and Africa.
+- **Pitfall encountered:** the framing rectangle passed to `fitExtent` must be a **clockwise** ring (North, East, South, West starting from the southwest corner). A counterclockwise ring (the standard GeoJSON RFC 7946 convention) is interpreted by d3-geo as "everything except this rectangle" and frames the whole world instead of the intended area: silent, with no error, to watch out for if this rectangle is modified.
+- **Rivers (v5):** `public/data/bird-migrations/rivers.json` (see "Rivers (basemap)" in `data-model.md`), raw `MultiLineString` geometry, **worldwide coverage** (not just the Europe/Africa framing rectangle, see "Basemap" above for the same remark about the silhouette), drawn on the background canvas within the same clip as the land silhouette (`ctx.clip()` on the `landFeature` path, before any relief or river drawing, see "Relief" below), color `#a8c5da`, width `1.5px` divided by `transform.k` to stay visually constant when zooming: same color and same treatment as the rivers of `paris-trees`/`monument-layers`, no geographic filter or curation by name (see "Rivers (basemap)" in `data-model.md` for the reason).
+- **Relief (v5):** `public/data/bird-migrations/relief.webp`, pre-tinted raster image (see "Relief (basemap)" in `data-model.md`), drawn on top of the silhouette's flat fill and under the rivers, within the same clip. See "Relief: alignment on resize" below for the technique used to align it with the dynamic projection: the site's first raster asset, unlike the other three maps (100% vector silhouette).
 
-## Rendu des trajectoires
+## Trajectory rendering
 
-**Canvas 2D, pas SVG**, à la différence de la biodiversité et de la phénologie. Décision prise en anticipation d'un volume de trajectoires potentiellement important (voir échanges de cadrage) ; le jeu de données retenu (32 trajectoires, ≈ 1900 points au total toutes espèces confondues, voir `data-model.md`) reste léger, mais le choix Canvas est conservé pour la cohérence de l'implémentation et sa marge de croissance si d'autres espèces sont ajoutées.
+**Canvas 2D, not SVG**, unlike biodiversity and phenology. Decision made in anticipation of a potentially large volume of trajectories (see scoping discussions); the chosen dataset (32 trajectories, ≈ 1900 points in total across all species, see `data-model.md`) remains light, but the Canvas choice is kept for implementation consistency and its headroom for growth if other species are added.
 
-- D3 reste utilisé pour les calculs (projection géographique, interpolation le long d'une trajectoire via `d3.geoInterpolate`, échelle de couleur par espèce via `d3-scale`), pas pour le rendu DOM des trajectoires elles-mêmes.
-- Deux canvas superposés : un canvas de fond (silhouette terrestre, redessiné seulement au redimensionnement ou au zoom) et un canvas de premier plan (trajectoires), pour appliquer l'effet de traînée uniquement au second sans re-râper le fond à chaque frame.
-- Effet de traînée : à chaque frame, un rectangle semi-transparent est appliqué sur le canvas de premier plan avec `globalCompositeOperation = 'destination-out'` (efface progressivement vers la transparence plutôt que de peindre une couleur opaque par-dessus), puis le nouveau segment est tracé par-dessus.
-- Le tooltip (élément DOM, pas la carte elle-même) reste en HTML standard, superposé au Canvas.
+- D3 is still used for computations (geographic projection, interpolation along a trajectory via `d3.geoInterpolate`, color scale per species via `d3-scale`), not for DOM rendering of the trajectories themselves.
+- Two stacked canvases: a background canvas (land silhouette, redrawn only on resize or zoom) and a foreground canvas (trajectories), so that the trail effect applies only to the latter without re-rasterizing the background at each frame.
+- Trail effect: at each frame, a semi-transparent rectangle is applied to the foreground canvas with `globalCompositeOperation = 'destination-out'` (progressively erases toward transparency rather than painting an opaque color on top), then the new segment is drawn on top.
+- The tooltip (a DOM element, not the map itself) remains standard HTML, overlaid on the Canvas.
 
-## Nouvelles dépendances
+## New dependencies
 
-| Dépendance | Usage | Portée |
+| Dependency | Usage | Scope |
 |---|---|---|
-| `d3-geo` | Projection (`geoNaturalEarth1`), tracé du fond de carte (`geoPath`), interpolation le long d'un trajet (`geoInterpolate`) | Scopée à cette visualisation (île Astro) |
-| `d3-scale` | Échelle de couleur catégorielle par espèce (`scaleOrdinal`) | Idem |
-| `d3-timer` | Boucle d'animation (`timer`, wrapper de `requestAnimationFrame`) | Idem |
-| `d3-zoom` | Pan/zoom (souris et tactile) sur la carte | Idem |
-| `d3-selection` | Requis par `d3-zoom` pour s'attacher au canvas (`select(canvas).call(zoom)`) | Idem |
-| `topojson-client` | Conversion du fond de carte TopoJSON → GeoJSON côté client | Idem |
+| `d3-geo` | Projection (`geoNaturalEarth1`), basemap drawing (`geoPath`), interpolation along a route (`geoInterpolate`) | Scoped to this visualization (Astro island) |
+| `d3-scale` | Categorical color scale per species (`scaleOrdinal`) | Same |
+| `d3-timer` | Animation loop (`timer`, wrapper around `requestAnimationFrame`) | Same |
+| `d3-zoom` | Pan/zoom (mouse and touch) on the map | Same |
+| `d3-selection` | Required by `d3-zoom` to attach to the canvas (`select(canvas).call(zoom)`) | Same |
+| `topojson-client` | Client-side conversion of the TopoJSON basemap → GeoJSON | Same |
 
-Le fond de carte lui-même (`basemap.json`) est un fichier statique committé (voir `data-model.md`), pas une dépendance npm : `world-atlas` n'est pas ajouté au `package.json`, son fichier `countries-110m.json` a été récupéré une fois via le CDN jsDelivr puis réduit à son seul objet `land`. Même logique pour les deux ajouts de v5, `rivers.json` et `relief.webp` (voir "Cours d'eau (fond de carte)" et "Relief (fond de carte)" dans `data-model.md`) : fichiers statiques committés, produits par des scripts ponctuels non committés, aucune dépendance npm ajoutée (le script de prétraitement du relief réutilise `d3-geo`, déjà présent, et `sharp`, déjà présent en dépendance transitive d'Astro, sans l'ajouter explicitement au projet).
+The basemap itself (`basemap.json`) is a committed static file (see `data-model.md`), not an npm dependency: `world-atlas` is not added to `package.json`; its `countries-110m.json` file was retrieved once via the jsDelivr CDN then reduced to its `land` object alone. Same logic for the two v5 additions, `rivers.json` and `relief.webp` (see "Rivers (basemap)" and "Relief (basemap)" in `data-model.md`): committed static files, produced by one-off uncommitted scripts, no npm dependency added (the relief preprocessing script reuses `d3-geo`, already present, and `sharp`, already present as a transitive dependency of Astro, without adding it explicitly to the project).
 
 ## Palette
 
-Palette catégorielle officielle (voir "Palette dataviz" dans `style-guide.md`). Quatre espèces (voir "Sélection des études" dans `data-model.md`), assignées dans l'ordre d'apparition dans `species` :
+Official categorical palette (see "Dataviz palette" in `style-guide.md`). Four species (see "Study selection" in `data-model.md`), assigned in order of appearance in `species`:
 
-| Slot | Teinte | Espèce |
+| Slot | Hue | Species |
 |---|---|---|
-| 1 | Bleu | Cigogne blanche |
-| 2 | Orange | Busard cendré |
-| 3 | Aqua | Coucou gris |
-| 4 | Jaune | Bondrée apivore |
+| 1 | Blue | White stork |
+| 2 | Orange | Montagu's harrier |
+| 3 | Aqua | Common cuckoo |
+| 4 | Yellow | European honey buzzard |
 
-Le slot suivant (magenta) s'appliquera dans cet ordre à la prochaine espèce ajoutée ; au-delà de huit espèces, revoir le regroupement plutôt que d'ajouter une neuvième teinte (voir "Palette dataviz" dans `style-guide.md`). Contrairement au calendrier des fleurs, la couleur d'une espèce d'oiseau ne porte pas de sens réaliste à préserver : la palette officielle s'applique sans exception ici.
+The next slot (magenta) will apply in this order to the next species added; beyond eight species, revisit the grouping rather than adding a ninth hue (see "Dataviz palette" in `style-guide.md`). Unlike the flower calendar, a bird species' color carries no realistic meaning to preserve: the official palette applies here without exception.
 
-## Historique du cadrage nord
+## History of the northern framing
 
-Le cadrage (voir "Projection" ci-dessus) est initialement resté à lat -36/55, calibré sur la seule cigogne blanche (aires de reproduction jusqu'à ~52°N) : les espèces ajoutées ensuite se reproduisant plus au nord (Scandinavie/Finlande), la portion nord de leurs trajectoires projetait au-dessus du cadre visible. Élargi à 68° à la demande explicite de l'utilisateur plutôt que laissé comme limite assumée (voir "Projection" ci-dessus pour la borne retenue et son effet sur les proportions de la zone de montage).
+The framing (see "Projection" above) initially remained at lat -36/55, calibrated on the white stork alone (breeding grounds up to ~52°N): since the species added afterwards breed further north (Scandinavia/Finland), the northern portion of their trajectories projected above the visible frame. Widened to 68° at the explicit request of the user rather than left as an accepted limitation (see "Projection" above for the chosen bound and its effect on the mount area proportions).
 
-En élargissant ce cadrage, plusieurs trajectoires de busard cendré sont apparues comme des segments rectilignes aberrants traversant la carte de part en part (auparavant coupés hors champ par l'ancien cadrage, donc invisibles). Ce n'était pas un artefact du cadrage lui-même mais un vrai problème de qualité de données pré-existant, révélé par le nouveau cadrage : voir "Busard cendré" et "Historique" (v4) dans `data-model.md` pour le diagnostic (ambiguïté de résolution Argos Doppler) et la correction.
+When widening this framing, several Montagu's harrier trajectories appeared as aberrant straight segments crossing the entire map (previously cut off out of view by the old framing, hence invisible). This was not an artifact of the framing itself but a genuine pre-existing data quality problem, revealed by the new framing: see "Montagu's harrier" and "History" (v4) in `data-model.md` for the diagnosis (Argos Doppler resolution ambiguity) and the fix.
 
-## Relief : alignement au redimensionnement
+## Relief: alignment on resize
 
-`relief.webp` (voir "Relief (fond de carte)" dans `data-model.md`) est une image statique, pré-rendue une seule fois au prétraitement. La zone de montage réelle, elle, change de largeur/hauteur à chaque redimensionnement de fenêtre, ce qui recalcule `projection.fitExtent()` sur un rectangle différent à chaque fois (voir "Projection" ci-dessus). Une image raster ne peut pas se reprojeter elle-même au vol comme le fait `d3-geo` pour la silhouette et les cours d'eau (tracés vectoriels, reprojetés nativement à chaque frame par `path()`).
+`relief.webp` (see "Relief (basemap)" in `data-model.md`) is a static image, pre-rendered once during preprocessing. The actual mount area, however, changes width/height at every window resize, which recomputes `projection.fitExtent()` on a different rectangle each time (see "Projection" above). A raster image cannot reproject itself on the fly the way `d3-geo` does for the silhouette and the rivers (vector paths, natively reprojected at each frame by `path()`).
 
-**Solution retenue : un repositionnement affine de l'image entière plutôt qu'une reprojection au runtime.** `fitExtent` calcule une échelle et une translation qui "contiennent" une géométrie donnée dans un rectangle cible en conservant ses proportions (un `contain`, jamais un `stretch`) : pour une même géométrie (`viewBounds`), deux appels à `fitExtent` sur deux rectangles différents ne peuvent donc différer que par une transformation affine uniforme (une échelle plus une translation) entre leurs deux résultats, quel que soit le rapport largeur/hauteur de chacun des deux rectangles. `resize()` exploite cette propriété :
+**Chosen solution: an affine repositioning of the entire image rather than a runtime reprojection.** `fitExtent` computes a scale and a translation that "contain" a given geometry within a target rectangle while preserving its proportions (a `contain`, never a `stretch`): for the same geometry (`viewBounds`), two calls to `fitExtent` on two different rectangles can therefore only differ by a uniform affine transformation (a scale plus a translation) between their two results, whatever the width/height ratio of each of the two rectangles. `resize()` exploits this property:
 
-1. Un premier appel à `fitExtent()` sur le rectangle de référence (celui utilisé au prétraitement pour calibrer l'échelle, `RELIEF_REF_WIDTH`/`RELIEF_REF_HEIGHT` dans `render.ts`, 2600 × 4348 px, le rectangle Europe/Afrique lui-même, **pas** l'étendue complète de `relief.webp`, voir point suivant) capture l'échelle et la translation de référence (`refScale`/`refTranslate`).
-2. Un second appel sur le rectangle réel de la zone de montage (celui utilisé pour tout le reste du rendu) laisse la projection dans l'état réel et donne l'échelle et la translation réelles.
-3. Le rapport des deux échelles donne `reliefScale` ; la différence des deux translations, pondérée par ce rapport, donne le point d'ancrage du repère de référence dans le repère réel.
-4. `drawBasemap()` positionne alors l'image entière en une seule fois, sans recalcul pixel par pixel : `basemapCtx.drawImage(reliefImg, reliefOffsetX, reliefOffsetY, reliefImg.naturalWidth * reliefScale, reliefImg.naturalHeight * reliefScale)`.
+1. A first call to `fitExtent()` on the reference rectangle (the one used during preprocessing to calibrate the scale, `RELIEF_REF_WIDTH`/`RELIEF_REF_HEIGHT` in `render.ts`, 2600 × 4348 px, the Europe/Africa rectangle itself, **not** the full extent of `relief.webp`, see next point) captures the reference scale and translation (`refScale`/`refTranslate`).
+2. A second call on the actual mount area rectangle (the one used for all the rest of the rendering) leaves the projection in its actual state and gives the actual scale and translation.
+3. The ratio of the two scales gives `reliefScale`; the difference between the two translations, weighted by this ratio, gives the anchor point of the reference frame within the actual frame.
+4. `drawBasemap()` then positions the entire image in one go, without any pixel-by-pixel recomputation: `basemapCtx.drawImage(reliefImg, reliefOffsetX, reliefOffsetY, reliefImg.naturalWidth * reliefScale, reliefImg.naturalHeight * reliefScale)`.
 
-Ce recalcul a lieu à chaque redimensionnement (coût négligeable, un second `fitExtent` reste un calcul de bornes géométriques, pas un rendu), jamais par frame ; le zoom/pan (`d3-zoom`) s'applique ensuite uniformément à toute la scène (silhouette, relief, cours d'eau, trajectoires) via la même transformation Canvas (`translate`/`scale` de `transform`), donc sans recalcul supplémentaire propre au relief.
+This recomputation happens at each resize (negligible cost, a second `fitExtent` is still a geometric bounds calculation, not a render), never per frame; zoom/pan (`d3-zoom`) then applies uniformly to the whole scene (silhouette, relief, rivers, trajectories) via the same Canvas transformation (`translate`/`scale` from `transform`), hence with no additional recomputation specific to the relief.
 
-**`relief.webp` couvre toute la silhouette terrestre, pas seulement le rectangle de référence Europe/Afrique** (voir "Couverture mondiale" dans `data-model.md`) : son pixel (0,0) ne correspond donc pas au coin du rectangle de référence, mais à un point décalé (`RELIEF_ORIGIN_X`/`RELIEF_ORIGIN_Y` dans `render.ts`, = (-5523, -496) dans le repère du rectangle de référence, tous deux négatifs puisque les Amériques et l'Asie/Océanie débordent loin à gauche et au-dessus de ce rectangle sous cette projection). `reliefOffsetX`/`reliefOffsetY` (étape 3 ci-dessus) prennent donc en compte ce décalage : `reliefOffsetX = liveTranslate[0] - reliefScale * (refTranslate[0] - RELIEF_ORIGIN_X)` (et l'équivalent en Y) plutôt que la formule plus simple `liveTranslate[0] - reliefScale * refTranslate[0]` qui suffirait si l'image couvrait exactement le rectangle de référence — équivalent à décaler `refTranslate` de cette origine avant d'appliquer la même relation affine.
+**`relief.webp` covers the entire land silhouette, not just the Europe/Africa reference rectangle** (see "Worldwide coverage" in `data-model.md`): its pixel (0,0) therefore does not correspond to the corner of the reference rectangle, but to an offset point (`RELIEF_ORIGIN_X`/`RELIEF_ORIGIN_Y` in `render.ts`, = (-5523, -496) in the reference rectangle's frame, both negative since the Americas and Asia/Oceania overflow far to the left of and above this rectangle under this projection). `reliefOffsetX`/`reliefOffsetY` (step 3 above) therefore take this offset into account: `reliefOffsetX = liveTranslate[0] - reliefScale * (refTranslate[0] - RELIEF_ORIGIN_X)` (and the equivalent in Y) rather than the simpler formula `liveTranslate[0] - reliefScale * refTranslate[0]`, which would suffice if the image covered exactly the reference rectangle: equivalent to shifting `refTranslate` by this origin before applying the same affine relationship.
 
-**Piège potentiel à surveiller :** `RELIEF_REF_WIDTH`/`RELIEF_REF_HEIGHT`/`RELIEF_ORIGIN_X`/`RELIEF_ORIGIN_Y` (dans `render.ts`) doivent rester strictement identiques aux valeurs utilisées par le script de prétraitement qui a généré `relief.webp`, et `viewBounds` doit rester strictement identique des deux côtés (même risque que le "Piège rencontré" du cadrage ci-dessus). Une divergence entre les deux ne produit ni erreur ni avertissement, seulement un relief visuellement désaligné avec le littoral de la silhouette. Si `viewBounds` est un jour modifié (un nouvel élargissement du cadrage nord, par exemple, voir ci-dessus) ou si la silhouette (`basemap.json`) change, `relief.webp` doit être régénéré avec le même script de prétraitement (l'origine et les dimensions de l'image en dépendent directement, voir "Relief (fond de carte)" dans `data-model.md`).
+**Potential pitfall to watch out for:** `RELIEF_REF_WIDTH`/`RELIEF_REF_HEIGHT`/`RELIEF_ORIGIN_X`/`RELIEF_ORIGIN_Y` (in `render.ts`) must remain strictly identical to the values used by the preprocessing script that generated `relief.webp`, and `viewBounds` must remain strictly identical on both sides (same risk as the framing "Pitfall encountered" above). A divergence between the two produces neither an error nor a warning, only a relief visually misaligned with the silhouette's coastline. If `viewBounds` is modified one day (a new widening of the northern framing, for example, see above) or if the silhouette (`basemap.json`) changes, `relief.webp` must be regenerated with the same preprocessing script (the image's origin and dimensions depend directly on them, see "Relief (basemap)" in `data-model.md`).
 
 ## Animation
 
-- Boucle `d3-timer`, pilotée par un temps simulé en jours (0-365, cyclique). Un cycle calendaire complet dure 36 secondes en vitesse "Normal" (voir "Interactions" dans `functional-specifications.md`), 72 s en "Lent" (×0,5), 18 s en "Rapide" (×2).
-- Chaque trajectoire est découpée en jour de l'année (voir "Prétraitement" dans `data-model.md`, unwrap déjà fait côté données) ; à chaque frame, la position courante d'un individu est interpolée entre ses deux points encadrants via `d3.geoInterpolate` (interpolation le long du grand cercle, pas une simple moyenne linéaire lat/lng).
-- Le sélecteur de vitesse modifie le facteur d'avancement du temps simulé, pas le taux de rafraîchissement de l'animation (toujours cadencée par `requestAnimationFrame` via `d3-timer`).
-- Nom du mois simulé affiché via `Intl.DateTimeFormat(lang, { month: 'long' })` plutôt qu'un tableau de libellés maison : localisation FR/EN gratuite.
+- `d3-timer` loop, driven by a simulated time in days (0-365, cyclic). A complete calendar cycle lasts 36 seconds at "Normal" speed (see "Interactions" in `functional-specifications.md`), 72 s at "Slow" (×0.5), 18 s at "Fast" (×2).
+- Each trajectory is split by day of the year (see "Preprocessing" in `data-model.md`, unwrap already done on the data side); at each frame, an individual's current position is interpolated between its two surrounding points via `d3.geoInterpolate` (interpolation along the great circle, not a simple linear lat/lng average).
+- The speed selector changes the advance factor of the simulated time, not the animation's refresh rate (always paced by `requestAnimationFrame` via `d3-timer`).
+- Name of the simulated month displayed via `Intl.DateTimeFormat(lang, { month: 'long' })` rather than a custom array of labels: FR/EN localization for free.
 
-## Vue statique
+## Static view
 
-Deuxième mode d'affichage (voir "Bascule de vue" dans `functional-specifications.md`), partageant le canvas de premier plan et la logique de filtrage espèce/direction avec la vue animée plutôt que de dupliquer le rendu.
+Second display mode (see "View toggle" in `functional-specifications.md`), sharing the foreground canvas and the species/direction filtering logic with the animated view rather than duplicating the rendering.
 
-- **Bascule vers "Statique" :** arrête la boucle `d3-timer` (`timer.stop()`) plutôt que de la laisser tourner à vide : pas de calcul ni de rendu inutile pendant que la vue statique est affichée. Le canvas de premier plan est vidé (`clearRect` complet, pas l'effacement progressif de l'effet de traînée) puis chaque trajectoire active est tracée en une seule passe, du premier au dernier point (`lineTo` successifs sur les points projetés), sans interpolation temporelle : la vue statique n'a pas de notion de temps simulé.
-- **Distinction automne/printemps :** `context.setLineDash([6, 4])` pour les trajectoires de printemps, trait plein (`setLineDash([])`) pour l'automne. Pas de changement de teinte : la couleur reste le code espèce (voir "Palette" ci-dessus), le pointillé porte la distinction de direction.
-- **Survol/tap en vue statique :** contrairement à la vue animée (une seule position "tête" par trajectoire, mise à jour chaque frame), la vue statique doit détecter la proximité du curseur avec n'importe quel segment du tracé complet. Chaque trajectoire garde en mémoire son chemin en pixels (recalculé à chaque tracé, y compris après un zoom/pan) ; la détection calcule la distance point-segment (projection orthogonale bornée au segment) pour chaque segment du tracé, et retient le plus proche sous le seuil de tolérance.
-- **Bascule vers "Animée" :** vide le chemin en pixels mémorisé de chaque trajectoire, efface le canvas de premier plan, relance la boucle `d3-timer` (nouvelle instance plutôt que résumée, pour repartir d'un delta de temps propre et éviter un grand saut d'animation dû au temps passé en vue statique).
-- **Redessin sur changement de filtre ou de zoom :** en vue animée, un changement de filtre est pris en compte à la frame suivante automatiquement ; en vue statique, sans boucle active, chaque changement (case espèce, radio direction, zoom/pan) déclenche un redessin explicite.
-- **Note historique :** c'est en vue statique, où un trajet entier se trace d'un coup, que les positions Argos Doppler mal résolues du busard cendré sont devenues visibles pour la première fois sous forme de longs segments rectilignes aberrants (voir "Historique du cadrage nord" ci-dessus et "Busard cendré" dans `data-model.md`) : un vrai défaut de qualité de données, révélé par cette vue plutôt que causé par elle, et corrigé à la source depuis.
+- **Switching to "Static":** stops the `d3-timer` loop (`timer.stop()`) rather than letting it run idle: no unnecessary computation or rendering while the static view is displayed. The foreground canvas is cleared (full `clearRect`, not the progressive erasure of the trail effect) then each active trajectory is drawn in a single pass, from the first to the last point (successive `lineTo` calls on the projected points), with no time interpolation: the static view has no notion of simulated time.
+- **Autumn/spring distinction:** `context.setLineDash([6, 4])` for spring trajectories, solid line (`setLineDash([])`) for autumn. No change of hue: the color remains the species code (see "Palette" above), the dashing carries the direction distinction.
+- **Hover/tap in static view:** unlike the animated view (a single "head" position per trajectory, updated every frame), the static view must detect the cursor's proximity to any segment of the complete path. Each trajectory keeps its pixel path in memory (recomputed at each drawing, including after a zoom/pan); detection computes the point-to-segment distance (orthogonal projection bounded to the segment) for each segment of the path, and keeps the closest one below the tolerance threshold.
+- **Switching to "Animated":** clears the stored pixel path of each trajectory, erases the foreground canvas, restarts the `d3-timer` loop (a new instance rather than a resumed one, to restart from a clean time delta and avoid a large animation jump due to the time spent in static view).
+- **Redraw on filter or zoom change:** in the animated view, a filter change is automatically taken into account at the next frame; in the static view, with no active loop, each change (species checkbox, direction radio, zoom/pan) triggers an explicit redraw.
+- **Historical note:** it was in the static view, where an entire route is drawn at once, that the poorly resolved Argos Doppler positions of the Montagu's harrier first became visible as long aberrant straight segments (see "History of the northern framing" above and "Montagu's harrier" in `data-model.md`): a genuine data quality defect, revealed by this view rather than caused by it, and corrected at the source since then.
 
-## Hydratation
+## Hydration
 
-`client:visible`, implémenté par un `IntersectionObserver` sur la zone de montage (pas de directive `client:*` disponible : le chrome du site n'utilise aucun framework UI, voir "JavaScript et visualisations" dans `technical-specifications.md` général) : le montage réel (fetch des données, initialisation Canvas) ne se déclenche qu'à l'approche du viewport.
+`client:visible`, implemented by an `IntersectionObserver` on the mount area (no `client:*` directive available: the site chrome uses no UI framework, see "JavaScript and visualizations" in the general `technical-specifications.md`): the actual mounting (data fetch, Canvas initialization) is triggered only when approaching the viewport.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cette visualisation.
+See "Accessibility (known limitation)" in this visualization's `functional-specifications.md`.
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pan/zoom tactile via `d3-zoom` (pincer pour zoomer, glisser pour déplacer, pris en charge nativement par ce module aussi bien à la souris qu'au doigt) ; tooltip déclenché par `pointerdown`/`click` plutôt que `pointermove` quand `event.pointerType === 'touch'`.
+See "Responsive" in this visualization's `functional-specifications.md`. Touch pan/zoom via `d3-zoom` (pinch to zoom, drag to move, natively supported by this module with both mouse and finger); tooltip triggered by `pointerdown`/`click` rather than `pointermove` when `event.pointerType === 'touch'`.
 
-## État dans l'URL
+## State in the URL
 
-Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+See "State in the URL" in the general `technical-specifications.md` for the common mechanism.
 
-| Paramètre | Valeurs | Défaut (absent de l'URL) |
+| Parameter | Values | Default (absent from the URL) |
 |---|---|---|
-| `species` | Identifiants d'espèce de `species` séparés par des virgules (`white-stork,common-cuckoo`) ; vide (`species=`) : aucune espèce active (état "vide") | Toutes les espèces actives |
-| `direction` | `autumn`, `spring` | Les deux |
-| `view` | `static` | Vue animée |
-| `day` | Jour simulé, entier de 0 (1er janvier) à 364 | Lecture en cours |
-| `zoom` | `<k>,<lon>,<lat>` (format commun) | Zone Europe/Afrique entière |
+| `species` | Species identifiers from `species` separated by commas (`white-stork,common-cuckoo`); empty (`species=`): no active species ("empty" state) | All species active |
+| `direction` | `autumn`, `spring` | Both |
+| `view` | `static` | Animated view |
+| `day` | Simulated day, integer from 0 (January 1) to 364 | Playback in progress |
+| `zoom` | `<k>,<lon>,<lat>` (common format) | Entire Europe/Africa area |
 
-- **`day` suit la règle générale de position temporelle, sans l'écart d'`earthquakes` :** en pause, les traînées s'effacent mais la tête de chaque trajectoire active ce jour-là reste dessinée, donc l'image en pause montre bien où se trouve chaque oiseau. `day` est écrit à la pause (bouton Play/Pause) et retiré à la reprise ; un lien porteur de `day` ouvre la vue animée en pause sur ce jour (bouton sur "Lecture", `aria-pressed="false"`, mois affiché). Pas de curseur temporel dans cette visualisation, donc pas d'écriture sur `change`.
-- Précision au jour entier : un jour simulé dure environ 0,1 s en vitesse "Normal", la position restaurée diffère de moins d'un jour de celle vue à la pause.
-- `day` reste dans l'URL en vue statique : il ne s'y voit pas, mais le retour à la vue animée reprend en pause sur ce jour (la pause survit au changement de vue, voir "Vue statique" ci-dessus). Un lien `view=static&day=…` restaure donc les deux.
-- Non capturés, en plus de la vitesse (règle générale) : le surlignage d'un individu et sa fiche épinglée au tap, sélection transitoire au même titre qu'une infobulle (en vue animée, la tête qui la porte disparaît d'ailleurs dès que l'individu sort de sa période de migration).
-- `species` : un identifiant inconnu est ignoré ; une liste dont aucun identifiant n'est connu est ignorée en entier (toutes les espèces actives).
+- **`day` follows the general temporal position rule, without the `earthquakes` deviation:** when paused, the trails fade but the head of each trajectory active on that day remains drawn, so the paused image does show where each bird is. `day` is written on pause (Play/Pause button) and removed on resume; a link carrying `day` opens the animated view paused on that day (button set to "Play", `aria-pressed="false"`, month displayed). No time slider in this visualization, hence no writing on `change`.
+- Whole-day precision: a simulated day lasts about 0.1 s at "Normal" speed, the restored position differs by less than a day from the one seen when paused.
+- `day` stays in the URL in the static view: it is not visible there, but returning to the animated view resumes paused on that day (the pause survives the view change, see "Static view" above). A `view=static&day=…` link therefore restores both.
+- Not captured, in addition to speed (general rule): the highlighting of an individual and its card pinned on tap, a transient selection just like a tooltip (in the animated view, the head that carries it disappears anyway as soon as the individual leaves its migration period).
+- `species`: an unknown identifier is ignored; a list in which no identifier is known is ignored entirely (all species active).

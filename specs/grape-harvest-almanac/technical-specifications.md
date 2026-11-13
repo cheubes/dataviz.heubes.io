@@ -1,71 +1,71 @@
-# Spécifications techniques : L'almanach des vendanges
+# Technical specifications: The Grape Harvest Almanac
 
-Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
+Supplements the general `technical-specifications.md`: technical choices specific to this visualization, beyond the common rules.
 
-## Rendu
+## Rendering
 
-D3 v7 (`d3-shape` pour les lignes, `d3-scale` pour les échelles) ; interactions (case à cocher, survol, tooltip, clic sur repère) en JS natif (`addEventListener`), pas de `d3-selection`/`d3-transition`. Rendu SVG : volume de données faible (sept régions, au plus 654 points bruts chacune, environ 4 500 points au total en comptant les moyennes mobiles), pas d'enjeu de performance justifiant Canvas, même raisonnement que `flower-phenology`.
+D3 v7 (`d3-shape` for the lines, `d3-scale` for the scales); interactions (checkbox, hover, tooltip, click on landmark) in plain JS (`addEventListener`), no `d3-selection`/`d3-transition`. SVG rendering: low data volume (seven regions, at most 654 raw points each, about 4,500 points in total counting the moving averages), no performance concern justifying Canvas, same reasoning as `flower-phenology`.
 
-## Lignes discontinues (lacunes de données)
+## Broken lines (data gaps)
 
-Chaque courbe (brute ou moyenne mobile) est découpée en autant de segments `<path>` que de plages continues de données : aucun trait n'est tracé entre deux années séparées par une lacune, pour ne pas laisser croire à une interpolation qui n'existe pas dans la donnée source. `d3.line().defined(...)` gère nativement cette coupure à partir de la présence ou non de `dayOffset`/`smoothedDayOffset` pour chaque année (voir "Format de sortie" dans `data-model.md`).
+Each curve (raw or moving average) is split into as many `<path>` segments as there are continuous ranges of data: no line is drawn between two years separated by a gap, so as not to suggest an interpolation that does not exist in the source data. `d3.line().defined(...)` natively handles this break based on the presence or absence of `dayOffset`/`smoothedDayOffset` for each year (see "Output format" in `data-model.md`).
 
 ## Axes
 
-Pas de zoom ni de pan (retirés à la demande de l'utilisateur, voir aussi "Interactions" dans `functional-specifications.md`) : l'échelle des années est fixe, calculée une fois à la mise en page (et recalculée au redimensionnement de la fenêtre) plutôt que recomposée dynamiquement à chaque geste.
+No zoom or pan (removed at the user's request, see also "Interactions" in `functional-specifications.md`): the year scale is fixed, computed once at layout (and recomputed when the window is resized) rather than dynamically rebuilt on each gesture.
 
-- **Axe des années (abscisse) :** graduations et libellés affichés, pas de rétrécissement/agrandissement possible.
-- **Axe du jour de vendange (ordonnée) :** ni graduation ni libellé affichés (retirés à la demande de l'utilisateur) ; des lignes de grille horizontales discrètes (`var(--dv-gridline)`) restent tracées comme repère visuel, la valeur exacte se lit via le survol/tap (voir "Interactions" dans `functional-specifications.md`).
+- **Year axis (x-axis):** ticks and labels displayed, no shrinking/enlarging possible.
+- **Harvest day axis (y-axis):** neither ticks nor labels displayed (removed at the user's request); discreet horizontal gridlines (`var(--dv-gridline)`) are still drawn as a visual reference, and the exact value is read via hover/tap (see "Interactions" in `functional-specifications.md`).
 
-Sans zoom/pan, la zone de montage n'a plus besoin de capturer les gestes tactiles pour elle-même (`touch-action: none` retiré) : le défilement normal de la page fonctionne au doigt au-dessus du graphique, comme sur le reste du site.
+Without zoom/pan, the mount area no longer needs to capture touch gestures for itself (`touch-action: none` removed): normal page scrolling works with a finger over the chart, as on the rest of the site.
 
-## Repères historiques
+## Historical landmarks
 
-Trait vertical pointillé `1px` `var(--dv-gridline)` sur toute la hauteur de la zone de tracé, plus une petite icône cliquable ancrée sur l'axe des années. `phylloxera-crisis` (seul repère à couvrir une période plutôt qu'une année, voir `data-model.md`) se rend comme une bande verticale semi-transparente entre `year` et `yearEnd` plutôt qu'un simple trait, pour distinguer visuellement un intervalle d'un instant précis. Le panneau de détail ouvert au clic (voir "Interactions" dans `functional-specifications.md`) est positionné en superposition, ancré au repère, sans déplacer le tracé.
+Dotted vertical line `1px` `var(--dv-gridline)` over the full height of the plot area, plus a small clickable icon anchored on the year axis. `phylloxera-crisis` (the only landmark covering a period rather than a year, see `data-model.md`) is rendered as a semi-transparent vertical band between `year` and `yearEnd` rather than a simple line, to visually distinguish an interval from a specific moment. The detail panel opened on click (see "Interactions" in `functional-specifications.md`) is positioned as an overlay, anchored to the landmark, without moving the plot.
 
 ## Palette
 
-Palette catégorielle officielle du site (voir "Palette dataviz" dans `style-guide.md`), pas d'exception : sept régions, dans l'ordre chronologique de leur date de départ dans le dataset (voir "Régions retenues" dans `data-model.md`), assignées aux sept premiers slots fixes (sur huit disponibles).
+The site's official categorical palette (see "Dataviz palette" in `style-guide.md`), no exception: seven regions, in chronological order of their start date in the dataset (see "Chosen regions" in `data-model.md`), assigned to the first seven fixed slots (out of eight available).
 
-| Région | Slot | Teinte |
+| Region | Slot | Hue |
 |---|---|---|
-| Bourgogne | 1 | Bleu (`#2a78d6`) |
+| Bourgogne | 1 | Blue (`#2a78d6`) |
 | Vallée du Rhône (sud) | 2 | Orange (`#eb6834`) |
 | Bordeaux | 3 | Aqua (`#1baf7a`) |
-| Languedoc | 4 | Jaune (`#eda100`) |
+| Languedoc | 4 | Yellow (`#eda100`) |
 | Alsace | 5 | Magenta (`#e87ba4`) |
-| Basse vallée de la Loire | 6 | Vert (`#008300`) |
+| Basse vallée de la Loire | 6 | Green (`#008300`) |
 | Champagne | 7 | Violet (`#4a3aa7`) |
 
-Sept séries en lignes : à ce nombre, la palette catégorielle officielle passe du régime "adjacent" (gate-safe jusqu'à huit teintes pour des lignes qui peuvent se croiser sans se chevaucher en aplat) au palier suivant de l'échelle du skill dataviz ("5-6 : plafond souple, légende ou petits multiples" puis "7-8 : plafond du jeton de couleurs") : décision assumée avec l'utilisateur, qui a validé l'ajout malgré ce resserrement plutôt que de proposer des petits multiples. Pas d'étiquette directe en fin de courbe (retirée à la demande de l'utilisateur avec les graduations de l'ordonnée, voir "Axes" ci-dessus) : l'identification des régions reste portée par la légende/filtre à cases à cocher, toujours visible au-dessus du graphique (voir "Contenu" dans `functional-specifications.md`), et par le tooltip au survol, jamais par la couleur seule.
+Seven series as lines: at this number, the official categorical palette moves from the "adjacent" regime (gate-safe up to eight hues for lines that may cross without overlapping as filled areas) to the next tier of the dataviz skill's scale ("5-6: soft cap, legend or small multiples" then "7-8: color token cap"): a decision accepted with the user, who approved the addition despite this tightening rather than proposing small multiples. No direct label at the end of the curves (removed at the user's request along with the y-axis ticks, see "Axes" above): region identification remains carried by the checkbox legend/filter, always visible above the chart (see "Content" in `functional-specifications.md`), and by the tooltip on hover, never by color alone.
 
-## Conversion des dates
+## Date conversion
 
-Les données sources expriment une date de vendange en nombre de jours après le 31 août, y compris négatif (voir "Schéma des données brutes" dans `data-model.md`). Converties côté client en date calendaire lisible (ex. `31 août + 22 jours` → "22 septembre") pour l'axe, les tooltips et le panneau de détail des repères ; l'année de référence utilisée pour ce calcul (une année non bissextile arbitraire) n'a pas d'incidence, seul le décalage en jours depuis le 31 août est signifiant.
+The source data expresses a harvest date as a number of days after August 31, possibly negative (see "Raw data schema" in `data-model.md`). Converted client-side into a readable calendar date (e.g. `31 août + 22 jours` → "22 septembre") for the axis, the tooltips and the landmark detail panel; the reference year used for this calculation (an arbitrary non-leap year) has no effect, only the offset in days from August 31 is meaningful.
 
-## Nouvelles dépendances
+## New dependencies
 
-Aucune : `d3-shape` et `d3-scale` sont déjà des dépendances du site (via `bird-migrations`, `flower-phenology`), réutilisées à l'identique, scopées à cette visualisation par convention npm. Pas de `d3-selection`/`d3-transition` : à la différence de `bird-migrations`/`flower-phenology`, les interactions sont en JS natif (voir "Rendu" ci-dessus).
+None: `d3-shape` and `d3-scale` are already dependencies of the site (via `bird-migrations`, `flower-phenology`), reused as is, scoped to this visualization by npm convention. No `d3-selection`/`d3-transition`: unlike `bird-migrations`/`flower-phenology`, the interactions are in plain JS (see "Rendering" above).
 
-## Hydratation
+## Hydration
 
 `client:visible`.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cette visualisation.
+See "Accessibility (known limitation)" in this visualization's `functional-specifications.md`.
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation.
+See "Responsive" in this visualization's `functional-specifications.md`.
 
-## État dans l'URL
+## State in the URL
 
-Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+See "State in the URL" in the general `technical-specifications.md` for the common mechanism.
 
-| Paramètre | Valeurs | Défaut (absent de l'URL) |
+| Parameter | Values | Default (absent from the URL) |
 |---|---|---|
-| `regions` | Identifiants (`id`, voir `data-model.md`) des régions cochées, séparés par des virgules, dans l'ordre des cases ; vide (`regions=`) si aucune région n'est cochée | Les sept régions |
+| `regions` | Identifiers (`id`, see `data-model.md`) of the checked regions, comma-separated, in checkbox order; empty (`regions=`) if no region is checked | All seven regions |
 
-- Un identifiant inconnu est ignoré ; une liste dont aucun identifiant n'est reconnu est traitée comme invalide (retour aux sept régions), pour qu'un lien cassé ne tombe pas sur l'état vide.
-- Le panneau de détail d'un repère historique et le tooltip ne sont pas capturés : ce sont des consultations passagères, pas un état de la vue.
+- An unknown identifier is ignored; a list in which no identifier is recognized is treated as invalid (falls back to all seven regions), so that a broken link does not land on the empty state.
+- The detail panel of a historical landmark and the tooltip are not captured: they are transient consultations, not a state of the view.

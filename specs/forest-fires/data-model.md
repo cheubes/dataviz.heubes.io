@@ -1,63 +1,63 @@
-# Modèle de données : Où la France a brûlé
+# Data model: Where France Has Burned
 
-Complète `data-model.md` général : schéma du dataset propre à cette visualisation.
+Supplements the general `data-model.md`: schema of the dataset specific to this visualization.
 
-## Dataset source
+## Source dataset
 
 | `name` | `publisher` | `url` | `license` | `retrieved` |
 |---|---|---|---|---|
 | Base de Données sur les Incendies de Forêts en France (BDIFF) | Ministère de l'Agriculture et de la Souveraineté alimentaire / IGN | https://bdiff.agriculture.gouv.fr/ | Licence Ouverte v2.0 | 2026-09-22 |
 | API Découpage administratif (communes) | Etalab | https://geo.api.gouv.fr/decoupage-administratif | Licence Ouverte v2.0 | 2026-09-22 |
 
-La BDIFF centralise, depuis 2006, les données sur les incendies de forêt survenus sur l'ensemble du territoire français (métropole, Corse, départements et collectivités d'outre-mer), au niveau de l'incident individuel (commune d'origine, date, surface parcourue, cause suspectée — pas de coordonnées géographiques précises, voir "Champs source utilisés" ci-dessous). Elle a absorbé en janvier 2023 la base Prométhée, qui couvrait depuis 1973 les quinze départements du pourtour méditerranéen : la période antérieure à 2006 n'est donc disponible que pour cette zone, pas pour le territoire national (voir "Périmètre retenu" ci-dessous). Hébergée par l'IGN pour le compte du ministère de l'Agriculture, mise à jour annuellement (données disponibles jusqu'à l'année antérieure à l'année en cours).
+Since 2006, the BDIFF has centralized data on forest fires occurring across the whole of French territory (mainland France, Corsica, overseas departments and collectivities), at the level of the individual incident (municipality of origin, date, burned area, suspected cause, no precise geographic coordinates, see "Source fields used" below). In January 2023 it absorbed the Prométhée database, which had covered the fifteen departments of the Mediterranean rim since 1973: the period before 2006 is therefore only available for that area, not for the national territory (see "Chosen scope" below). Hosted by IGN on behalf of the Ministry of Agriculture, updated annually (data available up to the year before the current year).
 
-La seconde source (API Découpage administratif d'Etalab) ne contribue aucun incendie : elle fournit uniquement le centre géographique de chaque commune française, utilisé pour géocoder les incidents BDIFF (voir "Champs source utilisés" et "Prétraitement" ci-dessous).
+The second source (Etalab's API Découpage administratif) contributes no fires: it only provides the geographic center of each French municipality, used to geocode the BDIFF incidents (see "Source fields used" and "Preprocessing" below).
 
-## Périmètre retenu
+## Chosen scope
 
-- **Géographique : France métropolitaine uniquement** (Corse incluse, départements et collectivités d'outre-mer exclus), même décision que `biodiversity`, `monument-layers` et `light-pollution` (voir "Couverture géographique" dans le `data-model.md` de `biodiversity`) : une carte à silhouette unique ne se prête pas à l'échelle très différente des DOM/COM sans maquette à encarts, non retenue pour cette première version.
-- **Temporel : 2006 à 2025** (2025 étant l'année la plus récente disponible au moment du prétraitement, 2026 étant l'année en cours). Le choix de démarrer en 2006 plutôt qu'en 1973 (date de départ de l'ex-Prométhée) écarte délibérément un historique plus profond mais restreint aux seuls départements méditerranéens : la couverture nationale complète, cohérente avec l'angle éditorial (voir `functional-specifications.md`), prime sur la profondeur temporelle.
-- **Aucun seuil de surface minimal** : la BDIFF enregistre des incendies dès quelques mètres carrés (le plus petit incident retenu fait 1 m², voir "Statistiques mesurées" ci-dessous) — aucun filtre supplémentaire appliqué au prétraitement.
-- **Uniquement les feux de forêt** (paramètre `if[type]=F` de la recherche BDIFF, appliqué par défaut par le site lui-même sans action du script de prétraitement, voir "Prétraitement" ci-dessous) : la BDIFF couvre aussi d'autres types d'espaces (agricole, etc.) hors du périmètre de cette visualisation.
+- **Geographic: mainland France only** (Corsica included, overseas departments and collectivities excluded), same decision as `biodiversity`, `monument-layers` and `light-pollution` (see "Geographic coverage" in the `data-model.md` of `biodiversity`): a single-silhouette map does not lend itself to the very different scale of the DOM/COM without an inset layout, not chosen for this first version.
+- **Temporal: 2006 to 2025** (2025 being the most recent year available at preprocessing time, 2026 being the current year). Choosing to start in 2006 rather than 1973 (the start date of the former Prométhée) deliberately sets aside a deeper history restricted to the Mediterranean departments only: complete national coverage, consistent with the editorial angle (see `functional-specifications.md`), takes precedence over temporal depth.
+- **No minimum area threshold**: the BDIFF records fires from a few square meters (the smallest incident kept is 1 m², see "Measured statistics" below), no additional filter applied during preprocessing.
+- **Forest fires only** (BDIFF search parameter `if[type]=F`, applied by default by the site itself without any action from the preprocessing script, see "Preprocessing" below): the BDIFF also covers other types of land (agricultural, etc.) outside the scope of this visualization.
 
-## Champs source utilisés
+## Source fields used
 
-L'export BDIFF (voir "Prétraitement" ci-dessous) ne fournit ni latitude ni longitude, à la différence de l'hypothèse initiale de cadrage : seuls le code INSEE et le nom de la commune de départ situent géographiquement chaque incendie. La position de chaque point sur la carte est donc le centre de sa commune (API Découpage administratif), pas les coordonnées précises du sinistre lui-même.
+The BDIFF export (see "Preprocessing" below) provides neither latitude nor longitude, contrary to the initial scoping assumption: only the INSEE code and the name of the starting municipality locate each fire geographically. The position of each point on the map is therefore the center of its municipality (API Découpage administratif), not the precise coordinates of the fire itself.
 
-| Champ source (BDIFF, export CSV) | Usage |
+| Source field (BDIFF, CSV export) | Usage |
 |---|---|
-| Année, Numéro | Identifiant de l'incendie, construction du lien vers la fiche officielle (voir "Lien vers la fiche officielle" ci-dessous) |
-| Département | Regroupement par département (voir "Format de sortie"), fiche de détail |
-| Code INSEE | Géocodage par commune (voir "Prétraitement" ci-dessous) |
-| Nom de la commune | Position administrative, fiche de détail |
-| Date de première alerte | Année de rattachement sur la chronologie (voir "Interactions" dans `functional-specifications.md`), date affichée en fiche de détail |
-| Surface parcourue (m2) | Taille du point sur la carte (voir "Taille des points" dans `technical-specifications.md`), fiche de détail |
-| Nature | Cause suspectée, normalisée en fiche de détail uniquement, pas de filtre dédié (voir "Interactions" dans `functional-specifications.md`) ; rempli pour 52,8 % des incidents retenus (voir "Statistiques mesurées"), conforme à l'hypothèse de cadrage sur ce taux de remplissage |
+| Année, Numéro | Fire identifier, construction of the link to the official record (see "Link to the official record" below) |
+| Département | Grouping by department (see "Output format"), detail card |
+| Code INSEE | Geocoding by municipality (see "Preprocessing" below) |
+| Nom de la commune | Administrative position, detail card |
+| Date de première alerte | Year assigned on the timeline (see "Interactions" in `functional-specifications.md`), date displayed in the detail card |
+| Surface parcourue (m2) | Point size on the map (see "Point size" in `technical-specifications.md`), detail card |
+| Nature | Suspected cause, normalized, in the detail card only, no dedicated filter (see "Interactions" in `functional-specifications.md`); filled in for 52.8% of the incidents kept (see "Measured statistics"), consistent with the scoping assumption on this fill rate |
 
-Champ complémentaire, de l'API Découpage administratif :
+Additional field, from the API Découpage administratif:
 
-| Champ source (Etalab) | Usage |
+| Source field (Etalab) | Usage |
 |---|---|
-| `centre` (point) par commune (`code` INSEE) | Latitude/longitude de chaque incendie (centre de sa commune de départ, voir ci-dessus) |
+| `centre` (point) per municipality (INSEE `code`) | Latitude/longitude of each fire (center of its starting municipality, see above) |
 
-## Lien vers la fiche officielle
+## Link to the official record
 
-Chaque incendie de la BDIFF dispose d'une fiche officielle consultable à une URL de la forme `https://bdiff.agriculture.gouv.fr/incendie/{année}/{numéro}` (vérifiée à l'implémentation sur plusieurs fiches, gabarit stable). Même pattern que le lien vers la Plateforme Ouverte du Patrimoine sur `monument-layers` (voir "Lien vers la notice de référence" dans son `data-model.md`) : un identifiant conservé par incendie, lien calculé côté client à partir d'un seul gabarit d'URL, pas d'URL complète stockée dans `fires.json`.
+Each BDIFF fire has an official record available at a URL of the form `https://bdiff.agriculture.gouv.fr/incendie/{année}/{numéro}` (checked during implementation on several records, stable template). Same pattern as the link to the Plateforme Ouverte du Patrimoine in `monument-layers` (see "Link to the reference record" in its `data-model.md`): one identifier kept per fire, link computed client-side from a single URL template, no full URL stored in `fires.json`.
 
-## Prétraitement
+## Preprocessing
 
-Script ponctuel (Node.js plutôt que Python, hors dépendance npm du projet — l'interpréteur Python du poste d'implémentation nécessitait une acceptation de licence Xcode hors du périmètre de cette tâche ; même logique de prétraitement one-off que `monument-layers` par ailleurs) :
+One-off script (Node.js rather than Python, outside the project's npm dependencies: the Python interpreter on the implementation machine required accepting an Xcode license, outside the scope of this task; otherwise the same one-off preprocessing logic as `monument-layers`):
 
-1. **Récupération de l'export.** Contrairement à la base Mérimée de `monument-layers`, la BDIFF n'expose aucun fichier statique téléchargeable en une requête sur data.gouv.fr (la ressource qui y est référencée pointe vers le portail lui-même, pas vers un fichier). Le site `bdiff.agriculture.gouv.fr` expose en revanche un export CSV complet (`GET /incendies/zip`, dans une session portant les critères de recherche posés via `GET /incendies?if[dateAlerteDeb][date]=JJ/MM/AAAA&if[dateAlerteFin][date]=JJ/MM/AAAA`) — mais plafonné à 30 000 résultats par export (message d'erreur explicite au-delà). Le prétraitement interroge donc deux plages consécutives (2006-2015 : 25 367 incidents, 2016-2025 : 27 444 incidents, chacune sous le plafond) et concatène les deux CSV obtenus.
-2. Restriction aux seuls feux de forêt (`Type de feu : F`, filtre par défaut du site, confirmé dans l'en-tête de chaque export) et à la France métropolitaine (Corse incluse), par exclusion des départements d'outre-mer (971, 972, 973, 974, 975, 976, 977, 978) sur le champ `Département` (voir "Périmètre retenu" ci-dessus).
-3. **Géocodage par commune :** l'export BDIFF ne portant pas de coordonnées, chaque incident est rapproché de sa commune (`Code INSEE`) via l'export complet de l'API Découpage administratif (`GET /communes?fields=centre,code,nom,departement`, ~35 000 communes), et prend le `centre` de cette commune comme position. Rejet des incidents dont le code INSEE ne correspond à aucune commune actuelle de ce référentiel (communes fusionnées/déléguées depuis, dont le code a changé — voir "Statistiques mesurées" ci-dessous pour le volume exact).
-4. Extraction de l'année (champ `Année`, déjà distinct de la date complète dans l'export) comme année de rattachement.
-5. Normalisation de la cause suspectée (`Nature`) en valeur fixe (voir "Format de sortie" ci-dessous).
-6. Tri par année croissante puis écriture de `public/data/forest-fires/fires.json`.
+1. **Retrieving the export.** Unlike the Mérimée database of `monument-layers`, the BDIFF exposes no static file downloadable in a single request on data.gouv.fr (the resource referenced there points to the portal itself, not to a file). The `bdiff.agriculture.gouv.fr` site does, however, expose a complete CSV export (`GET /incendies/zip`, in a session carrying the search criteria set via `GET /incendies?if[dateAlerteDeb][date]=JJ/MM/AAAA&if[dateAlerteFin][date]=JJ/MM/AAAA`), but capped at 30,000 results per export (explicit error message beyond that). The preprocessing therefore queries two consecutive ranges (2006-2015: 25,367 incidents, 2016-2025: 27,444 incidents, each under the cap) and concatenates the two resulting CSVs.
+2. Restriction to forest fires only (`Type de feu : F`, the site's default filter, confirmed in the header of each export) and to mainland France (Corsica included), by excluding the overseas departments (971, 972, 973, 974, 975, 976, 977, 978) on the `Département` field (see "Chosen scope" above).
+3. **Geocoding by municipality:** since the BDIFF export carries no coordinates, each incident is matched to its municipality (`Code INSEE`) via the complete export of the API Découpage administratif (`GET /communes?fields=centre,code,nom,departement`, ~35,000 municipalities), and takes the `centre` of that municipality as its position. Incidents whose INSEE code matches no current municipality in this reference are rejected (municipalities merged/delegated since then, whose code has changed, see "Measured statistics" below for the exact volume).
+4. Extraction of the year (`Année` field, already separate from the full date in the export) as the assigned year.
+5. Normalization of the suspected cause (`Nature`) into a fixed value (see "Output format" below).
+6. Sort by ascending year, then write `public/data/forest-fires/fires.json`.
 
-**Fond de carte :** réutilisation telle quelle de `public/data/biodiversity/basemap.json` (copié sous `public/data/forest-fires/basemap.json`), même périmètre géographique (France métropolitaine, Corse incluse), même format TopoJSON (`objects.france`) consommé de la même façon (`topojson-client`) — même précédent que `monument-layers` (voir "Prétraitement" dans son `data-model.md`). Pas d'enrichissement (hydrographie, réseau routier) : aucun besoin de repère géographique supplémentaire constaté à l'implémentation, à la différence de `monument-layers`/`paris-trees`.
+**Basemap:** reuse as is of `public/data/biodiversity/basemap.json` (copied to `public/data/forest-fires/basemap.json`), same geographic extent (mainland France, Corsica included), same TopoJSON format (`objects.france`) consumed in the same way (`topojson-client`), same precedent as `monument-layers` (see "Preprocessing" in its `data-model.md`). No enrichment (rivers, road network): no need for an additional geographic landmark was found during implementation, unlike `monument-layers`/`paris-trees`.
 
-## Format de sortie
+## Output format
 
 ```json
 {
@@ -81,22 +81,22 @@ Script ponctuel (Node.js plutôt que Python, hors dépendance npm du projet — 
 }
 ```
 
-`departmentCode` référence `departments` (liste des 93 départements métropolitains effectivement représentés dans le jeu de données retenu, sur 96 au total — voir "Statistiques mesurées"), pour éviter de répéter le nom du département sur chacun des incidents ; mêmes `nameFr`/`nameEn` que `monument-layers` (voir son `data-model.md` pour la convention). `id` reprend l'année et le numéro d'incendie de la source (`{Année}-{Numéro}`), utilisé pour construire le lien vers la fiche officielle (voir "Lien vers la fiche officielle" ci-dessus). `lat`/`lng` sont le centre de la commune de départ (précision ~4 décimales, celle fournie par l'API Découpage administratif), pas les coordonnées précises du sinistre (voir "Champs source utilisés" ci-dessus). `cause` porte une valeur normalisée (`natural` / `human` / `malicious` / `unknown`, mappée depuis le champ source `Nature` : `Naturelle` → `natural` ; `Involontaire (particulier)`, `Involontaire (travaux)`, `Accidentelle` → `human` ; `Malveillance` → `malicious` ; vide → `unknown`) ; affichée uniquement en fiche de détail, jamais utilisée comme filtre ni comme couleur (voir "Interactions" dans `functional-specifications.md`). `burntArea` en mètres carrés, l'unité déjà utilisée par la source (aucune conversion au prétraitement) ; converti en hectares à l'affichage seulement (voir "Taille des points" dans `technical-specifications.md`), l'unité utilisée par le site BDIFF lui-même sur ses propres fiches.
+`departmentCode` references `departments` (list of the 93 mainland departments actually represented in the dataset kept, out of 96 in total, see "Measured statistics"), to avoid repeating the department name on each incident; same `nameFr`/`nameEn` as `monument-layers` (see its `data-model.md` for the convention). `id` takes the year and fire number from the source (`{Année}-{Numéro}`), used to build the link to the official record (see "Link to the official record" above). `lat`/`lng` are the center of the starting municipality (precision ~4 decimals, the one provided by the API Découpage administratif), not the precise coordinates of the fire (see "Source fields used" above). `cause` carries a normalized value (`natural` / `human` / `malicious` / `unknown`, mapped from the source field `Nature`: `Naturelle` → `natural`; `Involontaire (particulier)`, `Involontaire (travaux)`, `Accidentelle` → `human`; `Malveillance` → `malicious`; empty → `unknown`); displayed only in the detail card, never used as a filter or as a color (see "Interactions" in `functional-specifications.md`). `burntArea` in square meters, the unit already used by the source (no conversion during preprocessing); converted to hectares at display time only (see "Point size" in `technical-specifications.md`), the unit used by the BDIFF site itself on its own records.
 
-## Champs dérivés côté client (pas dans le JSON)
+## Client-side derived fields (not in the JSON)
 
-- **Compte d'incendies et surface totale brûlée à l'année simulée courante :** calculés à partir des `fires` dont `year` correspond à l'année affichée (voir "Contenu" dans `functional-specifications.md`).
-- **Lien vers la fiche officielle** (fiche de détail) : `https://bdiff.agriculture.gouv.fr/incendie/{year}/{numéro}`, reconstruit à partir de `id` (voir "Lien vers la fiche officielle" ci-dessus).
+- **Fire count and total burned area for the current simulated year:** computed from the `fires` whose `year` matches the displayed year (see "Content" in `functional-specifications.md`).
+- **Link to the official record** (detail card): `https://bdiff.agriculture.gouv.fr/incendie/{year}/{numéro}`, rebuilt from `id` (see "Link to the official record" above).
 
-## Statistiques mesurées
+## Measured statistics
 
-Mesurées sur l'export réel du 22/09/2026 :
+Measured on the actual export of September 22, 2026:
 
-- **52 811** incidents "feu de forêt" retenus par la BDIFF entre 2006 et 2025 (France entière, avant filtrage géographique).
-- **1 378** exclus car situés dans un département d'outre-mer (voir "Périmètre retenu").
-- **487** exclus (0,9 % du reste) faute de correspondance dans le référentiel courant des communes (code INSEE d'une commune depuis fusionnée/déléguée) — répartis sur 197 codes INSEE distincts, aucun département ou année en particulier.
-- **50 946** incidents retenus dans `fires.json`, répartis sur **93** départements métropolitains (sur 96 : absents Paris [75], les Hauts-de-Seine [92] et la Seine-Saint-Denis [93], forêt quasi inexistante sur ces trois départements).
-- Cause suspectée renseignée pour **52,8 %** des incidents retenus (`natural` 2 916, `human` 15 231, `malicious` 8 732, `unknown` 24 067).
-- Surface parcourue (`burntArea`, m²) : minimum 1, médiane 1 000 (0,1 ha), p90 30 924 (≈ 3 ha), p99 511 000 (≈ 51 ha), maximum 125 520 000 (1 255,2 ha) — l'incendie de Landiras (Gironde, juillet 2022), de loin le plus étendu de la période.
-- Par année, de 1 347 incidents (2024) à 4 356 (2022, l'année la plus active de la période) ; surface totale brûlée par année de 2 663 ha (2024) à 58 914 ha (2022).
-- Part du pourtour méditerranéen (quinze départements ex-Prométhée) dans le total annuel : 70,0 % en 2006-2010, 59,6 % en 2021-2025 — confirme empiriquement le glissement géographique évoqué par l'angle éditorial (voir `functional-specifications.md`), sans le contredire ni l'exagérer.
+- **52,811** "forest fire" incidents kept by the BDIFF between 2006 and 2025 (all of France, before geographic filtering).
+- **1,378** excluded because located in an overseas department (see "Chosen scope").
+- **487** excluded (0.9% of the remainder) for lack of a match in the current municipality reference (INSEE code of a municipality since merged/delegated), spread over 197 distinct INSEE codes, no particular department or year.
+- **50,946** incidents kept in `fires.json`, spread over **93** mainland departments (out of 96: missing Paris [75], Hauts-de-Seine [92] and Seine-Saint-Denis [93], where forest is almost nonexistent).
+- Suspected cause filled in for **52.8%** of the incidents kept (`natural` 2,916, `human` 15,231, `malicious` 8,732, `unknown` 24,067).
+- Burned area (`burntArea`, m²): minimum 1, median 1,000 (0.1 ha), p90 30,924 (≈ 3 ha), p99 511,000 (≈ 51 ha), maximum 125,520,000 (1,255.2 ha), the Landiras fire (Gironde, July 2022), by far the largest of the period.
+- By year, from 1,347 incidents (2024) to 4,356 (2022, the most active year of the period); total burned area per year from 2,663 ha (2024) to 58,914 ha (2022).
+- Share of the Mediterranean rim (fifteen former Prométhée departments) in the annual total: 70.0% in 2006-2010, 59.6% in 2021-2025, empirically confirming the geographic shift mentioned in the editorial angle (see `functional-specifications.md`), without contradicting or exaggerating it.

@@ -1,7 +1,7 @@
 ---
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { COVER_PLACEHOLDER, getCover } from '../scripts/covers';
 import { getVisualizationSlug } from '../content.config';
 
 interface Props {
@@ -14,15 +14,31 @@ const { lang, title, summary, themes } = viz.data;
 const slug = getVisualizationSlug(viz.id, lang);
 const href = lang === 'fr' ? `/fr/${slug}/` : `/${slug}/`;
 
-const coverExtension = ['jpg', 'png'].find((ext) =>
-  existsSync(join(process.cwd(), 'public', 'covers', `${slug}.${ext}`))
-);
-const coverPath = coverExtension ? `/covers/${slug}.${coverExtension}` : '/cover-placeholder.svg';
+const cover = getCover(slug);
+
+// Rendered tile width in the catalog grid (minmax(340px, 1fr), --dv-space-4 gap,
+// --dv-gutter padding, 1320px container): one column up to 727px of viewport,
+// two up to 1091px, then three tiles of about 416px.
+const COVER_SIZES = '(max-width: 727px) calc(100vw - 24px), (max-width: 1091px) calc(50vw - 24px), 416px';
 ---
 
 <article class="dv-viz-card" data-themes={themes.join(' ')}>
   <a href={href} class="dv-viz-card__cover-link">
-    <img src={coverPath} alt={title} loading="lazy" width="1200" height="675" class="dv-viz-card__cover" />
+    {
+      cover ? (
+        <Image
+          src={cover}
+          alt={title}
+          widths={[400, 800, 1200]}
+          sizes={COVER_SIZES}
+          format="webp"
+          loading="lazy"
+          class="dv-viz-card__cover"
+        />
+      ) : (
+        <img src={COVER_PLACEHOLDER} alt={title} loading="lazy" width="1200" height="675" class="dv-viz-card__cover" />
+      )
+    }
   </a>
   <div class="dv-viz-card__body">
     <h3 class="dv-viz-card__title">

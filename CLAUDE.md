@@ -1,44 +1,44 @@
 # dataviz.heubes.io
 
-Catalogue de visualisations de données interactives et originales, chacune explorant un dataset open data avec une mise en forme qui lui est propre. Site statique, multilingue (français / anglais), généré avec Astro et hébergé sur GitHub Pages.
+A catalog of original, interactive data visualizations, each exploring an open data dataset with its own visual treatment. Static, multilingual site (French / English), generated with Astro and hosted on GitHub Pages.
 
-## État du projet
+## Project status
 
-L'implémentation suit `BUILD-PLAN.md`, qui définit l'ordre en étapes incrémentales. `specs/` reste la source de vérité pour toute décision de conception : avant d'écrire ou de modifier du code, lire les fichiers de specs concernés par la tâche.
+Implementation follows `BUILD-PLAN.md`, which defines the order in incremental steps. `specs/` remains the source of truth for every design decision: before writing or modifying code, read the spec files relevant to the task.
 
-## Structure de `specs/`
+## Structure of `specs/`
 
-- **`functional-specifications.md`** : périmètre du projet, utilisateurs cibles, parcours utilisateurs, règles transverses (multilingue, navigation), hors périmètre.
-- **`data-model.md`** : modèle de données général (entités Visualisation, Dataset source), organisation des fichiers de contenu (content collections Astro), conventions de nommage, contraintes de validation.
-- **`technical-specifications.md`** : stack technique, hébergement/déploiement, architecture (routage, content collections), performance, accessibilité, SEO, et règles communes à toutes les visualisations (chargement des librairies, gestion des données, états communs).
-- **`style-guide.md`** : charte graphique (couleurs, typographie, espacements), composants UI de base (en-tête, pied de page, tuiles), palette dataviz — valable pour l'ensemble du site, y compris les visualisations.
-- **`home-page.md`** : spécification fonctionnelle de la page d'accueil (catalogue).
-- **`about-page.md`** : spécification de la page "À propos" (contenu attendu, accès, format).
-- **`<viz-slug>/`** : un dossier par visualisation publiée, avec :
-  - `data-model.md` : schéma du dataset propre à cette visualisation (colonnes, format, source précise, transformations).
-  - `functional-specifications.md` : spécification fonctionnelle de la visualisation, y compris son écran (objectif, contenu, interactions, états, responsive).
-  - `technical-specifications.md` : règles techniques propres à cette visualisation (librairie de rendu, technique d'interaction, contraintes de performance ou d'accessibilité spécifiques) qui vont au-delà des règles communes du fichier général. Presque systématique plutôt qu'exceptionnel : chaque visualisation étant une pièce de code originale (pas un gabarit générique rejoué), elle a presque toujours un choix technique propre à documenter.
+- **`functional-specifications.md`**: project scope, target users, user journeys, cross-cutting rules (multilingual, navigation), out of scope.
+- **`data-model.md`**: general data model (Visualization and Source dataset entities), content file organization (Astro content collections), naming conventions, validation constraints.
+- **`technical-specifications.md`**: tech stack, hosting/deployment, architecture (routing, content collections), performance, accessibility, SEO, and rules common to all visualizations (library loading, data handling, common states).
+- **`style-guide.md`**: style guide (colors, typography, spacing), base UI components (header, footer, tiles), dataviz palette, applicable to the whole site, visualizations included.
+- **`home-page.md`**: functional specification of the home page (catalog).
+- **`about-page.md`**: specification of the "About" page (expected content, access, format).
+- **`<viz-slug>/`**: one folder per published visualization, with:
+  - `data-model.md`: schema of the dataset specific to this visualization (columns, format, exact source, transformations).
+  - `functional-specifications.md`: functional specification of the visualization, including its screen (goal, content, interactions, states, responsive).
+  - `technical-specifications.md`: technical rules specific to this visualization (rendering library, interaction technique, specific performance or accessibility constraints) that go beyond the common rules of the general file. Almost systematic rather than exceptional: since each visualization is an original piece of code (not a generic template replayed), it almost always has a technical choice of its own to document.
 
-Quatorze dossiers `<viz-slug>/` existent à ce stade (voir la liste à l'étape 8 de `BUILD-PLAN.md`, fait).
+Nineteen `<viz-slug>/` folders exist at this stage: fourteen published visualizations (see the list in step 8 of `BUILD-PLAN.md`, done), and five specified but not yet implemented (`exoplanets`, `meteorites`, `sunspots`, `brest-sea-level`, `tropical-nights`, see step 24 of `BUILD-PLAN.md`).
 
-## Quand et comment utiliser ces specs
+## When and how to use these specs
 
-- **Avant toute implémentation**, lire le ou les fichiers concernés par la tâche. Les six specs générales (`functional-specifications.md`, `data-model.md`, `technical-specifications.md`, `style-guide.md`, `home-page.md`, `about-page.md`) s'appliquent à tout le site ; chaque dossier `<viz-slug>/` complète avec ce qui est propre à cette visualisation.
-- **Les fichiers se référencent constamment entre eux** ("voir `X.md`") plutôt que de dupliquer l'information. Suivre ces renvois plutôt que de deviner : si une spec mentionne une règle définie ailleurs (le comportement multilingue, une couleur de la charte...), la source de vérité est le fichier référencé.
-- **En cas de modification d'une spec**, chercher les autres fichiers qui la référencent (`grep` du nom de fichier dans `specs/`) et vérifier qu'ils restent cohérents avec le changement.
-- **En cas de doute ou de silence des specs** sur un point nécessaire à l'implémentation, demander plutôt que de supposer : ce sont des choix de conception, pas des détails d'implémentation libres.
-- **En cas de contradiction** entre le code et une spec, la spec fait foi ; si l'implémentation révèle qu'une spec doit changer, mettre à jour la spec et expliquer pourquoi, plutôt que de s'en écarter silencieusement dans le code.
+- **Before any implementation**, read the file or files relevant to the task. The six general specs (`functional-specifications.md`, `data-model.md`, `technical-specifications.md`, `style-guide.md`, `home-page.md`, `about-page.md`) apply to the whole site; each `<viz-slug>/` folder adds what is specific to that visualization.
+- **Files constantly reference each other** ("see `X.md`") rather than duplicating information. Follow these references rather than guessing: if a spec mentions a rule defined elsewhere (multilingual behavior, a style guide color...), the source of truth is the referenced file.
+- **When modifying a spec**, look for the other files that reference it (`grep` the file name in `specs/`) and check that they stay consistent with the change.
+- **When in doubt, or when the specs are silent** on a point needed for implementation, ask rather than assume: these are design choices, not free implementation details.
+- **In case of contradiction** between the code and a spec, the spec prevails; if the implementation reveals that a spec must change, update the spec and explain why, rather than silently diverging from it in the code.
 
-## Avant chaque commit
+## Before each commit
 
-- **Vérifier l'ensemble des fichiers de `specs/`** pour cohérence, pas seulement ceux directement modifiés par ce commit.
-- **Si une ou plusieurs specs doivent être ajustées** (pour rester cohérentes entre elles, ou avec le changement en cours), bloquer le commit : proposer les mises à jour nécessaires et attendre validation avant de les appliquer, puis de committer.
-- **Mettre à jour `BUILD-PLAN.md`** si nécessaire (état d'avancement).
-- **Mettre à jour `README.md`** si nécessaire.
+- **Check all files in `specs/`** for consistency, not only those directly modified by this commit.
+- **If one or more specs need to be adjusted** (to stay consistent with each other, or with the change in progress), block the commit: propose the necessary updates and wait for approval before applying them, then commit.
+- **Update `BUILD-PLAN.md`** if needed (progress status).
+- **Update `README.md`** if needed.
 
-## Conventions établies
+## Established conventions
 
-- Le contenu des specs (`specs/`, `BUILD-PLAN.md`, ce fichier) est en français : ce sont des documents de conception, pas de la documentation au sens des règles globales. `README.md` reste en anglais.
-- Les noms de fichiers, dossiers, attributs de données et identifiants techniques sont en anglais, en kebab-case (slugs, données, classes CSS) ou en PascalCase pour les composants Astro (voir "Conventions de nommage" dans `technical-specifications.md`).
-- Les couleurs et composants de la charte graphique sont définis une seule fois, dans `style-guide.md` : ne pas introduire de nouvelles valeurs de couleur ou de nouveaux styles de composants ailleurs sans les y ajouter d'abord.
-- Toute nouvelle dépendance (librairie de visualisation, package npm) propre à une visualisation est documentée dans le `technical-specifications.md` de cette visualisation et discutée avant ajout (voir les règles globales de sécurité du projet).
+- Everything in the repository is written in English: specs (`specs/`), `BUILD-PLAN.md`, this file, `README.md`, code and comments. The only French allowed is the French content of the bilingual site itself (French content files, French interface strings) and French proper nouns or source data values.
+- File names, folders, data attributes and technical identifiers are in English, in kebab-case (slugs, data, CSS classes) or in PascalCase for Astro components (see "Naming conventions" in `technical-specifications.md`).
+- Style guide colors and components are defined only once, in `style-guide.md`: do not introduce new color values or new component styles elsewhere without adding them there first.
+- Any new dependency (visualization library, npm package) specific to a visualization is documented in that visualization's `technical-specifications.md` and discussed before being added (see the project's global security rules).

@@ -1,36 +1,36 @@
-# Page "À propos"
+# "About" page
 
-## Objectif
+## Goal
 
-Expliquer au visiteur ce qu'est le site et comment il est fait : la démarche du catalogue, l'origine et le traitement des données, la licence et la fabrication. C'est une page secondaire, accessible depuis toutes les pages, sans rôle dans la découverte des visualisations elles-mêmes.
+Explain to the visitor what the site is and how it is made: the approach of the catalog, the origin and processing of the data, the license and the making. It is a secondary page, accessible from every page, with no role in the discovery of the visualizations themselves.
 
-## Accès
+## Access
 
-- URL `/about/` (EN) et `/fr/about/` (FR) : même convention que les visualisations, un slug anglais partagé entre les langues (voir "Structure des URLs" dans `technical-specifications.md`).
-- Lien "À propos" / "About" dans le pied de page, sur toutes les pages (voir "Pied de page" dans `style-guide.md`).
-- Le sélecteur de langue bascule entre les deux versions (voir "Multilingue" dans `functional-specifications.md`). La page existe toujours dans les deux langues.
+- URL `/about/` (EN) and `/fr/about/` (FR): same convention as the visualizations, an English slug shared between languages (see "URL structure" in `technical-specifications.md`).
+- "À propos" / "About" link in the footer, on every page (see "Footer" in `style-guide.md`).
+- The language selector switches between the two versions (see "Multilingual" in `functional-specifications.md`). The page always exists in both languages.
 
-## Contenu et structure
+## Content and structure
 
-- En-tête et pied de page du site.
-- Titre `h1` "À propos" / "About", puis un texte en sections `h2` :
-  - **La démarche** : un catalogue de visualisations originales, chacune avec une mise en forme propre à son dataset, sans gabarit rejoué.
-  - **Les données** : des sources publiques, citées sur chaque page avec leur producteur, leur licence et leur date de récupération ; des données figées au moment de leur préparation ; des limites (biais, couverture partielle) signalées sur la page concernée ; le téléchargement des données préparées quand les licences le permettent (voir "Téléchargement des données préparées" dans `functional-specifications.md`).
-  - **Partager une vue** : l'adresse d'une visualisation garde les filtres, l'année en pause et le cadrage (voir "État partageable dans l'URL" dans `functional-specifications.md`).
-  - **Fabrication** : site statique, visualisations codées une par une, hébergement, code source public ; pas de mesure d'audience ni de cookie, seule la préférence de langue est mémorisée dans le navigateur (voir "Détection et mémorisation de la langue" dans `technical-specifications.md`) ; polices et icônes servies par le site, sans requête vers un service tiers à l'affichage d'une page (voir "Polices" dans `technical-specifications.md`).
-  - **Licence** : présentation et code du site sous CC BY-NC-SA 4.0 ; chaque jeu de données reste sous la licence de sa source (voir "Pied de page" dans `style-guide.md`).
-  - **Auteur** : nom de l'auteur, en lien vers son site. Aucune autre information personnelle.
-- Le texte ne décrit que ce qui est vrai du site : toute évolution des specs citées ci-dessus (nouvelle fonctionnalité, mesure d'audience ajoutée, changement de licence) impose de relire cette page.
+- Site header and footer.
+- `h1` title "À propos" / "About", then a text in `h2` sections:
+  - **The approach**: a catalog of original visualizations, each with a presentation specific to its dataset, without a replayed template.
+  - **The data**: public sources, cited on each page with their producer, their license and their retrieval date; data frozen at the time of its preparation; limitations (biases, partial coverage) flagged on the relevant page; download of the prepared data when the licenses allow it (see "Prepared data download" in `functional-specifications.md`).
+  - **Sharing a view**: a visualization's address keeps the filters, the paused year and the framing (see "Shareable state in the URL" in `functional-specifications.md`).
+  - **How it's made**: static site, visualizations coded one by one, hosting, public source code; no audience measurement and no cookie, only the language preference is remembered in the browser (see "Language detection and persistence" in `technical-specifications.md`); fonts and icons served by the site, without any request to a third-party service when a page is displayed (see "Fonts" in `technical-specifications.md`).
+  - **License**: presentation and code of the site dedicated to the public domain under CC0 1.0 Universal; each dataset remains under its source's license (see "Footer" in `style-guide.md`).
+  - **Author**: the author's name, linking to their site. No other personal information.
+- The text only describes what is true of the site: any change to the specs cited above (new feature, added audience measurement, license change) requires rereading this page.
 
 ## Format
 
-- Texte rédigé dans `src/content/about/about.fr.md` et `about.en.md` (Markdown, sans frontmatter), rendu par `src/pages/about.astro` et `src/pages/fr/about.astro`. Titre et description de la page (balises `<title>` et meta) dans le dictionnaire i18n (voir "Textes d'interface" dans `technical-specifications.md`).
-- Même typographie que la présentation longue d'une visualisation (voir "Typographie" et "Page de visualisation" dans `style-guide.md`).
+- Text written in `src/content/about/about.fr.md` and `about.en.md` (Markdown, without frontmatter), rendered by `src/pages/about.astro` and `src/pages/fr/about.astro`. Title and description of the page (`<title>` and meta tags) in the i18n dictionary (see "Interface copy" in `technical-specifications.md`).
+- Same typography as the long presentation of a visualization (see "Typography" and "Visualization page" in `style-guide.md`).
 
-## États
+## States
 
-Page entièrement statique : ni chargement, ni erreur, ni état vide.
+Fully static page: no loading, no error, no empty state.
 
 ## Responsive
 
-Colonne de texte unique dans le conteneur de page, sans comportement propre.
+Single text column in the page container, with no specific behavior.

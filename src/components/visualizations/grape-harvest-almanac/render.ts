@@ -80,7 +80,7 @@ function niceStep(span: number, targetTicks: number): number {
 
 // Splits a region's series into runs of consecutive years with a defined
 // value for the given key: no line segment is ever drawn across a real gap
-// in the source data (see "Lignes discontinues" in technical-specifications.md).
+// in the source data (see "Broken lines" in technical-specifications.md).
 function buildSegments(series: SeriesPoint[], key: 'dayOffset' | 'smoothedDayOffset'): YearValue[][] {
   const segments: YearValue[][] = [];
   let current: YearValue[] = [];

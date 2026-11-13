@@ -1,60 +1,60 @@
-# Modèle de données : Le ciel, d'année en année
+# Data model: The Sky, Year by Year
 
-Complète `data-model.md` général : schéma du dataset propre à cette visualisation.
+Supplements the general `data-model.md`: schema of the dataset specific to this visualization.
 
-**Statut : implémenté.**
+**Status: implemented.**
 
-## Dataset source
+## Source dataset
 
 | `name` | `publisher` | `url` | `license` | `retrieved` |
 |---|---|---|---|---|
-| VIIRS Nighttime Lights (VNL), composites annuels | NOAA Earth Observation Group | https://eogdata.mines.edu/products/vnl/ | Creative Commons Attribution 4.0 International | 2026-09-09 |
+| VIIRS Nighttime Lights (VNL), annual composites | NOAA Earth Observation Group | https://eogdata.mines.edu/products/vnl/ | Creative Commons Attribution 4.0 International | 2026-09-09 |
 
-Données satellite de radiance nocturne, résolution native 15 secondes d'arc (~500 m à l'équateur), couverture mondiale (65°S à 75°N). Domaine public d'origine (National Oceanic and Atmospheric Administration, agence fédérale américaine), republié par l'Earth Observation Group sous CC BY 4.0 avec obligation de citation. Même source primaire que les cartes de pollution lumineuse existantes (ANPCEN, AVEX, lightpollutionmap.info), utilisée ici directement plutôt qu'une republication tierce (voir échanges de cadrage).
+Satellite nighttime radiance data, native resolution of 15 arc seconds (~500 m at the equator), global coverage (65°S to 75°N). Originally public domain (National Oceanic and Atmospheric Administration, a US federal agency), republished by the Earth Observation Group under CC BY 4.0 with a citation requirement. Same primary source as existing light pollution maps (ANPCEN, AVEX, lightpollutionmap.info), used here directly rather than a third-party republication (see scoping discussions).
 
-Deux versions du produit "Annual VNL V2" ont été utilisées pour couvrir toute la période (voir "Prétraitement" ci-dessous) : **v2.1** pour 2013-2021 et **v2.2** pour 2022-2025, EOG publiant ce produit par incréments annuels versionnés plutôt qu'en une série unique continûment renumérotée. Les deux versions partagent la même méthodologie de traitement (mêmes seuils de filtrage, même chaîne "Annual VNL V2") : contrairement à la rupture V1→V2 (changement d'algorithme documenté dans la littérature), il n'y a pas de changement de méthode entre v2.1 et v2.2, seulement l'ajout d'années suivantes. Aucune discontinuité artificielle constatée à la jonction 2021/2022 dans la série obtenue (voir "Points à valider à l'implémentation" dans `technical-specifications.md`).
+Two versions of the "Annual VNL V2" product were used to cover the whole period (see "Preprocessing" below): **v2.1** for 2013-2021 and **v2.2** for 2022-2025, EOG publishing this product in versioned annual increments rather than as a single continuously renumbered series. Both versions share the same processing methodology (same filtering thresholds, same "Annual VNL V2" pipeline): unlike the V1→V2 break (an algorithm change documented in the literature), there is no change of method between v2.1 and v2.2, only the addition of subsequent years. No artificial discontinuity found at the 2021/2022 junction in the resulting series (see "Decisions made during implementation" in `technical-specifications.md`).
 
-## Couverture géographique et temporelle
+## Geographic and temporal coverage
 
-- **Géographique : France métropolitaine**, sur la même grille hexagonale H3 (résolution 4, 395 cellules) déjà produite pour `biodiversity` (voir "Réutilisation de la grille" ci-dessous) — pas les DOM, même périmètre que les autres visualisations du site utilisant cette grille.
-- **Temporelle : composites annuels de 2013 à 2025** (treize années). Le composite 2012 a été écarté (premier composite VIIRS, couverture partielle de l'année, non comparable aux suivants). Décision explicite de l'utilisateur (voir échanges de cadrage) : montrer l'évolution plutôt qu'un instantané — voir "Angle éditorial" dans `functional-specifications.md` pour ce que cette évolution montre réellement (un recul de l'intensité lumineuse, pas une hausse).
+- **Geographic: mainland France**, on the same H3 hexagonal grid (resolution 4, 395 cells) already produced for `biodiversity` (see "Grid reuse" below), not the overseas departments, same scope as the site's other visualizations using this grid.
+- **Temporal: annual composites from 2013 to 2025** (thirteen years). The 2012 composite was discarded (first VIIRS composite, partial coverage of the year, not comparable with the following ones). Explicit decision by the user (see scoping discussions): show the change over time rather than a snapshot; see "Editorial angle" in `functional-specifications.md` for what this change actually shows (a decline in light intensity, not an increase).
 
-## Réutilisation de la grille
+## Grid reuse
 
-Décision technique prise à la lecture de `biodiversity/data-model.md` : les 395 cellules H3 (résolution 4) et leurs géométries sont reprises telles quelles depuis `public/data/biodiversity/hexbins.json` (mêmes identifiants `h3`, mêmes polygones), plutôt qu'une nouvelle sélection/génération de grille. Cela évite de refaire le travail déjà fait pour `biodiversity` (filtrage des cellules côtières aberrantes, correction du sens de l'anneau des polygones H3, voir "Prétraitement" dans son `data-model.md`) : seules de nouvelles propriétés (radiance et classe de visibilité par année) sont calculées pour ces mêmes cellules, pas une nouvelle géométrie.
+Technical decision made on reading `biodiversity/data-model.md`: the 395 H3 cells (resolution 4) and their geometries are reused as is from `public/data/biodiversity/hexbins.json` (same `h3` identifiers, same polygons), rather than a new grid selection/generation. This avoids redoing the work already done for `biodiversity` (filtering out aberrant coastal cells, fixing the ring orientation of H3 polygons, see "Preprocessing" in its `data-model.md`): only new properties (radiance and visibility class per year) are computed for these same cells, not a new geometry.
 
-La silhouette de la France métropolitaine servant de fond de carte (voir "Rendu" dans `technical-specifications.md`) est elle aussi identique à celle de `biodiversity` (même fichier `basemap.json`, même géométrie), mais **dupliquée** sous `public/data/light-pollution/basemap.json` plutôt que partagée par un fetch inter-visualisations : chaque visualisation a ses propres données sous `public/data/<viz-slug>/` (voir "Structure des fichiers" dans `technical-specifications.md` général), même choix que `satellites-in-orbit` qui duplique de la même façon son fond de carte plutôt que de le partager avec `bird-migrations`.
+The mainland France silhouette used as the basemap (see "Rendering" in `technical-specifications.md`) is also identical to that of `biodiversity` (same `basemap.json` file, same geometry), but **duplicated** under `public/data/light-pollution/basemap.json` rather than shared through a cross-visualization fetch: each visualization has its own data under `public/data/<viz-slug>/` (see "File structure" in the general `technical-specifications.md`), same choice as `satellites-in-orbit`, which likewise duplicates its basemap rather than sharing it with `bird-migrations`.
 
-## Échelle de visibilité du ciel
+## Sky visibility scale
 
-Décision explicite de l'utilisateur (voir échanges de cadrage) : la radiance mesurée est traduite en une échelle de visibilité inspirée de l'échelle de Bortle (référence standard en astronomie amateur, neuf paliers de « ciel de site d'observation exceptionnel » à « ciel de centre-ville »), plutôt qu'affichée en unités physiques brutes (nW/cm²/sr).
+Explicit decision by the user (see scoping discussions): the measured radiance is translated into a visibility scale inspired by the Bortle scale (the standard reference in amateur astronomy, nine levels from "excellent dark-sky site" to "inner-city sky"), rather than displayed in raw physical units (nW/cm²/sr).
 
-La conversion rigoureuse radiance satellite → luminance du ciel au zénith (modèle de Falchi et al., *The New World Atlas of Artificial Night Sky Brightness*, 2016) nécessite une modélisation de la propagation atmosphérique de la lumière (voir par ex. Bühler, Deverchère, Plotard & Vauclair (DarkSkyLab), *Multi-faceted light pollution modelling and its application to the decline of artificial illuminance in France*, arXiv:2510.02977, 2026, qui applique cette approche à la France) : hors de portée pour ce site, ce n'est pas un simple calcul par pixel. La table ci-dessous est donc une simplification assumée, documentée comme telle plutôt que présentée comme une classification Bortle rigoureuse :Six paliers construits sur la radiance brute VIIRS, calibrés sur la distribution réelle des 395 cellules × 13 années (répartition visée, pas des quantiles stricts), ancrés qualitativement sur la littérature disponible (seuil de détection VIIRS usuel ≈ 0,5 nW/cm²/sr pour « pas de lumière artificielle significative » ; radiances de terrain publiées, ex. Nurbandi et al. 2016, ≈ 0,2-0,7 nW/cm²/sr pour un ciel rural/transition, ≈ 24-44 nW/cm²/sr pour un ciel de ville).
+The rigorous conversion from satellite radiance → zenith sky luminance (model by Falchi et al., *The New World Atlas of Artificial Night Sky Brightness*, 2016) requires modeling the atmospheric propagation of light (see e.g. Bühler, Deverchère, Plotard & Vauclair (DarkSkyLab), *Multi-faceted light pollution modelling and its application to the decline of artificial illuminance in France*, arXiv:2510.02977, 2026, which applies this approach to France): out of reach for this site, it is not a simple per-pixel computation. The table below is therefore a deliberate simplification, documented as such rather than presented as a rigorous Bortle classification: Six levels built on raw VIIRS radiance, calibrated on the actual distribution of the 395 cells × 13 years (target breakdown, not strict quantiles), qualitatively anchored on the available literature (usual VIIRS detection threshold ≈ 0.5 nW/cm²/sr for "no significant artificial light"; published field radiances, e.g. Nurbandi et al. 2016, ≈ 0.2-0.7 nW/cm²/sr for a rural/transition sky, ≈ 24-44 nW/cm²/sr for a city sky).
 
-| Palier | Radiance (nW/cm²/sr) | FR | EN | Part des cellules (13 ans cumulées) |
+| Level | Radiance (nW/cm²/sr) | FR | EN | Share of cells (13 years combined) |
 |---|---|---|---|---|
-| 1 | < 0,3 | Ciel remarquable, Voie lactée bien visible | Pristine sky, Milky Way clearly visible | 30 % |
-| 2 | 0,3 – 0,6 | Ciel de campagne, halo lumineux distant | Rural sky, faint distant glow | 23 % |
-| 3 | 0,6 – 1,2 | Ciel périurbain, Voie lactée affaiblie | Suburban sky, Milky Way washed out | 21 % |
-| 4 | 1,2 – 2,5 | Ciel urbain, halo dominant | Urban sky, glow dominates | 15 % |
-| 5 | 2,5 – 6 | Ciel de grande ville, quelques dizaines d'étoiles visibles | City sky, only a few dozen stars visible | 8 % |
-| 6 | > 6 | Ciel de centre-ville, halo omniprésent | Inner-city sky, pervasive glow | 2 % |
+| 1 | < 0.3 | Ciel remarquable, Voie lactée bien visible | Pristine sky, Milky Way clearly visible | 30% |
+| 2 | 0.3-0.6 | Ciel de campagne, halo lumineux distant | Rural sky, faint distant glow | 23% |
+| 3 | 0.6-1.2 | Ciel périurbain, Voie lactée affaiblie | Suburban sky, Milky Way washed out | 21% |
+| 4 | 1.2-2.5 | Ciel urbain, halo dominant | Urban sky, glow dominates | 15% |
+| 5 | 2.5-6 | Ciel de grande ville, quelques dizaines d'étoiles visibles | City sky, only a few dozen stars visible | 8% |
+| 6 | > 6 | Ciel de centre-ville, halo omniprésent | Inner-city sky, pervasive glow | 2% |
 
-Bornes resserrées vers le bas par rapport à une première proposition calibrée sur des mesures ponctuelles (pixel unique, ~500 m) : la moyenne sur une cellule de 1770 km² (résolution H3 4) écrase fortement les pics urbains (max mesuré sur la France : 30,7 nW/cm²/sr, cellule parisienne, largement sous les dizaines de milliers de nW/cm²/sr d'un pixel de cœur de ville), d'où des seuils environ dix fois plus bas que les repères "pixel unique" de la littérature.
+Bounds tightened toward the low end compared with a first proposal calibrated on point measurements (single pixel, ~500 m): averaging over a 1,770 km² cell (H3 resolution 4) strongly flattens urban peaks (maximum measured over France: 30.7 nW/cm²/sr, a Paris cell, far below the tens of thousands of nW/cm²/sr of a city-center pixel), hence thresholds about ten times lower than the "single pixel" benchmarks in the literature.
 
-## Prétraitement (réalisé à l'implémentation, hors build)
+## Preprocessing (done during implementation, outside the build)
 
-Contrairement aux autres visualisations du site, le prétraitement part de données **raster** (grille de pixels), pas d'un export tabulaire : un traitement géospatial de type « statistique zonale » est nécessaire, hors de portée d'un script Node seul sans dépendance dédiée. Outil utilisé : Python (`rasterio` 1.4.3 / `rasterstats` 0.21.0, `h3` 4.4.2), dans un environnement virtuel local ponctuel (pas une dépendance du projet, même logique que `h3-js` ou `topojson-simplify` pour `biodiversity`/`bird-migrations`, voir leurs `technical-specifications.md`).
+Unlike the site's other visualizations, preprocessing starts from **raster** data (a grid of pixels), not a tabular export: a "zonal statistics" type of geospatial processing is required, out of reach for a Node script alone without a dedicated dependency. Tool used: Python (`rasterio` 1.4.3 / `rasterstats` 0.21.0, `h3` 4.4.2), in a one-off local virtual environment (not a project dependency, same logic as `h3-js` or `topojson-simplify` for `biodiversity`/`bird-migrations`, see their `technical-specifications.md`).
 
-1. Téléchargement manuel par l'utilisateur des 13 composites annuels VIIRS VNL "average_masked" (2013-2025, voir "Dataset source" ci-dessus pour les versions), depuis `eogdata.mines.edu` (compte requis, authentification OpenID Connect). ~300 Mo compressés par année, ~11,6 Go décompressés chacun (rasters mondiaux 86401×33601 pixels, WGS84, aucun découpage régional disponible depuis la V2).
-2. Décompression à la volée (un fichier à la fois, supprimé après traitement pour limiter l'usage disque) plutôt qu'un découpage préalable à la bbox France : `rasterstats.zonal_stats` ne lit que la fenêtre nécessaire autour de chaque polygone, un découpage explicite n'apportait rien.
-3. Pour chaque cellule H3 reprise de `biodiversity/hexbins.json` et chaque année, calcul de la radiance moyenne des pixels contenus dans le polygone de la cellule (statistique zonale, `rasterstats.zonal_stats`, moyenne uniquement).
-4. Conversion de chaque valeur moyenne en palier de l'échelle de visibilité (voir "Échelle de visibilité du ciel" ci-dessus).
-5. Écriture de `public/data/light-pollution/skybins.json`.
+1. Manual download by the user of the 13 VIIRS VNL "average_masked" annual composites (2013-2025, see "Source dataset" above for the versions), from `eogdata.mines.edu` (account required, OpenID Connect authentication). ~300 MB compressed per year, ~11.6 GB uncompressed each (global rasters of 86401×33601 pixels, WGS84, no regional cropping available since V2).
+2. On-the-fly decompression (one file at a time, deleted after processing to limit disk usage) rather than cropping to the France bbox beforehand: `rasterstats.zonal_stats` reads only the window needed around each polygon, explicit cropping brought nothing.
+3. For each H3 cell taken from `biodiversity/hexbins.json` and each year, computation of the mean radiance of the pixels contained in the cell polygon (zonal statistics, `rasterstats.zonal_stats`, mean only).
+4. Conversion of each mean value into a level of the visibility scale (see "Sky visibility scale" above).
+5. Writing of `public/data/light-pollution/skybins.json`.
 
-**Piège rencontré :** un bug de variable (année utilisée comme clé sous forme de chaîne à l'écriture, recherchée comme entier à la lecture) faisait silencieusement produire un `byYear` vide pour les 395 cellules, sans erreur ni avertissement — repéré uniquement en inspectant le JSON produit, pas au moment de l'exécution du script.
+**Pitfall encountered:** a variable bug (year used as a string key on write, looked up as an integer on read) silently produced an empty `byYear` for all 395 cells, with no error or warning; spotted only by inspecting the generated JSON, not when the script ran.
 
-## Format des données statifiées
+## Static data format
 
 ```json
 {
@@ -80,10 +80,10 @@ Contrairement aux autres visualisations du site, le prétraitement part de donn�
 }
 ```
 
-`geometry` identique à celle de la cellule correspondante dans `biodiversity/hexbins.json` (voir "Réutilisation de la grille" ci-dessus). `scale` référence les paliers de la table ci-dessus ; `years` liste les treize années 2013-2025 (continuité confirmée, voir "Dataset source" ci-dessus et "Points à valider à l'implémentation" dans `technical-specifications.md`).
+`geometry` identical to that of the corresponding cell in `biodiversity/hexbins.json` (see "Grid reuse" above). `scale` references the levels of the table above; `years` lists the thirteen years 2013-2025 (continuity confirmed, see "Source dataset" above and "Decisions made during implementation" in `technical-specifications.md`).
 
-## Contraintes de validation propres à cette visualisation
+## Validation constraints specific to this visualization
 
-- Chaque cellule porte une entrée `byYear` pour chaque année listée dans `years`, sans année manquante (une cellule sans donnée exploitable pour une année reste une exception à documenter, pas une absence silencieuse).
-- Chaque `scale` référencé dans `byYear` existe dans la liste `scale` de premier niveau.
-- Les 395 cellules de `biodiversity/hexbins.json` sont toutes présentes ici (même géométrie de grille, voir "Réutilisation de la grille" ci-dessus).
+- Each cell carries a `byYear` entry for each year listed in `years`, with no missing year (a cell with no usable data for a year remains an exception to be documented, not a silent absence).
+- Each `scale` referenced in `byYear` exists in the top-level `scale` list.
+- All 395 cells of `biodiversity/hexbins.json` are present here (same grid geometry, see "Grid reuse" above).

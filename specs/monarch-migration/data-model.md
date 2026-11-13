@@ -1,36 +1,36 @@
-# Modèle de données : La migration des monarques
+# Data model: The Monarch Migration
 
-Complète `data-model.md` général : schéma du dataset propre à cette visualisation.
+Supplements the general `data-model.md`: schema of the dataset specific to this visualization.
 
-## Dataset source
+## Source dataset
 
-Un seul jeu de données, un jeu d'occurrences agrégées :
+A single dataset, a set of aggregated occurrences:
 
 | `name` | `publisher` | `url` | `license` | `retrieved` |
 |---|---|---|---|---|
-| GBIF Occurrence Data (*Danaus plexippus*, Amérique du Nord) | GBIF.org | https://www.gbif.org/species/5133088 | CC0 / CC BY (variable par occurrence, voir "Attribution" dans `biodiversity/data-model.md` pour la même nuance) | 2026-09-21 |
+| GBIF Occurrence Data (*Danaus plexippus*, North America) | GBIF.org | https://www.gbif.org/species/5133088 | CC0 / CC BY (varies by occurrence, see "Attribution" in `biodiversity/data-model.md` for the same nuance) | 2026-09-21 |
 
-## Une seule mécanique de données : densité agrégée, pas de trajectoire individuelle
+## A single data mechanic: aggregated density, no individual trajectories
 
-Aucun monarque ne parcourt le trajet complet (relais entre générations successives, voir "Angle éditorial" dans `functional-specifications.md`) : la donnée disponible est un nuage d'observations GBIF, pas des positions GPS individuelles. Même famille de source que `flower-phenology`, mais agrégée spatialement (une grille nord-américaine par mois) plutôt que dans un calendrier radial.
+No monarch travels the full route (relay between successive generations, see "Editorial angle" in `functional-specifications.md`): the available data is a cloud of GBIF observations, not individual GPS positions. Same family of source as `flower-phenology`, but aggregated spatially (a North American grid per month) rather than in a radial calendar.
 
-**Périmètre recentré :** la première implémentation de cette visualisation, sous le titre "Les grandes migrations", réunissait aussi des trajectoires GPS/Argos de baleines à bosse, de baleines bleues et de gnous (Movebank Data Repository). Recentrée sur le monarque seul à la demande de l'utilisateur ; ces trois jeux de données, leur prétraitement et leur rendu ont été retirés du code et des données, et restent consultables dans l'historique git de la branche.
+**Refocused scope:** the first implementation of this visualization, under the title "Les grandes migrations", also brought together GPS/Argos trajectories of humpback whales, blue whales and wildebeest (Movebank Data Repository). Refocused on the monarch alone at the user's request; these three datasets, their preprocessing and their rendering have been removed from the code and the data, and remain available in the branch's git history.
 
-## Prétraitement (réalisé à l'implémentation, hors build)
+## Preprocessing (done during implementation, outside the build)
 
-**Écart au principe initial (agrégation via l'API SQL Downloads de GBIF, comme `biodiversity`), imposé par une contrainte d'accès :** cette API nécessite un compte GBIF authentifié (`POST /v1/occurrence/download/request`), indisponible au moment de l'implémentation. Remplacée par une agrégation équivalente via l'API de recherche publique, sans authentification :
+**Departure from the initial principle (aggregation via the GBIF SQL Downloads API, like `biodiversity`), imposed by an access constraint:** this API requires an authenticated GBIF account (`POST /v1/occurrence/download/request`), unavailable at the time of implementation. Replaced by an equivalent aggregation via the public search API, without authentication:
 
-1. Grille régulière de 1° × 1° en latitude/longitude sur l'Amérique du Nord (14°N-52°N, 125°O-65°O, soit 2 280 cellules de 38 × 60), calée sur l'aire de répartition du monarque (zones de reproduction jusqu'au sud du Canada, corridor de migration, sites d'hivernage au Mexique) plutôt que sur une grille H3 comme `biodiversity`. Une première version à 2° (570 cellules) a été affinée à 1° : à ce cadrage régional, les cases de 2° étaient trop grossières à l'œil nu.
-2. Pour chaque cellule : une requête `GET /v1/occurrence/search` avec `taxonKey=5133088` (*Danaus plexippus*), `hasCoordinate=true`, `hasGeospatialIssue=false`, `geometry` (polygone WKT de la cellule) et `facet=month&facetLimit=12&limit=0` : la facette mensuelle renvoie en une seule requête le nombre d'occurrences par mois pour cette cellule, sans jamais télécharger d'enregistrement individuel (774 264 occurrences géoréférencées sur le continent nord-américain avant filtre de qualité et découpage sur l'emprise de la grille, bien au-delà de ce qu'une pagination complète permettrait). Toutes les années sont agrégées, sans filtre sur l'année ni sur le type d'enregistrement.
-   - **Cellules semi-ouvertes `[min, max[` :** les polygones de recherche GBIF incluent leur bord, donc un point situé exactement sur la frontière de deux cellules (coordonnées arrondies au degré, fréquentes) serait compté deux fois. Vérifié sur la latitude 40° : 14 points exactement dessus, comptés dans la cellule du dessous ; le passage à 1° multiplie ces frontières. Chaque polygone s'arrête donc `1e-7`° avant son bord nord et avant son bord est, de sorte qu'un point n'appartient qu'à une seule cellule (celle dont il touche le bord sud ou ouest). La première version à 2° comptait ces points en double.
-   - **Limite de fréquence de l'API :** trois requêtes en parallèle, pause commune à tous les appels pendant la durée du `Retry-After` (3 secondes) à chaque erreur 429, progression sauvegardée cellule par cellule pour reprendre après un incident. 2 280 cellules récupérées sans échec en une vingtaine de minutes, dont 343 pauses de limitation absorbées.
-3. Sortie : un enregistrement par combinaison (cellule, mois) avec au moins une occurrence : 7 290 combinaisons, 1 270 cellules distinctes actives sur les 2 280 (jusqu'à 960 actives le mois le plus chargé, août), 395 170 observations retenues au total. Centre de cellule en `lat`/`lng` (voir "Format de sortie" ci-dessous), `DENSITY_CELL_DEGREES = 1` répliqué comme constante dans `render.ts` pour le dessin (voir `technical-specifications.md`).
+1. Regular 1° × 1° latitude/longitude grid over North America (14°N-52°N, 125°W-65°W, i.e. 2,280 cells of 38 × 60), fitted to the monarch's range (breeding areas up to southern Canada, migration corridor, overwintering sites in Mexico) rather than to an H3 grid like `biodiversity`. A first version at 2° (570 cells) was refined to 1°: at this regional framing, the 2° cells were too coarse to the naked eye.
+2. For each cell: a `GET /v1/occurrence/search` request with `taxonKey=5133088` (*Danaus plexippus*), `hasCoordinate=true`, `hasGeospatialIssue=false`, `geometry` (WKT polygon of the cell) and `facet=month&facetLimit=12&limit=0`: the monthly facet returns in a single request the number of occurrences per month for this cell, without ever downloading an individual record (774,264 georeferenced occurrences on the North American continent before the quality filter and clipping to the grid's footprint, far beyond what full pagination would allow). All years are aggregated, with no filter on the year or on the record type.
+   - **Half-open cells `[min, max[`:** GBIF search polygons include their edge, so a point located exactly on the boundary between two cells (coordinates rounded to the degree, which are common) would be counted twice. Verified on latitude 40°: 14 points exactly on it, counted in the cell below; moving to 1° multiplies these boundaries. Each polygon therefore stops `1e-7`° short of its northern edge and of its eastern edge, so that a point belongs to only one cell (the one whose southern or western edge it touches). The first version at 2° counted these points twice.
+   - **API rate limit:** three requests in parallel, a pause shared by all calls for the duration of the `Retry-After` (3 seconds) on each 429 error, progress saved cell by cell to resume after an incident. 2,280 cells retrieved without failure in about twenty minutes, with 343 rate-limiting pauses absorbed.
+3. Output: one record per (cell, month) combination with at least one occurrence: 7,290 combinations, 1,270 distinct active cells out of the 2,280 (up to 960 active in the busiest month, August), 395,170 observations kept in total. Cell center as `lat`/`lng` (see "Output format" below), `DENSITY_CELL_DEGREES = 1` replicated as a constant in `render.ts` for drawing (see `technical-specifications.md`).
 
-Vérification a posteriori sur la latitude moyenne pondérée par mois (29°N en janvier, 41°N en août, retour à 30°N en décembre) : cohérente avec la biologie du monarque (hivernage mexicain, expansion estivale vers le nord, migration automnale), aucun retraitement supplémentaire jugé nécessaire. Contrôle de cohérence avec la première version à 2° : agrégé à 2°, le jeu à 1° donne 395 170 observations contre 395 157, soit un écart de 13 (0,003 %), sans cause isolée (la base GBIF évolue en continu, et la première version comptait deux fois les points situés sur une frontière).
+A posteriori check on the mean latitude weighted by month (29°N in January, 41°N in August, back to 30°N in December): consistent with monarch biology (Mexican overwintering, summer expansion northward, autumn migration), no additional reprocessing deemed necessary. Consistency check against the first version at 2°: aggregated to 2°, the 1° dataset gives 395,170 observations versus 395,157, a difference of 13 (0.003%), with no isolated cause (the GBIF database evolves continuously, and the first version counted points located on a boundary twice).
 
-## Format de sortie
+## Output format
 
-`public/data/monarch-migration/density.json`, un tableau plat :
+`public/data/monarch-migration/density.json`, a flat array:
 
 ```json
 [
@@ -38,18 +38,18 @@ Vérification a posteriori sur la latitude moyenne pondérée par mois (29°N en
 ]
 ```
 
-- `month` : 1 (janvier) à 12 (décembre).
-- `lat`, `lng` : centre de la cellule de 1° × 1° (latitudes de 14,5 à 51,5, longitudes de -124,5 à -65,5, toujours un demi-degré).
-- `count` : nombre d'observations de la cellule ce mois-là, toutes années confondues (entier strictement positif : les combinaisons vides sont absentes).
+- `month`: 1 (January) to 12 (December).
+- `lat`, `lng`: center of the 1° × 1° cell (latitudes from 14.5 to 51.5, longitudes from -124.5 to -65.5, always on a half degree).
+- `count`: number of observations in the cell that month, all years combined (strictly positive integer: empty combinations are absent).
 
-## Champs dérivés côté client (pas dans le JSON)
+## Client-side derived fields (not in the JSON)
 
-- **Valeur affichée par cellule, à chaque instant :** interpolation linéaire entre le `count` du mois courant et celui du mois suivant (un mois absent vaut zéro), voir "Animation" dans `technical-specifications.md`.
-- **Maximum annuel par cellule :** plus grand `count` de la cellule sur les douze mois, dénominateur du pourcentage affiché dans le tooltip (voir "Interactions" dans `functional-specifications.md`).
-- **Maximum global :** plus grand `count` toutes cellules et tous mois confondus (4 904), borne haute de l'échelle d'opacité.
+- **Displayed value per cell, at each instant:** linear interpolation between the `count` of the current month and that of the following month (a missing month counts as zero), see "Animation" in `technical-specifications.md`.
+- **Annual maximum per cell:** largest `count` of the cell over the twelve months, denominator of the percentage displayed in the tooltip (see "Interactions" in `functional-specifications.md`).
+- **Global maximum:** largest `count` across all cells and all months (4,904), upper bound of the opacity scale.
 
-## Contraintes de validation propres à cette visualisation
+## Validation constraints specific to this visualization
 
-- `month` entre 1 et 12, `count` entier strictement positif.
-- Le triplet (`lat`, `lng`, `month`) est unique.
-- `lat`, `lng` tombent sur les centres de la grille de 1° (voir "Format de sortie").
+- `month` between 1 and 12, `count` a strictly positive integer.
+- The (`lat`, `lng`, `month`) triplet is unique.
+- `lat`, `lng` fall on the centers of the 1° grid (see "Output format").

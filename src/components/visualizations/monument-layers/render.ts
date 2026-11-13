@@ -89,7 +89,7 @@ export interface MonumentLayersLabels {
 }
 
 // Same two endpoints as SEQUENTIAL_BLUE in biodiversity/render.ts (style-guide.md
-// "Palette dataviz", paliers 100/700): oldest monuments lightest, most recent darkest.
+// "Dataviz palette", steps 100/700): oldest monuments lightest, most recent darkest.
 const SEQUENTIAL_BLUE: [string, string] = ['#cde2fb', '#0d366b'];
 
 // Monuments older than year 0 are painted as a static backdrop at mount instead
@@ -97,7 +97,7 @@ const SEQUENTIAL_BLUE: [string, string] = ['#cde2fb', '#0d366b'];
 // strict linear scale across the full -20000..today range would compress the
 // medieval/modern waves (90% of all monuments) into the last few percent of
 // playback time, decision validated with the user after measuring the real
-// distribution (see "Points tranchés à l'implémentation").
+// distribution (see "Points decided during implementation").
 const PRELUDE_CUTOFF_YEAR = 0;
 const TOTAL_DURATION_MS = 30_000;
 
@@ -105,9 +105,9 @@ type Speed = 'slow' | 'normal' | 'fast';
 // Same convention and factors as satellites-in-orbit/render.ts and
 // light-pollution/render.ts.
 const SPEED_FACTORS: Record<Speed, number> = { slow: 0.5, normal: 1, fast: 2 };
-// Pause on the fully-built map before a pass loops back to the socle, same
-// "hold on the culmination" pattern as satellites-in-orbit (see "Lecture
-// automatique" in functional-specifications.md).
+// Pause on the fully-built map before a pass loops back to the static base, same
+// "hold on the culmination" pattern as satellites-in-orbit (see
+// "Autoplay" in functional-specifications.md).
 const HOLD_AT_END_MS = 2_500;
 
 const POINT_RADIUS_PX = 1.8;
@@ -158,8 +158,8 @@ function ordinalEn(n: number): string {
 
 // Century recovered from the representative year rather than stored separately:
 // for a genuine numeric-century record, constructionYear is exactly
-// (century - 1) * 100 + 50 (data-model.md "Interprétation du siècle de
-// construction"), so this inverse is lossless for those records.
+// (century - 1) * 100 + 50 (data-model.md "Interpreting the construction
+// century"), so this inverse is lossless for those records.
 function centuryLabel(year: number, lang: 'fr' | 'en', labels: MonumentLayersLabels): string {
   const bc = year < 0;
   const century = Math.floor(Math.abs(year) / 100) + 1;
@@ -196,7 +196,7 @@ export function periodLabel(m: RawMonument, lang: 'fr' | 'en', labels: MonumentL
 }
 
 // Official Ministry of Culture record for this Mérimée reference (data-model.md
-// "Format de sortie"), same platform for every notice regardless of when it
+// "Output format"), same platform for every record regardless of when it
 // was last updated.
 function merimeeUrl(reference: string): string {
   return `https://www.pop.culture.gouv.fr/notice/merimee/${reference}`;
@@ -248,7 +248,7 @@ export async function mountMonumentLayers(root: HTMLElement, lang: 'fr' | 'en', 
   const newestYear = monuments[monuments.length - 1].constructionYear;
 
   // Number of monuments with constructionYear <= year (monuments is sorted
-  // ascending, see data-model.md "Contraintes de validation"): the reveal
+  // ascending, see data-model.md "Validation constraints"): the reveal
   // cursor for that year, used both by the per-frame animation loop and by
   // the manual year slider below (a scrub can jump the cursor backward, which
   // the frame loop alone never needs to do).

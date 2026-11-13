@@ -1,68 +1,68 @@
-# Modèle de données : La ruée vers l'orbite
+# Data model: The Orbital Rush
 
-Complète `data-model.md` général : schéma du dataset propre à cette visualisation.
+Supplements the general `data-model.md`: schema of the dataset specific to this visualization.
 
-**Statut : implémenté.**
+**Status: implemented.**
 
-## Dataset source
+## Source dataset
 
 | `name` | `publisher` | `url` | `license` | `retrieved` |
 |---|---|---|---|---|
-| Satellite Catalog (SATCAT) | CelesTrak | https://celestrak.org/satcat/ | Non formalisée par CelesTrak ; données d'origine USSPACECOM (Space-Track.org), redistribution de données dérivées admise sous réserve de citation appropriée (voir note ci-dessous) | 2026-09-09 |
+| Satellite Catalog (SATCAT) | CelesTrak | https://celestrak.org/satcat/ | Not formalized by CelesTrak; data originating from USSPACECOM (Space-Track.org), redistribution of derived data permitted subject to appropriate citation (see note below) | 2026-09-09 |
 
-**Note sur la licence :** CelesTrak ne publie pas de licence explicite (pas de CC, pas de mention domaine public) pour le catalogue SATCAT. Les données proviennent in fine de l'US Space Force via Space-Track.org, dont l'accord utilisateur admet la redistribution de données de base (dont le SATCAT) sous condition de citation appropriée à l'USSPACECOM, tout en réservant un régime d'approbation préalable pour d'autres formes de transfert. Décision prise avec l'utilisateur (voir échanges de cadrage) : poursuivre sur cette source, en citant explicitement CelesTrak et l'USSPACECOM/Space-Track.org dans le bloc de crédit des sources (voir "Page de visualisation" dans `style-guide.md`), le dataset publié ici étant une agrégation dérivée (comptes par zone et par date) plutôt qu'une republication brute du catalogue, sur un site non commercial (CC BY-NC-SA). Ce n'est pas une lecture juridique définitive : à revisiter si un usage plus étendu de la source est envisagé un jour.
+**Note on the license:** CelesTrak does not publish an explicit license (no CC, no public domain statement) for the SATCAT catalog. The data ultimately comes from the US Space Force via Space-Track.org, whose user agreement permits redistribution of basic data (including the SATCAT) on condition of appropriate citation to USSPACECOM, while reserving a prior-approval regime for other forms of transfer. Decision made with the user (see scoping discussions): proceed with this source, explicitly citing CelesTrak and USSPACECOM/Space-Track.org in the source credit block (see "Visualization page" in `style-guide.md`), the dataset published here being a derived aggregation (counts per region and per date) rather than a raw republication of the catalog, on a non-commercially operated site (its CC0 license covers only its original presentation and code, not this source). This is not a definitive legal reading: to be revisited if a broader use of the source is ever considered.
 
-Lecture confirmée à l'implémentation par la documentation publique de Space-Track (`space-track.org/documentation#/agreement`) : « USSPACECOM has provided express blanket approval for transfer/redistribution of basic SSA data and services accessed via www.Space-Track.org conditioned on appropriate citation », le SATCAT étant explicitement cité parmi les « basic SSA data » couvertes ; toute autre forme de transfert reste soumise à approbation préalable (« The User agrees not to transfer any data or technical information received from this website [...] to any other entity without prior express approval »).
+Reading confirmed during implementation by Space-Track's public documentation (`space-track.org/documentation#/agreement`): "USSPACECOM has provided express blanket approval for transfer/redistribution of basic SSA data and services accessed via www.Space-Track.org conditioned on appropriate citation", the SATCAT being explicitly listed among the "basic SSA data" covered; any other form of transfer remains subject to prior approval ("The User agrees not to transfer any data or technical information received from this website [...] to any other entity without prior express approval").
 
-## Périmètre retenu
+## Chosen scope
 
-Décidé explicitement avec l'utilisateur (voir échanges de cadrage) : **payloads en orbite, actifs et inactifs, hors débris et étages de fusée**. Traduit dans le filtre SATCAT par :
+Decided explicitly with the user (see scoping discussions): **payloads in orbit, active and inactive, excluding debris and rocket stages**. Translated into the SATCAT filter as:
 
-- `OBJECT_TYPE = PAY` (charge utile, exclut `R/B` étage de fusée, `DEB` débris, `UNK` inconnu) ;
-- `DECAY_DATE` vide (objet toujours en orbite au moment de la récupération, qu'il soit encore actif ou non).
+- `OBJECT_TYPE = PAY` (payload, excludes `R/B` rocket body, `DEB` debris, `UNK` unknown);
+- `DECAY_DATE` empty (object still in orbit at retrieval time, whether still active or not).
 
-Le statut opérationnel (`OPS_STATUS_CODE`) n'entre pas dans le filtre : un satellite hors service mais toujours en orbite reste compté, conformément au périmètre retenu.
+Operational status (`OPS_STATUS_CODE`) is not part of the filter: a satellite that is out of service but still in orbit is still counted, in line with the chosen scope.
 
-## Champs SATCAT utilisés
+## SATCAT fields used
 
-| Champ CelesTrak | Usage |
+| CelesTrak field | Usage |
 |---|---|
-| `OBJECT_TYPE` | Filtrage du périmètre (garder seulement `PAY`) |
-| `DECAY_DATE` | Filtrage du périmètre (garder seulement les objets sans date de désorbitation) |
-| `OWNER` | Attribution à l'une des cinq zones de lancement (voir "Regroupement géographique" ci-dessous) |
-| `LAUNCH_DATE` | Position de l'objet sur la chronologie simulée |
+| `OBJECT_TYPE` | Scope filtering (keep only `PAY`) |
+| `DECAY_DATE` | Scope filtering (keep only objects with no decay date) |
+| `OWNER` | Assignment to one of the five launching regions (see "Geographic grouping" below) |
+| `LAUNCH_DATE` | Position of the object on the simulated timeline |
 
-`OBJECT_NAME` et `NORAD_CAT_ID` ne sont pas repris dans le format de sortie : pas de fiche par satellite individuel dans cette visualisation (voir "Interactions" dans `functional-specifications.md`), donc pas de raison de les transporter jusqu'au client.
+`OBJECT_NAME` and `NORAD_CAT_ID` are not carried over into the output format: there is no card per individual satellite in this visualization (see "Interactions" in `functional-specifications.md`), so no reason to ship them to the client.
 
-## Regroupement géographique
+## Geographic grouping
 
-Cinq zones, décidées explicitement avec l'utilisateur (voir échanges de cadrage) : **États-Unis, Russie/URSS, Chine, Europe, reste du monde**.
+Five regions, decided explicitly with the user (see scoping discussions): **United States, Russia/USSR, China, Europe, rest of the world**.
 
-Table de correspondance établie à partir du catalogue réel récupéré (106 codes `OWNER` distincts parmi les objets retenus) :
+Mapping table built from the actual retrieved catalog (106 distinct `OWNER` codes among the retained objects):
 
-- `US` → États-Unis.
-- `CIS` → Russie/URSS (seul code du catalogue couvrant aussi bien l'URSS que la Russie post-1991 ; pas de code `RUS` distinct dans les données récupérées).
-- `PRC` → Chine.
-- Codes nationaux européens (géoschéma UN M49, Russie exclue par construction puisqu'elle a sa propre zone ci-dessus) et les deux agences intergouvernementales paneuropéennes du secteur (`ESA`, `EUME` = EUMETSAT) → Europe : `UK`, `FR`, `GER`, `IT`, `SPN`, `FIN`, `NOR`, `GREC`, `POL`, `SWED`, `LUXE`, `NETH`, `POR`, `BEL`, `DEN`, `SWTZ`, `CZCH`, `UKR`, `BUL`, `HUN`, `SVK`, `SVN`, `ASRA`, `EST`, `HRV`, `ROM`, `MNE`, `BELA`, `LTU`, `ESA`, `EUME`.
-- Tout le reste → reste du monde. Notamment tous les codes d'opérateurs commerciaux ou de consortiums multinationaux (`SES`, `EUTE`/Eutelsat, `ITSO`/Intelsat, `O3B`, `IM`/Inmarsat, `GLOB`/Globalstar, `ORB`/Orbcomm, `AB`/Arabsat, `AC`/AsiaSat, `ABS`, `NATO`...) : ce ne sont pas des nations qui lancent, et leur inclure une nationalité précise (ex : `GLOB` → États-Unis, siège de Globalstar) casserait la règle simple "code pays ou agence paneuropéenne officielle" ci-dessus au prix d'arbitrages peu défendables au cas par cas (`SES` est enregistrée au Luxembourg mais à capital international, `ITSO`/Intelsat a son siège au Luxembourg mais une gouvernance historiquement mondiale...). Également dans "reste du monde" : les codes de coentreprises bi/multinationales dont un partenaire au moins est hors Europe (`CHBZ` Chine-Brésil, `STCT` Singapour-Taïwan, `GRSA` Grèce-Arabie saoudite, `RASC` organisation africaine RASCOM), les pays hors géoschéma Europe de l'ONU (dont `TURK` Turquie et `KAZ` Kazakhstan, respectivement Asie occidentale et Asie centrale dans ce géoschéma), et `TBD` (code temporaire "à déterminer").
-- Exception documentée : `FGER` (programme franco-allemand Symphonie) et `FRIT` (programme franco-italien Athena-Fidus/Sicral 2) sont des programmes bilatéraux intergouvernementaux entre deux États déjà classés Europe ci-dessus → Europe, malgré leur code à part.
+- `US` → United States.
+- `CIS` → Russia/USSR (the only code in the catalog covering both the USSR and post-1991 Russia; no separate `RUS` code in the retrieved data).
+- `PRC` → China.
+- European national codes (UN M49 geoscheme, Russia excluded by construction since it has its own region above) and the two pan-European intergovernmental agencies of the sector (`ESA`, `EUME` = EUMETSAT) → Europe: `UK`, `FR`, `GER`, `IT`, `SPN`, `FIN`, `NOR`, `GREC`, `POL`, `SWED`, `LUXE`, `NETH`, `POR`, `BEL`, `DEN`, `SWTZ`, `CZCH`, `UKR`, `BUL`, `HUN`, `SVK`, `SVN`, `ASRA`, `EST`, `HRV`, `ROM`, `MNE`, `BELA`, `LTU`, `ESA`, `EUME`.
+- Everything else → rest of the world. In particular all codes of commercial operators or multinational consortia (`SES`, `EUTE`/Eutelsat, `ITSO`/Intelsat, `O3B`, `IM`/Inmarsat, `GLOB`/Globalstar, `ORB`/Orbcomm, `AB`/Arabsat, `AC`/AsiaSat, `ABS`, `NATO`...): these are not launching nations, and assigning them a specific nationality (e.g. `GLOB` → United States, Globalstar's headquarters) would break the simple "country code or official pan-European agency" rule above at the cost of hard-to-defend case-by-case calls (`SES` is registered in Luxembourg but internationally owned, `ITSO`/Intelsat is headquartered in Luxembourg but historically had global governance...). Also in "rest of the world": codes of bi/multinational joint ventures with at least one partner outside Europe (`CHBZ` China-Brazil, `STCT` Singapore-Taiwan, `GRSA` Greece-Saudi Arabia, `RASC` African organization RASCOM), countries outside the UN Europe geoscheme (including `TURK` Turkey and `KAZ` Kazakhstan, respectively Western Asia and Central Asia in that geoscheme), and `TBD` (temporary "to be determined" code).
+- Documented exception: `FGER` (Franco-German Symphonie program) and `FRIT` (Franco-Italian Athena-Fidus/Sicral 2 program) are bilateral intergovernmental programs between two states already classified as Europe above → Europe, despite their separate code.
 
-Un objet dont le code `OWNER` ne trouve pas de correspondance dans cette liste tombe dans "reste du monde" plutôt que de faire échouer le prétraitement (règle de repli, aucun cas rencontré en pratique sur le catalogue récupéré : les 106 codes ont tous été classés explicitement).
+An object whose `OWNER` code has no match in this list falls into "rest of the world" rather than causing preprocessing to fail (fallback rule, no case encountered in practice on the retrieved catalog: all 106 codes were classified explicitly).
 
-## Prétraitement (réalisé à l'implémentation, hors build)
+## Preprocessing (done during implementation, outside the build)
 
-Un script de prétraitement, dans l'esprit de ceux des autres visualisations (voir `data-model.md` de `bird-migrations` ou `biodiversity`), rejoué manuellement plutôt qu'à chaque build (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général) :
+A preprocessing script, in the spirit of those of the other visualizations (see `data-model.md` of `bird-migrations` or `biodiversity`), rerun manually rather than at every build (see "Rules common to all visualizations" in the general `technical-specifications.md`):
 
-1. Récupérer le catalogue SATCAT complet depuis CelesTrak, au format CSV documenté (`https://celestrak.org/pub/satcat.csv`, voir "SATCAT Format Documentation" sur `celestrak.org/satcat/satcat-format.php`) plutôt que `records.php` : c'est le format que CelesTrak recommande explicitement pour ce type de téléchargement complet ("Raw SATCAT Data" sur `celestrak.org/satcat/`), et le format CSV est cité dans la politique d'usage du site comme la version à privilégier (les formats texte hérités seront limités par le dépassement des numéros de catalogue à 5 chiffres, en cours au moment de cette récupération). Requête ponctuelle, pas de sondage répété, conforme à la politique d'usage (voir "Source des données" dans `technical-specifications.md` de cette visualisation). 70 587 lignes récupérées le 2026-09-09.
-2. Filtrer selon le périmètre retenu (`OBJECT_TYPE = PAY`, `DECAY_DATE` vide) → 20 020 objets retenus.
-3. Attribuer une zone à chaque objet retenu à partir de `OWNER` (voir "Regroupement géographique" ci-dessus).
-4. Réduire chaque objet retenu à `{ regionId, launchDate }` (voir "Format de sortie" ci-dessous), trier par `launchDate` croissante et écrire `public/data/satellites-in-orbit/satellites.json`.
+1. Retrieve the full SATCAT catalog from CelesTrak, in the documented CSV format (`https://celestrak.org/pub/satcat.csv`, see "SATCAT Format Documentation" on `celestrak.org/satcat/satcat-format.php`) rather than `records.php`: this is the format CelesTrak explicitly recommends for this kind of full download ("Raw SATCAT Data" on `celestrak.org/satcat/`), and the CSV format is cited in the site's usage policy as the preferred version (the legacy text formats will be limited by catalog numbers exceeding five digits, which was underway at the time of this retrieval). One-off request, no repeated polling, in line with the usage policy (see "Data source" in this visualization's `technical-specifications.md`). 70,587 rows retrieved on 2026-09-09.
+2. Filter according to the chosen scope (`OBJECT_TYPE = PAY`, `DECAY_DATE` empty) → 20,020 objects retained.
+3. Assign a region to each retained object based on `OWNER` (see "Geographic grouping" above).
+4. Reduce each retained object to `{ regionId, launchDate }` (see "Output format" below), sort by ascending `launchDate` and write `public/data/satellites-in-orbit/satellites.json`.
 
-Volume réel : 20 020 objets, plus élevé que l'estimation initiale (dix à quinze mille) — la fourchette basse ne tenait pas compte des satellites hors service mais toujours en orbite (`OPS_STATUS_CODE` hors filtre par choix de périmètre, voir "Périmètre retenu" ci-dessus), qui pèsent significativement dans le total. Répartition : États-Unis 13 723, Chine 1 577, Russie/URSS 1 713, Europe 1 434, reste du monde 1 573. Fichier de sortie : 892 Ko, en deçà des autres jeux de données du site (ex : `paris-trees/trees.json`, 12 Mo) — pas de compaction nécessaire.
+Actual volume: 20,020 objects, higher than the initial estimate (ten to fifteen thousand): the low end did not account for satellites that are out of service but still in orbit (`OPS_STATUS_CODE` left out of the filter by scope choice, see "Chosen scope" above), which weigh significantly in the total. Breakdown: United States 13,723, China 1,577, Russia/USSR 1,713, Europe 1,434, rest of the world 1,573. Output file: 892 KB, below the site's other datasets (e.g. `paris-trees/trees.json`, 12 MB), no compaction needed.
 
-Premier objet retenu chronologiquement : Vanguard 1 (`US`, lancé le 1958-03-17), plus ancien objet artificiel toujours en orbite ; Spoutnik 1, lancé le premier (1957-10-04), est retombé début 1958 et ne fait donc pas partie de ce jeu de données malgré sa mention dans la présentation éditoriale (voir "Angle éditorial" dans `functional-specifications.md`) comme repère narratif du début de l'ère spatiale plutôt que comme premier point du jeu de données lui-même.
+First retained object chronologically: Vanguard 1 (`US`, launched on 1958-03-17), the oldest artificial object still in orbit; Sputnik 1, launched first (1957-10-04), fell back in early 1958 and is therefore not part of this dataset despite its mention in the editorial presentation (see "Editorial angle" in `functional-specifications.md`) as a narrative landmark of the start of the space age rather than as the first point of the dataset itself.
 
-## Format de sortie
+## Output format
 
 ```json
 {
@@ -81,15 +81,15 @@ Premier objet retenu chronologiquement : Vanguard 1 (`US`, lancé le 1958-03-17)
 }
 ```
 
-`regionId` en kebab-case anglais (voir conventions générales de `data-model.md`) ; la couleur de chaque zone n'est pas stockée dans les données (voir palette dans `technical-specifications.md` de cette visualisation), assignée côté client par ordre d'apparition dans `regions`. `generatedAt` documente la date de récupération du catalogue source (les objets en orbite évoluent en continu), reprise comme `retrieved` du dataset une fois connue.
+`regionId` in English kebab-case (see general conventions of `data-model.md`); the color of each region is not stored in the data (see palette in this visualization's `technical-specifications.md`), assigned client-side by order of appearance in `regions`. `generatedAt` records the retrieval date of the source catalog (objects in orbit change continuously), used as the dataset's `retrieved` once known.
 
-## Champs dérivés côté client (pas dans le JSON)
+## Client-side derived fields (not in the JSON)
 
-- **Compte total à l'instant simulé courant :** nombre de `satellites` dont `launchDate` est antérieure ou égale à la date simulée, parmi les zones actives (voir "Filtre zone" dans `functional-specifications.md`).
-- **Compte par zone :** idem, décomposé par `regionId`, pour la légende (voir "Contenu" dans `functional-specifications.md`).
+- **Total count at the current simulated instant:** number of `satellites` whose `launchDate` is on or before the simulated date, among active regions (see "Region filter" in `functional-specifications.md`).
+- **Count per region:** same, broken down by `regionId`, for the legend (see "Content" in `functional-specifications.md`).
 
-## Contraintes de validation propres à cette visualisation
+## Validation constraints specific to this visualization
 
-- Chaque `regionId` référencé dans `satellites` existe dans `regions`.
-- `satellites` est trié par `launchDate` croissante (simplifie l'accumulation progressive à la lecture, voir "Animation" dans `technical-specifications.md`).
-- Un objet sans `OWNER` reconnu est présent avec `regionId: "other"`, jamais absent silencieusement du fichier de sortie.
+- Every `regionId` referenced in `satellites` exists in `regions`.
+- `satellites` is sorted by ascending `launchDate` (simplifies progressive accumulation during playback, see "Animation" in `technical-specifications.md`).
+- An object with no recognized `OWNER` is present with `regionId: "other"`, never silently missing from the output file.

@@ -1,12 +1,11 @@
 ---
 import { getCollection, render } from 'astro:content';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import RelatedVisualizations from '../components/RelatedVisualizations.astro';
 import DataDownloads from '../components/DataDownloads.astro';
 import DataTable from '../components/DataTable.astro';
 import { buildVisualizationStructuredData } from '../scripts/structured-data';
+import { getSharingImagePath } from '../scripts/covers';
 import type { DataTableBuilder } from '../scripts/data-table';
 import { buildFlowerPhenologyTable } from '../components/visualizations/flower-phenology/table';
 import { buildForestFiresTable } from '../components/visualizations/forest-fires/table';
@@ -100,10 +99,7 @@ const { lang, title, summary, datasets, downloads } = viz.data;
 const slug = getVisualizationSlug(viz.id, lang);
 const { Content } = await render(viz);
 
-const coverExtension = ['jpg', 'png'].find((ext) =>
-  existsSync(join(process.cwd(), 'public', 'covers', `${slug}.${ext}`))
-);
-const coverPath = coverExtension ? `/covers/${slug}.${coverExtension}` : '/cover-placeholder.svg';
+const coverPath = await getSharingImagePath(slug);
 const structuredData = buildVisualizationStructuredData({
   viz,
   slug,

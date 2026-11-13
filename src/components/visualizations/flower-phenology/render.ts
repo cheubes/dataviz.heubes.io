@@ -468,7 +468,7 @@ export async function mountFlowerPhenology(
   // Ring decade change: reuses the arcs already on that ring and morphs each
   // one from its old angular span to its new one, rather than a full rebuild
   // — the visual cue that "this species' bloom window shifted" is the point
-  // of the comparison (see "Comparaison de décennies" in
+  // of the comparison (see "Decade comparison" in
   // functional-specifications.md). Only the changed ring's arcs animate.
   function changeRingDecade(ringKey: RingKey, newDecade: Decade) {
     const oldDecade = currentDecadeForRing(ringKey);

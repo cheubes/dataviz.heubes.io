@@ -50,11 +50,11 @@ export interface LightPollutionLabels {
   speedFast: string;
 }
 
-// Palette sequentielle par defaut du style-guide (voir "Palette dataviz"),
-// memes deux teintes extremes (paliers 100 et 700) que biodiversity/render.ts
-// (SEQUENTIAL_BLUE), interpolees ici de la meme facon (d3-scale, interpolation
-// RGB par defaut) pour un degrade visuellement coherent entre les deux cartes
-// de France du site.
+// The style guide's default sequential palette (see "Dataviz palette"),
+// same two extreme tones (steps 100 and 700) as biodiversity/render.ts
+// (SEQUENTIAL_BLUE), interpolated here the same way (d3-scale, default RGB
+// interpolation) for a visually consistent gradient between the site's two
+// maps of France.
 const SEQUENTIAL_BLUE: [string, string] = ['#cde2fb', '#0d366b'];
 
 type Speed = 'slow' | 'normal' | 'fast';
@@ -63,7 +63,7 @@ const SPEED_FACTORS: Record<Speed, number> = { slow: 0.5, normal: 1, fast: 2 };
 
 // Time spent on each year at normal speed, and the pause on the final year
 // (today) before a pass loops back to 2013 — same "hold on the culmination"
-// pattern as satellites-in-orbit (see "Lecture automatique" in
+// pattern as satellites-in-orbit (see "Autoplay" in
 // functional-specifications.md).
 const STEP_MS = 900;
 const HOLD_MS = 2000;
@@ -95,7 +95,7 @@ export async function mountLightPollution(root: HTMLElement, lang: 'fr' | 'en', 
 
   const tierById = new Map(data.scale.map((t) => [t.id, t]));
   const years = data.years;
-  // Autoplay starts a pass from the oldest year (see "Lecture automatique" in
+  // Autoplay starts a pass from the oldest year (see "Autoplay" in
   // functional-specifications.md), not the initial-view convention used before
   // autoplay existed on this visualization.
   let selectedYearIndex = 0;

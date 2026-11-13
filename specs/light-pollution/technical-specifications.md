@@ -1,83 +1,83 @@
-# Spécifications techniques : Le ciel, d'année en année
+# Technical specifications: The Sky, Year by Year
 
-Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
+Supplements the general `technical-specifications.md`: technical choices specific to this visualization, beyond the common rules.
 
-**Statut : implémenté.**
+**Status: implemented.**
 
-## Source des données
+## Data source
 
-Composites annuels VIIRS VNL (NOAA Earth Observation Group), voir "Dataset source" et "Prétraitement" dans `data-model.md`. Citation obligatoire (CC BY 4.0) dans le bloc de crédit des sources de la page.
+VIIRS VNL annual composites (NOAA Earth Observation Group), see "Source dataset" and "Preprocessing" in `data-model.md`. Mandatory citation (CC BY 4.0) in the page's source credit block.
 
-## Rendu
+## Rendering
 
-**SVG, pas Canvas**, même choix que `biodiversity` : volume très réduit (395 cellules, voir "Réutilisation de la grille" dans `data-model.md`), loin du seuil qui justifie Canvas sur les autres visualisations du site.
+**SVG, not Canvas**, same choice as `biodiversity`: very small volume (395 cells, see "Grid reuse" in `data-model.md`), far from the threshold that justifies Canvas in the site's other visualizations.
 
-- Grille hexagonale : `d3-geo` pour projeter les polygones (mêmes géométries que `biodiversity/hexbins.json`, voir "Réutilisation de la grille" dans `data-model.md`, donc même projection `d3.geoMercator()` avec `fitExtent`, voir "Rendu" dans son `technical-specifications.md`).
-- Fond de carte : silhouette de la France métropolitaine, `public/data/light-pollution/basemap.json`, objet TopoJSON `france` converti en GeoJSON côté client via `topojson-client`. Fichier identique à celui de `biodiversity` mais **dupliqué** plutôt que partagé (voir "Réutilisation de la grille" dans `data-model.md`) : chaque visualisation récupère ses propres données sous `public/data/<viz-slug>/`, même règle et même choix que `satellites-in-orbit` vis-à-vis de `bird-migrations`.
-- Changement d'année (curseur, manuel ou automatique) : recolore les 395 chemins SVG existants (mise à jour de l'attribut `fill` selon la valeur `byYear[année].scale` de la cellule), pas de redessin des géométries elles-mêmes.
-- **Zone de montage compacte** (revu à la relecture) : hauteur de la carte plus basse que les zones de montage des autres visualisations à l'époque (`max(320px, largeur × 0,6)`) — légende et contrôles étant désormais au-dessus de la carte plutôt qu'en surimpression (voir "Contenu" dans `functional-specifications.md`), rien n'imposait plus de réserver une hauteur de carte généreuse pour leur laisser de la place. Ce calcul de hauteur (complété depuis d'un plafond lié à l'espace disponible entre header et footer) est devenu la hauteur par défaut de toutes les visualisations du site (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général).
+- Hexagonal grid: `d3-geo` to project the polygons (same geometries as `biodiversity/hexbins.json`, see "Grid reuse" in `data-model.md`, hence the same `d3.geoMercator()` projection with `fitExtent`, see "Rendering" in its `technical-specifications.md`).
+- Basemap: silhouette of mainland France, `public/data/light-pollution/basemap.json`, TopoJSON object `france` converted to GeoJSON client-side via `topojson-client`. File identical to that of `biodiversity` but **duplicated** rather than shared (see "Grid reuse" in `data-model.md`): each visualization retrieves its own data under `public/data/<viz-slug>/`, same rule and same choice as `satellites-in-orbit` with respect to `bird-migrations`.
+- Year change (slider, manual or automatic): recolors the 395 existing SVG paths (update of the `fill` attribute according to the cell's `byYear[year].scale` value), no redrawing of the geometries themselves.
+- **Compact mount area** (revised during review): map height lower than the mount areas of the other visualizations at the time (`max(320px, width × 0.6)`); since the legend and controls are now above the map rather than overlaid (see "Content" in `functional-specifications.md`), nothing required reserving a generous map height to leave room for them anymore. This height calculation (since supplemented by a cap tied to the space available between header and footer) has become the default height of all the site's visualizations (see "Rules common to all visualizations" in the general `technical-specifications.md`).
 
-Légende et contrôles (lecture/pause, vitesse, curseur d'année) : bloc unique placé avant la zone de carte dans le DOM, en flux normal (`display: flex; flex-direction: column`), jamais en position `absolute` par-dessus le SVG — plus simple que la première implémentation (légende/curseur en surimpression sur la carte, avec un traitement responsive séparé pour les repositionner sous la carte en petit écran, retiré à la relecture) et sans le bug de superposition qu'elle provoquait sur mobile (la légende recouvrait le haut de la carte).
+Legend and controls (play/pause, speed, year slider): a single block placed before the map area in the DOM, in normal flow (`display: flex; flex-direction: column`), never `absolute`-positioned over the SVG; simpler than the first implementation (legend/slider overlaid on the map, with separate responsive handling to reposition them below the map on small screens, removed during review) and without the overlap bug it caused on mobile (the legend covered the top of the map).
 
 ## Palette
 
-Palette **séquentielle** (voir "Palette dataviz" dans `style-guide.md`), même famille de choix que `monument-layers` : l'échelle de visibilité du ciel est un ordre continu (du ciel le plus sombre au plus pollué), pas des catégories à distinguer deux à deux. Pas d'exception à documenter ici, contrairement à `satellites-in-orbit` et `paris-trees`.
+**Sequential** palette (see "Dataviz palette" in `style-guide.md`), same family of choice as `monument-layers`: the sky visibility scale is a continuous order (from the darkest sky to the most polluted), not categories to be told apart pairwise. No exception to document here, unlike `satellites-in-orbit` and `paris-trees`.
 
-- Palier le plus sombre (ciel préservé) en teinte la plus claire de l'échelle séquentielle, palier le plus lumineux (ciel très pollué) en teinte la plus foncée — choix inverse de `monument-layers` (où le foncé marquait l'ancienneté) : ici le foncé marque l'intensité de la pollution, pas une progression temporelle portée par la couleur (le temps est porté par le curseur d'année, pas par la couleur, voir "Interactions" dans `functional-specifications.md`).
-- **Mêmes deux teintes extrêmes que `biodiversity`** (`#cde2fb` / `#0d366b`, paliers 100 et 700 de `style-guide.md`), interpolées de la même façon (`d3-scale`, interpolation RGB par défaut d'une échelle continue) plutôt que reprises comme six paliers nommés distincts du tableau. Revu à la relecture (voir échanges de cadrage) : une première version piochait quatre paliers nommés intermédiaires (200/300/400/550) directement dans le tableau du style-guide, plus saturés/distincts en légende, mais visuellement incohérents avec le dégradé continu de `biodiversity` — l'autre carte de France du site utilisant la même palette séquentielle. Compromis assumé : les teintes intermédiaires y perdent un peu en distinction dans la légende, au profit de la cohérence visuelle entre les deux cartes.
-- `d3.scaleLinear<string>().domain([1, 6]).range(['#cde2fb', '#0d366b']).clamp(true)` : linéaire plutôt que `scaleSqrt` comme `biodiversity` (dont le `sqrt` compense un domaine de comptages bruts très asymétrique, sans équivalent ici — le domaine est déjà un rang ordinal 1-6 régulièrement espacé).
+- Darkest level (preserved sky) in the lightest tint of the sequential scale, brightest level (heavily polluted sky) in the darkest tint: the opposite choice to `monument-layers` (where dark marked age): here dark marks the intensity of pollution, not a temporal progression carried by color (time is carried by the year slider, not by color, see "Interactions" in `functional-specifications.md`).
+- **Same two end tints as `biodiversity`** (`#cde2fb` / `#0d366b`, steps 100 and 700 of `style-guide.md`), interpolated the same way (`d3-scale`, default RGB interpolation of a continuous scale) rather than taken as six distinct named steps from the table. Revised during review (see scoping discussions): a first version picked four intermediate named steps (200/300/400/550) directly from the style guide table, more saturated/distinct in the legend, but visually inconsistent with the continuous gradient of `biodiversity`, the site's other map of France using the same sequential palette. Deliberate trade-off: the intermediate tints lose a little distinctiveness in the legend, in favor of visual consistency between the two maps.
+- `d3.scaleLinear<string>().domain([1, 6]).range(['#cde2fb', '#0d366b']).clamp(true)`: linear rather than `scaleSqrt` like `biodiversity` (whose `sqrt` compensates for a very skewed domain of raw counts, with no equivalent here: the domain is already an evenly spaced 1-6 ordinal rank).
 
-## Prétraitement raster
+## Raster preprocessing
 
-Voir "Prétraitement" dans `data-model.md` pour le détail des étapes. Point notable propre à cette visualisation : contrairement aux autres prétraitements du site (scripts Node ponctuels), celui-ci part d'un raster géospatial et nécessite un outil de statistique zonale (`rasterio`/`rasterstats` en Python), utilisé une seule fois hors build, pas une dépendance du projet (`package.json` inchangé par ce choix, même logique que `h3-js` pour `biodiversity`).
+See "Preprocessing" in `data-model.md` for the details of the steps. Notable point specific to this visualization: unlike the site's other preprocessing (one-off Node scripts), this one starts from a geospatial raster and requires a zonal statistics tool (`rasterio`/`rasterstats` in Python), used only once outside the build, not a project dependency (`package.json` unchanged by this choice, same logic as `h3-js` for `biodiversity`).
 
-## Nouvelles dépendances
+## New dependencies
 
-Aucune nouvelle dépendance pour le **projet** : `d3-geo` (projection), `d3-scale` (`scaleLinear`, dégradé continu entre les deux teintes extrêmes de la palette séquentielle, voir "Palette" ci-dessus), `d3-timer` (lecture automatique, voir "Lecture automatique" ci-dessous) et `topojson-client` (conversion du fond de carte TopoJSON → GeoJSON, voir "Rendu" ci-dessus) sont toutes déjà des dépendances existantes (`d3-timer` déjà utilisée par `satellites-in-orbit` et `bird-migrations`, `topojson-client` par `biodiversity`, `bird-migrations` et `satellites-in-orbit`), seulement nouvelles pour cette visualisation.
+No new dependency for the **project**: `d3-geo` (projection), `d3-scale` (`scaleLinear`, continuous gradient between the two end tints of the sequential palette, see "Palette" above), `d3-timer` (autoplay, see "Autoplay" below) and `topojson-client` (conversion of the TopoJSON basemap → GeoJSON, see "Rendering" above) are all already existing dependencies (`d3-timer` already used by `satellites-in-orbit` and `bird-migrations`, `topojson-client` by `biodiversity`, `bird-migrations` and `satellites-in-orbit`), only new to this visualization.
 
-## Curseur d'année
+## Year slider
 
-Élément `<input type="range">` natif plutôt qu'un composant sur mesure : pas d'interaction complexe à gérer (pas de glisser-relâcher personnalisé, pas de zoom), la sémantique et l'accessibilité clavier natives suffisent (voir "Accessibilité" dans `functional-specifications.md`). Un `<datalist>` associé marque chaque année disponible comme un cran plutôt qu'un curseur continu. Piloté à la fois manuellement (glisser/clavier) et automatiquement (voir "Lecture automatique" ci-dessous) : dans les deux cas, seule sa valeur (`yearSlider.value`) et l'attribut `aria-valuetext` sont mis à jour, jamais de re-création de l'élément.
+Native `<input type="range">` element rather than a custom component: no complex interaction to handle (no custom drag-and-release, no zoom), native semantics and keyboard accessibility are enough (see "Accessibility" in `functional-specifications.md`). An associated `<datalist>` marks each available year as a notch rather than a continuous slider. Driven both manually (drag/keyboard) and automatically (see "Autoplay" below): in both cases, only its value (`yearSlider.value`) and the `aria-valuetext` attribute are updated, the element is never recreated.
 
-## Lecture automatique
+## Autoplay
 
-Même approche que `satellites-in-orbit` (`d3-timer`, delta de temps mesuré entre frames via `performance.now()` plutôt que l'argument `elapsed` du timer, pour pouvoir geler proprement l'avancée en pause) :
+Same approach as `satellites-in-orbit` (`d3-timer`, time delta measured between frames via `performance.now()` rather than the timer's `elapsed` argument, to be able to freeze progression cleanly when paused):
 
-- **Paliers de temps :** 900 ms par année à vitesse Normal (`STEP_MS`), modulés par `SPEED_FACTORS` (`{ slow: 0.5, normal: 1, fast: 2 }`, mêmes valeurs que `satellites-in-orbit`) — un passage complet (12 transitions) dure donc environ 21,6 s en Lent, 10,8 s en Normal, 5,4 s en Rapide.
-- **Temps d'arrêt en fin de passage :** 2 s fixes sur 2025 (`HOLD_MS`), indépendantes de la vitesse choisie (même rationale que `satellites-in-orbit` : laisser le temps de lire l'état final avant la reprise), avant de reprendre à 2013.
-- **Pause :** un simple drapeau `playing` vérifié à chaque frame du timer ; passer en pause fige l'avancée (et le temps d'arrêt en cours, le cas échéant) sans arrêter ni recréer le timer lui-même.
-- **Interruption par le curseur manuel :** l'évènement `input` du curseur d'année met `playing` à `false` (et réinitialise le temps d'arrêt en cours), pour éviter que la lecture automatique ne fasse repartir le curseur pendant que le visiteur le manipule.
+- **Time steps:** 900 ms per year at Normal speed (`STEP_MS`), modulated by `SPEED_FACTORS` (`{ slow: 0.5, normal: 1, fast: 2 }`, same values as `satellites-in-orbit`); a full pass (12 transitions) therefore lasts about 21.6 s at Slow, 10.8 s at Normal, 5.4 s at Fast.
+- **End-of-pass pause:** a fixed 2 s on 2025 (`HOLD_MS`), independent of the chosen speed (same rationale as `satellites-in-orbit`: leave time to read the final state before restarting), before restarting at 2013.
+- **Pause:** a simple `playing` flag checked at each timer frame; pausing freezes progression (and the ongoing end-of-pass pause, if any) without stopping or recreating the timer itself.
+- **Interruption by the manual slider:** the year slider's `input` event sets `playing` to `false` (and resets the ongoing end-of-pass pause), to prevent autoplay from moving the slider while the visitor is handling it.
 
-## Hydratation
+## Hydration
 
-`client:visible`, via un `IntersectionObserver` sur la zone de montage, même mécanisme que les autres visualisations du site.
+`client:visible`, via an `IntersectionObserver` on the mount area, same mechanism as the site's other visualizations.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cette visualisation.
+See "Accessibility (known limitation)" in this visualization's `functional-specifications.md`.
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation.
+See "Responsive" in this visualization's `functional-specifications.md`.
 
-## État dans l'URL
+## State in the URL
 
-Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+See "State in the URL" in the general `technical-specifications.md` for the shared mechanism.
 
-| Paramètre | Valeurs | Défaut (absent de l'URL) |
+| Parameter | Values | Default (absent from the URL) |
 |---|---|---|
-| `year` | Année disponible dans `skybins.json` (2013 à 2025) | Lecture en cours |
+| `year` | Year available in `skybins.json` (2013 to 2025) | Playback running |
 
-- `year` porte l'année elle-même, pas l'indice du curseur (`yearSlider.value`), pour qu'un lien reste lisible et survive à l'ajout d'une année au jeu de données.
-- `year` est écrit à la pause (bouton) et au relâchement du curseur d'année, et retiré à la reprise de la lecture. Un lien porteur de `year` ouvre la carte en pause sur cette année.
-- Un lien ou un curseur posé sur la dernière année reprend la lecture, une fois relancée, par la pause brève de fin de passage (`HOLD_MS`) avant de reboucler à 2013, plutôt que de rester bloqué sur cette année.
-- Pas de cadrage à capturer (carte fixe, voir "Interactions" dans `functional-specifications.md`), ni de filtre. La fiche de détail épinglée n'est pas capturée (état transitoire).
+- `year` carries the year itself, not the slider index (`yearSlider.value`), so that a link remains readable and survives the addition of a year to the dataset.
+- `year` is written on pause (button) and on release of the year slider, and removed when playback resumes. A link carrying `year` opens the map paused on that year.
+- A link or a slider set to the last year resumes playback, once restarted, with the brief end-of-pass pause (`HOLD_MS`) before looping back to 2013, rather than staying stuck on that year.
+- No framing to capture (fixed map, see "Interactions" in `functional-specifications.md`), nor any filter. The pinned detail card is not captured (transient state).
 
-## Décisions prises à l'implémentation
+## Decisions made during implementation
 
-Réponses aux points laissés ouverts par le brouillon de cadrage :
+Answers to the points left open by the scoping draft:
 
-- **Continuité réelle des composites VIIRS VNL :** confirmée. v2.1 (2013-2021) et v2.2 (2022-2025) partagent la même méthodologie "Annual VNL V2" (EOG publie ce produit par incréments annuels versionnés, pas de changement d'algorithme entre les deux, contrairement à la rupture V1→V2) ; aucune discontinuité artificielle observée à la jonction 2021/2022 dans la série obtenue (voir "Dataset source" dans `data-model.md`). La rupture nette observée dans la série se situe entre 2022 et 2023, à l'intérieur de la même version — cohérente avec un phénomène réel plutôt qu'un artefact de traitement (voir "Angle éditorial" dans `functional-specifications.md`).
-- **Méthode de conversion radiance → palier :** simplification assumée et documentée (pas une classification Bortle rigoureuse, qui demanderait une modélisation de la propagation atmosphérique hors de portée ici), six paliers calibrés sur la distribution réelle observée après agrégation zonale, voir "Échelle de visibilité du ciel" dans `data-model.md`.
-- **Faisabilité du téléchargement/traitement :** confirmée, mais lourde : téléchargement manuel par l'utilisateur (~4 Go compressés au total, comptes EOG requis), traitement zonal en Python (`rasterio`/`rasterstats`) en quelques minutes une fois les fichiers disponibles localement. Voir "Prétraitement" dans `data-model.md`.
-- **Géométries de `biodiversity/hexbins.json` :** confirmées exploitables telles quelles (mêmes 395 cellules, mêmes identifiants `h3`, mêmes polygones).
+- **Actual continuity of the VIIRS VNL composites:** confirmed. v2.1 (2013-2021) and v2.2 (2022-2025) share the same "Annual VNL V2" methodology (EOG publishes this product in versioned annual increments, no algorithm change between the two, unlike the V1→V2 break); no artificial discontinuity observed at the 2021/2022 junction in the resulting series (see "Source dataset" in `data-model.md`). The sharp break observed in the series lies between 2022 and 2023, within the same version, consistent with a real phenomenon rather than a processing artifact (see "Editorial angle" in `functional-specifications.md`).
+- **Radiance → level conversion method:** deliberate, documented simplification (not a rigorous Bortle classification, which would require atmospheric propagation modeling out of reach here), six levels calibrated on the actual distribution observed after zonal aggregation, see "Sky visibility scale" in `data-model.md`.
+- **Feasibility of download/processing:** confirmed, but heavy: manual download by the user (~4 GB compressed in total, EOG accounts required), zonal processing in Python (`rasterio`/`rasterstats`) in a few minutes once the files are available locally. See "Preprocessing" in `data-model.md`.
+- **Geometries of `biodiversity/hexbins.json`:** confirmed usable as is (same 395 cells, same `h3` identifiers, same polygons).

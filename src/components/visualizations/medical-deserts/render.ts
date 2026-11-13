@@ -45,14 +45,14 @@ export interface MedicalDesertsLabels {
 // communes with a tiny population and one part-time doctor) which would
 // otherwise compress nearly all communes into a sliver of the scale.
 const APL_DOMAIN: [number, number] = [0, 6.5];
-// Seuil éditorial (désert médical) : voir "Palette" dans technical-specifications.md.
+// Editorial threshold (medical desert): see "Palette" in technical-specifications.md.
 const APL_LOW_THRESHOLD = 1.5;
-// Échelle à trois paliers plutôt qu'un dégradé linéaire simple, pour que le
-// contraste soit concentré sous APL_LOW_THRESHOLD (voir "Palette" dans
-// technical-specifications.md) : `#0d366b` reste le palier 700 de la palette
-// séquentielle du style-guide, les deux autres teintes sont une déviation par
-// visualisation documentée là-bas (`d3.scaleLinear<string>()`, pas
-// d3-scale-chromatic, qui aurait été une dépendance nouvelle non discutée).
+// Three-stop scale rather than a simple linear gradient, so that the
+// contrast is concentrated below APL_LOW_THRESHOLD (see "Palette" in
+// technical-specifications.md): `#0d366b` remains step 700 of the style
+// guide's sequential palette, the other two tones are a per-visualization
+// deviation documented there (`d3.scaleLinear<string>()`, not
+// d3-scale-chromatic, which would have been a new, undiscussed dependency).
 const APL_COLOR_RANGE: [string, string, string] = ['#eef5fc', '#3987e5', '#0d366b'];
 const ZOOM_EXTENT: [number, number] = [1, 8];
 const RENDER_OVERSAMPLE = 2; // headroom so zoomed-in fills stay reasonably crisp

@@ -6,7 +6,7 @@ import fr from '../i18n/fr';
 // technical-specifications.md): the visualization itself as a CreativeWork,
 // and, when it offers downloads, its prepared files as a Dataset.
 
-const SITE_LICENSE = 'https://creativecommons.org/licenses/by-nc-sa/4.0/';
+const SITE_LICENSE = 'https://creativecommons.org/publicdomain/zero/1.0/';
 const AUTHOR = { '@type': 'Person', name: 'Christophe Heubès', url: 'https://christophe.heubes.org' };
 
 interface Options {

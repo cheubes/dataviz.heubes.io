@@ -22,8 +22,8 @@ interface RawEarthquake {
   nameEn?: string;
 }
 
-// Raw geometry, no Feature/properties wrapper (data-model.md "Contraintes de
-// validation propres à cette visualisation": a single MultiLineString, not a
+// Raw geometry, no Feature/properties wrapper (data-model.md "Validation
+// constraints specific to this visualization": a single MultiLineString, not a
 // FeatureCollection), same shape as monument-layers' rivers.json/roads.json.
 interface MultiLineStringData {
   type: 'MultiLineString';
@@ -69,22 +69,22 @@ type Speed = 'slow' | 'normal' | 'fast';
 const SPEED_FACTORS: Record<Speed, number> = { slow: 0.5, normal: 1, fast: 2 };
 
 // Continuous loop across the whole covered period, no hold-at-end (same
-// "Lecture automatique en boucle" convention as bird-migrations/volcanic-eruptions,
+// "Looping autoplay" convention as bird-migrations/volcanic-eruptions,
 // not the hold-then-restart convention of monument-layers/satellites-in-orbit).
 // ~14,500 events over ~126 years is a much denser catalog than the "few
-// thousand" originally estimated in data-model.md (see "Points à valider à
-// l'implémentation" in technical-specifications.md): simulated against the
+// thousand" originally estimated in data-model.md (see "Points to validate
+// during implementation" in technical-specifications.md): simulated against the
 // real data (peak decades run ~150 events/simulated-year), a 60s cycle keeps
 // up to ~350 pulses alive at once during the densest years, 90s brings that
 // down to ~240 — picked as the calmer compromise, but this is exactly the
 // kind of value the spec flags for a visual check once someone actually
-// watches it play (see BUILD-PLAN.md's "à caler une fois un premier rendu
-// réel observable" precedent on other looping visualizations).
+// watches it play (see BUILD-PLAN.md's "to be tuned once a first real
+// render can be observed" precedent on other looping visualizations).
 const TOTAL_DURATION_MS = 90_000;
 
 // Fixed real-time pulse life, independent of playback speed (technical-specifications.md
-// "Rendu"): a pulse must stay legible even at "Rapide". Also doubles as the
-// hover/tap window (functional-specifications.md "Survol/tap d'un point"):
+// "Rendering"): a pulse must stay legible even at "Fast". Also doubles as the
+// hover/tap window (functional-specifications.md "Point hover/tap"):
 // an epicenter is only interactive while its pulse is still visible, not
 // permanently like volcanic-eruptions' resting volcanoes.
 const PULSE_DURATION_MS = 850;
@@ -99,7 +99,7 @@ const MAX_ZOOM = 8;
 const ZOOM_BUTTON_STEP = 1.5;
 
 // Sequential blue, same two endpoints as monument-layers' SEQUENTIAL_BLUE
-// (style-guide.md "Palette dataviz", paliers 100/700): magnitude 6 lightest,
+// (style-guide.md "Dataviz palette", steps 100/700): magnitude 6 lightest,
 // magnitude 9.5 (the real maximum in this catalog, the 1960 Chile earthquake)
 // darkest and most saturated.
 const SEQUENTIAL_BLUE: [string, string] = ['#cde2fb', '#0d366b'];
@@ -109,9 +109,9 @@ const RADIUS_RANGE_PX: [number, number] = [3, 30];
 const BASEMAP_FILL = '#e4e2da';
 const RIVER_COLOR = '#a8c5da';
 const RIVER_LINE_WIDTH_PX = 1.5;
-// New design-system value (style-guide.md "Fond de carte (illustration)"),
+// New design-system value (style-guide.md "Basemap (illustration)"),
 // added there alongside this visualization: muted enough to stay secondary
-// to the pulses (technical-specifications.md "Techno carte"), distinct from
+// to the pulses (technical-specifications.md "Map technology"), distinct from
 // the river blue and from the magnitude scale above.
 const PLATE_BOUNDARY_COLOR = '#b3a696';
 const PLATE_BOUNDARY_LINE_WIDTH_PX = 1;
@@ -156,8 +156,8 @@ const RELIEF_REFERENCE_BOUNDS: Polygon = {
 
 // Same year-only grouping, spread evenly across the year for a smoother
 // per-frame trigger cadence (see the `Earthquake` interface above). `list`
-// is already sorted by `year` ascending (data-model.md "Contraintes de
-// validation"), and ties keep the USGS catalog's own chronological order.
+// is already sorted by `year` ascending (data-model.md "Validation
+// constraints"), and ties keep the USGS catalog's own chronological order.
 function assignSimYears(list: RawEarthquake[]): Earthquake[] {
   const result = new Array<Earthquake>(list.length);
   let i = 0;
@@ -694,7 +694,7 @@ export async function mountEarthquakes(root: HTMLElement, lang: 'fr' | 'en', lab
   }
 
   // Only the currently-pulsing epicenters are hit-testable (functional-specifications.md
-  // "Survol/tap d'un point"): a plain linear scan over `activePulses` (bounded
+  // "Point hover/tap"): a plain linear scan over `activePulses` (bounded
   // by PULSE_DURATION_MS × trigger rate, at most a few hundred even in the
   // densest decades) rather than a spatial index over the full ~14,500 points.
   function findActiveNear(x: number, y: number): ActivePulse | null {

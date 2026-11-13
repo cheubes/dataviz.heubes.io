@@ -1,72 +1,72 @@
-# Spécifications techniques : Ce qu'il en reste
+# Technical specifications: What's Left
 
-Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
+Complements the general `technical-specifications.md`: technical choices specific to this visualization, beyond the common rules.
 
-## Source des données
+## Data source
 
-Une source officielle par espèce (voir "Dataset source" dans `data-model.md`), pas un historique IUCN Red List unique (source initialement retenue, abandonnée : voir "Historique : abandon de la source IUCN Red List" dans `data-model.md`). Récupération ponctuelle au moment du prétraitement, pas à chaque build.
+One official source per species (see "Source dataset" in `data-model.md`), not a single IUCN Red List history (source initially chosen, then dropped: see "History: dropping the IUCN Red List source" in `data-model.md`). One-off retrieval at preprocessing time, not on every build.
 
-## Rendu
+## Rendering
 
-**SVG, pas Canvas** : quatre à six petits multiples seulement (voir "Sélection des espèces" dans `data-model.md`), aucun rapport avec le volume qui a justifié Canvas sur les visualisations à carte du site. **Pas de carte géographique** ici, à la différence de `bird-migrations`, `monarch-migration`, `monument-layers` ou `light-pollution` : l'angle retenu (voir "Angle retenu" dans `data-model.md`) est délibérément sans dimension spatiale, chaque espèce est une carte de petits multiples, pas un point sur un planisphère.
+**SVG, not Canvas**: only four to six small multiples (see "Species selection" in `data-model.md`), nothing like the volume that justified Canvas on the site's map visualizations. **No geographic map** here, unlike `bird-migrations`, `monarch-migration`, `monument-layers` or `light-pollution`: the chosen angle (see "Chosen angle" in `data-model.md`) deliberately has no spatial dimension, each species is a small-multiples card, not a point on a world map.
 
-**Rendu basé uniquement sur les effectifs** (décision explicite de l'utilisateur, voir échanges de cadrage) : pas de dimension catégorielle affichée (l'ancienne catégorie de menace IUCN disparaît avec l'abandon de cette source, voir `data-model.md`), pas de mapping couleur ↔ donnée. Le nombre d'icônes affichées porte seule le message pour les données ; la couleur, elle, vient d'une illustration par espèce plutôt que d'une teinte plate (voir "Fond de carte illustré par espèce" ci-dessous), décision revenue en cours d'implémentation après une première version à fond neutre.
+**Rendering based solely on counts** (explicit decision of the user, see scoping discussions): no categorical dimension displayed (the former IUCN threat category disappears with the dropping of that source, see `data-model.md`), no color ↔ data mapping. The number of icons displayed alone carries the message for the data; color, for its part, comes from an illustration per species rather than a flat hue (see "Illustrated basemap per species" below), a decision reversed during implementation after a first version with a neutral background.
 
-- Chaque carte d'espèce affiche une grille d'icônes SVG simples, une seule silhouette générique (empreinte de patte, voir "Iconographie" dans `style-guide.md` : pas de bibliothèque d'icônes, SVG inline minimal) réutilisée pour les six espèces plutôt qu'une silhouette propre à chacune — cohérent avec le rendu volontairement dépouillé de cette visualisation (voir ci-dessus). Une icône représente un nombre fixe d'unités propre à chaque espèce (`iconRatio` dans le JSON, voir "Format de sortie" dans `data-model.md` ; ex. 1 icône = 100 individus pour le tigre, 1 icône = 10 individus pour la vaquita), ce ratio choisi pour que le nombre d'icônes affichées reste dans une fourchette lisible (grossièrement 10 à 80 icônes selon l'espèce) quel que soit le point de mesure.
-- Le nombre d'icônes affichées à un instant simulé donné est calculé par interpolation linéaire (`d3.interpolateNumber`) entre les deux points de mesure qui encadrent cet instant, puis divisé par `iconRatio` et arrondi.
-- Les icônes et le nom de l'espèce restent en blanc, constant (pas de teinte par espèce) : le fond illustré (voir ci-dessous) porte déjà une identité visuelle propre à chaque espèce, les éléments de texte/données au-dessus n'ont pas besoin d'en ajouter une deuxième.
-- Le grand hamster d'Alsace affiche "terriers actifs" plutôt que "individus" dans son intitulé et sa fiche de détail (`unit` dans le JSON, voir "Points d'attention" dans `data-model.md`) ; les deux points vaquita construits à partir d'une fourchette source affichent cette fourchette (`populationLabel`) dans la fiche de détail plutôt que le point médian utilisé pour le calcul du nombre d'icônes.
+- Each species card displays a grid of simple SVG icons, a single generic silhouette (paw print, see "Iconography" in `style-guide.md`: no icon library, minimal inline SVG) reused for the six species rather than a silhouette specific to each one, consistent with the deliberately stripped-down rendering of this visualization (see above). One icon represents a fixed number of units specific to each species (`iconRatio` in the JSON, see "Output format" in `data-model.md`; e.g. 1 icon = 100 individuals for the tiger, 1 icon = 10 individuals for the vaquita), this ratio being chosen so that the number of icons displayed stays within a readable range (roughly 10 to 80 icons depending on the species) whatever the measurement point.
+- The number of icons displayed at a given simulated instant is computed by linear interpolation (`d3.interpolateNumber`) between the two measurement points surrounding that instant, then divided by `iconRatio` and rounded.
+- The icons and the species name stay white, constant (no hue per species): the illustrated background (see below) already carries a visual identity specific to each species, the text/data elements on top of it do not need to add a second one.
+- The European hamster displays "active burrows" rather than "individuals" in its label and its detail card (`unit` in the JSON, see "Points of attention" in `data-model.md`); the two vaquita points built from a source range display that range (`populationLabel`) in the detail card rather than the midpoint used to compute the number of icons.
 
-## Fond de carte illustré par espèce
+## Illustrated basemap per species
 
-Chaque carte a pour fond une illustration propre à son espèce, fournie par l'utilisateur (`public/data/endangered-species/<species-id>.jpg`, un fichier par espèce, même nom que l'`id` du JSON — voir "Format de sortie" dans `data-model.md`), plutôt qu'une teinte plate ou la palette catégorielle du site : décision de l'utilisateur après discussion (l'alternative envisagée, une teinte par espèce puisée dans la palette catégorielle, écartée au profit d'une illustration). Les six illustrations partagent un même style graphique (aplat sombre bleu marine/doré), fournies déjà au bon ratio pour la taille fixe des cartes (1040 × 840 px, soit le même ratio que 260 × 210 px). Recompressées au moment de l'ajout (JPEG progressif qualité 82, voir "Performance" dans `technical-specifications.md` général), passées de 290-480 Ko à 93-211 Ko chacune sans perte visible.
+Each card has as its background an illustration specific to its species, provided by the user (`public/data/endangered-species/<species-id>.jpg`, one file per species, same name as the `id` in the JSON, see "Output format" in `data-model.md`), rather than a flat hue or the site's categorical palette: decision of the user after discussion (the alternative considered, one hue per species drawn from the categorical palette, was ruled out in favor of an illustration). The six illustrations share the same graphic style (dark navy blue/gold flat colors), provided already at the right ratio for the fixed size of the cards (1040 × 840 px, i.e. the same ratio as 260 × 210 px). Recompressed when added (progressive JPEG quality 82, see "Performance" in the general `technical-specifications.md`), going from 290-480 KB to 93-211 KB each without visible loss.
 
-Un voile sombre semi-transparent (`rgba(13, 13, 12, 0.45)`, superposé en `linear-gradient` au-dessus de l'image) garantit un contraste suffisant pour le nom de l'espèce et les icônes (passés en blanc, voir "Rendu" ci-dessus) quelle que soit la zone de l'illustration derrière eux, plutôt que de dépendre de la luminosité propre à chaque image à cet endroit précis.
+A semi-transparent dark overlay (`rgba(13, 13, 12, 0.45)`, layered as a `linear-gradient` above the image) ensures sufficient contrast for the species name and the icons (switched to white, see "Rendering" above) whatever the area of the illustration behind them, rather than depending on the brightness of each image at that precise spot.
 
-**Provenance :** travail original de l'utilisateur (confirmé, voir échanges de cadrage), pas de mention de crédit/licence tierce nécessaire, à la différence des jeux de données de population (voir "Dataset source" dans `data-model.md`).
-- **Cartes de taille fixe** (retour utilisateur explicite après une première version à hauteur variable) : la grille d'icônes est une grille CSS à colonnes et lignes fixes (10 colonnes × 8 lignes, 80 emplacements), dimensionnée pour le maximum réel observé (77 icônes, grand hamster d'Alsace en 2024), plutôt qu'une hauteur qui grandit avec le nombre d'icônes. Les emplacements non utilisés restent vides ; la carte entière (en-tête compris) a donc la même largeur et la même hauteur quelle que soit l'espèce ou l'instant simulé.
+**Provenance:** original work by the user (confirmed, see scoping discussions), no third-party credit/license mention needed, unlike the population datasets (see "Source dataset" in `data-model.md`).
+- **Fixed-size cards** (explicit user feedback after a first version with variable height): the icon grid is a CSS grid with fixed columns and rows (10 columns × 8 rows, 80 slots), sized for the actual observed maximum (77 icons, European hamster in 2024), rather than a height that grows with the number of icons. Unused slots stay empty; the whole card (header included) therefore has the same width and height whatever the species or the simulated instant.
 
 ## Animation
 
-- **Lecture automatique en boucle** (revu après retour utilisateur ; la première version faisait un passage unique sans boucler, voir échanges de cadrage) : boucle `d3-timer` avançant d'année en année sur le domaine `[point de mesure le plus ancien toutes espèces confondues, point de mesure le plus récent]`, une pause de 2 s sur la dernière année avant de reboucler au point de départ, même convention que `light-pollution` (`STEP_MS`/`HOLD_MS`).
-- **Trois vitesses** (Lent ×0,5 / Normal ×1 / Rapide ×2, mêmes facteurs que `light-pollution`/`satellites-in-orbit`) appliquées à la durée par année (`STEP_MS`).
-- **Curseur d'année natif** (`<input type="range">`, un cran par année, avec graduations, même convention que `light-pollution`) synchronisé avec la lecture automatique ; le déplacer manuellement met la lecture en pause (même comportement que `light-pollution`).
-- Toutes les cartes partagent la même chronologie simulée : une espèce dont les mesures démarrent plus tard que les autres reste à son état initial (premier point connu) jusqu'à cette date.
-- Le nombre d'icônes à l'année simulée courante reste calculé par interpolation (voir "Rendu" ci-dessus) même si l'avancée du curseur se fait année par année : une espèce sans mesure exactement sur l'année courante affiche un effectif interpolé entre ses deux mesures les plus proches, pas une valeur figée jusqu'à la prochaine mesure réelle.
+- **Looping autoplay** (revised after user feedback; the first version made a single pass without looping, see scoping discussions): `d3-timer` loop advancing year by year over the domain `[earliest measurement point across all species, most recent measurement point]`, a 2 s pause on the last year before looping back to the starting point, same convention as `light-pollution` (`STEP_MS`/`HOLD_MS`).
+- **Three speeds** (Slow ×0.5 / Normal ×1 / Fast ×2, same factors as `light-pollution`/`satellites-in-orbit`) applied to the duration per year (`STEP_MS`).
+- **Native year slider** (`<input type="range">`, one step per year, with tick marks, same convention as `light-pollution`) synchronized with autoplay; moving it manually pauses playback (same behavior as `light-pollution`).
+- All cards share the same simulated timeline: a species whose measurements start later than the others stays at its initial state (first known point) until that date.
+- The number of icons at the current simulated year is still computed by interpolation (see "Rendering" above) even though the slider advances year by year: a species with no measurement exactly in the current year displays a count interpolated between its two nearest measurements, not a value frozen until the next real measurement.
 
-## Nouvelles dépendances
+## New dependencies
 
-| Dépendance | Usage | Portée |
+| Dependency | Usage | Scope |
 |---|---|---|
-| `d3-interpolate` | Interpolation de la population entre deux points de mesure connus (`interpolateNumber`) | Scopée à cette visualisation (île Astro) |
-| `d3-timer` | Boucle d'animation (`timer`, wrapper de `requestAnimationFrame`) | Idem |
+| `d3-interpolate` | Interpolation of the population between two known measurement points (`interpolateNumber`) | Scoped to this visualization (Astro island) |
+| `d3-timer` | Animation loop (`timer`, a `requestAnimationFrame` wrapper) | Same |
 
-Pas de `d3-scale` ici (déjà une dépendance du projet, mais pas utilisée par cette visualisation : l'avancée année par année ne nécessite pas d'échelle, voir "Animation" ci-dessus), ni `d3-geo`, `d3-zoom` ou `d3-selection` (voir "Rendu" ci-dessus : pas de carte géographique, pas de pan/zoom).
+No `d3-scale` here (already a project dependency, but not used by this visualization: advancing year by year does not require a scale, see "Animation" above), nor `d3-geo`, `d3-zoom` or `d3-selection` (see "Rendering" above: no geographic map, no pan/zoom).
 
-## Hydratation
+## Hydration
 
-`client:visible`, via un `IntersectionObserver` sur la zone de montage, même mécanisme que les autres visualisations du site.
+`client:visible`, via an `IntersectionObserver` on the mount area, same mechanism as the site's other visualizations.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cette visualisation.
+See "Accessibility (known limitation)" in this visualization's `functional-specifications.md`.
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation.
+See "Responsive" in this visualization's `functional-specifications.md`.
 
-## État dans l'URL
+## State in the URL
 
-Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+See "State in the URL" in the general `technical-specifications.md` for the common mechanism.
 
-| Paramètre | Valeurs | Défaut (absent de l'URL) |
+| Parameter | Values | Default (absent from the URL) |
 |---|---|---|
-| `year` | Année entière entre les bornes du curseur d'année (point de mesure le plus ancien au plus récent, toutes espèces confondues) | Lecture en cours |
+| `year` | Integer year between the year slider bounds (earliest to most recent measurement point, across all species) | Playback running |
 
-- `year` est écrit à la pause (bouton) et au relâchement du curseur d'année, et retiré à la reprise de la lecture. Un lien porteur de `year` ouvre les petits multiples en pause sur cette année.
-- Un lien ou un curseur posé sur la dernière année reprend la lecture, une fois relancée, par la pause brève de fin de passage (`HOLD_MS`) avant de reboucler à la première année, plutôt que de rester bloqué sur cette année.
-- Pas de filtre ni de cadrage à capturer (voir "Interactions" dans `functional-specifications.md`). La fiche de détail épinglée n'est pas capturée (état transitoire).
+- `year` is written on pause (button) and on release of the year slider, and removed when playback resumes. A link carrying `year` opens the small multiples paused on that year.
+- A link or a slider set on the last year resumes playback, once restarted, with the brief end-of-pass pause (`HOLD_MS`) before looping back to the first year, rather than staying stuck on that year.
+- No filter or framing to capture (see "Interactions" in `functional-specifications.md`). The pinned detail card is not captured (transient state).
 
-## Points tranchés à l'implémentation
+## Points decided during implementation
 
-Tous les points laissés ouverts au cadrage sont désormais résolus (voir "Dataset source", "Sélection des espèces" et "Points d'attention actés" dans `data-model.md`) : sources et chiffres réels vérifiés, six espèces conservées, silhouette générique unique (empreinte de patte) et `iconRatio` fixés par espèce dans le JSON.
+All points left open during scoping are now resolved (see "Source dataset", "Species selection" and "Points of attention settled" in `data-model.md`): real sources and figures verified, six species kept, a single generic silhouette (paw print) and `iconRatio` set per species in the JSON.

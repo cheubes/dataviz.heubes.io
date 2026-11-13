@@ -1,78 +1,78 @@
-# Spécification fonctionnelle : Où la France a brûlé
+# Functional specification: Where France Has Burned
 
-Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
+Supplements the general `functional-specifications.md`: screen of this visualization (goal, content, interactions, states, responsive).
 
-## Angle éditorial
+## Editorial angle
 
-| Langue | Titre | Résumé |
+| Language | Title | Summary |
 |---|---|---|
 | FR | Où la France a brûlé | Plus de cinquante mille incendies de forêt recensés depuis 2006 : une carte qui les rejoue, année après année, à travers le pays. |
 | EN | Where France Has Burned | Over fifty thousand forest fires recorded since 2006: a map replaying them, year by year, across the country. |
 
-**Présentation longue FR :**
+**Long FR presentation:**
 > Depuis 2006, la Base de Données sur les Incendies de Forêts en France (BDIFF) recense chaque incendie de forêt survenu sur le territoire : sa commune, sa date, la surface qu'il a parcourue. Plus de cinquante mille foyers y sont aujourd'hui répertoriés, très majoritairement concentrés sur le pourtour méditerranéen.
 >
 > Cette carte rejoue, année après année, où ces incendies se sont produits : chaque point apparaît à la commune où il a démarré, sa taille reflétant la surface brûlée. La part du pourtour méditerranéen dans le total annuel recule doucement sur la période (de sept incendies sur dix en 2006-2010 à six sur dix en 2021-2025), tandis que des foyers plus nombreux apparaissent ailleurs : Bretagne, massif alpin, Normandie, Vosges. Le feu reste concentré sur ses terres historiques, mais il ne s'y cantonne plus tout à fait.
 
-**Présentation longue EN :**
+**Long EN presentation:**
 > Since 2006, the French Forest Fire Database (BDIFF) has recorded every forest fire on French territory: its municipality, its date, the area it burned. More than fifty thousand fires are now listed, overwhelmingly concentrated around the Mediterranean rim.
 >
 > This map replays, year by year, where these fires occurred: each point appears at the municipality where it started, its size reflecting the area burned. The Mediterranean rim's share of the annual total slowly recedes over the period (from seven fires in ten in 2006-2010 to six in ten in 2021-2025), while more fires appear elsewhere: Brittany, the Alps, Normandy, the Vosges. Fire remains concentrated on its historical ground, but it no longer stays fully confined to it.
 
-Angle confirmé empiriquement sur les données réelles agrégées par année et par département (voir "Statistiques mesurées" dans `data-model.md`), pas présumé : glissement réel mais modéré, formulé en conséquence plutôt qu'exagéré.
+Angle confirmed empirically on the actual data aggregated by year and by department (see "Measured statistics" in `data-model.md`), not presumed: a real but moderate shift, worded accordingly rather than exaggerated.
 
-## Objectif
+## Goal
 
-Faire voir, par la reconstitution année par année sur une carte réelle de la France métropolitaine, où se produisent les incendies de forêt et si leur répartition géographique évolue dans le temps.
+Show, through a year-by-year reconstruction on an actual map of mainland France, where forest fires occur and whether their geographic distribution changes over time.
 
-## Contenu (zone de montage)
+## Content (mount area)
 
-- Carte illustrée de la France métropolitaine (silhouette, pas de fond de tuiles, voir "Fond de carte" dans `technical-specifications.md`).
-- Points représentant chaque incendie de l'année simulée courante (uniquement cette année-là, pas d'accumulation des années précédentes, voir "Interactions" ci-dessous), à la position de sa commune de départ (pas de coordonnées plus précises dans la source, voir "Champs source utilisés" dans `data-model.md`), taille proportionnelle à la surface parcourue (voir "Taille des points" dans `technical-specifications.md`).
-- Indicateur de l'année simulée en cours.
-- Compteur du nombre d'incendies et de la surface totale brûlée à l'année simulée courante.
-- Contrôles de lecture : bouton Play/Pause ; sélecteur de vitesse (Lent / Normal / Rapide) ; curseur d'année natif (`<input type="range">`), de 2006 à l'année la plus récente disponible (voir "Périmètre retenu" dans `data-model.md`).
-- Boutons zoomer/dézoomer/réinitialiser en surimpression sur la carte, doublant le zoom/pan à la souris et au tactile.
-- Fiche de détail au survol/tap d'un incendie, avec lien vers sa fiche officielle sur le site de la BDIFF.
+- Illustrated map of mainland France (silhouette, no tile background, see "Basemap" in `technical-specifications.md`).
+- Points representing each fire of the current simulated year (that year only, no accumulation of previous years, see "Interactions" below), at the position of its starting municipality (no more precise coordinates in the source, see "Source fields used" in `data-model.md`), size proportional to the burned area (see "Point size" in `technical-specifications.md`).
+- Indicator of the current simulated year.
+- Counter of the number of fires and the total burned area for the current simulated year.
+- Playback controls: Play/Pause button; speed selector (Slow / Normal / Fast); native year slider (`<input type="range">`), from 2006 to the most recent year available (see "Chosen scope" in `data-model.md`).
+- Zoom in/zoom out/reset buttons overlaid on the map, doubling mouse and touch zoom/pan.
+- Detail card on hover/tap of a fire, with a link to its official record on the BDIFF site.
 
 ## Interactions
 
-- **Lecture automatique :** démarre dès le chargement de la page sur la première année disponible (2006), en boucle continue jusqu'à l'année la plus récente, même convention que `satellites-in-orbit`, `light-pollution` et `monument-layers` (voir leurs `functional-specifications.md`) : pause brève sur la dernière année avant de reprendre au début.
-- **Play/Pause :** interrompt ou reprend la lecture à l'année simulée courante.
-- **Vitesse de lecture :** Lent / Normal / Rapide, "Normal" par défaut (mêmes trois vitesses que les autres visualisations animées du site).
-- **Curseur d'année :** un pas par année. Le déplacer manuellement (glisser ou clavier) met la lecture automatique en pause et remplace immédiatement les points affichés par ceux de l'année choisie, y compris en arrière (même convention que le curseur de `light-pollution`, voir son `functional-specifications.md`).
-- **Zoom/pan :** libre sur la carte (souris/molette, tactile), pour observer une concentration régionale (ex. le pourtour méditerranéen) une fois qu'elle est apparue. Doublé de boutons zoomer/dézoomer/réinitialiser (mêmes contrôles que `monument-layers`/`paris-trees`), désactivés aux bornes de l'échelle de zoom.
-- **Survol/tap d'un incendie :** fiche de détail (commune, département, date, surface parcourue, cause suspectée si connue, lien vers la fiche officielle BDIFF). Le lien n'est cliquable qu'une fois la fiche épinglée (clic/tap sur le point), même raison que `monument-layers` : en simple survol, la fiche suit le pointeur et resterait impossible à atteindre sans se refermer avant de pouvoir cliquer le lien.
-- **Vue initiale :** carte de France entière visible, année 2006 affichée, lecture automatique déjà en cours.
-- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : l'année et le cadrage sont restaurés. Une année partagée ouvre la carte en pause sur cette année (voir "État dans l'URL" dans `technical-specifications.md`).
-- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause sur la dernière année couverte.
+- **Autoplay:** starts as soon as the page loads on the first available year (2006), in a continuous loop up to the most recent year, same convention as `satellites-in-orbit`, `light-pollution` and `monument-layers` (see their `functional-specifications.md`): brief pause on the last year before starting over.
+- **Play/Pause:** stops or resumes playback at the current simulated year.
+- **Playback speed:** Slow / Normal / Fast, "Normal" by default (same three speeds as the site's other animated visualizations).
+- **Year slider:** one step per year. Moving it manually (drag or keyboard) pauses autoplay and immediately replaces the displayed points with those of the chosen year, including backwards (same convention as the slider of `light-pollution`, see its `functional-specifications.md`).
+- **Zoom/pan:** free on the map (mouse/wheel, touch), to observe a regional concentration (e.g. the Mediterranean rim) once it has appeared. Doubled by zoom in/zoom out/reset buttons (same controls as `monument-layers`/`paris-trees`), disabled at the bounds of the zoom scale.
+- **Hover/tap on a fire:** detail card (municipality, department, date, burned area, suspected cause if known, link to the official BDIFF record). The link is only clickable once the card is pinned (click/tap on the point), for the same reason as `monument-layers`: on simple hover, the card follows the pointer and could not be reached without closing before the link can be clicked.
+- **Initial view:** whole map of France visible, year 2006 displayed, autoplay already running.
+- **Shared link** (see "Shareable state in the URL" in the general `functional-specifications.md`): the year and the framing are restored. A shared year opens the map paused on that year (see "State in the URL" in `technical-specifications.md`).
+- **Reduced motion** (see "Reduced motion" in the general `functional-specifications.md`): the map opens paused on the last year covered.
 
-## Vue tableau
+## Table view
 
-Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+See "Data table view" in the general `functional-specifications.md`.
 
-- **Légende :** "Incendies de forêt recensés par la BDIFF, par année" / "Forest fires recorded by the BDIFF, by year".
-- **Lignes :** une par année couverte (2006 à 2025), dans l'ordre chronologique.
-- **Colonnes :** Année ; Incendies (nombre) ; Surface brûlée (somme de l'année, en hectares, arrondie à l'hectare) ; Plus grand incendie (commune, code du département entre parenthèses, et surface en hectares).
-- **Ligne de total :** "2006-2025" : nombre total d'incendies, surface totale, et plus grand incendie de toute la période.
+- **Caption:** "Incendies de forêt recensés par la BDIFF, par année" / "Forest fires recorded by the BDIFF, by year".
+- **Rows:** one per year covered (2006 to 2025), in chronological order.
+- **Columns:** Year; Fires (count); Burned area (sum for the year, in hectares, rounded to the hectare); Largest fire (municipality, department code in parentheses, and area in hectares).
+- **Total row:** "2006-2025": total number of fires, total area, and largest fire of the whole period.
 
-## États
+## States
 
-- **Chargement :** le temps que `fires.json` et le fond de carte soient récupérés et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
-- **Erreur :** échec de récupération d'un des fichiers de données → message d'erreur, pas de carte vide silencieuse.
-- **Vide :** une année sans aucun incendie recensé dans le jeu de données retenu → pas de message d'erreur, la carte reste simplement vide pour cette année. Cas non rencontré sur les données réelles (1 347 incidents sur l'année la plus calme, 2024, voir "Statistiques mesurées" dans `data-model.md`), état géré par construction (la boucle de rendu itère sur le sous-ensemble de l'année, potentiellement vide) plutôt que retiré faute de cas réel.
+- **Loading:** while `fires.json` and the basemap are retrieved and the animation initializes; mount area reserved with no layout shift.
+- **Error:** failure to retrieve one of the data files → error message, no silent empty map.
+- **Empty:** a year with no fire recorded in the dataset kept → no error message, the map simply stays empty for that year. Case not encountered in the actual data (1,347 incidents in the quietest year, 2024, see "Measured statistics" in `data-model.md`), state handled by construction (the rendering loop iterates over the year's subset, potentially empty) rather than removed for lack of a real case.
 
 ## Responsive
 
-- Contrôles de lecture et indicateur d'année repositionnés sous la carte plutôt qu'en surimpression, avec des cibles tactiles suffisamment grandes.
-- Pan/zoom au geste tactile ; fiche de détail au tap sur un incendie plutôt qu'au survol.
+- Playback controls and year indicator repositioned below the map rather than overlaid, with sufficiently large touch targets.
+- Pan/zoom by touch gesture; detail card on tap of a fire rather than on hover.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-L'interaction principale (carte animée, zoom/pan, survol des incendies) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général). Le bouton Play/Pause, le sélecteur de vitesse, le curseur d'année et les boutons de zoom restent accessibles au clavier (éléments `<button>`/`<select>`/`<input type="range">` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention (la lecture boucle indéfiniment, même rationale que `satellites-in-orbit`) et de parcourir la chronologie sans dépendre de la carte animée elle-même.
+The main interaction (animated map, zoom/pan, hovering over fires) is not natively accessible by keyboard or screen reader. Documented as a known limitation, without fallback, in line with the project's default rule (see "Rules common to all visualizations" in the general `technical-specifications.md`). The Play/Pause button, the speed selector, the year slider and the zoom buttons remain keyboard accessible (standard `<button>`/`<select>`/`<input type="range">` elements), to allow stopping content that moves continuously without intervention (playback loops indefinitely, same rationale as `satellites-in-orbit`) and browsing the timeline without depending on the animated map itself.
 
-Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
+Fallback: the table view (see "Table view" above) gives access to the same data, in summary form, by keyboard and screen reader.
 
-## Contenu non traduit
+## Untranslated content
 
-Les noms de communes et de départements ne sont disponibles qu'en français dans la source ; affichés tels quels dans la version anglaise de la page, sans traduction (même convention que `paris-trees` et `monument-layers`, voir leurs `functional-specifications.md`).
+Municipality and department names are only available in French in the source; displayed as is in the English version of the page, without translation (same convention as `paris-trees` and `monument-layers`, see their `functional-specifications.md`).
