@@ -1,71 +1,71 @@
-# Spécification fonctionnelle : Le calendrier des fleurs
+# Functional specification: The Flower Calendar
 
-Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
+Complements the general `functional-specifications.md`: screen of this visualization (goal, content, interactions, states, responsive).
 
-## Angle éditorial
+## Editorial angle
 
-| Langue | Titre | Résumé |
+| Language | Title | Summary |
 |---|---|---|
 | FR | Le calendrier des fleurs | Quand fleurissent les plantes sauvages en France, et comment ce calendrier se déplace avec le réchauffement. |
 | EN | The Flower Calendar | When wild plants flower in France, and how that calendar shifts with warming temperatures. |
 
-**Présentation longue FR :**
+**Long FR presentation:**
 > La phénologie, l'étude des cycles saisonniers du vivant, est l'un des indices les plus sensibles du changement climatique. En France, des milliers d'observations citoyennes enregistrent chaque année les premières floraisons des plantes sauvages. Visualisées sur un calendrier circulaire, ces données révèlent la beauté des rythmes naturels et, dans leur dérive progressive, l'empreinte discrète du réchauffement.
 
-**Présentation longue EN :**
+**Long EN presentation:**
 > Phenology, the study of seasonal cycles in nature, is one of the most sensitive indicators of climate change. Across France, thousands of citizen observations record each year the first flowering dates of wild plants. Visualised on a circular calendar, these data reveal the beauty of natural rhythms and, in their slow drift, the quiet imprint of warming temperatures.
 
-## Objectif
+## Goal
 
-Montrer, sur un calendrier circulaire, le moment de première floraison de plantes sauvages en France, et comment ce moment s'est déplacé entre deux décennies.
+Show, on a circular calendar, the time of first flowering of wild plants in France, and how that time has shifted between two decades.
 
-## Contenu (zone de montage)
+## Content (mount area)
 
-- Calendrier circulaire (deux anneaux, chacun affichant une décennie choisie indépendamment), labels des mois sur le pourtour.
-- Sélecteur d'espèces (checkboxes ou liste, jusqu'à 15 espèces affichées simultanément).
-- Deux sélecteurs de décennie, un par anneau (voir "Comparaison de décennies" ci-dessous).
-- Titre central ("Premières floraisons en France" / "First Flowerings in France").
-- Tooltip contextuel au survol/tap d'un arc.
+- Circular calendar (two rings, each displaying an independently chosen decade), month labels around the edge.
+- Species selector (checkboxes or list, up to 15 species displayed simultaneously).
+- Two decade selectors, one per ring (see "Decade comparison" below).
+- Central title ("Premières floraisons en France" / "First Flowerings in France").
+- Contextual tooltip on hover/tap of an arc.
 
 ## Interactions
 
-- **Sélecteur d'espèces :** multi-sélection, jusqu'à 15 espèces simultanées (au-delà, désactiver la sélection la plus ancienne ou bloquer une sélection supplémentaire avec un message, à trancher à l'implémentation). Sélection par défaut : toutes les espèces de la liste (voir "Sélection des espèces" dans `data-model.md`), pour un premier affichage montrant d'emblée l'ensemble du calendrier.
-- **Comparaison de décennies :** deux sélecteurs indépendants, un pour l'anneau intérieur et un pour l'anneau extérieur, chacun proposant les six décennies couvertes par les données (1970s à 2020s, voir "Dataset source" dans `data-model.md`). Sélection libre : aucune contrainte d'ordre entre les deux anneaux (l'anneau intérieur peut porter une décennie plus récente que l'extérieur si le visiteur le choisit ainsi). **Par défaut : 1970s à l'intérieur, 2020s (2020 à aujourd'hui) à l'extérieur** (décision explicite : l'écart maximal disponible, pour rendre la dérive du calendrier la plus visible possible dès l'ouverture).
-- **Survol / tap d'un arc :** tooltip avec le nom de l'espèce, le jour médian de floraison en toutes lettres (ex. "15 avril"), la variation par rapport à l'autre décennie affichée (ex. "-8 jours").
-- **Vue initiale :** calendrier complet visible, toutes les espèces sélectionnées, décennies par défaut (1970s intérieur / 2020s extérieur).
-- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les espèces affichées et la décennie de chaque anneau sont restaurées, y compris une sélection vide. Le tooltip n'est pas capturé (voir "État dans l'URL" dans `technical-specifications.md`).
-- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : changer de décennie redessine les anneaux sans transition, au lieu de faire glisser les arcs.
+- **Species selector:** multi-select, up to 15 simultaneous species (beyond that, deselect the oldest selection or block an additional selection with a message, to be decided during implementation). Default selection: all species in the list (see "Species selection" in `data-model.md`), so that the first display shows the whole calendar from the start.
+- **Decade comparison:** two independent selectors, one for the inner ring and one for the outer ring, each offering the six decades covered by the data (1970s to 2020s, see "Source dataset" in `data-model.md`). Free selection: no ordering constraint between the two rings (the inner ring can carry a more recent decade than the outer one if the visitor chooses so). **Default: 1970s on the inside, 2020s (2020 to today) on the outside** (explicit decision: the maximum available gap, to make the calendar's drift as visible as possible from the start).
+- **Hover / tap on an arc:** tooltip with the species name, the median flowering day spelled out (e.g. "15 avril"), the change relative to the other displayed decade (e.g. "-8 jours").
+- **Initial view:** complete calendar visible, all species selected, default decades (1970s inner / 2020s outer).
+- **Shared link** (see "Shareable state in the URL" in the general `functional-specifications.md`): the displayed species and each ring's decade are restored, including an empty selection. The tooltip is not captured (see "State in the URL" in `technical-specifications.md`).
+- **Reduced motion** (see "Reduced motion" in the general `functional-specifications.md`): changing the decade redraws the rings without transition, instead of sliding the arcs.
 
-## Vue tableau
+## Table view
 
-Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+See "Data table view" in the general `functional-specifications.md`.
 
-- **Légende :** "Date médiane de première floraison, par espèce et par décennie" / "Median first-flowering date, by species and decade".
-- **Lignes :** les douze espèces, dans l'ordre des cases à cocher. Première cellule : nom commun dans la langue de la page, suivi du nom scientifique en italique.
-- **Colonnes :** une par décennie, avec les mêmes libellés que les sélecteurs d'anneaux (`1970-1979`…), contenant la date médiane de première floraison en jour et mois ("6 avril" / "April 6"), écrite "1er" pour le premier jour du mois en français. Dernière colonne : **Écart**, différence en jours entre la dernière et la première décennie, signée ("−26 j" / "−26 d"), une valeur négative signifiant une floraison plus précoce.
-- **Pas de ligne de total :** une moyenne entre espèces n'aurait pas de sens botanique.
-- **Non repris :** les percentiles 10 et 90 et le nombre d'observations, qui doubleraient la largeur d'un tableau déjà dense ; ils restent dans le fichier téléchargeable.
+- **Caption:** "Date médiane de première floraison, par espèce et par décennie" / "Median first-flowering date, by species and decade".
+- **Rows:** the twelve species, in checkbox order. First cell: common name in the page language, followed by the scientific name in italics.
+- **Columns:** one per decade, with the same labels as the ring selectors (`1970-1979`…), containing the median first-flowering date as day and month ("6 avril" / "April 6"), written "1er" for the first day of the month in French. Last column: **Shift**, difference in days between the last and the first decade, signed ("−26 j" / "−26 d"), a negative value meaning earlier flowering.
+- **No total row:** an average across species would make no botanical sense.
+- **Not included:** the 10th and 90th percentiles and the number of observations, which would double the width of an already dense table; they remain in the downloadable file.
 
-## États
+## States
 
-- **Chargement :** le temps que le JSON de phénologie soit récupéré et que le calendrier s'initialise ; zone de montage réservée sans saut de mise en page.
-- **Erreur :** échec de récupération du JSON → message d'erreur, pas de calendrier vide silencieux.
-- **Vide :** aucune espèce sélectionnée (si le visiteur désélectionne tout) → message invitant à en choisir au moins une, plutôt qu'un calendrier sans arcs sans explication.
+- **Loading:** while the phenology JSON is retrieved and the calendar initializes; mount area reserved with no layout shift.
+- **Error:** failure to retrieve the JSON → error message, no silent empty calendar.
+- **Empty:** no species selected (if the visitor deselects everything) → message inviting them to choose at least one, rather than a calendar with no arcs and no explanation.
 
 ## Responsive
 
-Version tactile adaptée (voir "Responsive" dans `technical-specifications.md` général, appliquée ici) :
+Adapted touch version (see "Responsive" in the general `technical-specifications.md`, applied here):
 
-- Tap sur un arc pour le tooltip plutôt que survol ; un second tap ailleurs le referme.
-- Sélecteur d'espèces en liste déroulante ou puces défilantes horizontalement sous un certain seuil de largeur, plutôt qu'une grille de checkboxes qui prendrait toute la hauteur.
-- Le calendrier circulaire se redimensionne en conservant ses proportions ; sous un diamètre minimal (à définir à l'implémentation), les labels des mois se réduisent aux initiales (J, F, M...) plutôt que de se chevaucher.
+- Tap on an arc for the tooltip rather than hover; a second tap elsewhere closes it.
+- Species selector as a dropdown list or horizontally scrolling chips below a certain width threshold, rather than a grid of checkboxes that would take up the full height.
+- The circular calendar resizes while keeping its proportions; below a minimum diameter (to be defined during implementation), the month labels are reduced to initials (J, F, M...) rather than overlapping.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-L'interaction principale (calendrier SVG, survol/tap des arcs) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général).
+The main interaction (SVG calendar, hover/tap on arcs) is not natively accessible by keyboard or screen reader. Documented as a known limitation, with no fallback, in accordance with the project's default rule (see "Rules common to all visualizations" in the general `technical-specifications.md`).
 
-Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
+Fallback: the table view (see "Table view" above) gives access to the same data, in summary form, by keyboard and screen reader.
 
-## Contenu non traduit
+## Untranslated content
 
-Les noms scientifiques d'espèces (ex. *Papaver rhoeas*) et les noms de famille botanique (ex. Papaveraceae) restent en latin, non traduits, dans les deux langues : convention taxonomique standard, pas une donnée à localiser. Seuls les noms communs (`nameFr` / `nameEn`) sont localisés.
+Scientific species names (e.g. *Papaver rhoeas*) and botanical family names (e.g. Papaveraceae) remain in Latin, untranslated, in both languages: a standard taxonomic convention, not data to be localized. Only the common names (`nameFr` / `nameEn`) are localized.

@@ -1,96 +1,96 @@
-# Spécifications techniques : Les nuits tropicales
+# Technical specifications: Tropical Nights
 
-Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
+Complements the general `technical-specifications.md`: technical choices specific to this visualization, beyond the common rules.
 
-**Statut : spécifié, non implémenté.**
+**Status: specified, not implemented.**
 
-## Source des données
+## Data source
 
-Données climatologiques de base quotidiennes de Météo-France, préparées une fois hors build en `public/data/tropical-nights/nights.json` (voir "Prétraitement" et "Format de sortie" dans `data-model.md`). Aucun appel à un service tiers à l'exécution.
+Météo-France daily base climatological data, prepared once outside the build into `public/data/tropical-nights/nights.json` (see "Preprocessing" and "Output format" in `data-model.md`). No call to a third-party service at runtime.
 
-## Rendu
+## Rendering
 
-**Canvas 2D pour les cases, SVG pour le reste.** La vue d'ensemble dessine 8 × 77 × 184 = 113 344 cases (vue détaillée : 14 168) : un `<rect>` SVG par case pèserait sur le DOM et sur chaque survol, sans bénéfice puisque les cases ne sont pas accessibles individuellement de toute façon (voir "Accessibilité" ci-dessous). Même raisonnement que les visualisations du site à gros volume, à l'inverse de `flower-phenology` ou `light-pollution` (quelques centaines d'éléments, SVG).
+**Canvas 2D for the cells, SVG for the rest.** The overview draws 8 × 77 × 184 = 113,344 cells (detailed view: 14,168): one SVG `<rect>` per cell would weigh on the DOM and on every hover, with no benefit since the cells are not individually accessible anyway (see "Accessibility" below). Same reasoning as the site's high-volume visualizations, the opposite of `flower-phenology` or `light-pollution` (a few hundred elements, SVG).
 
-- **Un canvas par grille** (huit en vue d'ensemble, un en vue détaillée), dimensionné en pixels physiques (`devicePixelRatio`) pour rester net sur écran haute densité. Les cases sont des rectangles pleins ; un espace de 1 px les sépare seulement quand la case fait au moins 4 px de côté, sinon elles sont jointives (une grille de filets blancs écraserait la couleur à petite taille).
-- **Géométrie :** colonne `i` = nuit `i` de la fenêtre (indice 0 = 1er mai, voir "Format de sortie" dans `data-model.md`), ligne `j` = année `1950 + j`, de haut en bas. Largeur et hauteur de case calculées séparément (les cases ne sont pas forcément carrées) à partir de la place disponible.
-- **Surcouche SVG** superposée à chaque canvas, pour ce qui est du texte ou doit rester net : repères de décennies, mois, titre et ligne de synthèse de chaque grille, filet de la ligne survolée, barres de total annuel de la vue détaillée.
-- **Repérage au survol** par arithmétique sur les coordonnées du pointeur (`Math.floor((x - x0) / largeurCase)`), sans index spatial : la grille est régulière.
-- **Changement de vue ou de ville :** redessin complet des canvas concernés, sans transition (voir "Mouvement réduit" dans `functional-specifications.md`). Le coût est négligeable (quelques millisecondes pour 113 000 rectangles).
+- **One canvas per grid** (eight in the overview, one in the detailed view), sized in physical pixels (`devicePixelRatio`) to stay sharp on high-density screens. The cells are filled rectangles; a 1 px gap separates them only when the cell is at least 4 px wide, otherwise they are contiguous (a grid of white rules would crush the color at small sizes).
+- **Geometry:** column `i` = night `i` of the window (index 0 = May 1, see "Output format" in `data-model.md`), row `j` = year `1950 + j`, from top to bottom. Cell width and height computed separately (cells are not necessarily square) from the available space.
+- **SVG overlay** on top of each canvas, for whatever is text or must stay sharp: decade markers, months, title and summary line of each grid, rule of the hovered row, annual total bars of the detailed view.
+- **Hover hit-testing** by arithmetic on the pointer coordinates (`Math.floor((x - x0) / cellWidth)`), with no spatial index: the grid is regular.
+- **Change of view or city:** full redraw of the canvases concerned, with no transition (see "Reduced motion" in `functional-specifications.md`). The cost is negligible (a few milliseconds for 113,000 rectangles).
 
 ## Palette
 
-Pas d'exception à la charte : trois valeurs existantes de `style-guide.md`, une seule teinte porteuse de sens.
+No exception to the style guide: three existing values from `style-guide.md`, a single meaningful hue.
 
-| État de la nuit | Couleur | Origine dans `style-guide.md` |
+| Night state | Color | Origin in `style-guide.md` |
 |---|---|---|
-| Tropicale | `#e34948` | Slot 8 (rouge) de la palette catégorielle, valeur claire |
-| Ordinaire | `#f0efec` | Point neutre clair de la palette divergente |
-| Pas encore observée | Aucun remplissage (`--dv-surface`) | Surface de l'interface |
-| Manquante | Hachures `--dv-gridline` sur `#f0efec` | Couleur de filet de l'interface |
+| Tropical | `#e34948` | Slot 8 (red) of the categorical palette, light value |
+| Ordinary | `#f0efec` | Light neutral midpoint of the diverging palette |
+| Not yet observed | No fill (`--dv-surface`) | Interface surface |
+| Missing | `--dv-gridline` hatching on `#f0efec` | Interface rule color |
 
-- **Rouge plutôt qu'orange :** contraste mesuré du rouge `#e34948` contre la case ordinaire `#f0efec` : 3,44:1, contre la surface blanche : 3,95:1, au-dessus du seuil de 3:1 pour un élément graphique. L'orange (slot 2, `#eb6834`), plus évocateur d'une nuit chaude, n'atteint que 2,78:1 contre la case ordinaire : écarté. Le rouge reprend aussi le pôle chaud de la palette divergente bleu ↔ rouge.
-- **Pas de codage par station :** les stations sont séparées par la disposition (une grille chacune, titrée), jamais par la couleur. Le rouge n'est donc pas utilisé comme "couleur de série" au sens de la palette catégorielle, et aucune autre teinte n'est nécessaire.
-- **Binaire, pas de dégradé de TN :** la nuit est tropicale ou non, selon la définition de Météo-France. Graduer les cases selon la valeur de TN (20 °C, 22 °C, 24 °C…) ajouterait une deuxième lecture au détriment de la première ; la valeur reste dans l'infobulle. Alternative laissée aux "Points à valider".
-- **Pas encore observée vs ordinaire :** la différence repose sur la présence ou l'absence de case (`#f0efec` contre blanc, 1,15:1), volontairement discrète pour ne pas attirer l'œil, et la légende la nomme. Elle ne concerne qu'une fin de ligne de la dernière année.
-- **Barres de total annuel** (vue détaillée) : même rouge `#e34948`, puisqu'elles mesurent la même chose que les cases rouges ; hachurées pour une année incomplète (voir "Interactions" dans `functional-specifications.md`).
-- **Fond clair**, cohérent avec le thème clair fixe du site (voir "Couleurs" dans `style-guide.md`). Un fond nuit (cases éteintes sombres, nuits tropicales "allumées") illustrerait mieux la métaphore, mais introduirait une surface sombre absente de la charte : alternative laissée aux "Points à valider".
+- **Red rather than orange:** measured contrast of red `#e34948` against the ordinary cell `#f0efec`: 3.44:1, against the white surface: 3.95:1, above the 3:1 threshold for a graphical element. Orange (slot 2, `#eb6834`), more evocative of a hot night, only reaches 2.78:1 against the ordinary cell: ruled out. The red also matches the warm pole of the blue ↔ red diverging palette.
+- **No per-station encoding:** the stations are separated by layout (one titled grid each), never by color. The red is therefore not used as a "series color" in the sense of the categorical palette, and no other hue is needed.
+- **Binary, no TN gradient:** the night is tropical or not, according to Météo-France's definition. Grading the cells by TN value (20 °C, 22 °C, 24 °C…) would add a second reading at the expense of the first; the value stays in the tooltip. Alternative left to "Points to validate".
+- **Not yet observed vs ordinary:** the difference rests on the presence or absence of a cell (`#f0efec` versus white, 1.15:1), deliberately subtle so as not to draw the eye, and the legend names it. It only concerns the end of a row in the last year.
+- **Annual total bars** (detailed view): the same red `#e34948`, since they measure the same thing as the red cells; hatched for an incomplete year (see "Interactions" in `functional-specifications.md`).
+- **Light background**, consistent with the site's fixed light theme (see "Colors" in `style-guide.md`). A night background (dark unlit cells, "lit" tropical nights) would better illustrate the metaphor, but would introduce a dark surface absent from the style guide: alternative left to "Points to validate".
 
-## Hauteur de la zone de montage
+## Mount area height
 
-- **Grand écran :** règle par défaut du site (voir "Règles communes à toutes les visualisations" dans le `technical-specifications.md` général), sans écart. Les huit grilles (deux rangées de quatre) ou la grille détaillée se partagent la hauteur obtenue ; la hauteur de case en découle (de l'ordre de 3 px en vue d'ensemble et de 7 px en vue détaillée pour une fenêtre de bureau courante, à mesurer).
-- **Petit écran, vue d'ensemble (écart documenté) :** sous environ 640 px de large, quatre rangées de deux grilles ne tiennent pas dans `max(320px, largeur × 0,6)` sans tomber sous un pixel par année. La zone de montage y prend la hauteur de son contenu, chaque grille gardant une hauteur minimale de 2 px par année (154 px), et dépasse alors le plafond général : la page défile. Raison : une grille illisible n'aurait plus aucun intérêt, et la vue tableau reste le repli. À valider (voir "Points à valider" ci-dessous).
-- **Petit écran, vue détaillée :** règle par défaut, sans écart (77 lignes tiennent dans 320 px).
+- **Large screen:** the site's default rule (see "Rules common to all visualizations" in the general `technical-specifications.md`), with no deviation. The eight grids (two rows of four) or the detailed grid share the resulting height; the cell height follows from it (on the order of 3 px in the overview and 7 px in the detailed view for a typical desktop window, to be measured).
+- **Small screen, overview (documented deviation):** below about 640 px wide, four rows of two grids do not fit in `max(320px, width × 0.6)` without dropping below one pixel per year. The mount area there takes the height of its content, each grid keeping a minimum height of 2 px per year (154 px), and then exceeds the general cap: the page scrolls. Reason: an unreadable grid would be of no interest at all, and the table view remains the fallback. To be validated (see "Points to validate" below).
+- **Small screen, detailed view:** default rule, with no deviation (77 rows fit in 320 px).
 
-## Nouvelles dépendances
+## New dependencies
 
-Aucune nouvelle dépendance : `d3-scale` (`scaleLinear` des barres de total annuel) et `d3-selection` (surcouche SVG, sélecteur, infobulle) sont déjà des dépendances du site. Le Canvas 2D est natif. Pas d'axe `d3-axis` : les repères (décennies, mois) sont de simples textes positionnés.
+No new dependency: `d3-scale` (`scaleLinear` for the annual total bars) and `d3-selection` (SVG overlay, selector, tooltip) are already site dependencies. Canvas 2D is native. No `d3-axis` axis: the markers (decades, months) are simple positioned texts.
 
-## Hydratation
+## Hydration
 
-`client:visible`, via un `IntersectionObserver` sur la zone de montage, même mécanisme que les autres visualisations du site : la zone de montage est sous une présentation longue de trois paragraphes, rarement visible au premier affichage.
+`client:visible`, via an `IntersectionObserver` on the mount area, same mechanism as the site's other visualizations: the mount area sits below a three-paragraph long introduction, rarely visible on first display.
 
-## Vue tableau
+## Table view
 
-`src/components/visualizations/tropical-nights/table.ts` lit `nights.json` au build (`readDataFile`, voir "Vue tableau des données" dans le `technical-specifications.md` général) et calcule les moyennes par décennie sur les années `complete`, ainsi que le record (année en cours comprise), selon "Vue tableau" dans `functional-specifications.md`.
+`src/components/visualizations/tropical-nights/table.ts` reads `nights.json` at build time (`readDataFile`, see "Data table view" in the general `technical-specifications.md`) and computes the per-decade averages over the `complete` years, as well as the record (current year included), according to "Table view" in `functional-specifications.md`.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cette visualisation. Chaque canvas porte `role="img"` et un `aria-label` généré à partir des données (station, moyenne de la première et de la dernière décennie complète, année record), pour qu'un lecteur d'écran sache au moins ce que la grille montre ; le détail passe par la vue tableau. Sélecteur de ville : `<button>` natifs avec `aria-pressed`.
+See "Accessibility (known limitation)" in this visualization's `functional-specifications.md`. Each canvas carries `role="img"` and an `aria-label` generated from the data (station, average of the first and last complete decade, record year), so that a screen reader at least knows what the grid shows; the detail goes through the table view. City selector: native `<button>` elements with `aria-pressed`.
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation et "Hauteur de la zone de montage" ci-dessus. Les canvas sont redimensionnés et redessinés au redimensionnement de la fenêtre (même événement que le recalcul de hauteur commun).
+See "Responsive" in this visualization's `functional-specifications.md` and "Mount area height" above. The canvases are resized and redrawn when the window is resized (same event as the common height recalculation).
 
-## État dans l'URL
+## State in the URL
 
-Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+See "State in the URL" in the general `technical-specifications.md` for the common mechanism.
 
-| Paramètre | Valeurs | Défaut (absent de l'URL) |
+| Parameter | Values | Default (absent from the URL) |
 |---|---|---|
-| `city` | `id` d'une station de `nights.json` (`nice`, `perpignan`, `marseille`, `toulouse`, `lyon`, `bordeaux`, `paris`, `strasbourg`) | Vue d'ensemble |
+| `city` | `id` of a station in `nights.json` (`nice`, `perpignan`, `marseille`, `toulouse`, `lyon`, `bordeaux`, `paris`, `strasbourg`) | Overview |
 
-- `city` est écrit au clic sur une puce de ville ou sur une grille de la vue d'ensemble, et retiré au retour sur "Toutes les villes".
-- Un identifiant inconnu est ignoré : la visualisation s'ouvre sur la vue d'ensemble.
-- Pas de position temporelle à capturer (pas de lecture), ni de cadrage (pas de zoom). L'infobulle et la ligne survolée ne sont pas capturées (états transitoires).
+- `city` is written on click on a city chip or on a grid of the overview, and removed on returning to "All cities".
+- An unknown identifier is ignored: the visualization opens on the overview.
+- No temporal position to capture (no playback), nor framing (no zoom). The tooltip and the hovered row are not captured (transient states).
 
-## Points à valider
+## Points to validate
 
-Décisions de conception proposées dans ces trois fichiers, à confirmer avant l'implémentation :
+Design decisions proposed in these three files, to be confirmed before implementation:
 
-1. **Forme** : petits multiples en vue d'ensemble par défaut, vue détaillée par ville en second temps (voir "Forme retenue" dans `functional-specifications.md`), plutôt qu'une seule ville à la fois.
-2. **Sélection des huit stations**, dont Marignane à la place de Marseille-Observatoire (lacunaire de 2003 à 2018), et l'exclusion de Montpellier-Aéroport et Nantes-Bouguenais (voir "Stations retenues" dans `data-model.md`).
-3. **Libellé "Marseille-Marignane"** pour une station située à une vingtaine de kilomètres de Marseille, plutôt que "Marignane" seul (moins parlant) ou "Marseille" (trompeur).
-4. **Seuil TN ≥ 20 °C** (20,0 °C inclus), fondé sur deux articles d'actualité de Météo-France, faute de définition dans un glossaire officiel (voir "Définition retenue" dans `data-model.md`).
-5. **Fenêtre de mesure de TN** (18 h UTC la veille - 18 h UTC le jour J), non confirmée par le descriptif de la source : elle conditionne le libellé "Nuit du 24 au 25 juillet" de l'infobulle ; à défaut, l'infobulle donne la date de la mesure.
-6. **Données brutes plutôt qu'homogénéisées**, faute de série quotidienne homogénéisée de TN en open data, avec la mise en garde de la présentation longue (voir "Séries homogénéisées" dans `data-model.md`).
-7. **Affichage des périodes SQR** dans la note sous la vue détaillée. Si elles sont affichées, le jeu de données "Données changement climatique - SQR (Séries Quotidiennes de Référence)" (Météo-France, https://www.data.gouv.fr/datasets/donnees-changement-climatique-sqr-series-quotidiennes-de-reference, Licence Ouverte v2.0) devient une deuxième source à créditer dans `datasets`. Sinon, retirer `referencePeriod` du fichier de sortie.
-8. **Fenêtre affichée du 1er mai au 31 octobre**, la seule nuit tropicale mesurée hors fenêtre (Perpignan, 25 avril 2002) restant comptée dans le total et signalée dans l'infobulle.
-9. **Ordre des années** : 1950 en haut, année en cours en bas (lecture chronologique de haut en bas, la tache "descend"), plutôt que l'année récente en haut.
-10. **Seuil d'année incomplète** à plus de 9 nuits manquantes sur 184 (5 %), et exclusion des années incomplètes et de l'année en cours des moyennes par décennie (voir "Données manquantes et année en cours" dans `data-model.md`).
-11. **Année en cours affichée** avec ses nuits pas encore observées, plutôt que de couper la série à la dernière année complète. Corollaire : les records 2026 (Perpignan, Toulouse, Bordeaux, Paris, Strasbourg) apparaissent avec la mention "en cours" tant que l'année n'est pas finie.
-12. **Palette** : rouge du slot 8 pour les nuits tropicales sur fond clair, binaire (voir "Palette" ci-dessus). Alternatives écartées : orange du slot 2 (contraste insuffisant), dégradé selon la valeur de TN (deuxième lecture qui brouille la première), fond nuit sombre (surface hors charte, qui demanderait d'ajouter des couleurs à `style-guide.md`).
-13. **Écart de hauteur sur petit écran** pour la vue d'ensemble (voir "Hauteur de la zone de montage" ci-dessus), plutôt que de basculer directement en vue détaillée sous 640 px.
-14. **Thèmes** : `[climate]` seul, qui lie la visualisation à `flower-phenology` et `grape-harvest-almanac`. Ajouter `territory` (l'angle des villes et de l'îlot de chaleur urbain) la rapprocherait aussi de `paris-trees` ou `medical-deserts`, au prix d'un lien thématique plus lâche.
-15. **Téléchargement** de `nights.json` (`downloads: [nights.json]`), permis par la Licence Ouverte v2.0 (voir "Téléchargement" dans `data-model.md`).
-16. **Date de récupération** : les données ont été mesurées le 2026-09-24, en pleine saison. Une récupération après le 31 octobre 2026 rendrait l'année 2026 complète et ferait disparaître l'état "pas encore observée" jusqu'à la saison suivante, sans changer le reste de la spec.
+1. **Form**: small multiples in the overview by default, detailed view per city as a second step (see "Chosen form" in `functional-specifications.md`), rather than a single city at a time.
+2. **Selection of the eight stations**, including Marignane instead of Marseille-Observatoire (patchy from 2003 to 2018), and the exclusion of Montpellier-Aéroport and Nantes-Bouguenais (see "Chosen stations" in `data-model.md`).
+3. **"Marseille-Marignane" label** for a station located about twenty kilometers from Marseille, rather than "Marignane" alone (less telling) or "Marseille" (misleading).
+4. **TN ≥ 20 °C threshold** (20.0 °C included), based on two Météo-France news articles, for lack of a definition in an official glossary (see "Chosen definition" in `data-model.md`).
+5. **TN measurement window** (18:00 UTC the previous day - 18:00 UTC on day D), not confirmed by the source's description: it determines the "Nuit du 24 au 25 juillet" label of the tooltip; failing that, the tooltip gives the measurement date.
+6. **Raw rather than homogenized data**, for lack of a homogenized daily TN series in open data, with the caveat in the long introduction (see "Homogenized series" in `data-model.md`).
+7. **Display of the SQR periods** in the note below the detailed view. If they are displayed, the dataset "Données changement climatique - SQR (Séries Quotidiennes de Référence)" (Météo-France, https://www.data.gouv.fr/datasets/donnees-changement-climatique-sqr-series-quotidiennes-de-reference, Licence Ouverte v2.0) becomes a second source to credit in `datasets`. Otherwise, remove `referencePeriod` from the output file.
+8. **Displayed window from May 1 to October 31**, the only tropical night measured outside the window (Perpignan, April 25, 2002) remaining counted in the total and flagged in the tooltip.
+9. **Year order**: 1950 at the top, current year at the bottom (chronological reading from top to bottom, the patch "goes down"), rather than the recent year at the top.
+10. **Incomplete year threshold** at more than 9 missing nights out of 184 (5%), and exclusion of incomplete years and of the current year from the per-decade averages (see "Missing data and current year" in `data-model.md`).
+11. **Current year displayed** with its nights not yet observed, rather than cutting the series at the last complete year. Corollary: the 2026 records (Perpignan, Toulouse, Bordeaux, Paris, Strasbourg) appear with the "en cours" mention as long as the year is not over.
+12. **Palette**: slot 8 red for tropical nights on a light background, binary (see "Palette" above). Alternatives ruled out: slot 2 orange (insufficient contrast), gradient by TN value (a second reading that blurs the first), dark night background (surface outside the style guide, which would require adding colors to `style-guide.md`).
+13. **Height deviation on small screens** for the overview (see "Mount area height" above), rather than switching directly to the detailed view below 640 px.
+14. **Themes**: `[climate]` alone, which links the visualization to `flower-phenology` and `grape-harvest-almanac`. Adding `territory` (the angle of cities and the urban heat island) would also bring it closer to `paris-trees` or `medical-deserts`, at the cost of a looser thematic link.
+15. **Download** of `nights.json` (`downloads: [nights.json]`), permitted by the Licence Ouverte v2.0 (see "Download" in `data-model.md`).
+16. **Retrieval date**: the data was measured on 2026-09-24, in the middle of the season. A retrieval after October 31, 2026 would make the year 2026 complete and remove the "not yet observed" state until the following season, without changing the rest of the spec.

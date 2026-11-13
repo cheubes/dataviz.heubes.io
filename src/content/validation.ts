@@ -17,7 +17,7 @@ function normalize(value: unknown): unknown {
   return value;
 }
 
-// Cross-file rules from "Contraintes et règles de validation" in
+// Cross-file rules from "Validation constraints and rules" in
 // specs/data-model.md, which the per-file Zod schema cannot express.
 export function validateVisualizations(
   entries: CollectionEntry<'visualizations'>[],

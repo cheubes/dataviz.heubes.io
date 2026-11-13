@@ -1,12 +1,12 @@
-# Modèle de données : Paris, arbre par arbre
+# Data model: Paris, Tree by Tree
 
-Complète `data-model.md` général : schéma du dataset propre à cette visualisation.
+Complements the general `data-model.md`: schema of the dataset specific to this visualization.
 
-**Statut : implémenté.**
+**Status: implemented.**
 
-## Dataset source
+## Source dataset
 
-Cinq jeux de données. Les trois premiers, publiés par la Ville de Paris (Paris Data), et les deux derniers par OpenStreetMap : tous sous **Open Database License (ODbL)**, licence compatible (même famille copyleft) :
+Five datasets. The first three are published by the City of Paris (Paris Data), and the last two by OpenStreetMap: all under the **Open Database License (ODbL)**, a compatible license (same copyleft family):
 
 | `name` | `publisher` | `url` | `license` | `retrieved` |
 |---|---|---|---|---|
@@ -16,54 +16,54 @@ Cinq jeux de données. Les trois premiers, publiés par la Ville de Paris (Paris
 | La Seine (tracé) | OpenStreetMap contributors | https://www.openstreetmap.org/copyright | Open Database License (ODbL) | 2026-09-09 |
 | Jardins nationaux (arbres) | OpenStreetMap contributors | https://www.openstreetmap.org/copyright | Open Database License (ODbL) | 2026-09-09 |
 
-Le premier jeu recensait 219 360 arbres au moment de la récupération (mis à jour de façon hebdomadaire par la source). Avertissement du producteur, repris tel quel dans le texte éditorial de la visualisation (voir "Angle éditorial" dans `functional-specifications.md`) : la donnée n'est pas mise à jour en temps réel, peut présenter des décalages notables (notamment dans les espaces verts), et ne couvre pas les arbres du domaine privé ni la totalité du patrimoine arboré parisien. Le second jeu fournit les contours géographiques des vingt arrondissements, utilisés comme fond de carte stylisé (voir "Rendu" dans `technical-specifications.md`). Le troisième jeu (25 096 tronçons, représentation schématique de l'axe central des voies publiques et privées, 75056 uniquement, pas de tronçon hors Paris) fournit la trame de rues dessinée en surimpression discrète sur ce fond de carte (ajouté après la première implémentation, voir "Rendu" dans `technical-specifications.md` ; pas d'usage pour la position des arbres ou le filtrage, uniquement décoratif/contextuel).
+The first dataset listed 219,360 trees at retrieval time (updated weekly by the source). Producer's disclaimer, carried over as is into the visualization's editorial text (see "Editorial angle" in `functional-specifications.md`): the data is not updated in real time, may show notable discrepancies (particularly in green spaces), and covers neither trees on private land nor the entirety of Paris's tree stock. The second dataset provides the geographic outlines of the twenty arrondissements, used as a stylized basemap (see "Rendering" in `technical-specifications.md`). The third dataset (25,096 street segments, a schematic representation of the centerline of public and private roads, 75056 only, no segment outside Paris) provides the street grid drawn as a discreet overlay on this basemap (added after the first implementation, see "Rendering" in `technical-specifications.md`; not used for tree positions or filtering, purely decorative/contextual).
 
-**Le quatrième jeu sort du giron Paris Data**, seule exception de cette visualisation (et du site) à date : aucun jeu de données équivalent n'a été trouvé sur Paris Data pour le tracé du fleuve lui-même (le jeu le plus proche, "Plan de voirie - Voies d'eau", ne couvre que des emprises administratives fragmentaires autour d'écluses/bassins, y compris pour le canal Saint-Martin/de l'Ourcq, pas le tracé continu de la Seine). Récupéré via l'API Overpass (`overpass-api.de`), tous les tronçons `waterway=river` de l'emprise de Paris, recadrée à l'emprise de Paris. **Corrigé après une première extraction incomplète** : filtrer strictement sur `name=La Seine` écartait les bras secondaires qui portent leur propre nom (`La Seine - Bras Marie` autour de l'île Saint-Louis, `La Seine - Bras de la Monnaie` autour de l'île de la Cité, `Bras de Gravelle`, `Bras du Chapitre`...), les faisant disparaître de la carte alors qu'ils font bien partie du fleuve. Filtre corrigé : tous les tronçons `waterway=river` de l'emprise, à l'exception de ceux nommés "La Marne" (rivière distincte, brièvement présente dans la même emprise près de Charenton). 56 tronçons OSM retenus sur 69, rassemblés bout à bout en dix-sept chaînes par correspondance de coordonnées d'extrémité (voir "Prétraitement" ci-dessous) : les bras qui longent le tracé principal en parallèle (autour des îles) restent des chaînes distinctes plutôt que de fusionner avec la chaîne principale, ce qui est le comportement voulu pour qu'ils se dessinent comme des branches séparées. Purement décoratif, comme la trame de rues.
+**The fourth dataset falls outside Paris Data**, the only exception in this visualization (and on the site) to date: no equivalent dataset was found on Paris Data for the course of the river itself (the closest dataset, "Plan de voirie - Voies d'eau", only covers fragmentary administrative footprints around locks/basins, including for the Canal Saint-Martin/de l'Ourcq, not the continuous course of the Seine). Retrieved via the Overpass API (`overpass-api.de`): all `waterway=river` segments within the Paris extent, clipped to the Paris extent. **Corrected after an initial incomplete extraction**: filtering strictly on `name=La Seine` excluded the secondary branches that carry their own name (`La Seine - Bras Marie` around the Île Saint-Louis, `La Seine - Bras de la Monnaie` around the Île de la Cité, `Bras de Gravelle`, `Bras du Chapitre`...), making them disappear from the map even though they are indeed part of the river. Corrected filter: all `waterway=river` segments within the extent, except those named "La Marne" (a distinct river, briefly present in the same extent near Charenton). 56 OSM segments kept out of 69, joined end to end into seventeen chains by matching endpoint coordinates (see "Preprocessing" below): the branches running parallel to the main course (around the islands) remain distinct chains rather than merging with the main chain, which is the intended behavior so that they are drawn as separate branches. Purely decorative, like the street grid.
 
-**Le cinquième jeu comble une lacune signalée par l'utilisateur** : le Jardin du Luxembourg, le Jardin des Plantes, le jardin des Tuileries et le jardin du Palais-Royal apparaissent comme des zones vides sur la carte, malgré leur notoriété. Vérifié avant d'implémenter quoi que ce soit (requêtes ciblées sur `les-arbres` avec un filtre de distance autour de chacun) : ce n'est pas un défaut du prétraitement, ces quatre jardins sont administrés par des établissements publics nationaux plutôt que par la Ville de Paris (respectivement le Sénat, le Muséum national d'Histoire naturelle, l'établissement public du musée du Louvre, le Centre des monuments nationaux), donc hors du périmètre du jeu "Les arbres" par nature — l'inventaire municipal ne couvre que le patrimoine dont la Ville a la charge. Aucun inventaire arbre-par-arbre ouvert n'a été trouvé publié par ces quatre établissements (recherche web, voir échanges de cadrage). OpenStreetMap recense en revanche des points `natural=tree` dans l'emprise de ces quatre jardins : 528 (Luxembourg), 833 (Jardin des Plantes), 1 458 (Tuileries), 170 (Palais-Royal), 2 989 au total. Traité comme un jeu à part, jamais fondu dans `trees.json` (voir "Périmètre retenu" et "Format de sortie" ci-dessous) : couverture communautaire partielle (environ 20 % des ~3 000 arbres réels du Luxembourg d'après le Sénat) et attributs très pauvres comparés à la source Ville de Paris (seuls 783 des 2 989 points, 26,2 %, portent un tag `genus` ; jamais de circonférence, hauteur, stade de développement ni domanialité) — mélanger silencieusement les deux ferait perdre cette différence de fiabilité, voir "Rendu" dans `technical-specifications.md` pour le traitement visuel distinct (case à cocher activée par défaut, voir "Interactions" dans `functional-specifications.md` pour ce choix et sa mise en garde).
+**The fifth dataset fills a gap reported by the user**: the Jardin du Luxembourg, the Jardin des Plantes, the Jardin des Tuileries and the Jardin du Palais-Royal appear as empty areas on the map, despite their fame. Verified before implementing anything (targeted queries on `les-arbres` with a distance filter around each one): this is not a preprocessing defect, these four gardens are managed by national public institutions rather than by the City of Paris (respectively the Senate, the Muséum national d'Histoire naturelle, the public institution of the Louvre museum, the Centre des monuments nationaux), and are therefore outside the scope of the "Les arbres" dataset by nature: the municipal inventory only covers the assets the City is responsible for. No open tree-by-tree inventory was found published by these four institutions (web search, see scoping discussions). OpenStreetMap, on the other hand, lists `natural=tree` points within the footprint of these four gardens: 528 (Luxembourg), 833 (Jardin des Plantes), 1,458 (Tuileries), 170 (Palais-Royal), 2,989 in total. Treated as a separate dataset, never merged into `trees.json` (see "Chosen scope" and "Output format" below): partial community coverage (about 20% of the ~3,000 actual trees in the Luxembourg according to the Senate) and very sparse attributes compared to the City of Paris source (only 783 of the 2,989 points, 26.2%, carry a `genus` tag; never circumference, height, development stage or ownership): silently mixing the two would lose this difference in reliability, see "Rendering" in `technical-specifications.md` for the distinct visual treatment (checkbox enabled by default, see "Interactions" in `functional-specifications.md` for this choice and its caveat).
 
-**Absence notée :** le jeu "Les arbres" ne comporte pas de champ de date ou d'année de plantation (vérifié à la lecture du schéma). L'angle "âge du patrimoine" envisagé un temps pendant le cadrage n'est donc pas exploitable avec cette source ; sans conséquence sur l'angle finalement retenu ("exploration libre", voir `functional-specifications.md`), qui ne s'appuie pas sur cette donnée.
+**Noted absence:** the "Les arbres" dataset has no planting date or year field (verified by reading the schema). The "age of the tree stock" angle considered for a time during scoping is therefore not usable with this source; no consequence for the angle finally chosen ("free exploration", see `functional-specifications.md`), which does not rely on this data.
 
-## Périmètre retenu
+## Chosen scope
 
-Décidé explicitement avec l'utilisateur au cadrage : l'intégralité du jeu "Les arbres", tous domaines confondus (alignement, jardins, bois, équipements municipaux...), sans filtrage ni agrégation par zoom.
+Decided explicitly with the user during scoping: the entire "Les arbres" dataset, all domains combined (street trees, gardens, woods, municipal facilities...), without filtering or aggregation by zoom level.
 
-**Ajustement découvert à l'implémentation, validé avec l'utilisateur :** le champ `arrondissement` du jeu source porte en réalité 25 valeurs distinctes, pas 20. Outre les vingt arrondissements et "BOIS DE BOULOGNE" / "BOIS DE VINCENNES" (rattachés sans ambiguïté aux arrondissements 16 et 12, où ils sont géographiquement inclus dans le périmètre administratif), 25 045 arbres (11,4 % du jeu) portent la valeur "HAUTS-DE-SEINE", "SEINE-SAINT-DENIS" ou "VAL-DE-MARNE" : des cimetières parisiens extraterritoriaux (ex. cimetière de Bagneux), géographiquement hors du périmètre des vingt arrondissements couvert par le fond de carte. Ces 25 045 arbres sont **exclus** du jeu de sortie (décision utilisateur, voir échanges de cadrage) : le périmètre retenu est donc "l'intégralité du jeu 'Les arbres' à l'intérieur des vingt arrondissements", pas l'intégralité stricte du jeu source. **194 315 arbres** sont conservés (219 360 moins 25 045 hors périmètre ; aucun arbre écarté pour coordonnées manquantes, voir "Prétraitement" ci-dessous).
+**Adjustment discovered during implementation, validated with the user:** the `arrondissement` field of the source dataset actually holds 25 distinct values, not 20. Besides the twenty arrondissements and "BOIS DE BOULOGNE" / "BOIS DE VINCENNES" (unambiguously attached to arrondissements 16 and 12, within whose administrative boundaries they are geographically located), 25,045 trees (11.4% of the dataset) carry the value "HAUTS-DE-SEINE", "SEINE-SAINT-DENIS" or "VAL-DE-MARNE": extraterritorial Parisian cemeteries (e.g. the Bagneux cemetery), geographically outside the twenty-arrondissement area covered by the basemap. These 25,045 trees are **excluded** from the output dataset (user decision, see scoping discussions): the chosen scope is therefore "the entire 'Les arbres' dataset within the twenty arrondissements", not strictly the entire source dataset. **194,315 trees** are kept (219,360 minus 25,045 out of scope; no tree dropped for missing coordinates, see "Preprocessing" below).
 
-## Champs source utilisés
+## Source fields used
 
-| Champ `les-arbres` | Usage |
+| `les-arbres` field | Usage |
 |---|---|
-| `idbase` | Identifiant de l'arbre |
-| `genre` | Regroupement par genre dominant (voir "Regroupement par genre" ci-dessous) et recherche |
-| `espece`, `varieteoucultivar` | Recherche, fiche de détail au clic (voir "Interactions" dans `functional-specifications.md`) |
-| `libellefrancais` | Nom commun affiché (recherche, fiche de détail) |
-| `circonferenceencm` | Taille du point (voir "Rendu" dans `technical-specifications.md`), fiche de détail |
-| `hauteurenm` | Fiche de détail |
-| `stadedeveloppement` | Fiche de détail |
-| `domanialite` | Fiche de détail |
-| `arrondissement` | Zoom/filtrage géographique par clic sur la carte (voir "Interactions" dans `functional-specifications.md`), converti en numéro d'arrondissement (`district`, voir "Format de sortie" ci-dessous) |
-| `remarquable` | Mise en avant visuelle des arbres remarquables (voir "Interactions" dans `functional-specifications.md`) |
-| `geo_point_2d` | Position sur la carte |
+| `idbase` | Tree identifier |
+| `genre` | Grouping by dominant genus (see "Grouping by genus" below) and search |
+| `espece`, `varieteoucultivar` | Search, detail card on click (see "Interactions" in `functional-specifications.md`) |
+| `libellefrancais` | Displayed common name (search, detail card) |
+| `circonferenceencm` | Point size (see "Rendering" in `technical-specifications.md`), detail card |
+| `hauteurenm` | Detail card |
+| `stadedeveloppement` | Detail card |
+| `domanialite` | Detail card |
+| `arrondissement` | Geographic zoom/filtering by clicking on the map (see "Interactions" in `functional-specifications.md`), converted to an arrondissement number (`district`, see "Output format" below) |
+| `remarquable` | Visual highlighting of remarkable trees (see "Interactions" in `functional-specifications.md`) |
+| `geo_point_2d` | Position on the map |
 
-`typeemplacement`, `complementadresse`, `adresse` et `idemplacement` ne sont pas repris dans le format de sortie : hors du périmètre des interactions retenues (voir "Interactions" dans `functional-specifications.md`).
+`typeemplacement`, `complementadresse`, `adresse` and `idemplacement` are not carried over into the output format: outside the scope of the chosen interactions (see "Interactions" in `functional-specifications.md`).
 
-| Champ `arrondissements` | Usage |
+| `arrondissements` field | Usage |
 |---|---|
-| `geom` (polygone) | Fond de carte stylisé (silhouette des vingt arrondissements) |
-| `c_ar` (numéro d'arrondissement) | Correspondance avec le champ `arrondissement` du jeu "Les arbres" |
+| `geom` (polygon) | Stylized basemap (silhouette of the twenty arrondissements) |
+| `c_ar` (arrondissement number) | Matching with the `arrondissement` field of the "Les arbres" dataset |
 
-## Regroupement par genre
+## Grouping by genus
 
-Décidé explicitement avec l'utilisateur (voir échanges de cadrage) : **huit genres** prennent chacun un slot de la palette catégorielle (voir "Palette" dans `technical-specifications.md`), tous les autres genres sont regroupés dans une catégorie "Autres" en teinte neutre, hors palette.
+Decided explicitly with the user (see scoping discussions): **eight genera** each take a slot of the categorical palette (see "Palette" in `technical-specifications.md`), all other genera are grouped into an "Other" category in a neutral hue, outside the palette.
 
-**Résolu à l'implémentation**, par agrégation sur les données réelles (`group_by=genre`) : les huit genres les plus fréquents sont, dans l'ordre, *Platanus* (39 689 arbres après exclusion hors périmètre, voir "Périmètre retenu" ci-dessus), *Aesculus* (22 314), *Tilia* (20 386), *Acer* (16 534), *Styphnolobium* (10 562), *Prunus* (8 212), *Quercus* (6 048), *Fraxinus* (4 950).
+**Resolved during implementation**, by aggregation on the real data (`group_by=genre`): the eight most frequent genera are, in order, *Platanus* (39,689 trees after the out-of-scope exclusion, see "Chosen scope" above), *Aesculus* (22,314), *Tilia* (20,386), *Acer* (16,534), *Styphnolobium* (10,562), *Prunus* (8,212), *Quercus* (6,048), *Fraxinus* (4,950).
 
-**Ajusté après une deuxième relecture** (retour utilisateur : ajouter Bouleau et Cyprès comme genres distincts) : ni l'un ni l'autre ne fait partie des huit genres les plus fréquents (*Betula*, 1 982 arbres avant exclusion hors périmètre, 1 838 après ; *Cupressus* + *x Cupressocyparis*, 1 218 avant, 562 après — beaucoup de cyprès se trouvent apparemment dans les cimetières extraterritoriaux exclus du périmètre, une plantation traditionnelle en contexte funéraire). Le skill dataviz du projet est catégorique sur ce point : jamais de neuvième ou dixième teinte générée sur une disposition où tous les points peuvent se toucher (voir "Palette" dans `technical-specifications.md` pour le détail) — passer à dix genres distincts était donc écarté. Décision retenue avec l'utilisateur : *Quercus* et *Fraxinus*, les deux genres dominants les moins fréquents des huit initiaux, rejoignent "Autres" ; *Betula* et *Cupressus* prennent leurs slots. Le regroupement "Cyprès" réunit *Cupressus* et *x Cupressocyparis* (tous deux `libellefrancais` = "Cyprès" dans la source), mais exclut délibérément *Chamaecyparis* (`libellefrancais` = "Faux-cyprès", un genre et un nom distincts, resté dans "Autres" faute d'avoir été demandé explicitement).
+**Adjusted after a second review** (user feedback: add Birch and Cypress as distinct genera): neither is among the eight most frequent genera (*Betula*, 1,982 trees before the out-of-scope exclusion, 1,838 after; *Cupressus* + *x Cupressocyparis*, 1,218 before, 562 after: many cypresses are apparently located in the extraterritorial cemeteries excluded from the scope, a traditional planting in a funerary context). The project's dataviz skill is categorical on this point: never a generated ninth or tenth hue on a layout where all points can touch (see "Palette" in `technical-specifications.md` for details), so moving to ten distinct genera was ruled out. Decision made with the user: *Quercus* and *Fraxinus*, the two least frequent dominant genera of the initial eight, join "Other"; *Betula* and *Cupressus* take their slots. The "Cypress" grouping combines *Cupressus* and *x Cupressocyparis* (both `libellefrancais` = "Cyprès" in the source), but deliberately excludes *Chamaecyparis* (`libellefrancais` = "Faux-cyprès", a distinct genus and name, left in "Other" since it was not explicitly requested).
 
-Nom commun associé à chaque `genusId` (dérivé du `libellefrancais` le plus fréquent au sein du genre, confirmé par agrégation) :
+Common name associated with each `genusId` (derived from the most frequent `libellefrancais` within the genus, confirmed by aggregation):
 
-| `genusId` | Genre | Nom commun (FR) | Nom commun (EN) |
+| `genusId` | Genus | Common name (FR) | Common name (EN) |
 |---|---|---|---|
 | `platanus` | *Platanus* | Platane | Plane tree |
 | `aesculus` | *Aesculus* | Marronnier | Horse chestnut |
@@ -73,28 +73,28 @@ Nom commun associé à chaque `genusId` (dérivé du `libellefrancais` le plus f
 | `prunus` | *Prunus* | Cerisier à fleurs | Ornamental cherry |
 | `betula` | *Betula* | Bouleau | Birch |
 | `cupressus` | *Cupressus*, *x Cupressocyparis* | Cyprès | Cypress |
-| `other` | — (dont *Quercus*, *Fraxinus*, *Chamaecyparis*) | Autres | Other |
+| `other` | - (including *Quercus*, *Fraxinus*, *Chamaecyparis*) | Autres | Other |
 
-74 218 arbres (38,2 %) tombent dans "Autres" (genres moins fréquents et les deux genres déplacés, ou `genre` vide — un seul arbre du jeu source).
+74,218 trees (38.2%) fall into "Other" (less frequent genera and the two displaced genera, or an empty `genre`: a single tree in the source dataset).
 
-## Prétraitement (réalisé à l'implémentation, hors build)
+## Preprocessing (done during implementation, outside the build)
 
-Script de prétraitement Node, dans l'esprit de ceux des autres visualisations, exécuté une fois et non committé (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général) :
+Node preprocessing script, in the spirit of those of the other visualizations, run once and not committed (see "Rules common to all visualizations" in the general `technical-specifications.md`):
 
-1. Récupérer l'export complet du jeu "Les arbres" (`GET /api/explore/v2.1/catalog/datasets/les-arbres/exports/json?limit=-1`, 219 360 arbres, 108 Mo) et celui du jeu "Arrondissements" (`GET .../datasets/arrondissements/exports/geojson`, 20 polygones).
-2. Écarter les arbres dont `arrondissement` vaut "HAUTS-DE-SEINE", "SEINE-SAINT-DENIS" ou "VAL-DE-MARNE" (25 045 arbres, voir "Périmètre retenu" ci-dessus). Aucun arbre du jeu source n'a de `geo_point_2d` manquant (vérifié par agrégation avant le prétraitement, `where=geo_point_2d is null` → 0 résultat) : pas d'écart pour coordonnées invalides.
-3. Convertir `arrondissement` en numéro d'arrondissement (`district`) : `"PARIS Ne ARRDT"` / `"PARIS 1ER ARRDT"` → *N* ; `"BOIS DE BOULOGNE"` → 16 ; `"BOIS DE VINCENNES"` → 12.
-4. Déterminer les huit genres dominants (voir "Regroupement par genre" ci-dessus) et attribuer un `genusId` à chaque arbre retenu (index dans `genera`, un des huit ou `"other"`).
-5. Dédupliquer les combinaisons (`libellefrancais`, `genre`, `espece`) : 1 093 combinaisons distinctes sur 194 315 arbres retenus (moins de 1 % de valeurs uniques). Chaque combinaison devient une entrée de la table `species` (voir "Format de sortie" ci-dessous), avec un champ de recherche précalculé (concaténation normalisée du nom commun, du genre et de l'espèce, minuscules et sans accents) ; chaque arbre référence son entrée par `speciesId` plutôt que de répéter les chaînes.
-6. Réduire chaque arbre retenu aux champs nécessaires, arrondir `lat`/`lng` à six décimales, et écrire `public/data/paris-trees/trees.json`.
-7. Simplifier les polygones du jeu "Arrondissements" (Douglas-Peucker, tolérance 0,0001° ≈ 10 m, implémenté directement dans le script sans dépendance ajoutée — même choix que la simplification des trajectoires de `bird-migrations`) et écrire `public/data/paris-trees/districts.json`.
-8. **Ajouté après la première implémentation** (retour utilisateur : fond de carte jugé trop nu) : récupérer l'export complet du jeu "Tronçons de voies" (`GET .../datasets/troncon_voie/exports/json?limit=-1`, 25 096 tronçons, 16 Mo), écarter les 2 tronçons sans géométrie, simplifier chaque tronçon (Douglas-Peucker, tolérance 0,00003° ≈ 3 m, plus fine que celle des arrondissements pour garder le détail visuel des rues : 78 622 points réduits à 58 228), arrondir à six décimales, et écrire `public/data/paris-trees/streets.json`. Pas de champ conservé au-delà de la géométrie (ni le nom de voie, ni le domaine) : uniquement décoratif, voir "Rendu" dans `technical-specifications.md`.
-9. **Ajouté juste après** (retour utilisateur : la Seine manquait toujours au fond de carte) : interroger l'API Overpass pour les tronçons `waterway=river` recadrés à l'emprise de Paris, à l'exception de ceux nommés "La Marne" (56 tronçons OSM retenus sur 69, voir "Dataset source" ci-dessus pour la correction de filtre — un premier filtre strict sur `name=La Seine` manquait les bras nommés séparément autour des îles Saint-Louis et de la Cité), les rassembler en chaînes par correspondance d'extrémités (deux extrémités identiques à sept décimales près considérées comme le même point ; dix-sept chaînes, les bras parallèles au tracé principal restant des chaînes distinctes plutôt que fusionnées), sans simplification supplémentaire (volume déjà minime), et écrire `public/data/paris-trees/seine.json`.
-10. **Ajouté après une nouvelle relecture** (retour utilisateur : les jardins à statut national restent des zones vides, voir "Dataset source" ci-dessus) : pour chacun des quatre jardins (Luxembourg, Jardin des Plantes, Tuileries, Palais-Royal), interroger l'API Overpass pour les nœuds `natural=tree` dans son emprise géographique (une requête par jardin, chacune bornée à une petite boîte englobante propre à ce jardin, plutôt qu'une requête unique sur tout Paris qui aurait ramené des arbres municipaux déjà présents dans `trees.json`). Conserver uniquement la position et, quand renseignés, les tags `genus`/`species` (aucun autre attribut disponible dans la source). Étiqueter chaque arbre retenu du jardin d'origine (`gardenId`) et écrire `public/data/paris-trees/national-gardens.json`.
+1. Fetch the full export of the "Les arbres" dataset (`GET /api/explore/v2.1/catalog/datasets/les-arbres/exports/json?limit=-1`, 219,360 trees, 108 MB) and that of the "Arrondissements" dataset (`GET .../datasets/arrondissements/exports/geojson`, 20 polygons).
+2. Drop the trees whose `arrondissement` is "HAUTS-DE-SEINE", "SEINE-SAINT-DENIS" or "VAL-DE-MARNE" (25,045 trees, see "Chosen scope" above). No tree in the source dataset has a missing `geo_point_2d` (verified by aggregation before preprocessing, `where=geo_point_2d is null` → 0 results): no trees dropped for invalid coordinates.
+3. Convert `arrondissement` to an arrondissement number (`district`): `"PARIS Ne ARRDT"` / `"PARIS 1ER ARRDT"` → *N*; `"BOIS DE BOULOGNE"` → 16; `"BOIS DE VINCENNES"` → 12.
+4. Determine the eight dominant genera (see "Grouping by genus" above) and assign a `genusId` to each kept tree (index in `genera`, one of the eight or `"other"`).
+5. Deduplicate the (`libellefrancais`, `genre`, `espece`) combinations: 1,093 distinct combinations across 194,315 kept trees (less than 1% unique values). Each combination becomes an entry in the `species` table (see "Output format" below), with a precomputed search field (normalized concatenation of the common name, genus and species, lowercase and without accents); each tree references its entry by `speciesId` rather than repeating the strings.
+6. Reduce each kept tree to the necessary fields, round `lat`/`lng` to six decimal places, and write `public/data/paris-trees/trees.json`.
+7. Simplify the polygons of the "Arrondissements" dataset (Douglas-Peucker, tolerance 0.0001° ≈ 10 m, implemented directly in the script without an added dependency, same choice as the trajectory simplification of `bird-migrations`) and write `public/data/paris-trees/districts.json`.
+8. **Added after the first implementation** (user feedback: basemap deemed too bare): fetch the full export of the "Tronçons de voies" dataset (`GET .../datasets/troncon_voie/exports/json?limit=-1`, 25,096 segments, 16 MB), drop the 2 segments without geometry, simplify each segment (Douglas-Peucker, tolerance 0.00003° ≈ 3 m, finer than the arrondissements one to keep the visual detail of the streets: 78,622 points reduced to 58,228), round to six decimal places, and write `public/data/paris-trees/streets.json`. No field kept beyond the geometry (neither the street name nor the domain): purely decorative, see "Rendering" in `technical-specifications.md`.
+9. **Added right after** (user feedback: the Seine was still missing from the basemap): query the Overpass API for `waterway=river` segments clipped to the Paris extent, except those named "La Marne" (56 OSM segments kept out of 69, see "Source dataset" above for the filter correction: an initial strict filter on `name=La Seine` missed the separately named branches around the Île Saint-Louis and the Île de la Cité), join them into chains by matching endpoints (two endpoints identical to seven decimal places are treated as the same point; seventeen chains, the branches parallel to the main course remaining distinct chains rather than merged), without further simplification (volume already minimal), and write `public/data/paris-trees/seine.json`.
+10. **Added after another review** (user feedback: the gardens with national status remain empty areas, see "Source dataset" above): for each of the four gardens (Luxembourg, Jardin des Plantes, Tuileries, Palais-Royal), query the Overpass API for `natural=tree` nodes within its geographic footprint (one query per garden, each bounded to a small bounding box specific to that garden, rather than a single query over all of Paris that would have returned municipal trees already present in `trees.json`). Keep only the position and, when present, the `genus`/`species` tags (no other attribute available in the source). Label each kept tree with its garden of origin (`gardenId`) and write `public/data/paris-trees/national-gardens.json`.
 
-## Format de sortie
+## Output format
 
-**`public/data/paris-trees/trees.json`** — encodé en tableaux parallèles (« structure of arrays ») plutôt qu'un tableau d'objets, pour limiter la taille du fichier étant donné le volume (voir "Format de données" dans `technical-specifications.md`). Le nom commun, le genre et l'espèce ne sont pas répétés par arbre : dédupliqués dans une table `species` référencée par index (voir "Prétraitement" ci-dessus), seule compaction retenue au-delà de l'arrondi des coordonnées (voir "Format de données" dans `technical-specifications.md` pour les autres pistes envisagées et pourquoi elles n'ont pas été retenues) :
+**`public/data/paris-trees/trees.json`**: encoded as parallel arrays ("structure of arrays") rather than an array of objects, to limit the file size given the volume (see "Data format" in `technical-specifications.md`). The common name, genus and species are not repeated per tree: deduplicated into a `species` table referenced by index (see "Preprocessing" above), the only compaction applied beyond coordinate rounding (see "Data format" in `technical-specifications.md` for the other options considered and why they were not adopted):
 
 ```json
 {
@@ -123,21 +123,21 @@ Script de prétraitement Node, dans l'esprit de ceux des autres visualisations, 
 }
 ```
 
-Le tableau `genera` liste huit genres dominants plus l'entrée `"other"` (voir "Regroupement par genre" ci-dessus) ; la couleur de chaque genre n'est pas stockée dans les données, assignée côté client par ordre d'apparition dans `genera` (voir "Palette" dans `technical-specifications.md`). `trees.genusId` et `trees.speciesId` sont des index dans `genera` et `species` respectivement, pas des chaînes. `trees.developmentStage` et `trees.domain` conservent les valeurs brutes de la source (françaises, non traduites, voir "Contenu non traduit" dans `functional-specifications.md`), `null` quand la source ne renseigne pas le champ. Chaque tableau de `trees` a la même longueur, index par index (le premier arbre est `lat[0]`/`lng[0]`/`genusId[0]`/...).
+The `genera` array lists eight dominant genera plus the `"other"` entry (see "Grouping by genus" above); the color of each genus is not stored in the data, but assigned client-side by order of appearance in `genera` (see "Palette" in `technical-specifications.md`). `trees.genusId` and `trees.speciesId` are indexes into `genera` and `species` respectively, not strings. `trees.developmentStage` and `trees.domain` keep the raw source values (French, untranslated, see "Untranslated content" in `functional-specifications.md`), `null` when the source does not fill in the field. Every array in `trees` has the same length, index by index (the first tree is `lat[0]`/`lng[0]`/`genusId[0]`/...).
 
-**`public/data/paris-trees/districts.json`** — GeoJSON simplifié des vingt arrondissements (`FeatureCollection`, une géométrie `Polygon` par arrondissement), avec le numéro d'arrondissement (`properties.c_ar`) porté par chaque géométrie pour permettre le clic-zoom (voir "Interactions" dans `functional-specifications.md`).
+**`public/data/paris-trees/districts.json`**: simplified GeoJSON of the twenty arrondissements (`FeatureCollection`, one `Polygon` geometry per arrondissement), with the arrondissement number (`properties.c_ar`) carried by each geometry to enable click-to-zoom (see "Interactions" in `functional-specifications.md`).
 
-**`public/data/paris-trees/streets.json`** — géométrie brute (pas de `Feature`, pas de propriétés, purement décorative) :
+**`public/data/paris-trees/streets.json`**: raw geometry (no `Feature`, no properties, purely decorative):
 
 ```json
 { "type": "MultiLineString", "coordinates": [[[2.3522, 48.8566], [2.3530, 48.8570]], ...] }
 ```
 
-25 094 tronçons (2 écartés faute de géométrie, voir "Prétraitement" ci-dessus), 1,2 Mo non compressé (391 Ko gzippé).
+25,094 segments (2 dropped for lack of geometry, see "Preprocessing" above), 1.2 MB uncompressed (391 KB gzipped).
 
-**`public/data/paris-trees/seine.json`** — même forme (`MultiLineString`, aucune propriété), dix-sept chaînes (tracé principal, bras autour des îles Saint-Louis, de la Cité et aux Cygnes, voir "Dataset source" ci-dessus) totalisant 490 points, 10 Ko.
+**`public/data/paris-trees/seine.json`**: same shape (`MultiLineString`, no properties), seventeen chains (main course, branches around the Île Saint-Louis, the Île de la Cité and the Île aux Cygnes, see "Source dataset" above) totaling 490 points, 10 KB.
 
-**`public/data/paris-trees/national-gardens.json`** — structure analogue à `trees.json` (tableaux parallèles), mais un schéma bien plus pauvre reflétant celui, minimal, de la source :
+**`public/data/paris-trees/national-gardens.json`**: structure similar to `trees.json` (parallel arrays), but a much sparser schema reflecting the minimal one of the source:
 
 ```json
 {
@@ -158,18 +158,18 @@ Le tableau `genera` liste huit genres dominants plus l'entrée `"other"` (voir "
 }
 ```
 
-`gardenId` est un index dans `gardens` (même mécanisme que `genusId`/`speciesId` dans `trees.json`). `genusLabel`/`species` sont les tags OSM bruts (`genus`/`species`), rarement renseignés (26,2 %, voir "Dataset source" ci-dessus), `null` sinon — pas de déduplication en table à part comme `species` dans `trees.json` : la variété des combinaisons observées (783 arbres avec un tag) ne justifie pas l'effort à ce volume. 2 989 arbres, 105 Ko non compressé.
+`gardenId` is an index into `gardens` (same mechanism as `genusId`/`speciesId` in `trees.json`). `genusLabel`/`species` are the raw OSM tags (`genus`/`species`), rarely filled in (26.2%, see "Source dataset" above), `null` otherwise; no deduplication into a separate table like `species` in `trees.json`: the variety of observed combinations (783 trees with a tag) does not justify the effort at this volume. 2,989 trees, 105 KB uncompressed.
 
-## Champs dérivés côté client (pas dans le JSON)
+## Client-side derived fields (not in the JSON)
 
-- **Nombre d'arbres visibles :** recalculé à chaque changement de filtre genre ou de recherche (voir "Interactions" dans `functional-specifications.md`).
-- **Rayon du point à l'écran :** dérivé de `circumferenceCm` via une échelle (voir "Rendu" dans `technical-specifications.md`), pas stocké.
+- **Number of visible trees:** recomputed on every genus filter or search change (see "Interactions" in `functional-specifications.md`).
+- **On-screen point radius:** derived from `circumferenceCm` via a scale (see "Rendering" in `technical-specifications.md`), not stored.
 
-## Contraintes de validation propres à cette visualisation
+## Validation constraints specific to this visualization
 
-- Chaque `genusId` référencé dans `trees.genusId` est un index valide de `genera` (0 invalide sur 194 315 à la génération).
-- Chaque `speciesId` référencé dans `trees.speciesId` est un index valide de `species` (0 invalide sur 194 315 à la génération).
-- Tous les tableaux de `trees` ont la même longueur.
-- Un arbre présent dans `trees` a toujours une position (`lat`/`lng`) valide.
-- Chaque `district` référencé dans `trees` correspond à un `c_ar` présent dans `districts.json` (garanti par l'exclusion des arbres hors périmètre au prétraitement, voir "Périmètre retenu" ci-dessus ; 0 incohérence à la génération).
-- Chaque `gardenId` référencé dans `national-gardens.json` est un index valide de `gardens`.
+- Each `genusId` referenced in `trees.genusId` is a valid index of `genera` (0 invalid out of 194,315 at generation).
+- Each `speciesId` referenced in `trees.speciesId` is a valid index of `species` (0 invalid out of 194,315 at generation).
+- All arrays in `trees` have the same length.
+- A tree present in `trees` always has a valid position (`lat`/`lng`).
+- Each `district` referenced in `trees` matches a `c_ar` present in `districts.json` (guaranteed by the exclusion of out-of-scope trees during preprocessing, see "Chosen scope" above; 0 inconsistencies at generation).
+- Each `gardenId` referenced in `national-gardens.json` is a valid index of `gardens`.

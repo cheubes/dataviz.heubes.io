@@ -1,17 +1,17 @@
-# Charte graphique
+# Style guide
 
-Valable pour l'ensemble du site, y compris les visualisations : les couleurs, la typographie et les composants définis ici sont la base commune que chaque visualisation utilise par défaut (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` pour ce qu'une visualisation peut adapter, et comment).
+Applies to the whole site, including the visualizations: the colors, typography and components defined here are the common base that each visualization uses by default (see "Rules common to all visualizations" in `technical-specifications.md` for what a visualization can adapt, and how).
 
-## Couleurs
+## Colors
 
-### Palette de l'interface (surfaces et texte)
+### Interface palette (surfaces and text)
 
-En-tête et pied de page en couleurs de marque fixes (bleu marine, doré), reste de l'interface en gris neutre sur fond blanc.
+Header and footer in fixed brand colors (navy blue, gold), rest of the interface in neutral gray on a white background.
 
 ```css
 :root {
-  /* Identité de marque (en-tête, pied de page) : fixes, pas de variante sombre
-     (déjà des surfaces sombres par construction, voir note ci-dessous). */
+  /* Brand identity (header, footer): fixed, no dark variant
+     (already dark surfaces by construction, see note below). */
   --dv-header-bg: #2c374c;
   --dv-footer-bg: #444444;
   --dv-gold: #c7b299;
@@ -34,87 +34,87 @@ En-tête et pied de page en couleurs de marque fixes (bleu marine, doré), reste
 }
 ```
 
-- `--dv-header-bg`, `--dv-footer-bg` et `--dv-gold` sont l'identité de marque de l'en-tête et du pied de page (voir "En-tête" et "Pied de page" ci-dessous) : des valeurs fixes, non redéfinies en mode sombre, car l'en-tête et le pied de page sont déjà des surfaces sombres par construction, quel que soit le thème du reste de la page. `--dv-gold` y sert d'état de survol/focus (texte, bordures), jamais comme couleur de catégorie de données. `--dv-header-bg` sert aussi de couleur de survol des tuiles du catalogue (voir "Tuiles (catalogue)" ci-dessous), pour rattacher cet état à l'identité de marque plutôt qu'à une couleur neutre.
-- `--dv-accent` (bleu, identique au slot 1 de la palette catégorielle ci-dessous) porte les liens et les éléments interactifs sur fond clair (corps de page). Il n'est jamais réutilisé pour coder une catégorie de données dans une visualisation qui affiche plusieurs séries en même temps : l'identité d'une série vient toujours de la palette catégorielle ci-dessous, jamais du bleu d'accent seul. `--dv-gold`, plus clair, n'est pas utilisé comme couleur de survol sur fond clair : son contraste y est insuffisant (voir "Accessibilité" dans `technical-specifications.md`), il reste réservé aux surfaces sombres de l'en-tête et du pied de page.
-- Le site reste toujours en thème clair, quel que soit le thème système du visiteur : pas de mode sombre pour l'instant. Les valeurs sombres restent définies (`:root[data-theme="dark"]`) mais ne s'activent plus automatiquement via `prefers-color-scheme` : elles ne sont atteignables que si une future bascule manuelle pose l'attribut `data-theme="dark"`, non implémentée à ce stade.
+- `--dv-header-bg`, `--dv-footer-bg` and `--dv-gold` are the brand identity of the header and footer (see "Header" and "Footer" below): fixed values, not redefined in dark mode, because the header and footer are already dark surfaces by construction, whatever the theme of the rest of the page. `--dv-gold` serves there as the hover/focus state (text, borders), never as a data category color. `--dv-header-bg` also serves as the hover color of the catalog tiles (see "Tiles (catalog)" below), to tie this state to the brand identity rather than to a neutral color.
+- `--dv-accent` (blue, identical to slot 1 of the categorical palette below) carries links and interactive elements on a light background (page body). It is never reused to encode a data category in a visualization that displays several series at the same time: a series' identity always comes from the categorical palette below, never from the accent blue alone. `--dv-gold`, lighter, is not used as a hover color on a light background: its contrast there is insufficient (see "Accessibility" in `technical-specifications.md`), it remains reserved for the dark surfaces of the header and footer.
+- The site always stays in light theme, whatever the visitor's system theme: no dark mode for now. The dark values remain defined (`:root[data-theme="dark"]`) but no longer activate automatically via `prefers-color-scheme`: they can only be reached if a future manual toggle sets the `data-theme="dark"` attribute, not implemented at this stage.
 
-### Palette dataviz (pour les visualisations)
+### Dataviz palette (for visualizations)
 
-Palette catégorielle, dans cet ordre fixe (jamais cyclé au-delà de huit séries : au-delà, regrouper dans "Autre" ou passer en petits multiples) :
+Categorical palette, in this fixed order (never cycled beyond eight series: beyond that, group into "Other" or switch to small multiples):
 
-| Slot | Teinte | Light | Dark |
+| Slot | Hue | Light | Dark |
 |---|---|---|---|
-| 1 | Bleu | `#2a78d6` | `#3987e5` |
+| 1 | Blue | `#2a78d6` | `#3987e5` |
 | 2 | Orange | `#eb6834` | `#d95926` |
 | 3 | Aqua | `#1baf7a` | `#199e70` |
-| 4 | Jaune | `#eda100` | `#c98500` |
+| 4 | Yellow | `#eda100` | `#c98500` |
 | 5 | Magenta | `#e87ba4` | `#d55181` |
-| 6 | Vert | `#008300` | `#008300` |
+| 6 | Green | `#008300` | `#008300` |
 | 7 | Violet | `#4a3aa7` | `#9085e9` |
-| 8 | Rouge | `#e34948` | `#e66767` |
+| 8 | Red | `#e34948` | `#e66767` |
 
-Validée pour la lecture en daltonisme sur paires adjacentes (empilements, barres, lignes). Sur une disposition où toutes les paires peuvent se toucher (nuage de points, choroplèthe, petits multiples), seuls les trois premiers slots restent garantis distinguables deux à deux : au-delà de trois séries dans ce cas, regrouper ou passer en petits multiples plutôt que d'ajouter une quatrième teinte. Trois teintes (magenta, jaune, aqua) passent sous 3:1 de contraste sur `--dv-surface` claire en simple trait fin : une légende et des étiquettes directes visibles restent la garantie de lecture, pas seulement la couleur.
+Validated for color-blind reading on adjacent pairs (stacking, bars, lines). On a layout where all pairs can touch (scatter plot, choropleth, small multiples), only the first three slots remain guaranteed pairwise distinguishable: beyond three series in that case, group or switch to small multiples rather than adding a fourth hue. Three hues (magenta, yellow, aqua) fall below 3:1 contrast on light `--dv-surface` as a single thin stroke: a legend and visible direct labels remain the guarantee of readability, not color alone.
 
-Séquentielle (magnitude, une seule teinte, clair → foncé), défaut bleu :
+Sequential (magnitude, single hue, light → dark), blue by default:
 
-| Palier | Hex | Palier | Hex | Palier | Hex | Palier | Hex |
+| Step | Hex | Step | Hex | Step | Hex | Step | Hex |
 |---|---|---|---|---|---|---|---|
 | 100 | `#cde2fb` | 250 | `#86b6ef` | 400 | `#3987e5` | 550 | `#1c5cab` |
 | 150 | `#b7d3f6` | 300 | `#6da7ec` | 450 | `#2a78d6` | 600 | `#184f95` |
 | 200 | `#9ec5f4` | 350 | `#5598e7` | 500 | `#256abf` | 650 | `#104281` |
 | | | | | | | 700 | `#0d366b` |
 
-Divergente (polarité) : bleu ↔ rouge, point neutre gris (`#f0efec` clair, `#383835` sombre).
+Diverging (polarity): blue ↔ red, gray neutral point (`#f0efec` light, `#383835` dark).
 
-Statuts (fixes, jamais réutilisés pour une série de données, toujours accompagnés d'une icône et d'un libellé, jamais de la couleur seule) :
+Statuses (fixed, never reused for a data series, always accompanied by an icon and a label, never by color alone):
 
-| Rôle | Hex |
+| Role | Hex |
 |---|---|
-| Succès | `#0ca30c` |
-| Avertissement | `#fab219` |
-| Grave | `#ec835a` |
-| Critique | `#d03b3b` |
+| Success | `#0ca30c` |
+| Warning | `#fab219` |
+| Serious | `#ec835a` |
+| Critical | `#d03b3b` |
 
-Une visualisation qui a besoin d'une palette différente de ce défaut (ex : une teinte séquentielle propre à son sujet) la documente et la valide dans son propre `technical-specifications.md` plutôt que d'improviser des couleurs (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md`).
+A visualization that needs a palette different from this default (e.g. a sequential hue specific to its subject) documents and validates it in its own `technical-specifications.md` rather than improvising colors (see "Rules common to all visualizations" in `technical-specifications.md`).
 
-### Fond de carte (illustration)
+### Basemap (illustration)
 
-Couleurs récurrentes pour les visualisations avec fond de carte (silhouette de territoire, hydrographie) : des couleurs d'illustration, fixes quel que soit le thème, jamais réutilisées pour encoder une donnée (hors de la palette dataviz ci-dessus, voir par exemple "Palette" dans `specs/satellites-in-orbit/technical-specifications.md`).
+Recurring colors for visualizations with a basemap (territory silhouette, hydrography): illustration colors, fixed whatever the theme, never reused to encode data (outside the dataviz palette above, see for example "Palette" in `specs/satellites-in-orbit/technical-specifications.md`).
 
-| Usage | Hex |
+| Use | Hex |
 |---|---|
-| Silhouette (fond de carte) | `#e4e2da` |
-| Hydrographie (cours d'eau, fleuves) | `#a8c5da` |
-| Frontières de plaques tectoniques | `#b3a696` |
-| Point de repère permanent (volcan au repos) | `#6b6455` |
-| Réseau routier | `#c9a97e` |
-| Trame de rues (quasi invisible, densité urbaine élevée) | `#f4f2ec` |
-| Repère hors palette catégorielle (donnée annexe sans attribut fiable) | `#a5a4a0` |
+| Silhouette (basemap) | `#e4e2da` |
+| Hydrography (streams, rivers) | `#a8c5da` |
+| Tectonic plate boundaries | `#b3a696` |
+| Permanent landmark (dormant volcano) | `#6b6455` |
+| Road network | `#c9a97e` |
+| Street grid (nearly invisible, high urban density) | `#f4f2ec` |
+| Landmark outside the categorical palette (ancillary data without a reliable attribute) | `#a5a4a0` |
 
-Utilisées par `biodiversity`, `light-pollution`, `paris-trees`, `monument-layers`, `bird-migrations`, `monarch-migration`, `earthquakes` (frontières de plaques tectoniques, propre à cette dernière), `forest-fires` et `volcanic-eruptions` (point de repère permanent, propre à cette dernière, voir "Palette" dans `specs/volcanic-eruptions/technical-specifications.md`) ; réseau routier propre à `monument-layers`, trame de rues et repère hors palette propres à `paris-trees` (voir "Rendu"/"Interactions" dans leurs `technical-specifications.md` respectifs) ; toute nouvelle visualisation avec fond de carte réutilise ces teintes plutôt que d'en introduire de nouvelles.
+Used by `biodiversity`, `light-pollution`, `paris-trees`, `monument-layers`, `bird-migrations`, `monarch-migration`, `earthquakes` (tectonic plate boundaries, specific to the latter), `forest-fires` and `volcanic-eruptions` (permanent landmark, specific to the latter, see "Palette" in `specs/volcanic-eruptions/technical-specifications.md`); road network specific to `monument-layers`, street grid and off-palette landmark specific to `paris-trees` (see "Rendering"/"Interactions" in their respective `technical-specifications.md`); any new visualization with a basemap reuses these hues rather than introducing new ones.
 
-## Typographie
+## Typography
 
-- **Police :** Ubuntu, hébergée par le site, graisses 300 / 400 / 500 / 700 (voir "Polices" dans `technical-specifications.md` pour le chargement).
-- `font-family: "Ubuntu", sans-serif;` sur `body`.
+- **Font:** Ubuntu, hosted by the site, weights 300 / 400 / 500 / 700 (see "Fonts" in `technical-specifications.md` for loading).
+- `font-family: "Ubuntu", sans-serif;` on `body`.
 
-| Usage | Taille | Graisse | Couleur |
+| Use | Size | Weight | Color |
 |---|---|---|---|
 | `h1` | 2rem | 700 | `--dv-ink-primary` |
 | `h2` | 1.5rem | 700 | `--dv-ink-primary` |
 | `h3` | 1.125rem | 500 | `--dv-ink-primary` |
-| Corps de texte | 1rem | 400 | `--dv-ink-secondary` |
-| Texte secondaire, légendes, métadonnées | 0.875rem | 300 | `--dv-ink-secondary` |
+| Body text | 1rem | 400 | `--dv-ink-secondary` |
+| Secondary text, captions, metadata | 0.875rem | 300 | `--dv-ink-secondary` |
 
-`line-height` : 1.2 pour les titres, 1.5 pour le corps de texte.
+`line-height`: 1.2 for headings, 1.5 for body text.
 
-Ponctuation du texte français (textes d'interface `i18n/fr.ts`, frontmatter et corps des `<viz-slug>.fr.md`, textes français embarqués dans les données comme les champs `*Fr`) : une espace insécable précède toujours les ponctuations doubles (`:`, `;`, `!`, `?`) et les points de suspension (`…` comme `...`). Elle est saisie comme caractère U+00A0, pas comme entité `&nbsp;`, que le frontmatter et les chaînes JS afficheraient littéralement. Les attributs non localisés (ex : `license` d'un dataset, identique entre les deux langues) restent tels que publiés par la source.
+Punctuation of French text (interface copy `i18n/fr.ts`, frontmatter and body of the `<viz-slug>.fr.md`, French text embedded in the data such as the `*Fr` fields): a non-breaking space always precedes double punctuation marks (`:`, `;`, `!`, `?`) and ellipses (`…` as well as `...`). It is typed as the U+00A0 character, not as the `&nbsp;` entity, which the frontmatter and JS strings would display literally. Non-localized attributes (e.g. a dataset's `license`, identical between the two languages) remain as published by the source.
 
-Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble du site) ; l'affordance vient de la couleur (`--dv-accent` ou `--dv-gold` selon la surface, voir "Couleurs") et de son changement au survol/focus, pas du soulignement. `--dv-accent` est posé par défaut sur la règle globale `a` (`global.css`), pour que tout lien du texte courant (corps Markdown d'une visualisation, page "À propos") ait la couleur de la charte sans règle propre. Les liens sur surface sombre (en-tête, pied de page, infobulles) redéfinissent leur couleur localement.
+Links: never underlined by default (`text-decoration: none`, across the whole site); the affordance comes from the color (`--dv-accent` or `--dv-gold` depending on the surface, see "Colors") and its change on hover/focus, not from underlining. `--dv-accent` is set by default on the global `a` rule (`global.css`), so that every link in running text (Markdown body of a visualization, "About" page) has the style guide color without a rule of its own. Links on a dark surface (header, footer, tooltips) redefine their color locally.
 
-## Espacements, grille et responsive
+## Spacing, grid and responsive
 
-Échelle d'espacement, en variables CSS custom (pas de framework) :
+Spacing scale, in custom CSS variables (no framework):
 
 ```css
 :root {
@@ -131,74 +131,74 @@ Liens : jamais soulignés par défaut (`text-decoration: none`, sur l'ensemble d
 }
 ```
 
-- `--dv-gutter` : espacement horizontal minimal au bord de la fenêtre, partagé par le conteneur de page, l'en-tête et le pied de page (voir ci-dessous) ; hors échelle `--dv-space-*`.
-- Conteneur de page (contenu principal) : largeur maximale 1320px, centré, marge horizontale `--dv-gutter`. Ne s'applique pas à l'en-tête ni au pied de page, en pleine largeur (voir "En-tête" et "Pied de page" ci-dessous).
-- Grille du catalogue (voir "Tuiles (catalogue)" ci-dessous) : CSS Grid fluide (`repeat(auto-fill, minmax(340px, 1fr))`, `gap: var(--dv-space-4)`), pas de point de rupture fixe à maintenir ; ce minimum de tuile large plafonne naturellement à trois colonnes sur desktop (largeur du conteneur), deux puis une seule en dessous.
-- `--dv-header-height` et `--dv-footer-height` dimensionnent l'en-tête collant et le pied de page fixe (voir "En-tête" et "Pied de page" ci-dessous) ; le contenu principal réserve un espacement bas égal à `--dv-footer-height` pour ne pas passer sous le pied de page fixe.
+- `--dv-gutter`: minimal horizontal spacing at the window edge, shared by the page container, the header and the footer (see below); outside the `--dv-space-*` scale.
+- Page container (main content): maximum width 1320px, centered, horizontal margin `--dv-gutter`. Does not apply to the header or footer, which are full width (see "Header" and "Footer" below).
+- Catalog grid (see "Tiles (catalog)" below): fluid CSS Grid (`repeat(auto-fill, minmax(340px, 1fr))`, `gap: var(--dv-space-4)`), no fixed breakpoint to maintain; this wide tile minimum naturally caps at three columns on desktop (container width), then two and a single one below.
+- `--dv-header-height` and `--dv-footer-height` size the sticky header and the fixed footer (see "Header" and "Footer" below); the main content reserves a bottom spacing equal to `--dv-footer-height` so as not to pass under the fixed footer.
 
-## Composants UI de base
+## Base UI components
 
-### En-tête
+### Header
 
-- **Gauche** : logo (`public/logo.png`) suivi du nom du site ("Données Vivantes" / "Living Data" selon la langue, voir `i18n/fr.ts` et `i18n/en.ts`) puis, en dessous, son tagline ("Explorations visuelles de données ouvertes" / "Visual explorations of open data"), l'ensemble en lien vers l'accueil.
-- **Droite** : sélecteur de langue, deux drapeaux 🇫🇷 / 🇬🇧 empilés verticalement (l'un au-dessus de l'autre), avec `aria-label` explicite ("Français" / "English").
-- Fond `--dv-header-bg` (bleu marine), texte blanc, bordure basse `--dv-gold`.
-- Survol/focus des éléments interactifs (nom du site, drapeaux) : `--dv-gold`.
-- En-tête collant (`position: sticky`) en haut de page, hauteur indicative `--dv-header-height` (voir "Espacements, grille et responsive").
-- Largeur pleine, sans le conteneur de page (pas de largeur maximale ni de centrage) : ses éléments (logo/nom du site, sélecteur de langue) sont au plus près du bord de la fenêtre, avec seulement `--dv-gutter` d'espacement horizontal.
-- Pas de contenu propre à une visualisation dans l'en-tête (pas de sous-titre, pas de switcher) : pas de notion d'univers ni de vue alternative ici. Le titre de la page courante s'affiche dans le contenu principal, pas dans le chrome.
+- **Left**: logo (`public/logo.png`) followed by the site name ("Données Vivantes" / "Living Data" depending on the language, see `i18n/fr.ts` and `i18n/en.ts`) then, below, its tagline ("Explorations visuelles de données ouvertes" / "Visual explorations of open data"), the whole linking to the home page.
+- **Right**: language selector, two flags 🇫🇷 / 🇬🇧 stacked vertically (one above the other), with an explicit `aria-label` ("Français" / "English").
+- `--dv-header-bg` background (navy blue), white text, `--dv-gold` bottom border.
+- Hover/focus of interactive elements (site name, flags): `--dv-gold`.
+- Sticky header (`position: sticky`) at the top of the page, indicative height `--dv-header-height` (see "Spacing, grid and responsive").
+- Full width, without the page container (no maximum width or centering): its elements (logo/site name, language selector) are as close as possible to the window edge, with only `--dv-gutter` of horizontal spacing.
+- No visualization-specific content in the header (no subtitle, no switcher): no notion of universe or alternative view here. The title of the current page is displayed in the main content, not in the chrome.
 
-### Pied de page
+### Footer
 
-- **Gauche** : mention de licence, quatre icônes Creative Commons (voir "Iconographie") suivies du texte "CC BY-NC-SA 4.0", lien vers `https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr` ou `.../deed.en` selon la langue courante, appliquée à la présentation et au code originaux du site ; la licence propre à chaque dataset source reste celle de sa source (voir "Dataset source" dans `data-model.md`), non affectée par celle-ci.
-- **Droite** : lien "À propos" / "About" vers la page du même nom (voir `about-page.md`), puis, séparée par un point médian, la mention "Réalisée par Christophe Heubès" (FR) / "Created by Christophe Heubès" (EN), le nom en lien vers `https://christophe.heubes.org`.
-- Fond `--dv-footer-bg` (gris foncé), texte blanc, bordure haute `--dv-gridline`, liens en `--dv-gold` au survol.
-- Pied de page fixe (`position: fixed`, ancré en bas de viewport) sur toute la largeur, hauteur indicative `--dv-footer-height` ; le contenu principal réserve cet espace en bas de page pour ne jamais passer dessous. Padding vertical `--dv-space-2` et espacement `--dv-space-2` entre les icônes et le texte de la mention de licence.
-- Comme l'en-tête, largeur pleine sans le conteneur de page : ses éléments sont au plus près du bord de la fenêtre, avec seulement `--dv-gutter` d'espacement horizontal.
+- **Left**: license notice, four Creative Commons icons (see "Iconography") followed by the text "CC BY-NC-SA 4.0", linking to `https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr` or `.../deed.en` depending on the current language, applied to the original presentation and code of the site; the license of each source dataset remains that of its source (see "Source dataset" in `data-model.md`), unaffected by this one.
+- **Right**: "À propos" / "About" link to the page of the same name (see `about-page.md`), then, separated by a middle dot, the notice "Réalisée par Christophe Heubès" (FR) / "Created by Christophe Heubès" (EN), the name linking to `https://christophe.heubes.org`.
+- `--dv-footer-bg` background (dark gray), white text, `--dv-gridline` top border, links in `--dv-gold` on hover.
+- Fixed footer (`position: fixed`, anchored at the bottom of the viewport) across the full width, indicative height `--dv-footer-height`; the main content reserves this space at the bottom of the page so as never to pass under it. Vertical padding `--dv-space-2` and `--dv-space-2` spacing between the icons and the text of the license notice.
+- Like the header, full width without the page container: its elements are as close as possible to the window edge, with only `--dv-gutter` of horizontal spacing.
 
-### Chips de filtre (catalogue)
+### Filter chips (catalog)
 
-- Une chip par thème (voir "Thème" dans `data-model.md`), disposées en ligne au-dessus de la grille de tuiles, avec retour à la ligne (`flex-wrap`) plutôt que défilement horizontal. Forme pilule (`border-radius` élevé), padding `--dv-space-2` horizontal / `--dv-space-1` vertical, espacement `--dv-space-2` entre chips.
-- État inactif (thème non sélectionné) : fond `--dv-surface`, texte `--dv-ink-secondary`, bordure `--dv-gridline`.
-- État actif (thème sélectionné) : fond `--dv-header-bg`, texte blanc, bordure `--dv-header-bg` — même couleur de marque que le survol des tuiles (voir "Tuiles (catalogue)" ci-dessous et la note sur `--dv-header-bg` dans "Couleurs" ci-dessus), contraste largement supérieur au minimum WCAG AA (texte blanc sur `#2c374c`, ratio ≈ 12:1). Pas `--dv-accent` : à 4,4:1 avec du texte blanc, il passe sous le seuil AA 4,5:1 requis pour du texte de cette taille (0.875rem, sous le seuil de "grand texte").
-- Survol/focus (état inactif) : bordure `--dv-accent`, cohérent avec son rôle d'élément interactif sur fond clair (voir "Couleurs" ci-dessus). Pas d'usage de `--dv-gold` ici, réservé aux surfaces sombres de l'en-tête et du pied de page.
+- One chip per theme (see "Theme" in `data-model.md`), laid out in a row above the tile grid, wrapping (`flex-wrap`) rather than scrolling horizontally. Pill shape (high `border-radius`), padding `--dv-space-2` horizontal / `--dv-space-1` vertical, `--dv-space-2` spacing between chips.
+- Inactive state (theme not selected): `--dv-surface` background, `--dv-ink-secondary` text, `--dv-gridline` border.
+- Active state (theme selected): `--dv-header-bg` background, white text, `--dv-header-bg` border: the same brand color as the tile hover (see "Tiles (catalog)" below and the note on `--dv-header-bg` in "Colors" above), contrast well above the WCAG AA minimum (white text on `#2c374c`, ratio ≈ 12:1). Not `--dv-accent`: at 4.4:1 with white text, it falls below the AA 4.5:1 threshold required for text of this size (0.875rem, below the "large text" threshold).
+- Hover/focus (inactive state): `--dv-accent` border, consistent with its role as an interactive element on a light background (see "Colors" above). No use of `--dv-gold` here, reserved for the dark surfaces of the header and footer.
 
-### Tuiles (catalogue)
+### Tiles (catalog)
 
-- Couverture (ratio et dimensions : voir "Images" ci-dessous), en lazy loading, `title` en titre, `summary` en corps, aligné en justifié. Zone de texte (titre + résumé) à hauteur fixe, résumé défilant verticalement au-delà de cette hauteur plutôt que tronqué : chaque tuile garde la même hauteur quelle que soit la longueur du résumé.
-- Fond `--dv-surface`, titre `--dv-ink-primary`, texte `--dv-ink-secondary`, bordure `--dv-gridline`.
-- Survol : légère élévation (ombre) et bordure `--dv-header-bg` (identité de marque).
+- Cover (ratio and dimensions: see "Images" below), lazy loaded, `title` as heading, `summary` as body, justified. Text area (title + summary) at a fixed height, summary scrolling vertically beyond that height rather than truncated: each tile keeps the same height whatever the length of the summary.
+- `--dv-surface` background, `--dv-ink-primary` title, `--dv-ink-secondary` text, `--dv-gridline` border.
+- Hover: slight elevation (shadow) and `--dv-header-bg` border (brand identity).
 
-### Tableau de données
+### Data table
 
-- Bloc repliable (`<details>`), fermé par défaut. Son libellé (`<summary>`) est en `--dv-accent`, en texte secondaire, précédé du triangle natif du navigateur, qui indique l'état ouvert ou fermé.
-- Tableau pleine largeur du conteneur, typographie du texte secondaire (`0.875rem`, graisse 300, `--dv-ink-secondary`), en-têtes en graisse 500 et `--dv-ink-primary`. Légende (`<caption>`) alignée à gauche, au-dessus du tableau.
-- Filets horizontaux `--dv-gridline` entre les lignes, pas de filets verticaux ni de zébrures. Ligne de total séparée par un filet plus épais (`2px`).
-- Nombres alignés à droite, en chiffres tabulaires (`font-variant-numeric: tabular-nums`) pour que les unités s'alignent d'une ligne à l'autre. Texte aligné à gauche.
-- Sur petit écran, le tableau défile horizontalement dans son propre conteneur, jamais la page (voir "Espacements, grille et responsive").
+- Collapsible block (`<details>`), closed by default. Its label (`<summary>`) is in `--dv-accent`, as secondary text, preceded by the browser's native triangle, which indicates the open or closed state.
+- Table at the full width of the container, secondary text typography (`0.875rem`, weight 300, `--dv-ink-secondary`), headers in weight 500 and `--dv-ink-primary`. Caption (`<caption>`) left-aligned, above the table.
+- Horizontal `--dv-gridline` rules between rows, no vertical rules or zebra stripes. Total row separated by a thicker rule (`2px`).
+- Numbers right-aligned, in tabular figures (`font-variant-numeric: tabular-nums`) so that units align from one row to the next. Text left-aligned.
+- On small screens, the table scrolls horizontally within its own container, never the page (see "Spacing, grid and responsive").
 
-### Page de visualisation
+### Visualization page
 
-- `title` en `h1`, `summary` puis présentation longue (corps de texte de `<viz-slug>.<lang>.md`, voir `data-model.md`). Pas de couverture affichée en tête de page (à la différence de la tuile) : elle reste utilisée comme image de partage (meta Open Graph, voir "SEO" dans `technical-specifications.md`), pas comme élément visuel de la page elle-même.
-- Zone de montage de la visualisation elle-même, après la présentation : conteneur pleine largeur, hauteur minimale réservée pour éviter un saut de mise en page pendant son initialisation (voir "États" attendus dans "Règles communes à toutes les visualisations" de `technical-specifications.md`). Traitement visuel propre à chaque visualisation, documenté dans son propre `functional-specifications.md`.
-- Vue tableau, entre la zone de montage et le bloc de crédit, quand la visualisation en propose une (voir "Tableau de données" ci-dessus).
-- Bloc de crédit des sources, après la zone de montage : un jeu de données par ligne (`name`, `publisher`, `license`, lien vers `url`, `retrieved`), texte secondaire.
-- Téléchargement des données préparées, en fin de bloc de crédit, sous la liste des sources (voir "Téléchargement des données préparées" dans `functional-specifications.md`) : un libellé, puis un lien par fichier (nom du fichier en `--dv-accent`, taille entre parenthèses, séparés par des virgules), et une mention rappelant que la réutilisation reste soumise aux licences des sources. Même typographie que les lignes de sources (texte secondaire). Pas d'icône. Absent quand la visualisation ne déclare aucun fichier.
-- Section des visualisations liées, après le bloc de crédit (règle de sélection : voir "Visualisations liées" dans `functional-specifications.md`) : titre `h2` au même style que celui du bloc de crédit, puis les tuiles du catalogue réutilisées telles quelles (voir "Tuiles (catalogue)" ci-dessus), dans la même grille fluide que l'accueil. Avec moins de trois tuiles, celles-ci gardent la largeur qu'elles auraient dans la grille complète au lieu de s'étirer. Section absente quand aucune visualisation ne partage de thème.
-- Pas de lien de retour au catalogue propre à la page : le retour à l'accueil se fait via l'en-tête (voir "En-tête" ci-dessus), commun à toutes les pages.
+- `title` as `h1`, `summary` then long presentation (body text of `<viz-slug>.<lang>.md`, see `data-model.md`). No cover displayed at the top of the page (unlike the tile): it remains used as the sharing image (Open Graph meta, see "SEO" in `technical-specifications.md`), not as a visual element of the page itself.
+- Mount area of the visualization itself, after the presentation: full-width container, minimum height reserved to avoid a layout shift during its initialization (see the expected "States" in "Rules common to all visualizations" of `technical-specifications.md`). Visual treatment specific to each visualization, documented in its own `functional-specifications.md`.
+- Table view, between the mount area and the credit block, when the visualization offers one (see "Data table" above).
+- Source credit block, after the mount area: one dataset per line (`name`, `publisher`, `license`, link to `url`, `retrieved`), secondary text.
+- Prepared data download, at the end of the credit block, below the list of sources (see "Prepared data download" in `functional-specifications.md`): a label, then one link per file (file name in `--dv-accent`, size in parentheses, separated by commas), and a notice reminding that reuse remains subject to the sources' licenses. Same typography as the source lines (secondary text). No icon. Absent when the visualization declares no file.
+- Related visualizations section, after the credit block (selection rule: see "Related visualizations" in `functional-specifications.md`): `h2` title in the same style as that of the credit block, then the catalog tiles reused as is (see "Tiles (catalog)" above), in the same fluid grid as the home page. With fewer than three tiles, they keep the width they would have in the full grid instead of stretching. Section absent when no visualization shares a theme.
+- No page-specific link back to the catalog: returning to the home page is done via the header (see "Header" above), common to all pages.
 
 ## Images
 
-| Image | Ratio | Dimensions minimales |
+| Image | Ratio | Minimum dimensions |
 |---|---|---|
-| Couverture de visualisation | 16:9 | 1200 × 675 px |
+| Visualization cover | 16:9 | 1200 × 675 px |
 
-Format `.jpg` (photo) ou `.png` (illustration, capture d'écran), selon la nature de la visualisation ; pas de contrainte de format imposée au-delà du ratio et des dimensions minimales. `object-fit: cover` en CSS pour absorber les écarts plutôt que d'imposer un recadrage strict.
+`.jpg` (photo) or `.png` (illustration, screenshot) format, depending on the nature of the visualization; no format constraint imposed beyond the ratio and minimum dimensions. `object-fit: cover` in CSS to absorb discrepancies rather than imposing strict cropping.
 
-Tant que la couverture propre d'une visualisation (`src/assets/covers/<viz-slug>.jpg`/`.png`, voir `data-model.md`) n'existe pas, un placeholder partagé (`public/cover-placeholder.svg`) s'affiche à sa place sur sa tuile (et sert de repli pour l'image de partage de sa page, voir "Page de visualisation" ci-dessus).
+As long as a visualization's own cover (`src/assets/covers/<viz-slug>.jpg`/`.png`, see `data-model.md`) does not exist, a shared placeholder (`public/cover-placeholder.svg`) is displayed in its place on its tile (and serves as a fallback for its page's sharing image, see "Visualization page" above).
 
-## Iconographie
+## Iconography
 
-Pas de bibliothèque d'icônes par défaut (pas de nouvelle dépendance sans discussion, voir les règles globales de sécurité du projet). Les rares besoins d'icône (ex : lien externe) utilisent un caractère Unicode ou un SVG inline minimal.
+No icon library by default (no new dependency without discussion, see the project's global security rules). The rare icon needs (e.g. external link) use a Unicode character or a minimal inline SVG.
 
-Exception : les quatre icônes de la mention de licence en pied de page (voir "Pied de page" ci-dessus) reprennent les tracés SVG de Font Awesome Free 7.3.1 (icônes sous licence CC BY 4.0, créditée en commentaire dans `Footer.astro`) : `creative-commons`, `creative-commons-by`, `creative-commons-nc-eu`, `creative-commons-sa`, dans cet ordre. Inlinés dans le pied de page plutôt que chargés depuis la bibliothèque, qui n'est plus utilisée nulle part. Taille du texte du pied de page (`1em`), chacune dans une boîte de `1.25em` de large qui les espace, couleur héritée du pied de page (blanc, doré au survol).
+Exception: the four icons of the license notice in the footer (see "Footer" above) reuse the SVG paths of Font Awesome Free 7.3.1 (icons under the CC BY 4.0 license, credited in a comment in `Footer.astro`): `creative-commons`, `creative-commons-by`, `creative-commons-nc-eu`, `creative-commons-sa`, in that order. Inlined in the footer rather than loaded from the library, which is no longer used anywhere. Footer text size (`1em`), each in a `1.25em`-wide box that spaces them, color inherited from the footer (white, gold on hover).

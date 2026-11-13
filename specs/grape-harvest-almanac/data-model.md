@@ -1,64 +1,64 @@
-# Modèle de données : L'almanach des vendanges
+# Data model: The Grape Harvest Almanac
 
-Complète `data-model.md` général : schéma du dataset propre à cette visualisation.
+Supplements the general `data-model.md`: schema of the dataset specific to this visualization.
 
-## Dataset source
+## Source dataset
 
-| Champ | Valeur |
+| Field | Value |
 |---|---|
 | `name` | Western Europe 650 Year Grape Harvest Date Database (Daux et al. 2012) |
 | `publisher` | NOAA/NCEI (National Centers for Environmental Information), World Data Service for Paleoclimatology |
 | `url` | https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=noaa-historical-13194 |
-| `license` | Données publiques NOAA/NCEI (aucune restriction de réutilisation, garantie exclue), citation de l'article source requise : Daux, V., et al. 2012. *An open-access database of grape harvest dates for climate research: data description and quality assessment.* Climate of the Past, 8, 1403-1418. |
+| `license` | NOAA/NCEI public data (no reuse restriction, no warranty), citation of the source article required: Daux, V., et al. 2012. *An open-access database of grape harvest dates for climate research: data description and quality assessment.* Climate of the Past, 8, 1403-1418. |
 | `retrieved` | 2026-09-10 |
 
-**Couverture temporelle du dataset complet :** 1354 à 2007 (654 ans), 27 séries régionales composites (22 en France, 5 hors de France : Allemagne, Luxembourg, Italie du Nord, Espagne, Suisse). Choix validé avec l'utilisateur : périmètre restreint à la France (voir "Régions retenues" ci-dessous), cohérent avec le titre de la visualisation.
+**Temporal coverage of the full dataset:** 1354 to 2007 (654 years), 27 composite regional series (22 in France, 5 outside France: Germany, Luxembourg, Northern Italy, Spain, Switzerland). Choice validated with the user: scope restricted to France (see "Chosen regions" below), consistent with the title of the visualization.
 
-## Régions retenues
+## Chosen regions
 
-Sept régions, choisies parmi les vingt-deux séries françaises pour leur ancienneté et leur continuité jusqu'à la fin du dataset (2007) : un repère historique récent (canicule de 2003, voir "Repères historiques" ci-dessous) doit pouvoir s'appuyer sur chaque courbe affichée, pas seulement certaines d'entre elles. Deux régions pourtant citées comme "parmi les plus complètes" par l'article source, Jura et Ile-de-France, ont été écartées à la vérification empirique du dataset réel : leurs séries s'arrêtent respectivement en 1977 et 1978, sans aucune donnée sur les trois dernières décennies. Bordeaux, Alsace et Champagne (série "Champagne 2" du dataset, la plus complète des deux séries Champagne) ont été ajoutées après coup, sur le même critère.
+Seven regions, chosen among the twenty-two French series for their age and their continuity up to the end of the dataset (2007): a recent historical landmark (the 2003 heatwave, see "Historical landmarks" below) must be able to rely on every displayed curve, not just some of them. Two regions nonetheless cited as "among the most complete" by the source article, Jura and Ile-de-France, were ruled out upon empirical checking of the actual dataset: their series end in 1977 and 1978 respectively, with no data at all over the last three decades. Bordeaux, Alsace and Champagne (the dataset's "Champagne 2" series, the more complete of the two Champagne series) were added afterwards, on the same criterion.
 
-| Région | `id` | Début | Fin | Années renseignées | Complétude |
+| Region | `id` | Start | End | Years with data | Completeness |
 |---|---|---|---|---|---|
-| Bourgogne | `burgundy` | 1354 | 2006 | 604 | 92 % |
-| Vallée du Rhône (sud) | `southern-rhone-valley` | 1434 | 2007 | 451 | 79 % |
-| Bordeaux | `bordeaux` | 1449 | 2006 | 327 | 59 % |
-| Languedoc | `languedoc` | 1525 | 2007 | 288 | 60 % |
-| Alsace | `alsace` | 1700 | 2005 | 262 | 86 % |
-| Basse vallée de la Loire | `lower-loire-valley` | 1802 | 2007 | 203 | 99 % |
-| Champagne | `champagne` | 1806 | 2006 | 183 | 91 % |
+| Bourgogne | `burgundy` | 1354 | 2006 | 604 | 92% |
+| Vallée du Rhône (sud) | `southern-rhone-valley` | 1434 | 2007 | 451 | 79% |
+| Bordeaux | `bordeaux` | 1449 | 2006 | 327 | 59% |
+| Languedoc | `languedoc` | 1525 | 2007 | 288 | 60% |
+| Alsace | `alsace` | 1700 | 2005 | 262 | 86% |
+| Basse vallée de la Loire | `lower-loire-valley` | 1802 | 2007 | 203 | 99% |
+| Champagne | `champagne` | 1806 | 2006 | 183 | 91% |
 
-Complétude = nombre d'années avec une valeur / nombre d'années entre le premier et le dernier point de la série (ratio propre à chaque série, pas à la plage globale 1354-2007).
+Completeness = number of years with a value / number of years between the first and last point of the series (a ratio specific to each series, not to the overall 1354-2007 range).
 
-## Schéma des données brutes (source NOAA)
+## Raw data schema (NOAA source)
 
-Fichier texte à largeur de colonnes fixe (`europe2012ghd.txt`), trois blocs de neuf régions ("part 1 of 3", "part 2 of 3", "part 3 of 3"), une ligne par année de 1354 à 2007, une colonne par région. Une valeur est le nombre de jours après le 31 août (peut être négatif, ex. `-10.0` = 21 août), une case vide signifie l'absence de donnée cette année-là pour cette région.
+Fixed-width text file (`europe2012ghd.txt`), three blocks of nine regions ("part 1 of 3", "part 2 of 3", "part 3 of 3"), one row per year from 1354 to 2007, one column per region. A value is the number of days after August 31 (can be negative, e.g. `-10.0` = August 21); an empty cell means there is no data that year for that region.
 
-**Piège de parsing rencontré à la vérification (à éviter au prétraitement) :** les valeurs sont alignées à droite dans leur colonne, la largeur de chaque colonne se déduisant de la position de **fin** de l'abréviation de la région dans la ligne d'en-tête (ex. `Bur` à `...Bur|`), pas de sa position de **début**. Une extraction naïve basée sur la position de début de chaque libellé tronque les valeurs à deux chiffres (`51.5` devient `1.5`), avec un résultat qui reste un nombre valide et ne se détecte donc pas à une simple vérification de présence/absence : seule une vérification de valeurs connues (ex. 1816 en Bourgogne, un retard de vendanges documenté par ailleurs) révèle l'erreur. Par ailleurs, les blocs "part 2" et "part 3" portent une ligne parasite juste sous l'en-tête, à l'année 1354 : les abréviations de colonnes elles-mêmes (`Ger`, `HLV`, `IdF`...) plutôt qu'une valeur, à ignorer explicitement (seule la Bourgogne, dans "part 1", a une vraie donnée en 1354).
+**Parsing pitfall encountered during checking (to be avoided in preprocessing):** values are right-aligned in their column, the width of each column being derived from the **end** position of the region abbreviation in the header row (e.g. `Bur` at `...Bur|`), not from its **start** position. A naive extraction based on the start position of each label truncates two-digit values (`51.5` becomes `1.5`), with a result that remains a valid number and therefore cannot be detected by a simple presence/absence check: only a check against known values (e.g. 1816 in Burgundy, a harvest delay documented elsewhere) reveals the error. In addition, the "part 2" and "part 3" blocks carry a stray row just below the header, at year 1354: the column abbreviations themselves (`Ger`, `HLV`, `IdF`...) rather than a value, to be explicitly ignored (only Burgundy, in "part 1", has real data in 1354).
 
-## Repères historiques
+## Historical landmarks
 
-Quatre repères, choisis avec l'utilisateur pour couvrir un arc éditorial complet (extrême précoce ancien, extrême tardif, période où la donnée elle-même se dégrade, extrême précoce moderne) plutôt que la seule dérive climatique récente (déjà traitée par `flower-phenology` et `light-pollution`). Valeurs vérifiées contre les séries réellement retenues.
+Four landmarks, chosen with the user to cover a complete editorial arc (an early extreme from long ago, a late extreme, a period when the data itself degrades, a modern early extreme) rather than only the recent climate drift (already covered by `flower-phenology` and `light-pollution`). Values checked against the series actually chosen.
 
-| `id` | Année(s) | Événement | Bourgogne | Rhône (sud) | Bordeaux | Languedoc | Alsace | Basse Loire | Champagne |
+| `id` | Year(s) | Event | Bourgogne | Rhône (sud) | Bordeaux | Languedoc | Alsace | Basse Loire | Champagne |
 |---|---|---|---|---|---|---|---|---|---|
-| `drought-1540` | 1540 | Méga-sécheresse européenne de 1540, la plus sévère connue par sources documentaires sur cinq siècles | 3 septembre | — | — | — | — | — | — |
-| `year-without-summer-1816` | 1816 | "Année sans été" : éruption du Tambora (1815), étés froids et pluvieux en Europe | 22 octobre | 27 septembre | 27 octobre | — | 24 octobre | 11 octobre | — |
-| `phylloxera-crisis` | 1863-1900 | Crise du phylloxéra : le vignoble français est détruit puis reconstitué sur porte-greffes américains ; l'article source signale une dégradation de la fiabilité des séries GHD sur cette période | — (repère de contexte, pas un pic) | | | | | | |
-| `heatwave-2003` | 2003 | Canicule d'août 2003 : vendanges parmi les plus précoces jamais enregistrées | 21 août | 11 septembre | 27 août | 21 septembre | 8 septembre | 4 octobre | 27 août |
+| `drought-1540` | 1540 | European megadrought of 1540, the most severe known from documentary sources over five centuries | September 3 | — | — | — | — | — | — |
+| `year-without-summer-1816` | 1816 | "Year without a summer": eruption of Tambora (1815), cold and rainy summers in Europe | October 22 | September 27 | October 27 | — | October 24 | October 11 | — |
+| `phylloxera-crisis` | 1863-1900 | Phylloxera crisis: French vineyards are destroyed and then rebuilt on American rootstocks; the source article reports a degradation in the reliability of the GHD series over this period | — (context landmark, not a peak) | | | | | | |
+| `heatwave-2003` | 2003 | August 2003 heatwave: among the earliest grape harvests ever recorded | August 21 | September 11 | August 27 | September 21 | September 8 | October 4 | August 27 |
 
-`drought-1540` ne rattache que la Bourgogne, seule série ayant une donnée cette année-là (voir `regions` dans le format de sortie ci-dessous). `year-without-summer-1816` ne rattache pas le Languedoc ni la Champagne, sans donnée cette année-là (série Champagne commencée en 1806, avec une lacune dès 1816). `phylloxera-crisis` n'ancre aucun pic précis sur une courbe : il se lit comme une période (bande verticale plutôt qu'un marqueur ponctuel, voir "Repères historiques" dans `technical-specifications.md`).
+`drought-1540` attaches only Burgundy, the only series with data that year (see `regions` in the output format below). `year-without-summer-1816` does not attach Languedoc or Champagne, which have no data that year (Champagne series started in 1806, with a gap as early as 1816). `phylloxera-crisis` does not anchor any specific peak on a curve: it reads as a period (a vertical band rather than a point marker, see "Historical landmarks" in `technical-specifications.md`).
 
-## Prétraitement (script hors-build, exécuté à l'implémentation)
+## Preprocessing (script outside the build, run during implementation)
 
-Script Node ponctuel (non commité, cohérent avec `bird-migrations` et `flower-phenology`), à partir du fichier texte NOAA téléchargé une fois (`europe2012ghd.txt`).
+One-off Node script (not committed, consistent with `bird-migrations` and `flower-phenology`), from the NOAA text file downloaded once (`europe2012ghd.txt`).
 
-1. Parser les trois blocs à largeur fixe en respectant la règle d'alignement à droite décrite ci-dessus (fin de colonne = fin du libellé d'en-tête), en ignorant la ligne parasite d'abréviations à l'année 1354 des blocs 2 et 3.
-2. Ne conserver que les sept régions retenues (voir "Régions retenues").
-3. Pour chaque région, calculer une moyenne mobile centrée sur une fenêtre de vingt ans (dix ans avant, dix ans après l'année considérée) : fenêtre réduite en bord de série (première et dernière décennie), valeur calculée seulement si au moins la moitié des années couvertes par la fenêtre effective ont une donnée brute, sinon `null` (pas d'interpolation qui inventerait une tendance à partir de trop peu de points). Fenêtre choisie comme compromis entre lissage du bruit interannuel réel (écart type d'environ dix jours d'une année à l'autre sur la série Bourgogne) et réactivité conservée sur des séries qui comptent des lacunes, notamment le Languedoc (60 % de complétude).
-4. Sortie : `public/data/grape-harvest-almanac/harvest-dates.json`.
+1. Parse the three fixed-width blocks following the right-alignment rule described above (column end = end of the header label), ignoring the stray abbreviation row at year 1354 in blocks 2 and 3.
+2. Keep only the seven chosen regions (see "Chosen regions").
+3. For each region, compute a centered moving average over a twenty-year window (ten years before, ten years after the year considered): window reduced at the edges of the series (first and last decade), value computed only if at least half of the years covered by the effective window have raw data, otherwise `null` (no interpolation that would invent a trend from too few points). Window chosen as a compromise between smoothing the real year-to-year noise (standard deviation of about ten days from one year to the next on the Burgundy series) and preserving responsiveness on series that have gaps, notably Languedoc (60% completeness).
+4. Output: `public/data/grape-harvest-almanac/harvest-dates.json`.
 
-## Format de sortie
+## Output format
 
 ```json
 {
@@ -92,10 +92,10 @@ Script Node ponctuel (non commité, cohérent avec `bird-migrations` et `flower-
 }
 ```
 
-`dayOffset`, `smoothedDayOffset` : jours après le 31 août (peut être négatif). `smoothedDayOffset` est `null` pour une année sans moyenne mobile calculable (voir "Prétraitement" ci-dessus), `dayOffset` est absent de `series` pour une année sans donnée brute (pas d'entrée plutôt qu'une valeur `null`, pour ne pas alourdir un fichier qui couvre potentiellement 654 ans par région).
+`dayOffset`, `smoothedDayOffset`: days after August 31 (can be negative). `smoothedDayOffset` is `null` for a year with no computable moving average (see "Preprocessing" above); `dayOffset` is absent from `series` for a year with no raw data (no entry rather than a `null` value, so as not to weigh down a file that potentially covers 654 years per region).
 
-## Contraintes de validation propres à cette visualisation
+## Validation constraints specific to this visualization
 
-- Chaque région déclare `startYear`/`endYear` cohérents avec la première et la dernière année présentes dans `series`.
-- `colorSlot` est unique parmi les sept régions (voir "Palette" dans `technical-specifications.md`).
-- Chaque `id` d'`events` est unique ; `regions` ne référence que des `id` présents dans `regions` (tableau vide autorisé pour un repère de contexte comme `phylloxera-crisis`, voir "Repères historiques" ci-dessus).
+- Each region declares `startYear`/`endYear` consistent with the first and last years present in `series`.
+- `colorSlot` is unique among the seven regions (see "Palette" in `technical-specifications.md`).
+- Each `events` `id` is unique; `regions` references only `id`s present in `regions` (empty array allowed for a context landmark such as `phylloxera-crisis`, see "Historical landmarks" above).

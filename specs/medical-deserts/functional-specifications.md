@@ -1,74 +1,74 @@
-# Spécification fonctionnelle : Le désert médical de demain
+# Functional specification: Tomorrow's Medical Desert
 
-Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
+Complements the general `functional-specifications.md`: screen of this visualization (goal, content, interactions, states, responsive).
 
-**Statut : implémenté.**
+**Status: implemented.**
 
-## Angle éditorial
+## Editorial angle
 
-| Langue | Titre | Résumé |
+| Language | Title | Summary |
 |---|---|---|
 | FR | Le désert médical de demain | Trente-quatre mille sept cent vingt-huit communes, deux cartes en une : l'accès aux médecins généralistes aujourd'hui, et ce qu'il devient sans ceux qui partent bientôt à la retraite. |
 | EN | Tomorrow's Medical Desert | Thirty-four thousand seven hundred and twenty-eight communes, two maps in one: access to general practitioners today, and what it becomes without those about to retire. |
 
-**Présentation longue FR (proposition) :**
+**Long FR presentation (proposal):**
 > L'accessibilité potentielle localisée (APL) mesure, commune par commune, le nombre de consultations de médecine générale réellement accessibles par habitant et par an. Calculé chaque année par la DREES, cet indicateur existe aussi dans une version restreinte aux médecins de moins de soixante-cinq ans : une photographie de ce que deviendrait l'accès aux soins si les praticiens les plus proches de la retraite cessaient leur activité.
 >
 > Cette carte fait basculer la France entière d'un état à l'autre. Certaines communes ne bougent presque pas ; d'autres, dont l'accès aux soins ne tient aujourd'hui qu'à un seul médecin âgé, basculent d'un coup dans le désert médical.
 
-**Présentation longue EN (proposition) :**
+**Long EN presentation (proposal):**
 > The APL indicator (accessibilité potentielle localisée) measures, commune by commune, the number of general practitioner consultations actually accessible per resident per year. Calculated annually by DREES, this indicator also exists in a version restricted to doctors under sixty-five: a snapshot of what healthcare access would become if the practitioners closest to retirement stopped working.
 >
 > This map switches the whole of France from one state to the other. Some communes barely move; others, whose access to care today hinges on a single aging doctor, fall into medical desert territory overnight.
 
-## Objectif
+## Goal
 
-Faire voir, sur une carte réelle des communes de France métropolitaine, l'écart entre l'accès actuel aux médecins généralistes et l'accès une fois les praticiens proches de la retraite partis.
+Show, on an actual map of the communes of metropolitan France, the gap between current access to general practitioners and access once the practitioners close to retirement have left.
 
-## Contenu (zone de montage)
+## Content (mount area)
 
-- Carte choroplèthe de la France métropolitaine, une forme par commune (34 728, dont Paris, Lyon et Marseille agrégées depuis leurs arrondissements, voir "Jointure" dans `data-model.md`), colorée selon son niveau d'APL (voir "Palette" dans `technical-specifications.md`).
-- Bascule "Aujourd'hui" / "Sans les médecins de 65 ans et plus", qui recolore l'ensemble de la carte.
-- Légende de la palette séquentielle, avec l'intitulé de la mesure ("APL (consultations accessibles par habitant et par an)") pour que l'échelle reste compréhensible indépendamment du texte de présentation.
-- Fiche de détail au survol/tap d'une commune (nom, département, APL actuel, APL sans les 65 ans et plus, population).
+- Choropleth map of metropolitan France, one shape per commune (34,728, including Paris, Lyon and Marseille aggregated from their arrondissements, see "Join" in `data-model.md`), colored according to its APL level (see "Palette" in `technical-specifications.md`).
+- "Aujourd'hui" / "Sans les médecins de 65 ans et plus" toggle, which recolors the whole map.
+- Legend of the sequential palette, with the label of the measure ("APL (consultations accessibles par habitant et par an)") so that the scale remains understandable independently of the presentation text.
+- Detail card on hover/tap of a commune (name, department, current APL, APL without those aged 65 and over, population).
 
 ## Interactions
 
-- **Bascule aujourd'hui/demain :** un contrôle (bouton à deux états) recolore l'ensemble de la carte entre les deux valeurs d'APL, avec une transition de couleur animée courte plutôt qu'un changement instantané (voir "Rendu" dans `technical-specifications.md`) — pour que le visiteur voie les communes concernées basculer, pas seulement constater un état différent.
-- **Survol/tap d'une commune :** fiche de détail avec les deux valeurs d'APL, quel que soit l'état de la bascule (les deux chiffres restent visibles ensemble dans la fiche, pas seulement celui actuellement affiché sur la carte).
-- **Zoom/pan :** libre sur la carte (souris/molette, tactile), nécessaire pour distinguer les communes dans les zones denses (agglomérations).
-- **Pas de filtre par département/région :** l'ensemble du territoire reste visible en permanence, le zoom suffit à explorer une zone précise.
-- **Vue initiale :** France métropolitaine entière visible, état "Aujourd'hui" de la bascule.
-- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : l'état de la bascule et le cadrage sont restaurés. Un lien pris sur l'état "Sans les médecins de 65 ans et plus" ouvre directement la carte dans cet état, sans rejouer le fondu de la bascule.
-- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : les boutons de zoom recadrent la carte sans animation. Le fondu entre les cartes "aujourd'hui" et "demain" est conservé : il change l'opacité sans rien déplacer.
+- **Today/tomorrow toggle:** a control (two-state button) recolors the whole map between the two APL values, with a short animated color transition rather than an instant change (see "Rendering" in `technical-specifications.md`), so that the visitor sees the affected communes tip over, not just notices a different state.
+- **Hover/tap on a commune:** detail card with both APL values, whatever the state of the toggle (both figures remain visible together in the card, not only the one currently shown on the map).
+- **Zoom/pan:** free on the map (mouse/wheel, touch), necessary to distinguish the communes in dense areas (urban areas).
+- **No filter by department/region:** the whole territory remains visible at all times, zoom is enough to explore a specific area.
+- **Initial view:** whole of metropolitan France visible, "Aujourd'hui" state of the toggle.
+- **Shared link** (see "Shareable state in the URL" in the general `functional-specifications.md`): the state of the toggle and the framing are restored. A link taken in the "Sans les médecins de 65 ans et plus" state opens the map directly in that state, without replaying the toggle's fade.
+- **Reduced motion** (see "Reduced motion" in the general `functional-specifications.md`): the zoom buttons reframe the map without animation. The fade between the "today" and "tomorrow" maps is kept: it changes opacity without moving anything.
 
-## Vue tableau
+## Table view
 
-Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+See "Data table view" in the general `functional-specifications.md`.
 
-- **Légende :** "Accès aux médecins généralistes par département, aujourd'hui et sans les médecins de 65 ans et plus" / "Access to general practitioners by department, today and without doctors aged 65+".
-- **Lignes :** les 96 départements de France métropolitaine, dans l'ordre de leur code (`01` à `95`, `2A` et `2B` à leur place). Première cellule : code et nom du département. Le département est la seule maille lisible entre la commune (34 728 lignes) et la région (13 lignes, trop grossière pour l'angle de la visualisation), d'où un tableau plus long que la moyenne.
-- **Colonnes :** Population ; APL aujourd'hui ; APL sans les 65 ans et plus ; Population sous le seuil aujourd'hui (%) ; Population sous le seuil demain (%). L'APL d'un département est la moyenne des APL de ses communes pondérée par leur population. Le seuil est celui qui structure la palette de la carte, 1,5 consultation par habitant et par an (voir "Palette" dans `technical-specifications.md`).
-- **Ligne de total :** "France métropolitaine", calculée de la même façon sur l'ensemble des communes.
-- **Noms des départements :** absents du fichier de données (seul le code y figure). Liste statique des 96 noms officiels (Code officiel géographique de l'INSEE) dans le module du tableau, non traduite, comme les noms de communes.
+- **Caption:** "Accès aux médecins généralistes par département, aujourd'hui et sans les médecins de 65 ans et plus" / "Access to general practitioners by department, today and without doctors aged 65+".
+- **Rows:** the 96 departments of metropolitan France, in the order of their code (`01` to `95`, `2A` and `2B` in their place). First cell: code and name of the department. The department is the only readable level between the commune (34,728 rows) and the region (13 rows, too coarse for the angle of the visualization), hence a longer table than average.
+- **Columns:** Population; APL today; APL without those aged 65 and over; Population below the threshold today (%); Population below the threshold tomorrow (%). A department's APL is the mean of the APL of its communes weighted by their population. The threshold is the one that structures the map's palette, 1.5 consultations per resident per year (see "Palette" in `technical-specifications.md`).
+- **Total row:** "France métropolitaine", computed in the same way over all communes.
+- **Department names:** absent from the data file (only the code is there). Static list of the 96 official names (Code officiel géographique of INSEE) in the table module, not translated, like the commune names.
 
-## États
+## States
 
-- **Chargement :** le temps que `communes.json` soit récupéré et que la carte s'initialise ; zone de montage réservée sans saut de mise en page. Fichier volumineux (9,0 Mo, 2,3 Mo compressé, voir "Poids du fichier" dans `data-model.md`) : un indicateur de progression du chargement (pourcentage, lecture du flux réseau) est affiché pendant le téléchargement, dans l'esprit de `paris-trees`.
-- **Erreur :** échec de récupération du JSON → message d'erreur, pas de carte vide silencieuse.
-- **Vide :** sans objet ici (pas de filtre pouvant réduire l'affichage à rien).
+- **Loading:** the time for `communes.json` to be fetched and the map to initialize; mount area reserved without layout shift. Large file (9.0 MB, 2.3 MB compressed, see "File size" in `data-model.md`): a loading progress indicator (percentage, reading of the network stream) is displayed during the download, in the spirit of `paris-trees`.
+- **Error:** JSON fetch failure → error message, no silent empty map.
+- **Empty:** not applicable here (no filter that could reduce the display to nothing).
 
 ## Responsive
 
-- Pan/zoom au geste tactile, fiche de détail au tap sur une commune plutôt qu'au survol.
-- Bascule et légende repositionnées sous la carte plutôt qu'en surimpression.
+- Pan/zoom by touch gesture, detail card on tap of a commune rather than on hover.
+- Toggle and legend repositioned below the map rather than overlaid.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-L'interaction principale (carte choroplèthe, zoom/pan, survol des communes) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documentée comme limite connue, sans repli, conformément à la règle par défaut du projet. La bascule aujourd'hui/demain reste accessible au clavier (élément natif standard).
+The main interaction (choropleth map, zoom/pan, hover over communes) is not natively accessible by keyboard or screen reader. Documented as a known limitation, without fallback, in accordance with the project's default rule. The today/tomorrow toggle remains keyboard accessible (standard native element).
 
-Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
+Fallback: the table view (see "Table view" above) gives access to the same data, as a summary, by keyboard and screen reader.
 
-## Contenu non traduit
+## Untranslated content
 
-Les noms de communes et de départements restent identiques dans les deux langues (noms propres) ; pas de contenu non traduit à signaler au-delà des règles générales.
+Commune and department names remain identical in both languages (proper nouns); no untranslated content to report beyond the general rules.

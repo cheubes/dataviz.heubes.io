@@ -1,541 +1,541 @@
-# Plan de construction incrémental
+# Incremental build plan
 
-Vingt-quatre étapes, chacune démontrable dans un navigateur avant de passer à la suivante. Voir `CLAUDE.md` pour la structure de `specs/` et les règles d'usage des spécifications.
+Twenty-four steps, each demonstrable in a browser before moving on to the next. See `CLAUDE.md` for the structure of `specs/` and the rules for using the specifications.
 
-Chaque étape a un prompt prêt à l'emploi pour la démarrer, à l'exception de l'étape 8 dont le prompt dépend d'un choix de dataset non encore fait. Les étapes 2 à 6 s'appuient sur une visualisation de test jetable (voir étape 2), en l'absence de première visualisation réelle choisie à ce stade : l'étape 7 retire ce contenu de test, remplacé par la vraie première visualisation à l'étape 8, avant le déploiement (étape 9).
+Each step has a ready-to-use prompt to start it, except step 8, whose prompt depends on a dataset choice not yet made. Steps 2 to 6 rely on a throwaway test visualization (see step 2), since no real first visualization has been chosen at this stage: step 7 removes this test content, replaced by the real first visualization in step 8, before deployment (step 9).
 
-## ✅ 1. Squelette Astro + chrome commun
+## ✅ 1. Astro skeleton + shared chrome
 
-`astro.config.mjs`, `package.json`, `BaseLayout.astro` avec en-tête collant et pied de page (couleurs, typographie, sélecteur de langue en emoji, pas encore fonctionnel) sur une page vide. Voir "Structure des fichiers" dans `technical-specifications.md` et `style-guide.md` ("En-tête", "Pied de page", "Couleurs", "Typographie").
+`astro.config.mjs`, `package.json`, `BaseLayout.astro` with a sticky header and a footer (colors, typography, emoji language selector, not yet functional) on an empty page. See "File structure" in `technical-specifications.md` and `style-guide.md` ("Header", "Footer", "Colors", "Typography").
 
-**Critère :** `astro dev` tourne, l'en-tête et le pied de page respectent la charte graphique, sans rien de dynamique encore.
+**Criterion:** `astro dev` runs, the header and footer follow the style guide, with nothing dynamic yet.
 
-**Statut :** fait.
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 1 du plan de construction (BUILD-PLAN.md) : squelette Astro et chrome commun.
+Implement step 1 of the build plan (BUILD-PLAN.md): Astro skeleton and shared chrome.
 
-Initialise le projet Astro (astro.config.mjs, package.json, voir "Dépendances" dans
-technical-specifications.md), puis src/layouts/BaseLayout.astro, src/components/Header.astro
-et src/components/Footer.astro, conformes à style-guide.md : variables CSS (src/styles/global.css,
-voir "Couleurs" et "Espacements, grille et responsive"), police Ubuntu chargée via Google Fonts
-(voir "Polices" dans technical-specifications.md), en-tête collant et pied de page (sélecteur de
-langue en emoji drapeaux, pas encore fonctionnel, juste visuel, mention CC BY-NC-SA 4.0).
+Initialize the Astro project (astro.config.mjs, package.json, see "Dependencies" in
+technical-specifications.md), then src/layouts/BaseLayout.astro, src/components/Header.astro
+and src/components/Footer.astro, following style-guide.md: CSS variables (src/styles/global.css,
+see "Colors" and "Spacing, grid and responsive"), Ubuntu font loaded via Google Fonts
+(see "Fonts" in technical-specifications.md), sticky header and footer (language selector
+with flag emojis, not yet functional, visual only, CC BY-NC-SA 4.0 notice).
 
-Crée une page de test minimale (src/pages/index.astro) pour vérifier l'affichage. Ne construis
-aucune fonctionnalité au-delà de cette étape (pas de contenu de visualisation, pas de JS).
+Create a minimal test page (src/pages/index.astro) to check the display. Do not build
+any functionality beyond this step (no visualization content, no JS).
 
-Critère de fin : astro dev tourne, l'en-tête et le pied de page s'affichent correctement aux
-couleurs de la charte sur cette page de test.
-```
-
-## ✅ 2. Content collections + visualisation de test
-
-`src/content/config.ts` (schéma de la collection `visualizations`, voir "Structure des fichiers" dans `technical-specifications.md`), une visualisation de test (contenu jetable, sans rapport avec une vraie visualisation à venir), pour valider le schéma dans les deux langues.
-
-**Critère :** le build Astro passe avec ce contenu ; introduire un champ manquant ou mal typé dans le frontmatter le fait échouer.
-
-**Statut :** fait.
-
-**Prompt :**
-```
-Implémente l'étape 2 du plan de construction (BUILD-PLAN.md) : content collections et
-visualisation de test.
-
-Crée src/content/config.ts avec le schéma de la collection visualizations, en suivant
-"Schéma des content collections" dans technical-specifications.md et les attributs de
-data-model.md ("Visualisation", "Dataset source").
-
-Ajoute une visualisation de test (src/content/visualizations/test-viz.fr.md et .en.md), avec
-un frontmatter complet et un dataset factice, explicitement marquée comme contenu jetable à
-retirer à l'étape 7.
-
-Critère de fin : astro build passe avec ce contenu ; retire volontairement un champ requis du
-frontmatter et vérifie que le build échoue, puis remets-le.
+Completion criterion: astro dev runs, the header and footer display correctly in the
+style guide colors on this test page.
 ```
 
-## ✅ 3. Page d'accueil (catalogue)
+## ✅ 2. Content collections + test visualization
 
-Grille de tuiles, lazy loading, état vide. Voir `home-page.md`.
+`src/content/config.ts` (schema of the `visualizations` collection, see "File structure" in `technical-specifications.md`), a test visualization (throwaway content, unrelated to any real upcoming visualization), to validate the schema in both languages.
 
-**Critère :** la tuile de la visualisation de test s'affiche et mène à sa page.
+**Criterion:** the Astro build passes with this content; introducing a missing or wrongly typed field in the frontmatter makes it fail.
 
-**Statut :** fait.
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 3 du plan de construction (BUILD-PLAN.md) : page d'accueil.
+Implement step 2 of the build plan (BUILD-PLAN.md): content collections and
+test visualization.
 
-Construis src/pages/index.astro, src/pages/fr/index.astro et src/components/VizCard.astro, en
-suivant home-page.md : grille de tuiles (couverture en lazy loading, titre, résumé), état vide
-(aucune visualisation publiée).
+Create src/content/config.ts with the schema of the visualizations collection, following
+"Content collections schema" in technical-specifications.md and the attributes in
+data-model.md ("Visualization", "Source dataset").
 
-Critère de fin : la tuile de la visualisation de test (étape 2) s'affiche à l'accueil, dans les
-deux langues, et mène à sa page (même si cette page n'existe pas encore : le lien peut être
-cassé à ce stade).
-```
+Add a test visualization (src/content/visualizations/test-viz.fr.md and .en.md), with
+a complete frontmatter and a dummy dataset, explicitly marked as throwaway content to be
+removed in step 7.
 
-## ✅ 4. Page de visualisation (gabarit générique)
-
-Couverture, titre, résumé, présentation longue, bloc de crédit des sources, zone de montage réservée (encore vide), lien retour. Voir "Page de visualisation" dans `style-guide.md`.
-
-**Critère :** la page de la visualisation de test s'affiche avec tout son contenu de présentation ; la zone de montage réserve sa hauteur sans contenu.
-
-**Statut :** fait.
-
-**Prompt :**
-```
-Implémente l'étape 4 du plan de construction (BUILD-PLAN.md) : page de visualisation (gabarit
-générique).
-
-Construis src/pages/[viz].astro et src/pages/fr/[viz].astro (getStaticPaths à partir de la
-collection visualizations, voir "Content collections et génération des pages" dans
-technical-specifications.md), en suivant "Page de visualisation" dans style-guide.md :
-couverture, title en h1, summary, présentation longue (corps du markdown), bloc de crédit des
-datasets, zone de montage réservée (encore vide à ce stade, pas de visualisation réelle), lien
-de retour au catalogue.
-
-Critère de fin : cliquer sur la tuile de test depuis l'accueil (étape 3) ouvre sa page, avec
-tout son contenu de présentation affiché correctement dans les deux langues.
+Completion criterion: astro build passes with this content; deliberately remove a required field
+from the frontmatter and check that the build fails, then put it back.
 ```
 
-## ✅ 5. Multilingue complet
+## ✅ 3. Home page (catalog)
 
-Détection de langue au premier accès, mémorisation `localStorage`, préfixe `/fr/`, message d'indisponibilité (`404.astro`). Voir "Multilingue" dans `functional-specifications.md` et "Architecture" dans `technical-specifications.md`.
+Tile grid, lazy loading, empty state. See `home-page.md`.
 
-**Critère :** changer de langue conserve le contexte de navigation ; visiter une URL non traduite affiche le message d'indisponibilité dans la bonne langue.
+**Criterion:** the test visualization's tile is displayed and leads to its page.
 
-**Statut :** fait.
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 5 du plan de construction (BUILD-PLAN.md) : multilingue complet.
+Implement step 3 of the build plan (BUILD-PLAN.md): home page.
 
-Construis le sélecteur de langue fonctionnel (détection de la langue du navigateur au premier
-accès, repli sur l'anglais, mémorisation via localStorage après changement manuel) et
-src/pages/404.astro (message d'indisponibilité localisé selon le préfixe /fr/), en suivant
-"Multilingue" dans functional-specifications.md et "Contenu non traduit" /
-"Détection et mémorisation de la langue" dans technical-specifications.md.
+Build src/pages/index.astro, src/pages/fr/index.astro and src/components/VizCard.astro,
+following home-page.md: tile grid (lazy-loaded cover, title, summary), empty state
+(no published visualization).
 
-Critère de fin : changer de langue via le sélecteur conserve le contexte de navigation ;
-visiter une URL de visualisation qui n'existe pas dans une langue affiche le message
-d'indisponibilité dans cette langue plutôt que la 404 générique.
+Completion criterion: the test visualization's tile (step 2) is displayed on the home page, in both
+languages, and leads to its page (even if that page does not exist yet: the link may be
+broken at this stage).
 ```
 
-## ✅ 6. SEO et accessibilité
+## ✅ 4. Visualization page (generic template)
 
-`@astrojs/sitemap`, hreflang, meta/Open Graph dans `BaseLayout.astro`, puis vérification manuelle (clavier, contraste réel à l'écran). Voir "SEO" et "Accessibilité" dans `technical-specifications.md`.
+Cover, title, summary, long presentation, source credit block, reserved mount area (still empty), back link. See "Visualization page" in `style-guide.md`.
 
-**Critère :** `sitemap.xml` généré, balises meta présentes, navigation clavier fonctionnelle sur l'accueil et la page de visualisation.
+**Criterion:** the test visualization's page is displayed with all its presentation content; the mount area reserves its height without content.
 
-**Statut :** fait.
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 6 du plan de construction (BUILD-PLAN.md) : SEO et accessibilité.
+Implement step 4 of the build plan (BUILD-PLAN.md): visualization page (generic
+template).
 
-Ajoute @astrojs/sitemap, les balises meta et Open Graph (titre, summary, couverture) et les
-liens hreflang entre versions FR/EN d'une même page dans BaseLayout.astro, en suivant "SEO"
-dans technical-specifications.md. Fais ensuite une vérification manuelle dans le navigateur :
-navigation au clavier, contraste réel à l'écran (les valeurs de style-guide.md ont été
-calculées par le validateur du skill dataviz, pas testées visuellement ici).
+Build src/pages/[viz].astro and src/pages/fr/[viz].astro (getStaticPaths from the
+visualizations collection, see "Content collections and page generation" in
+technical-specifications.md), following "Visualization page" in style-guide.md:
+cover, title as h1, summary, long presentation (markdown body), dataset credit
+block, reserved mount area (still empty at this stage, no real visualization), link
+back to the catalog.
 
-Critère de fin : sitemap.xml généré, balises meta et hreflang présentes, l'accueil et la page
-de visualisation restent utilisables au clavier.
-```
-
-## ✅ 7. Retrait du contenu de test
-
-Retire la catégorie et la visualisation de test de l'étape 2 : le site en squelette reste fonctionnel (accueil à l'état vide, voir `home-page.md`), prêt pour l'ajout d'une première vraie visualisation.
-
-**Critère :** l'accueil affiche l'état vide documenté dans `home-page.md`, sans erreur ni référence au contenu de test.
-
-**Statut :** fait.
-
-**Prompt :**
-```
-Implémente l'étape 7 du plan de construction (BUILD-PLAN.md) : retrait du contenu de test.
-
-Retire la catégorie et la visualisation de test créées à l'étape 2 (contenu, couverture),
-sans modifier le code des étapes précédentes.
-
-Critère de fin : l'accueil affiche l'état vide documenté dans home-page.md ("Vide : aucune
-visualisation publiée dans la langue courante"), sans erreur de build ni référence au contenu
-de test.
+Completion criterion: clicking the test tile from the home page (step 3) opens its page, with
+all its presentation content displayed correctly in both languages.
 ```
 
-## ✅ 8. Première visualisation réelle
+## ✅ 5. Full multilingual support
 
-Choix d'un premier dataset open data et d'un premier angle de visualisation, documentation de `specs/<viz-slug>/` (voir "Structure de `specs/`" dans `CLAUDE.md`), puis implémentation : contenu réel dans la collection `visualizations`, rendu interactif dans la zone de montage du gabarit générique (étape 4).
+Language detection on first visit, `localStorage` persistence, `/fr/` prefix, unavailability message (`404.astro`). See "Multilingual" in `functional-specifications.md` and "Architecture" in `technical-specifications.md`.
 
-**Critère :** la tuile de la vraie visualisation s'affiche à l'accueil dans les deux langues ; sa page affiche le rendu interactif réel, pas un espace réservé vide.
+**Criterion:** switching language keeps the navigation context; visiting an untranslated URL displays the unavailability message in the right language.
 
-**Statut :** fait, quatorze visualisations réelles à ce stade :
-- `bird-migrations` (Les routes de migration), données GPS/Argos réelles (quatre espèces, voir `specs/bird-migrations/data-model.md`), rendu D3 + Canvas, fond de carte enrichi de cours d'eau et d'un relief ombré (Natural Earth, couverture mondiale, premier asset raster du site, voir "Cours d'eau (fond de carte)"/"Relief (fond de carte)" dans `specs/bird-migrations/data-model.md`), couverture réelle (`public/covers/bird-migrations.jpg`).
-- `flower-phenology` (Le calendrier des fleurs), données d'occurrence GBIF réelles (douze espèces sauvages, voir `specs/flower-phenology/data-model.md`), rendu D3 SVG (arcs), couverture réelle (`public/covers/flower-phenology.jpg`).
-- `biodiversity` (La biodiversité française), grille hexagonale H3 (résolution 4, 395 cellules) sur silhouette de la France métropolitaine, données GBIF agrégées via l'API SQL Downloads (voir `specs/biodiversity/data-model.md`), rendu D3 SVG statique (pas de zoom/pan, retiré à la relecture), mode "données en direct" optionnel interrogeant l'API GBIF depuis le navigateur, couverture réelle (`public/covers/biodiversity.jpg`).
-- `paris-trees` (Paris, arbre par arbre), 194 315 arbres réels de l'inventaire "Les arbres" de la Ville de Paris (voir `specs/paris-trees/data-model.md` pour le périmètre retenu, ajusté à l'implémentation), rendu Canvas 2D (`d3-geo` + `d3-zoom`, projection Mercator, index spatial en grille pour le survol et le culling au rendu) sur fond de carte avec trame de rues et Seine (ajoutées après relecture, cette dernière seule donnée du site hors Paris Data, source OpenStreetMap), filtre par genre dominant et recherche d'espèce, zoom au clic sur un arrondissement, couverture réelle (`public/covers/paris-trees.jpg`).
-- `satellites-in-orbit` (La ruée vers l'orbite), 20 020 payloads réels toujours en orbite (actifs ou non) du catalogue SATCAT de CelesTrak (voir `specs/satellites-in-orbit/data-model.md` pour le périmètre et le regroupement géographique en cinq zones), animation Canvas 2D en boucle continue de 1958 à aujourd'hui (`d3-scale` + `d3-timer` + `d3-geo`/`topojson-client` pour le globe en rotation, positionnement en halo déterministe sans orbite réelle), trois vitesses de lecture, curseur d'année natif (`<input type="range">`, granularité annuelle, sans graduations, ajouté après la première implémentation sur le modèle de `monument-layers`) pilotable manuellement ou automatiquement, légende cliquable doublée d'un filtre par zone, couverture réelle (`public/covers/satellites-in-orbit.jpg`).
-- `light-pollution` (Le ciel, d'année en année), radiance nocturne VIIRS VNL réelle (NOAA Earth Observation Group, composites annuels 2013-2025, versions v2.1 et v2.2, voir `specs/light-pollution/data-model.md`) agrégée sur la même grille hexagonale H3 que `biodiversity` (395 cellules réutilisées telles quelles) et traduite en échelle de visibilité du ciel à six paliers (palette séquentielle du site), rendu D3 SVG compact (même projection Mercator que `biodiversity`, carte volontairement plus basse), légende et contrôles au-dessus de la carte, lecture automatique en boucle (`d3-timer`, même convention que `satellites-in-orbit` : départ 2013, arrêt sur 2025, trois vitesses, bouton pause), curseur d'année natif (`<input type="range">`) pilotable manuellement ou automatiquement, angle éditorial délibérément neutre (les données montrent un recul de l'intensité lumineuse depuis 2013, surtout depuis 2022-2023, pas une hausse comme le brouillon de cadrage le supposait), couverture réelle (`public/covers/light-pollution.jpg`).
-- `monument-layers` (Les strates du patrimoine), 37 661 monuments historiques réels de la base Mérimée (ministère de la Culture, voir `specs/monument-layers/data-model.md` pour le prétraitement et les statistiques d'exclusion mesurées), rendu Canvas 2D (`d3-geo` + `d3-zoom`, même fond de carte France que `biodiversity`) animé chronologiquement en boucle continue (`d3-timer`, échelle linéaire, même convention que `satellites-in-orbit` : trois vitesses, pause de 2,5 s sur la carte complète avant chaque nouveau passage) : les monuments antérieurs à l'an 0 (4,75 % du jeu de données, ère archéologique plutôt que siècle numérique) apparaissent comme un socle statique dès le début de chaque passage, décision prise avec l'utilisateur après mesure de la distribution réelle pour éviter que 90 % des monuments ne s'affichent en une fraction de seconde du balayage animé (voir "Points tranchés à l'implémentation" dans `specs/monument-layers/technical-specifications.md`), filtre par nature de protection (classé/inscrit), curseur d'année natif (`<input type="range">`, sans graduations, à la différence de `light-pollution`) pilotable manuellement ou automatiquement, zoom/pan à la souris et au tactile doublé de boutons zoomer/dézoomer/réinitialiser (mêmes contrôles que `paris-trees`, zoom maximal 1 000, relevé en deux fois sur retour utilisateur), fond de carte enrichi du réseau d'autoroutes et voies rapides sur toute la France (60 272 tronçons) et de quinze cours d'eau au tracé précis (3 124 tronçons), entièrement OpenStreetMap via l'API Overpass après deux passes de précision croissante sur retour utilisateur (Natural Earth puis dix-neuf grandes villes seulement, avant la couverture nationale complète) : requêtes par relation nommée ou par zone administrative plutôt que par rectangle englobant, seule façon d'obtenir une réponse sans dépassement du délai serveur sur une emprise aussi large que la France, fiche de détail complétée d'un lien vers la notice officielle de chaque monument sur la Plateforme Ouverte du Patrimoine (cliquable une fois la fiche épinglée, pas en simple survol), couverture réelle (`public/covers/monument-layers.jpg`).
-- `grape-harvest-almanac` (L'almanach des vendanges), dates de vendanges réelles de sept régions viticoles françaises (Bourgogne, vallée du Rhône sud, Bordeaux, Languedoc, Alsace, basse vallée de la Loire, Champagne) sur 1354-2007, source Daux et al. 2012 (NOAA/WDS Paleoclimatology, voir `specs/grape-harvest-almanac/data-model.md` pour le piège de parsing à largeur fixe rencontré et corrigé, et pour le choix des régions : Jura et Ile-de-France, pourtant citées comme "parmi les plus complètes" par l'article source, écartées car leurs séries s'arrêtent avant 1980), rendu D3 SVG (ligne temporelle multi-séries, courbe brute fine et moyenne mobile vingt ans plus marquée par région), quatre repères historiques cliquables (méga-sécheresse de 1540, année sans été 1816, crise du phylloxéra 1863-1900, canicule 2003) avec panneau de détail, filtre par région doublant la légende, pas de zoom/pan ni de graduations sur l'axe des dates (retirés à la demande de l'utilisateur après une première version qui les incluait, voir "Axes" dans `specs/grape-harvest-almanac/technical-specifications.md`), couverture réelle (`public/covers/grape-harvest-almanac.jpg`).
-- `endangered-species` (Ce qu'il en reste), trajectoires de population réelles de six espèces emblématiques (tigre, rhinocéros noir, panda géant, gorille des montagnes, vaquita, grand hamster d'Alsace), chacune sourcée séparément auprès de son organisme de suivi (Global Tiger Forum, Our World in Data/AfRSG, State Forestry Administration of China/WWF, IGCP, NOAA Fisheries/CIRVA, OFB/Préfecture Grand Est — voir `specs/endangered-species/data-model.md` : source IUCN Red List initialement retenue, abandonnée après blocage anti-bot constaté et incertitude sur l'approbation d'un token API pour un projet de visualisation), rendu D3 SVG en petits multiples (une carte par espèce, pas de carte géographique), une seule silhouette générique en icône (empreinte de patte, SVG inline minimal) dont le nombre par carte interpole (`d3-interpolate`) la population entre deux recensements connus, rendu basé uniquement sur les effectifs (pas de dimension catégorielle, décision explicite de l'utilisateur après abandon de la catégorie de menace IUCN), lecture automatique en boucle du recensement le plus ancien au plus récent (`d3-timer`, même convention que `satellites-in-orbit`/`light-pollution`/`monument-layers`, trois vitesses, pause de 2 s sur la dernière année avant de reboucler), curseur d'année natif pilotable manuellement ou automatiquement, tuiles d'espèce de taille fixe (grille d'icônes à 10 colonnes × 8 lignes, dimensionnée pour le maximum réel observé) sur fond illustré propre à chaque espèce (six illustrations originales de l'utilisateur, `public/data/endangered-species/<species-id>.jpg`, voile sombre pour la lisibilité du texte/des icônes en blanc), fiche de détail au survol/tap précisant l'estimation réelle et sa tendance, couverture réelle (`public/covers/endangered-species.jpg`, même style graphique que les fonds de tuiles).
-- `earthquakes` (Les lignes de faille), catalogue sismique réel de l'USGS (`fdsnws/event`, 14 453 séismes de magnitude 6 et plus depuis 1900, voir `specs/earthquakes/data-model.md` pour le filtrage des essais nucléaires exclus du catalogue source brut), frontières de plaques tectoniques du modèle de Bird (2003, dépôt `fraxen/tectonicplates`, licence ODC-BY) tracées en superposition statique hors du clip terrestre (visibles aussi en mer), rendu Canvas 2D (`d3-geo` + `d3-zoom`, projection Natural Earth mondiale, fond de carte/cours d'eau/relief copiés depuis `bird-migrations` dans le dossier de données propre à cette visualisation), chaque séisme pulse à sa date réelle (rayon et opacité croissants avec la magnitude, `d3.scaleSqrt`, palette séquentielle bleue) en boucle continue sur cent vingt-sept ans (`d3-timer`, cycle de 90 secondes en vitesse normale, trois vitesses, sans point permanent à la différence d'un volcan), sept séismes historiques annotés au moment de leur pulse (San Francisco 1906, Chili 1960, Alaska 1964, Tangshan 1976, Sumatra-Andaman 2004, Haïti 2010, Tōhoku 2011), fiche de détail au survol/tap limitée à la fenêtre du pulse, curseur d'année natif pilotable manuellement ou automatiquement (ajouté après la première implémentation, même modèle que `monument-layers`/`satellites-in-orbit`), boutons zoomer/dézoomer/réinitialiser en haut à droite (ajoutés en même temps, même modèle que `monument-layers`/`paris-trees`) en complément du zoom/pan libre, couverture réelle (`public/covers/earthquakes.jpg`).
-- `monarch-migration` (La migration des monarques), densité d'occurrences GBIF du papillon monarque (*Danaus plexippus*) agrégée sur une grille régulière de 1° en Amérique du Nord (2 280 cellules dont 1 270 actives, 395 170 observations retenues, voir `specs/monarch-migration/data-model.md`) ; méthode adaptée en cours d'implémentation : facettes mensuelles de l'API de recherche publique GBIF plutôt que l'API SQL Downloads, faute de compte GBIF disponible, avec des cellules semi-ouvertes pour ne pas compter deux fois les points situés exactement sur une frontière (grille affinée de 2° à 1° après une première version jugée trop grossière au cadrage régional). Rendu Canvas 2D (`d3-geo` + `d3-zoom`) sur le fond de carte mondial de `bird-migrations` (silhouette, relief et cours d'eau copiés tels quels, cadrage sur l'Amérique du Nord), animé en boucle continue sur une année simulée (`d3-timer`, trois vitesses, bouton pause, même convention que `satellites-in-orbit`) avec interpolation entre mois pour une vague progressive, tooltip exprimé en pourcentage du pic annuel de chaque case, zoom/pan à la souris et au tactile. Recentrée sur le monarque seul à la demande de l'utilisateur : la première implémentation, intitulée "Les grandes migrations", réunissait aussi des trajectoires de baleines et de gnous (Movebank), retirées du code et des données (voir "Périmètre recentré" dans `specs/monarch-migration/data-model.md`) ; couverture réelle (`public/covers/monarch-migration.jpg`).
-- `forest-fires` (Où la France a brûlé), 50 946 incendies de forêt réels recensés par la BDIFF entre 2006 et 2025 sur la France métropolitaine (ministère de l'Agriculture/IGN, voir `specs/forest-fires/data-model.md` pour le prétraitement et les statistiques d'exclusion mesurées) : export CSV complet récupéré en deux requêtes chaînées (plafond de 30 000 résultats par export sur `bdiff.agriculture.gouv.fr/incendies/zip`), géocodé par commune (l'export BDIFF ne porte pas de coordonnées) via l'API Découpage administratif d'Etalab. Rendu Canvas 2D (`d3-geo` + `d3-zoom`, même fond de carte France que `biodiversity`, sans enrichissement hydrographie/routes), un incendie en point orange fixe dont le rayon suit la racine carrée de la surface parcourue (`d3.scaleSqrt`, calibré sur la distribution réelle des surfaces), curseur d'année remplaçant l'ensemble des points à chaque pas plutôt que de les accumuler (même convention discrète que `light-pollution`, pas de morphing continu comme `monument-layers`), lecture automatique en boucle continue (`d3-timer`, trois vitesses, pause de 2 s sur la dernière année avant de reboucler), curseur d'année natif pilotable manuellement ou automatiquement, zoom/pan à la souris et au tactile doublé de boutons zoomer/dézoomer/réinitialiser (zoom maximal 200, plus bas que `monument-layers` : au plus quelques milliers de points affichés simultanément par année plutôt que l'accumulation totale), fiche de détail au survol/tap (commune, département, date, surface en hectares, cause suspectée) avec lien vers la fiche officielle BDIFF (cliquable une fois la fiche épinglée), angle éditorial (glissement géographique du pourtour méditerranéen vers le reste du pays) confirmé empiriquement sur les données agrégées plutôt que présumé au cadrage, couverture réelle (`public/covers/forest-fires.jpg`).
-- `volcanic-eruptions` (Le pouls du globe), 10 937 éruptions volcaniques holocènes réelles sur 1 214 volcans (Smithsonian Global Volcanism Program, catalogue Volcanoes of the World v. 5.4.0, récupéré via son web service WFS plutôt que par scraping du site principal qui bloque la récupération automatisée, voir `specs/volcanic-eruptions/data-model.md` pour la vérification de licence et les statistiques d'exclusion mesurées), rendu Canvas 2D (`d3-geo` + `d3-zoom`, projection Natural Earth mondiale, fond de carte/cours d'eau/relief copiés depuis `bird-migrations`) : chaque éruption pulse à sa date réelle (rayon et opacité croissants avec le VEI, `d3.scaleSqrt`, palette séquentielle orange propre à cette visualisation plutôt que le bleu par défaut réservé par `earthquakes`, voir "Palette" dans `specs/volcanic-eruptions/technical-specifications.md`) en boucle continue sur environ dix mille ans (`d3-timer`, cycle de 120 secondes en vitesse normale, trois vitesses), à la différence d'`earthquakes` chaque volcan garde un point de repère permanent hors pulse (333 volcans du catalogue sans éruption datée compris) et une fiche de détail accessible à tout moment (nom, pays, nombre d'éruptions recensées, éruption la plus récente, VEI maximal), 55 éruptions notables annotées au moment de leur pulse (VEI ≥ 6 plus le Vésuve de l'an 79), année simulée affichée avec suffixe av. J.-C./BC (mécanisme propre, hors de portée d'`Intl.DateTimeFormat`), curseur d'année natif et boutons zoomer/dézoomer/réinitialiser (mêmes modèles qu'`earthquakes`), couverture réelle (`public/covers/volcanic-eruptions.jpg`).
-- `medical-deserts` (Le désert médical de demain), indicateur APL (accessibilité potentielle localisée) réel aux médecins généralistes de la DREES croisé aux contours communaux data.gouv.fr/IGN (34 728 communes de France métropolitaine après jointure, voir `specs/medical-deserts/data-model.md` pour les statistiques d'exclusion mesurées) : volume de polygones le plus important du site à ce jour, ce qui a fait diverger trois choix techniques du brouillon de cadrage (voir "Rendu" dans `specs/medical-deserts/technical-specifications.md`) — bascule aujourd'hui/demain par fondu CSS entre deux canvas pré-rendus plutôt qu'une interpolation de couleur par commune, survol par un canvas d'index invisible ("color picking", lecture d'un seul pixel) plutôt qu'un test point-dans-polygone, zoom/pan par transformation CSS du calque plutôt qu'un redessin à la projection. Piège de jointure rencontré et corrigé : Paris/Lyon/Marseille découpées par arrondissement dans la source APL mais en un seul polygone dans le fond de carte, ce qui les faisait disparaître silencieusement de la carte ; corrigé en ramenant les codes d'arrondissement au code commune parent et en agrégeant par moyenne pondérée par la population standardisée, méthodologie DREES (voir "Jointure" dans `specs/medical-deserts/data-model.md`). Fond de carte simplifié via `mapshaper` en CLI ponctuel (13,2 Mo → 9,0 Mo, 2,3 Mo compressé), chargement en flux avec indicateur de progression. Palette séquentielle bleue, domaine calé sur la distribution réelle plutôt que le maximum brut (quelques communes très peu peuplées à un seul praticien écrasant sinon le dégradé) ; échelle à trois paliers (déviation documentée par rapport au dégradé linéaire simple du style-guide) concentrant le contraste sous le seuil éditorial de 1,5, pour faire ressortir les communes les plus mal desservies (voir "Palette" dans `specs/medical-deserts/technical-specifications.md`). Couverture réelle (`public/covers/medical-deserts.jpg`).
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 8 du plan de construction (BUILD-PLAN.md) : première visualisation réelle.
+Implement step 5 of the build plan (BUILD-PLAN.md): full multilingual support.
 
-Avant d'écrire du code, choisis (ou confirme avec moi si pas déjà fait) un dataset open data et
-un angle de visualisation, puis documente specs/<viz-slug>/data-model.md,
-specs/<viz-slug>/functional-specifications.md et specs/<viz-slug>/technical-specifications.md
-(voir "Structure de specs/" dans CLAUDE.md) : schéma du dataset, écran de la visualisation
-(objectif, contenu, interactions, états, responsive), choix techniques propres (librairie de
-rendu, technique d'interaction) au-delà des règles communes de technical-specifications.md.
+Build the functional language selector (browser language detection on first
+visit, fallback to English, persistence via localStorage after a manual change) and
+src/pages/404.astro (unavailability message localized according to the /fr/ prefix), following
+"Multilingual" in functional-specifications.md and "Untranslated content" /
+"Language detection and persistence" in technical-specifications.md.
 
-Ajoute la visualisation à la collection content (src/content/visualizations/<viz-slug>.fr.md et
-.en.md, voir étape 2), avec son vrai frontmatter et sa vraie couverture, et implémente son rendu
-dans la zone de montage du gabarit générique (étape 4), en suivant les specs propres à cette
-visualisation.
-
-Critère de fin : la tuile de la visualisation s'affiche à l'accueil dans les deux langues, et
-sa page affiche le rendu interactif réel, pas un espace réservé vide.
+Completion criterion: switching language via the selector keeps the navigation context;
+visiting a visualization URL that does not exist in a language displays the
+unavailability message in that language rather than the generic 404.
 ```
 
-## ✅ 9. Déploiement
+## ✅ 6. SEO and accessibility
 
-`.github/workflows/deploy.yml`, `public/CNAME`, source GitHub Pages réglée sur "GitHub Actions". Voir "Hébergement et déploiement" dans `technical-specifications.md`.
+`@astrojs/sitemap`, hreflang, meta/Open Graph in `BaseLayout.astro`, then a manual check (keyboard, actual on-screen contrast). See "SEO" and "Accessibility" in `technical-specifications.md`.
 
-**Critère :** le site est accessible sur `dataviz.heubes.io` après un push sur `main`.
+**Criterion:** `sitemap.xml` generated, meta tags present, keyboard navigation working on the home page and the visualization page.
 
-**Statut :** fait (workflow et `CNAME` en place ; nécessite le réglage manuel de la source Pages sur "GitHub Actions" dans les paramètres du repository, non modifiable depuis le code).
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 9 du plan de construction (BUILD-PLAN.md) : déploiement.
+Implement step 6 of the build plan (BUILD-PLAN.md): SEO and accessibility.
 
-Crée .github/workflows/deploy.yml et public/CNAME, en suivant "Hébergement et déploiement"
-dans technical-specifications.md. Indique-moi de régler manuellement la source GitHub Pages du
-repository sur "GitHub Actions" (paramètre du repository, pas modifiable depuis le code).
+Add @astrojs/sitemap, the meta and Open Graph tags (title, summary, cover) and the
+hreflang links between FR/EN versions of the same page in BaseLayout.astro, following "SEO"
+in technical-specifications.md. Then do a manual check in the browser:
+keyboard navigation, actual on-screen contrast (the values in style-guide.md were
+computed by the dataviz skill's validator, not tested visually here).
 
-Critère de fin : après un push sur main, le site est accessible sur https://dataviz.heubes.io
-avec la première visualisation réelle de l'étape 8.
+Completion criterion: sitemap.xml generated, meta and hreflang tags present, the home page and the
+visualization page remain usable with the keyboard.
 ```
 
-## ✅ 10. Visualisations liées
+## ✅ 7. Removal of test content
 
-Section de tuiles en bas de chaque page de visualisation, proposant jusqu'à trois autres visualisations du même thème. Voir "Visualisations liées" dans `functional-specifications.md` et "Page de visualisation" dans `style-guide.md`.
+Removes the test category and visualization from step 2: the skeleton site remains functional (home page in its empty state, see `home-page.md`), ready for a first real visualization to be added.
 
-**Critère :** chaque page de visualisation affiche, après le bloc de crédit, les visualisations partageant un thème avec elle, dans l'ordre spécifié ; la section est absente sur une visualisation seule de son thème.
+**Criterion:** the home page displays the empty state documented in `home-page.md`, with no error or reference to the test content.
 
-**Statut :** fait.
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 10 du plan de construction (BUILD-PLAN.md) : visualisations liées.
+Implement step 7 of the build plan (BUILD-PLAN.md): removal of test content.
 
-Crée src/components/RelatedVisualizations.astro (sélection au build, réutilise VizCard.astro)
-et monte-le dans src/pages/[viz].astro et src/pages/fr/[viz].astro, en suivant "Visualisations
-liées" dans functional-specifications.md et "Page de visualisation" dans style-guide.md.
+Remove the test category and visualization created in step 2 (content, cover),
+without modifying the code from the previous steps.
 
-Critère de fin : sur chaque page, les tuiles liées respectent la règle de sélection et d'ordre
-dans les deux langues ; une visualisation seule de son thème n'affiche aucune section.
+Completion criterion: the home page displays the empty state documented in home-page.md ("Empty: no
+visualization published in the current language"), with no build error or reference to the test
+content.
+```
+
+## ✅ 8. First real visualization
+
+Choice of a first open data dataset and a first visualization angle, documentation of `specs/<viz-slug>/` (see "Structure of `specs/`" in `CLAUDE.md`), then implementation: real content in the `visualizations` collection, interactive rendering in the mount area of the generic template (step 4).
+
+**Criterion:** the real visualization's tile is displayed on the home page in both languages; its page displays the real interactive rendering, not an empty placeholder.
+
+**Status:** done, fourteen real visualizations at this stage:
+- `bird-migrations` (The Migration Routes), real GPS/Argos data (four species, see `specs/bird-migrations/data-model.md`), D3 + Canvas rendering, basemap enriched with rivers and shaded relief (Natural Earth, worldwide coverage, the site's first raster asset, see "Rivers (basemap)"/"Relief (basemap)" in `specs/bird-migrations/data-model.md`), real cover (`public/covers/bird-migrations.jpg`).
+- `flower-phenology` (The Flower Calendar), real GBIF occurrence data (twelve wild species, see `specs/flower-phenology/data-model.md`), D3 SVG rendering (arcs), real cover (`public/covers/flower-phenology.jpg`).
+- `biodiversity` (French Biodiversity), H3 hexagonal grid (resolution 4, 395 cells) over the silhouette of metropolitan France, GBIF data aggregated via the SQL Downloads API (see `specs/biodiversity/data-model.md`), static D3 SVG rendering (no zoom/pan, removed during review), optional "live data" mode querying the GBIF API from the browser, real cover (`public/covers/biodiversity.jpg`).
+- `paris-trees` (Paris, Tree by Tree), 194,315 real trees from the City of Paris "Les arbres" inventory (see `specs/paris-trees/data-model.md` for the chosen scope, adjusted during implementation), Canvas 2D rendering (`d3-geo` + `d3-zoom`, Mercator projection, grid spatial index for hover and render culling) over a basemap with a street network and the Seine (added after review, the latter being the site's only data outside Paris Data, sourced from OpenStreetMap), filter by dominant genus and species search, zoom on click on an arrondissement, real cover (`public/covers/paris-trees.jpg`).
+- `satellites-in-orbit` (The Orbital Rush), 20,020 real payloads still in orbit (active or not) from CelesTrak's SATCAT catalog (see `specs/satellites-in-orbit/data-model.md` for the scope and the geographic grouping into five zones), Canvas 2D animation in a continuous loop from 1958 to today (`d3-scale` + `d3-timer` + `d3-geo`/`topojson-client` for the rotating globe, deterministic halo positioning without real orbits), three playback speeds, native year slider (`<input type="range">`, yearly granularity, no tick marks, added after the first implementation on the model of `monument-layers`) controllable manually or automatically, clickable legend doubling as a zone filter, real cover (`public/covers/satellites-in-orbit.jpg`).
+- `light-pollution` (The Sky, Year by Year), real VIIRS VNL nighttime radiance (NOAA Earth Observation Group, annual composites 2013-2025, versions v2.1 and v2.2, see `specs/light-pollution/data-model.md`) aggregated on the same H3 hexagonal grid as `biodiversity` (395 cells reused as is) and translated into a six-level sky visibility scale (the site's sequential palette), compact D3 SVG rendering (same Mercator projection as `biodiversity`, deliberately shorter map), legend and controls above the map, autoplay in a loop (`d3-timer`, same convention as `satellites-in-orbit`: starts in 2013, stops on 2025, three speeds, pause button), native year slider (`<input type="range">`) controllable manually or automatically, deliberately neutral editorial angle (the data show a decline in light intensity since 2013, especially since 2022-2023, not an increase as the framing draft assumed), real cover (`public/covers/light-pollution.jpg`).
+- `monument-layers` (Layers of Heritage), 37,661 real historic monuments from the Mérimée database (Ministry of Culture, see `specs/monument-layers/data-model.md` for the preprocessing and the measured exclusion statistics), Canvas 2D rendering (`d3-geo` + `d3-zoom`, same France basemap as `biodiversity`) animated chronologically in a continuous loop (`d3-timer`, linear scale, same convention as `satellites-in-orbit`: three speeds, 2.5 s pause on the complete map before each new pass): monuments predating year 0 (4.75% of the dataset, archaeological era rather than numeric century) appear as a static base from the start of each pass, a decision made with the user after measuring the actual distribution, to avoid 90% of the monuments appearing within a fraction of a second of the animated sweep (see "Points decided during implementation" in `specs/monument-layers/technical-specifications.md`), filter by nature of protection (classé/inscrit), native year slider (`<input type="range">`, no tick marks, unlike `light-pollution`) controllable manually or automatically, mouse and touch zoom/pan doubled by zoom in/zoom out/reset buttons (same controls as `paris-trees`, maximum zoom 1,000, raised in two steps based on user feedback), basemap enriched with the network of motorways and expressways across all of France (60,272 segments) and fifteen rivers with precise courses (3,124 segments), entirely from OpenStreetMap via the Overpass API after two passes of increasing precision based on user feedback (Natural Earth, then only nineteen major cities, before full national coverage): queries by named relation or by administrative area rather than by bounding box, the only way to get a response without exceeding the server timeout over an extent as large as France, detail card completed with a link to each monument's official record on the Plateforme Ouverte du Patrimoine (clickable once the card is pinned, not on simple hover), real cover (`public/covers/monument-layers.jpg`).
+- `grape-harvest-almanac` (The Grape Harvest Almanac), real grape harvest dates from seven French wine regions (Bourgogne, southern Rhône valley, Bordeaux, Languedoc, Alsace, lower Loire valley, Champagne) over 1354-2007, source Daux et al. 2012 (NOAA/WDS Paleoclimatology, see `specs/grape-harvest-almanac/data-model.md` for the fixed-width parsing pitfall encountered and fixed, and for the choice of regions: Jura and Ile-de-France, although cited as "among the most complete" by the source article, were ruled out because their series stop before 1980), D3 SVG rendering (multi-series timeline, thin raw curve and a more prominent twenty-year moving average per region), four clickable historical landmarks (1540 megadrought, 1816 year without a summer, 1863-1900 phylloxera crisis, 2003 heat wave) with a detail panel, region filter doubling the legend, no zoom/pan or tick marks on the date axis (removed at the user's request after a first version that included them, see "Axes" in `specs/grape-harvest-almanac/technical-specifications.md`), real cover (`public/covers/grape-harvest-almanac.jpg`).
+- `endangered-species` (What's Left), real population trajectories of six emblematic species (tiger, black rhinoceros, giant panda, mountain gorilla, vaquita, European hamster of Alsace), each sourced separately from its monitoring body (Global Tiger Forum, Our World in Data/AfRSG, State Forestry Administration of China/WWF, IGCP, NOAA Fisheries/CIRVA, OFB/Préfecture Grand Est; see `specs/endangered-species/data-model.md`: the IUCN Red List source initially chosen was dropped after an observed anti-bot block and uncertainty about the approval of an API token for a visualization project), D3 SVG rendering in small multiples (one card per species, no geographic map), a single generic silhouette as an icon (paw print, minimal inline SVG) whose count per card interpolates (`d3-interpolate`) the population between two known censuses, rendering based solely on headcounts (no categorical dimension, an explicit decision by the user after dropping the IUCN threat category), autoplay in a loop from the oldest census to the most recent (`d3-timer`, same convention as `satellites-in-orbit`/`light-pollution`/`monument-layers`, three speeds, 2 s pause on the last year before looping), native year slider controllable manually or automatically, fixed-size species tiles (icon grid of 10 columns × 8 rows, sized for the actual observed maximum) over an illustrated background specific to each species (six original illustrations by the user, `public/data/endangered-species/<species-id>.jpg`, dark overlay for the legibility of the white text/icons), detail card on hover/tap giving the actual estimate and its trend, real cover (`public/covers/endangered-species.jpg`, same graphic style as the tile backgrounds).
+- `earthquakes` (The Fault Lines), real USGS seismic catalog (`fdsnws/event`, 14,453 earthquakes of magnitude 6 and above since 1900, see `specs/earthquakes/data-model.md` for the filtering of nuclear tests excluded from the raw source catalog), tectonic plate boundaries from Bird's model (2003, `fraxen/tectonicplates` repository, ODC-BY license) drawn as a static overlay outside the land clip (also visible at sea), Canvas 2D rendering (`d3-geo` + `d3-zoom`, worldwide Natural Earth projection, basemap/rivers/relief copied from `bird-migrations` into this visualization's own data folder), each earthquake pulses at its actual date (radius and opacity increasing with magnitude, `d3.scaleSqrt`, blue sequential palette) in a continuous loop over one hundred twenty-seven years (`d3-timer`, 90-second cycle at normal speed, three speeds, no permanent point, unlike a volcano), seven historical earthquakes annotated at the time of their pulse (San Francisco 1906, Chile 1960, Alaska 1964, Tangshan 1976, Sumatra-Andaman 2004, Haiti 2010, Tōhoku 2011), detail card on hover/tap limited to the pulse window, native year slider controllable manually or automatically (added after the first implementation, same model as `monument-layers`/`satellites-in-orbit`), zoom in/zoom out/reset buttons at the top right (added at the same time, same model as `monument-layers`/`paris-trees`) in addition to free zoom/pan, real cover (`public/covers/earthquakes.jpg`).
+- `monarch-migration` (The Monarch Migration), density of GBIF occurrences of the monarch butterfly (*Danaus plexippus*) aggregated on a regular 1° grid over North America (2,280 cells of which 1,270 are active, 395,170 observations kept, see `specs/monarch-migration/data-model.md`); method adapted during implementation: monthly facets from the public GBIF search API rather than the SQL Downloads API, since no GBIF account was available, with half-open cells so as not to double-count points lying exactly on a boundary (grid refined from 2° to 1° after a first version judged too coarse at the regional framing). Canvas 2D rendering (`d3-geo` + `d3-zoom`) over the `bird-migrations` world basemap (silhouette, relief and rivers copied as is, framed on North America), animated in a continuous loop over a simulated year (`d3-timer`, three speeds, pause button, same convention as `satellites-in-orbit`) with interpolation between months for a progressive wave, tooltip expressed as a percentage of each cell's annual peak, mouse and touch zoom/pan. Refocused on the monarch alone at the user's request: the first implementation, titled "The Great Migrations", also brought together whale and wildebeest trajectories (Movebank), removed from the code and data (see "Refocused scope" in `specs/monarch-migration/data-model.md`); real cover (`public/covers/monarch-migration.jpg`).
+- `forest-fires` (Where France Has Burned), 50,946 real forest fires recorded by the BDIFF between 2006 and 2025 in metropolitan France (Ministry of Agriculture/IGN, see `specs/forest-fires/data-model.md` for the preprocessing and the measured exclusion statistics): complete CSV export retrieved in two chained requests (cap of 30,000 results per export on `bdiff.agriculture.gouv.fr/incendies/zip`), geocoded by commune (the BDIFF export carries no coordinates) via Etalab's Découpage administratif API. Canvas 2D rendering (`d3-geo` + `d3-zoom`, same France basemap as `biodiversity`, without hydrography/road enrichment), each fire a fixed orange point whose radius follows the square root of the burned area (`d3.scaleSqrt`, calibrated on the actual distribution of areas), year slider replacing the whole set of points at each step rather than accumulating them (same discrete convention as `light-pollution`, no continuous morphing like `monument-layers`), autoplay in a continuous loop (`d3-timer`, three speeds, 2 s pause on the last year before looping), native year slider controllable manually or automatically, mouse and touch zoom/pan doubled by zoom in/zoom out/reset buttons (maximum zoom 200, lower than `monument-layers`: at most a few thousand points displayed simultaneously per year rather than the total accumulation), detail card on hover/tap (commune, department, date, area in hectares, suspected cause) with a link to the official BDIFF record (clickable once the card is pinned), editorial angle (geographic shift from the Mediterranean rim to the rest of the country) confirmed empirically on the aggregated data rather than presumed at framing, real cover (`public/covers/forest-fires.jpg`).
+- `volcanic-eruptions` (The Pulse of the Earth), 10,937 real Holocene volcanic eruptions across 1,214 volcanoes (Smithsonian Global Volcanism Program, Volcanoes of the World catalog v. 5.4.0, retrieved via its WFS web service rather than by scraping the main site, which blocks automated retrieval, see `specs/volcanic-eruptions/data-model.md` for the license check and the measured exclusion statistics), Canvas 2D rendering (`d3-geo` + `d3-zoom`, worldwide Natural Earth projection, basemap/rivers/relief copied from `bird-migrations`): each eruption pulses at its actual date (radius and opacity increasing with VEI, `d3.scaleSqrt`, an orange sequential palette specific to this visualization rather than the default blue reserved by `earthquakes`, see "Palette" in `specs/volcanic-eruptions/technical-specifications.md`) in a continuous loop over about ten thousand years (`d3-timer`, 120-second cycle at normal speed, three speeds), unlike `earthquakes` each volcano keeps a permanent marker point outside its pulse (including the catalog's 333 volcanoes with no dated eruption) and a detail card accessible at any time (name, country, number of recorded eruptions, most recent eruption, maximum VEI), 55 notable eruptions annotated at the time of their pulse (VEI ≥ 6 plus Vesuvius in AD 79), simulated year displayed with an av. J.-C./BC suffix (custom mechanism, beyond the reach of `Intl.DateTimeFormat`), native year slider and zoom in/zoom out/reset buttons (same models as `earthquakes`), real cover (`public/covers/volcanic-eruptions.jpg`).
+- `medical-deserts` (Tomorrow's Medical Desert), real DREES APL indicator (localized potential accessibility) to general practitioners crossed with data.gouv.fr/IGN commune boundaries (34,728 communes of metropolitan France after the join, see `specs/medical-deserts/data-model.md` for the measured exclusion statistics): the largest polygon volume on the site to date, which made three technical choices diverge from the framing draft (see "Rendering" in `specs/medical-deserts/technical-specifications.md`): today/tomorrow switch by a CSS cross-fade between two pre-rendered canvases rather than a per-commune color interpolation, hover through an invisible index canvas ("color picking", reading a single pixel) rather than a point-in-polygon test, zoom/pan by CSS transform of the layer rather than a redraw at the projection. Join pitfall encountered and fixed: Paris/Lyon/Marseille are split by arrondissement in the APL source but form a single polygon in the basemap, which made them silently disappear from the map; fixed by mapping the arrondissement codes back to the parent commune code and aggregating by a mean weighted by the standardized population, the DREES methodology (see "Join" in `specs/medical-deserts/data-model.md`). Basemap simplified via `mapshaper` as a one-off CLI (13.2 MB → 9.0 MB, 2.3 MB compressed), streamed loading with a progress indicator. Blue sequential palette, domain set on the actual distribution rather than the raw maximum (a few very sparsely populated communes with a single practitioner would otherwise crush the gradient); three-level scale (documented deviation from the style guide's simple linear gradient) concentrating the contrast below the editorial threshold of 1.5, to bring out the most poorly served communes (see "Palette" in `specs/medical-deserts/technical-specifications.md`). Real cover (`public/covers/medical-deserts.jpg`).
+
+**Prompt:**
+```
+Implement step 8 of the build plan (BUILD-PLAN.md): first real visualization.
+
+Before writing any code, choose (or confirm with me if not already done) an open data dataset and
+a visualization angle, then document specs/<viz-slug>/data-model.md,
+specs/<viz-slug>/functional-specifications.md and specs/<viz-slug>/technical-specifications.md
+(see "Structure of specs/" in CLAUDE.md): dataset schema, visualization screen
+(goal, content, interactions, states, responsive), its own technical choices (rendering
+library, interaction technique) beyond the common rules of technical-specifications.md.
+
+Add the visualization to the content collection (src/content/visualizations/<viz-slug>.fr.md and
+.en.md, see step 2), with its real frontmatter and its real cover, and implement its rendering
+in the mount area of the generic template (step 4), following the specs specific to this
+visualization.
+
+Completion criterion: the visualization's tile is displayed on the home page in both languages, and
+its page displays the real interactive rendering, not an empty placeholder.
+```
+
+## ✅ 9. Deployment
+
+`.github/workflows/deploy.yml`, `public/CNAME`, GitHub Pages source set to "GitHub Actions". See "Hosting and deployment" in `technical-specifications.md`.
+
+**Criterion:** the site is reachable at `dataviz.heubes.io` after a push to `main`.
+
+**Status:** done (workflow and `CNAME` in place; requires manually setting the Pages source to "GitHub Actions" in the repository settings, which cannot be changed from the code).
+
+**Prompt:**
+```
+Implement step 9 of the build plan (BUILD-PLAN.md): deployment.
+
+Create .github/workflows/deploy.yml and public/CNAME, following "Hosting and deployment"
+in technical-specifications.md. Tell me to manually set the repository's GitHub Pages source
+to "GitHub Actions" (a repository setting, not changeable from the code).
+
+Completion criterion: after a push to main, the site is reachable at https://dataviz.heubes.io
+with the first real visualization from step 8.
+```
+
+## ✅ 10. Related visualizations
+
+Section of tiles at the bottom of each visualization page, offering up to three other visualizations with the same theme. See "Related visualizations" in `functional-specifications.md` and "Visualization page" in `style-guide.md`.
+
+**Criterion:** each visualization page displays, after the credit block, the visualizations sharing a theme with it, in the specified order; the section is absent on a visualization that is alone in its theme.
+
+**Status:** done.
+
+**Prompt:**
+```
+Implement step 10 of the build plan (BUILD-PLAN.md): related visualizations.
+
+Create src/components/RelatedVisualizations.astro (selection at build time, reuses VizCard.astro)
+and mount it in src/pages/[viz].astro and src/pages/fr/[viz].astro, following "Related
+visualizations" in functional-specifications.md and "Visualization page" in style-guide.md.
+
+Completion criterion: on each page, the related tiles follow the selection and ordering rule
+in both languages; a visualization that is alone in its theme displays no section.
 ```
 
 ---
 
-Les trois candidates spécifiées initialement (`specs/biodiversity/`, `specs/bird-migrations/`, `specs/flower-phenology/`) ont été les trois premières implémentées (étape 8, dans l'ordre `bird-migrations` → `flower-phenology` → `biodiversity`), suivies de dix autres (voir la liste ci-dessus).
+The three candidates initially specified (`specs/biodiversity/`, `specs/bird-migrations/`, `specs/flower-phenology/`) were the first three implemented (step 8, in the order `bird-migrations` → `flower-phenology` → `biodiversity`), followed by ten others (see the list above).
 
-Chaque étape est un point de commit naturel. Avant de committer, vérifier que l'ensemble de `specs/` reste cohérent avec ce qui vient d'être implémenté (voir "Avant chaque commit" dans `CLAUDE.md`) ; si l'implémentation révèle qu'une spec doit changer, le signaler avant d'appliquer la mise à jour.
+Each step is a natural commit point. Before committing, check that the whole of `specs/` remains consistent with what has just been implemented (see "Before each commit" in `CLAUDE.md`); if the implementation reveals that a spec must change, flag it before applying the update.
 
-## ✅ 11. Téléchargement des données préparées
+## ✅ 11. Prepared data download
 
-Liens de téléchargement des fichiers de données principaux, en fin de bloc de crédit des sources, déclarés visualisation par visualisation (attribut `downloads`). Voir "Téléchargement des données préparées" dans `functional-specifications.md`, "Visualisation" dans `data-model.md` et "Page de visualisation" dans `style-guide.md`.
+Download links for the main data files, at the end of the source credit block, declared visualization by visualization (`downloads` attribute). See "Prepared data download" in `functional-specifications.md`, "Visualization" in `data-model.md` and "Visualization page" in `style-guide.md`.
 
-**Critère :** chaque visualisation qui déclare `downloads` affiche un lien par fichier avec sa taille, dans les deux langues ; une visualisation sans `downloads` n'affiche rien ; un fichier déclaré mais absent fait échouer le build.
+**Criterion:** each visualization that declares `downloads` displays one link per file with its size, in both languages; a visualization without `downloads` displays nothing; a file that is declared but missing makes the build fail.
 
-**Statut :** fait.
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 11 du plan de construction (BUILD-PLAN.md) : téléchargement des données
-préparées.
+Implement step 11 of the build plan (BUILD-PLAN.md): prepared data
+download.
 
-Ajoute l'attribut optionnel downloads au schéma (src/content/config.ts), crée
-src/components/DataDownloads.astro et monte-le en fin de bloc de crédit dans
-src/pages/[viz].astro et src/pages/fr/[viz].astro, en suivant "Téléchargement des données
-préparées" dans functional-specifications.md et "Page de visualisation" dans style-guide.md.
-Déclare les fichiers principaux de chaque visualisation dont les licences le permettent.
+Add the optional downloads attribute to the schema (src/content/config.ts), create
+src/components/DataDownloads.astro and mount it at the end of the credit block in
+src/pages/[viz].astro and src/pages/fr/[viz].astro, following "Prepared data
+download" in functional-specifications.md and "Visualization page" in style-guide.md.
+Declare the main files of each visualization whose licenses allow it.
 
-Critère de fin : les liens et tailles s'affichent correctement dans les deux langues ; retirer
-volontairement un fichier déclaré fait échouer le build.
-```
-
-## ✅ 12. État partageable dans l'URL
-
-L'URL de chaque page de visualisation reflète en continu les filtres, la position temporelle (en pause) et le cadrage des cartes zoomables. Ouvrir le lien restaure cet état, y compris après un changement de langue. Voir "État partageable dans l'URL" dans `functional-specifications.md`, "État dans l'URL" dans `technical-specifications.md` et la section du même nom dans chaque `specs/<viz-slug>/technical-specifications.md`.
-
-**Critère :** pour chaque visualisation, manipuler ses contrôles met à jour l'URL sans créer d'entrée d'historique. Rouvrir cette URL dans un nouvel onglet restaure le même état, et une valeur invalide est ignorée sans erreur.
-
-**Statut :** fait.
-
-**Prompt :**
-```
-Implémente l'étape 12 du plan de construction (BUILD-PLAN.md) : état partageable dans l'URL.
-
-Crée src/scripts/url-state.ts (lecture/écriture des paramètres, format commun de cadrage),
-reporte la query string dans LanguageSelector.astro et ajoute un <link rel="canonical"> dans
-BaseLayout.astro, en suivant "État dans l'URL" dans technical-specifications.md. Branche ensuite
-chaque visualisation (lecture au montage, écriture sur action du visiteur) et documente ses
-paramètres dans son propre technical-specifications.md.
-
-Critère de fin : pour chaque visualisation, l'URL suit les manipulations et sa réouverture
-restaure l'état ; les paramètres invalides sont ignorés sans erreur.
+Completion criterion: the links and sizes display correctly in both languages; deliberately
+removing a declared file makes the build fail.
 ```
 
-## ✅ 13. Page "À propos"
+## ✅ 12. Shareable state in the URL
 
-Page `/about/` et `/fr/about/` (démarche, données, partage, fabrication, licence, auteur), accessible depuis un lien du pied de page. Voir `about-page.md` et "Pied de page" dans `style-guide.md`.
+The URL of each visualization page continuously reflects the filters, the temporal position (when paused) and the framing of zoomable maps. Opening the link restores this state, including after a language change. See "Shareable state in the URL" in `functional-specifications.md`, "State in the URL" in `technical-specifications.md` and the section of the same name in each `specs/<viz-slug>/technical-specifications.md`.
 
-**Critère :** la page s'affiche dans les deux langues avec le même texte, le lien du pied de page y mène depuis toutes les pages, et le sélecteur de langue bascule d'une version à l'autre.
+**Criterion:** for each visualization, operating its controls updates the URL without creating a history entry. Reopening this URL in a new tab restores the same state, and an invalid value is ignored without error.
 
-**Statut :** fait.
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 13 du plan de construction (BUILD-PLAN.md) : page "À propos".
+Implement step 12 of the build plan (BUILD-PLAN.md): shareable state in the URL.
 
-Rédige src/content/about/about.fr.md et about.en.md d'après les sections de about-page.md, en
-ne décrivant que ce qui est vrai du site, puis crée src/pages/about.astro et
-src/pages/fr/about.astro et ajoute le lien au pied de page (voir "Pied de page" dans
+Create src/scripts/url-state.ts (reading/writing parameters, common framing format),
+carry the query string over in LanguageSelector.astro and add a <link rel="canonical"> in
+BaseLayout.astro, following "State in the URL" in technical-specifications.md. Then wire up
+each visualization (read on mount, write on visitor action) and document its
+parameters in its own technical-specifications.md.
+
+Completion criterion: for each visualization, the URL follows the interactions and reopening it
+restores the state; invalid parameters are ignored without error.
+```
+
+## ✅ 13. "About" page
+
+`/about/` and `/fr/about/` page (approach, data, sharing, making, license, author), accessible from a footer link. See `about-page.md` and "Footer" in `style-guide.md`.
+
+**Criterion:** the page displays in both languages with the same text, the footer link leads to it from every page, and the language selector switches from one version to the other.
+
+**Status:** done.
+
+**Prompt:**
+```
+Implement step 13 of the build plan (BUILD-PLAN.md): "About" page.
+
+Write src/content/about/about.fr.md and about.en.md from the sections of about-page.md,
+describing only what is true of the site, then create src/pages/about.astro and
+src/pages/fr/about.astro and add the link to the footer (see "Footer" in
 style-guide.md).
 
-Critère de fin : la page s'affiche dans les deux langues, le lien du pied de page y mène
-depuis toutes les pages, et le sélecteur de langue bascule d'une version à l'autre.
+Completion criterion: the page displays in both languages, the footer link leads to it
+from every page, and the language selector switches from one version to the other.
 ```
 
-## ✅ 14. Validation du contenu entre fichiers
+## ✅ 14. Cross-file content validation
 
-Les règles de `data-model.md` qui portent sur plusieurs fichiers (attributs non localisés identiques entre les deux langues, `lang` cohérent avec le nom de fichier, slug réservé, composant monté pour chaque visualisation) font échouer le build au lieu d'être vérifiées à la main. Voir "Validation des données" dans `technical-specifications.md`.
+The rules in `data-model.md` that span several files (non-localized attributes identical between the two languages, `lang` consistent with the file name, reserved slug, component mounted for each visualization) make the build fail instead of being checked by hand. See "Data validation" in `technical-specifications.md`.
 
-**Critère :** chacune de ces règles, volontairement enfreinte, fait échouer `npm run build` avec un message qui nomme la visualisation et le champ en cause ; le contenu réel passe.
+**Criterion:** each of these rules, deliberately broken, makes `npm run build` fail with a message naming the visualization and the field at fault; the real content passes.
 
-**Statut :** fait.
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 14 du plan de construction (BUILD-PLAN.md) : validation du contenu entre
-fichiers.
+Implement step 14 of the build plan (BUILD-PLAN.md): cross-file content
+validation.
 
-Crée src/content/validation.ts (validateVisualizations) et appelle-la depuis src/pages/[viz].astro
-et src/pages/fr/[viz].astro, en suivant "Validation des données" dans
-technical-specifications.md et "Contraintes et règles de validation" dans data-model.md.
+Create src/content/validation.ts (validateVisualizations) and call it from src/pages/[viz].astro
+and src/pages/fr/[viz].astro, following "Data validation" in
+technical-specifications.md and "Validation constraints and rules" in data-model.md.
 
-Critère de fin : enfreindre volontairement chaque règle fait échouer le build avec un message
-précis ; le contenu réel passe.
+Completion criterion: deliberately breaking each rule makes the build fail with a precise
+message; the real content passes.
 ```
 
-## ✅ 15. Mouvement réduit
+## ✅ 15. Reduced motion
 
-Avec la préférence système `prefers-reduced-motion`, les visualisations animées s'ouvrent en pause sur leur état final (ou sur un état documenté quand elles n'en ont pas) et les transitions qui déplacent des éléments deviennent immédiates. Voir "Mouvement réduit" dans `functional-specifications.md`, "Accessibilité" dans `technical-specifications.md` et la puce du même nom dans chaque `specs/<viz-slug>/functional-specifications.md` concerné.
+With the `prefers-reduced-motion` system preference, animated visualizations open paused on their final state (or on a documented state when they have none) and transitions that move elements become immediate. See "Reduced motion" in `functional-specifications.md`, "Accessibility" in `technical-specifications.md` and the bullet of the same name in each relevant `specs/<viz-slug>/functional-specifications.md`.
 
-**Critère :** préférence émulée, aucune visualisation ne se met en mouvement d'elle-même, chacune s'ouvre sur l'état documenté sans écrire l'URL, et Lecture relance l'animation ; sans la préférence, rien ne change.
+**Criterion:** with the preference emulated, no visualization starts moving on its own, each one opens on the documented state without writing the URL, and Play restarts the animation; without the preference, nothing changes.
 
-**Statut :** fait.
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 15 du plan de construction (BUILD-PLAN.md) : mouvement réduit.
+Implement step 15 of the build plan (BUILD-PLAN.md): reduced motion.
 
-Crée src/scripts/reduced-motion.ts (prefersReducedMotion) et branche chaque visualisation animée
-sur le chemin déjà utilisé pour restaurer une position temporelle depuis l'URL, en suivant
-"Mouvement réduit" dans functional-specifications.md. Rends immédiates les transitions d3 qui
-déplacent des éléments. Documente l'état d'ouverture de chaque visualisation dans son
+Create src/scripts/reduced-motion.ts (prefersReducedMotion) and wire each animated visualization
+into the path already used to restore a temporal position from the URL, following
+"Reduced motion" in functional-specifications.md. Make the d3 transitions that
+move elements immediate. Document the opening state of each visualization in its
 functional-specifications.md.
 
-Critère de fin : préférence émulée, aucune visualisation ne bouge d'elle-même et chacune
-s'ouvre sur l'état documenté ; sans la préférence, rien ne change.
+Completion criterion: with the preference emulated, no visualization moves on its own and each one
+opens on the documented state; without the preference, nothing changes.
 ```
 
-## ✅ 16. Polices et icônes hébergées par le site
+## ✅ 16. Self-hosted fonts and icons
 
-La police Ubuntu (woff2, sous-ensembles latin et latin-ext) est servie depuis `public/fonts/ubuntu/`, et les quatre icônes Creative Commons du pied de page sont des SVG inline : ni Google Fonts, ni Font Awesome sur CDN. Voir "Polices" et "Dépendances" dans `technical-specifications.md`, "Iconographie" dans `style-guide.md`.
+The Ubuntu font (woff2, latin and latin-ext subsets) is served from `public/fonts/ubuntu/`, and the four Creative Commons icons in the footer are inline SVGs: neither Google Fonts nor Font Awesome on a CDN. See "Fonts" and "Dependencies" in `technical-specifications.md`, "Iconography" in `style-guide.md`.
 
-**Critère :** afficher n'importe quelle page ne déclenche aucune requête vers un autre domaine, et le rendu (police, icônes du pied de page) reste identique.
+**Criterion:** displaying any page triggers no request to another domain, and the rendering (font, footer icons) remains identical.
 
-**Statut :** fait.
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 16 du plan de construction (BUILD-PLAN.md) : polices et icônes hébergées
-par le site.
+Implement step 16 of the build plan (BUILD-PLAN.md): self-hosted fonts and
+icons.
 
-Télécharge une fois les woff2 d'Ubuntu (300/400/500/700, sous-ensembles latin et latin-ext) et
-leur licence dans public/fonts/ubuntu/, déclare-les en @font-face dans global.css, remplace les
-icônes Font Awesome du pied de page par leurs tracés SVG inline et retire les liens CDN de
-BaseLayout.astro, en suivant "Polices" dans technical-specifications.md et "Iconographie" dans
+Download the Ubuntu woff2 files once (300/400/500/700, latin and latin-ext subsets) along with
+their license into public/fonts/ubuntu/, declare them as @font-face in global.css, replace the
+Font Awesome icons in the footer with their inline SVG paths and remove the CDN links from
+BaseLayout.astro, following "Fonts" in technical-specifications.md and "Iconography" in
 style-guide.md.
 
-Critère de fin : aucune requête vers un autre domaine à l'affichage d'une page, rendu inchangé.
+Completion criterion: no request to another domain when displaying a page, rendering unchanged.
 ```
 
-## ✅ 17. Vérification des types au build
+## ✅ 17. Type checking at build time
 
-Le script `build` enchaîne `astro check && astro build` : une erreur de type dans un fichier `.ts` ou `.astro` fait échouer le build, donc le déploiement, avant toute publication. Le dictionnaire français est vérifié contre l'anglais (`satisfies typeof en`). Voir "Hébergement et déploiement", "Dépendances" et "Textes d'interface" dans `technical-specifications.md`.
+The `build` script chains `astro check && astro build`: a type error in a `.ts` or `.astro` file makes the build fail, and therefore the deployment, before anything is published. The French dictionary is checked against the English one (`satisfies typeof en`). See "Hosting and deployment", "Dependencies" and "Interface copy" in `technical-specifications.md`.
 
-**Critère :** une erreur de type volontaire dans un fichier `.astro`, ou une clé présente dans un seul des deux dictionnaires, fait échouer `npm run build` ; le code réel passe.
+**Criterion:** a deliberate type error in a `.astro` file, or a key present in only one of the two dictionaries, makes `npm run build` fail; the real code passes.
 
-**Statut :** fait.
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 17 du plan de construction (BUILD-PLAN.md) : vérification des types au build.
+Implement step 17 of the build plan (BUILD-PLAN.md): type checking at build time.
 
-Ajoute @astrojs/check en dépendance de développement, fais précéder astro build de astro check
-dans le script build du package.json, et déclare le dictionnaire français satisfies typeof en,
-en suivant "Hébergement et déploiement" et "Textes d'interface" dans technical-specifications.md.
+Add @astrojs/check as a development dependency, run astro check before astro build
+in the build script of package.json, and declare the French dictionary satisfies typeof en,
+following "Hosting and deployment" and "Interface copy" in technical-specifications.md.
 
-Critère de fin : une erreur de type volontaire (fichier .astro, clé i18n manquante) fait échouer
-npm run build ; le code réel passe.
-```
-
-## ✅ 18. Surveillance des liens des sources
-
-Chaque semaine, un workflow GitHub vérifie les URL des jeux de données et échoue si l'une est cassée (404, 410, 5xx persistant hors 502, 503 et 504, domaine introuvable). Les réponses qui ne disent rien de l'existence de la source (anti-robots, limitation, indisponibilité passagère, certificat, délai) sont listées sans faire échouer le run. Voir "Surveillance des sources" dans `technical-specifications.md`.
-
-**Critère :** `npm run check-links` classe correctement les URL réelles (aucune cassée, les indéterminées identifiées) ; une URL volontairement cassée fait sortir le script en erreur.
-
-**Statut :** fait.
-
-**Prompt :**
-```
-Implémente l'étape 18 du plan de construction (BUILD-PLAN.md) : surveillance des liens des
-sources.
-
-Crée scripts/check-source-links.mjs (Node, sans dépendance) et
-.github/workflows/check-source-links.yml (hebdomadaire et à la demande), en suivant
-"Surveillance des sources" dans technical-specifications.md.
-
-Critère de fin : les URL réelles sont correctement classées, et une URL volontairement cassée
-fait échouer le script.
+Completion criterion: a deliberate type error (.astro file, missing i18n key) makes
+npm run build fail; the real code passes.
 ```
 
-## ✅ 19. Types des modules d3
+## ✅ 18. Source link monitoring
 
-Déclarations de types des modules `d3-*` et de `topojson-client` (`@types/*`, dépendances de développement), pour que `astro check` vérifie les appels d3 au lieu de les laisser en `any`, et retrait des 81 `as any` qui court-circuitaient cette vérification aux appels d3. Voir "Dépendances" dans `technical-specifications.md`.
+Every week, a GitHub workflow checks the dataset URLs and fails if one is broken (404, 410, persistent 5xx other than 502, 503 and 504, domain not found). Responses that say nothing about whether the source exists (anti-bot, rate limiting, temporary unavailability, certificate, timeout) are listed without failing the run. See "Source monitoring" in `technical-specifications.md`.
 
-**Critère :** `astro check` ne signale plus aucune déclaration de types manquante, le code de rendu ne contient plus de `as any`, et les interactions (zoom, molette, glisser, transitions) se comportent comme avant.
+**Criterion:** `npm run check-links` correctly classifies the real URLs (none broken, the undetermined ones identified); a deliberately broken URL makes the script exit with an error.
 
-**Statut :** fait.
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 19 du plan de construction (BUILD-PLAN.md) : types des modules d3.
+Implement step 18 of the build plan (BUILD-PLAN.md): source link
+monitoring.
 
-Ajoute en dépendances de développement les paquets @types correspondant à chaque module d3
-utilisé et à topojson-client, retire les `as any` des appels d3 en corrigeant les types au lieu
-de les contourner, et retire les commentaires devenus faux sur l'absence de types, en suivant "Dépendances" dans
+Create scripts/check-source-links.mjs (Node, no dependencies) and
+.github/workflows/check-source-links.yml (weekly and on demand), following
+"Source monitoring" in technical-specifications.md.
+
+Completion criterion: the real URLs are correctly classified, and a deliberately broken URL
+makes the script fail.
+```
+
+## ✅ 19. d3 module types
+
+Type declarations for the `d3-*` modules and `topojson-client` (`@types/*`, development dependencies), so that `astro check` verifies d3 calls instead of leaving them as `any`, and removal of the 81 `as any` that bypassed this check on d3 calls. See "Dependencies" in `technical-specifications.md`.
+
+**Criterion:** `astro check` no longer reports any missing type declaration, the rendering code no longer contains any `as any`, and the interactions (zoom, wheel, drag, transitions) behave as before.
+
+**Status:** done.
+
+**Prompt:**
+```
+Implement step 19 of the build plan (BUILD-PLAN.md): d3 module types.
+
+Add as development dependencies the @types packages matching each d3 module
+used and topojson-client, remove the `as any` from d3 calls by fixing the types instead
+of working around them, and remove the comments about missing types that have become false, following "Dependencies" in
 technical-specifications.md.
 
-Critère de fin : astro check ne signale plus de déclaration manquante et passe sans erreur.
+Completion criterion: astro check no longer reports any missing declaration and passes without error.
 ```
 
-## ✅ 20. Passage à Astro 7
+## ✅ 20. Upgrade to Astro 7
 
-Montée de version d'Astro 5 à 7, qui lève les vulnérabilités signalées par `npm audit` (Astro, `sharp`, `esbuild`). Configuration des collections déplacée vers `src/content.config.ts`, `z` importé depuis `astro/zod`, `compressHTML: true` pour garder le rendu d'Astro 5, fichiers de `public/` localisés depuis la racine du projet. Voir "Génération de site" et "Dépendances" dans `technical-specifications.md`.
+Version upgrade from Astro 5 to 7, which resolves the vulnerabilities reported by `npm audit` (Astro, `sharp`, `esbuild`). Collections configuration moved to `src/content.config.ts`, `z` imported from `astro/zod`, `compressHTML: true` to keep Astro 5's output, `public/` files located from the project root. See "Site generation" and "Dependencies" in `technical-specifications.md`.
 
-**Critère :** `npm audit` ne signale plus de vulnérabilité, `npm run build` passe, le texte rendu de chaque page est identique à celui d'Astro 5 (hors ordre du catalogue, voir ci-dessous), et les visualisations se comportent comme avant.
+**Criterion:** `npm audit` no longer reports any vulnerability, `npm run build` passes, the rendered text of each page is identical to Astro 5's (except for the catalog order, see below), and the visualizations behave as before.
 
-**Statut :** fait. Seul écart constaté : Astro 7 liste les entrées de collection par ordre alphabétique, alors qu'Astro 5 suivait un ordre de fichiers quelconque. L'ordre des tuiles du catalogue a donc changé. Décision ensuite : garder l'ordre alphabétique de slug, désormais imposé explicitement dans le code et spécifié dans `home-page.md`.
+**Status:** done. Only discrepancy found: Astro 7 lists collection entries in alphabetical order, whereas Astro 5 followed an arbitrary file order. The order of the catalog tiles therefore changed. Decision made afterwards: keep the alphabetical slug order, now enforced explicitly in the code and specified in `home-page.md`.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 20 du plan de construction (BUILD-PLAN.md) : passage à Astro 7.
+Implement step 20 of the build plan (BUILD-PLAN.md): upgrade to Astro 7.
 
-Monte astro en 7.x, applique les changements cassants des guides de migration v6 et v7
-(emplacement de la configuration des collections, import de Zod, compressHTML, chemins vers
-public/), puis compare le site généré à celui d'Astro 5 (texte de chaque page, captures) et
-rejoue les scénarios d'interaction des visualisations.
+Upgrade astro to 7.x, apply the breaking changes from the v6 and v7 migration guides
+(location of the collections configuration, Zod import, compressHTML, paths to
+public/), then compare the generated site with Astro 5's (text of each page, screenshots) and
+replay the visualizations' interaction scenarios.
 
-Critère de fin : npm audit sans vulnérabilité, build qui passe, rendu et comportement identiques.
-```
-
-## ✅ 21. Vue tableau des données
-
-Tableau de synthèse statique, calculé au build et replié sous la visualisation, pour les quatorze visualisations : d'abord un pilote de trois (`flower-phenology`, `forest-fires`, `medical-deserts`) pour caler le composant et le style, puis les onze autres. Voir "Vue tableau des données" dans `functional-specifications.md` et `technical-specifications.md`, "Tableau de données" dans `style-guide.md`, et la section "Vue tableau" de chacune des trois specs.
-
-**Critère :** chaque tableau s'affiche dans les deux langues, avec des valeurs conformes aux données, lisibles sans JavaScript, sans débordement horizontal de la page sur mobile ; les autres visualisations n'en affichent pas.
-
-**Statut :** fait. Chaque tableau a été spécifié et validé (section "Vue tableau" de sa spec) avant implémentation.
-
-**Prompt :**
-```
-Implémente l'étape 21 du plan de construction (BUILD-PLAN.md) : vue tableau des données.
-
-Crée src/scripts/data-table.ts et src/components/DataTable.astro, puis un table.ts pour
-chaque visualisation qui a une section "Vue tableau" dans sa spec, branchés sur les deux pages,
-en suivant "Vue tableau des données" (spec fonctionnelle et technique), "Tableau de données"
-dans style-guide.md et la section "Vue tableau" de chaque visualisation.
-
-Critère de fin : chaque tableau s'affiche dans les deux langues avec des valeurs justes,
-sans JavaScript et sans débordement de page sur mobile.
+Completion criterion: npm audit with no vulnerability, build passing, identical rendering and behavior.
 ```
 
-## ✅ 22. Données structurées schema.org
+## ✅ 21. Data table view
 
-Chaque page de visualisation décrit en JSON-LD la visualisation (`CreativeWork`, sources en `isBasedOn`) et, quand elle en propose, ses fichiers téléchargeables comme `Dataset` dérivé, éligible à Google Dataset Search. Voir "SEO" dans `technical-specifications.md`.
+Static summary table, computed at build time and collapsed below the visualization, for all fourteen visualizations: first a pilot of three (`flower-phenology`, `forest-fires`, `medical-deserts`) to settle the component and the style, then the other eleven. See "Data table view" in `functional-specifications.md` and `technical-specifications.md`, "Data table" in `style-guide.md`, and the "Table view" section of each of the three specs.
 
-**Critère :** les 28 pages de visualisation portent un bloc JSON-LD valide ; un `Dataset` n'y figure que si la visualisation propose des téléchargements, avec une description de 50 à 5 000 caractères et des URL de fichiers qui existent.
+**Criterion:** each table displays in both languages, with values matching the data, readable without JavaScript, with no horizontal page overflow on mobile; the other visualizations do not display one.
 
-**Statut :** fait.
+**Status:** done. Each table was specified and validated ("Table view" section of its spec) before implementation.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 22 du plan de construction (BUILD-PLAN.md) : données structurées schema.org.
+Implement step 21 of the build plan (BUILD-PLAN.md): data table view.
 
-Crée src/scripts/structured-data.ts et rends son résultat dans le <head> via une propriété de
-BaseLayout.astro, depuis les deux pages de visualisation, en suivant "SEO" dans
+Create src/scripts/data-table.ts and src/components/DataTable.astro, then a table.ts for
+each visualization that has a "Table view" section in its spec, wired into both pages,
+following "Data table view" (functional and technical spec), "Data table"
+in style-guide.md and the "Table view" section of each visualization.
+
+Completion criterion: each table displays in both languages with correct values,
+without JavaScript and without page overflow on mobile.
+```
+
+## ✅ 22. schema.org structured data
+
+Each visualization page describes in JSON-LD the visualization (`CreativeWork`, sources as `isBasedOn`) and, when it offers any, its downloadable files as a derived `Dataset`, eligible for Google Dataset Search. See "SEO" in `technical-specifications.md`.
+
+**Criterion:** the 28 visualization pages carry a valid JSON-LD block; a `Dataset` appears in it only if the visualization offers downloads, with a description of 50 to 5,000 characters and file URLs that exist.
+
+**Status:** done.
+
+**Prompt:**
+```
+Implement step 22 of the build plan (BUILD-PLAN.md): schema.org structured data.
+
+Create src/scripts/structured-data.ts and render its output in the <head> via a property of
+BaseLayout.astro, from both visualization pages, following "SEO" in
 technical-specifications.md.
 
-Critère de fin : JSON-LD valide sur chaque page de visualisation, Dataset présent uniquement avec
-des téléchargements, descriptions et URL conformes.
+Completion criterion: valid JSON-LD on each visualization page, Dataset present only with
+downloads, compliant descriptions and URLs.
 ```
 
-## ✅ 23. Couvertures en WebP
+## ✅ 23. WebP covers
 
-Les couvertures passent de `public/covers/` à `src/assets/covers/`, pour que le build en dérive des WebP en trois largeurs pour les tuiles du catalogue, et une copie JPEG pour l'image de partage. Voir "Images" dans `data-model.md` et "Performance" dans `technical-specifications.md`.
+The covers move from `public/covers/` to `src/assets/covers/`, so that the build derives WebP versions in three widths for the catalog tiles, and a JPEG copy for the sharing image. See "Images" in `data-model.md` and "Performance" in `technical-specifications.md`.
 
-**Critère :** les tuiles servent des WebP adaptés à leur taille d'affichage, l'image de partage reste un JPEG, et le poids des images de l'accueil baisse nettement (mesuré : 3 559 Ko → 658 Ko sur desktop, 204 Ko sur mobile).
+**Criterion:** the tiles serve WebP images suited to their display size, the sharing image remains a JPEG, and the weight of the home page images drops markedly (measured: 3,559 KB → 658 KB on desktop, 204 KB on mobile).
 
-**Statut :** fait.
+**Status:** done.
 
-**Prompt :**
+**Prompt:**
 ```
-Implémente l'étape 23 du plan de construction (BUILD-PLAN.md) : couvertures en WebP.
+Implement step 23 of the build plan (BUILD-PLAN.md): WebP covers.
 
-Déplace les couvertures dans src/assets/covers/, crée src/scripts/covers.ts, rends les tuiles
-avec le composant Image d'Astro (WebP, srcset et sizes calés sur la grille) et dérive l'image de
-partage en JPEG, en suivant "Images" dans data-model.md et "Performance" dans
+Move the covers into src/assets/covers/, create src/scripts/covers.ts, render the tiles
+with Astro's Image component (WebP, srcset and sizes matched to the grid) and derive the
+sharing image as a JPEG, following "Images" in data-model.md and "Performance" in
 technical-specifications.md.
 
-Critère de fin : WebP adaptés sur les tuiles, JPEG pour le partage, poids de l'accueil mesuré.
+Completion criterion: suitable WebP on the tiles, JPEG for sharing, home page weight measured.
 ```
 
-## 24. Cinq nouvelles visualisations
+## 24. Five new visualizations
 
-Specs complètes (`data-model.md`, `functional-specifications.md`, `technical-specifications.md`) de cinq nouvelles visualisations, pour renforcer les thèmes Espace et Climat, les moins fournis du catalogue. Chaque spec repose sur une vérification réelle de sa source (accès, champs, volume, licence) et se termine par une section "Points à valider".
+Complete specs (`data-model.md`, `functional-specifications.md`, `technical-specifications.md`) for five new visualizations, to strengthen the Space and Climate themes, the least represented in the catalog. Each spec relies on an actual check of its source (access, fields, volume, license) and ends with a "Points to validate" section.
 
-- `exoplanets` (Les mondes découverts), thème `space` : 6 366 exoplanètes confirmées (NASA Exoplanet Archive), nuage masse × distance à l'étoile qui se remplit année par année, frise des découvertes par méthode.
-- `meteorites` (Ce qui nous tombe du ciel), thèmes `space` et `earth` : 45 716 météorites (catalogue de la Meteoritical Society, copie NASA figée en 2013), planisphère vues tomber / trouvées, profil latitudinal et encart antarctique.
-- `sunspots` (Le cœur battant du Soleil), thème `space` : nombre de taches solaires mensuel depuis 1749 (WDC-SILSO), spirale d'un tour par cycle.
-- `brest-sea-level` (La mer monte à Brest), thème `climate` : niveau moyen annuel du marégraphe de Brest depuis 1807 (PSMSL), quai de pierre déroulé et trois droites de tendance.
-- `tropical-nights` (Les nuits tropicales), thème `climate` : nuits à 20 °C ou plus depuis 1950 dans huit villes (Météo-France), calendriers empilés en petits multiples.
+- `exoplanets` (The Discovered Worlds), `space` theme: 6,366 confirmed exoplanets (NASA Exoplanet Archive), mass × distance-to-star scatter that fills in year by year, timeline of discoveries by method.
+- `meteorites` (What Falls from the Sky), `space` and `earth` themes: 45,716 meteorites (Meteoritical Society catalog, NASA copy frozen in 2013), world map of observed falls / finds, latitudinal profile and Antarctic inset.
+- `sunspots` (The Sun's Heartbeat), `space` theme: monthly sunspot number since 1749 (WDC-SILSO), spiral with one turn per cycle.
+- `brest-sea-level` (The Sea Is Rising in Brest), `climate` theme: annual mean level of the Brest tide gauge since 1807 (PSMSL), unrolled stone quay and three trend lines.
+- `tropical-nights` (Tropical Nights), `climate` theme: nights at 20°C or more since 1950 in eight cities (Météo-France), stacked calendars in small multiples.
 
-**Critère :** chaque spec validée par l'auteur, "Points à valider" tranchés, avant implémentation.
+**Criterion:** each spec validated by the author, "Points to validate" decided, before implementation.
 
-**Statut :** specs écrites, en attente de validation ; aucune implémentation.
+**Status:** specs written, awaiting validation; no implementation.

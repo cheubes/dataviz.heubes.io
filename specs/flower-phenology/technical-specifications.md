@@ -1,69 +1,69 @@
-# Spécifications techniques : Le calendrier des fleurs
+# Technical specifications: The Flower Calendar
 
-Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
+Complements the general `technical-specifications.md`: technical choices specific to this visualization, beyond the common rules.
 
-## Rendu
+## Rendering
 
-D3 v7 seul (`d3-shape` pour les arcs, `d3-scale` pour l'échelle angulaire des jours de l'année, `d3-transition` pour l'animation d'un anneau quand sa décennie change). Rendu SVG : volume de données faible (au plus 15 espèces × 2 décennies visibles), pas d'enjeu de performance justifiant Canvas ici, à la différence des migrations.
+D3 v7 only (`d3-shape` for the arcs, `d3-scale` for the angular scale of the days of the year, `d3-transition` for animating a ring when its decade changes). SVG rendering: low data volume (at most 15 species × 2 visible decades), no performance concern justifying Canvas here, unlike the migrations.
 
-Pas de carte, pas de TopoJSON, pas de `topojson-client` : seule visualisation des trois sans fond géographique.
+No map, no TopoJSON, no `topojson-client`: the only one of the three visualizations without a geographic background.
 
-## Zone de montage : ratio 1:1 (exception documentée)
+## Mount area: 1:1 ratio (documented exception)
 
-**`aspect-ratio: 1 / 1` sur la zone de montage, pas le calcul `largeur × 0,6` de la hauteur par défaut du site** (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général) : seule visualisation du site dont le rendu est un cadran radial, dont la géométrie exige une zone carrée (le `viewBox` SVG est dimensionné sur `size = largeur`, voir "Rendu" ci-dessus) ; y appliquer un rectangle non carré déformerait le cercle plutôt que de simplement recadrer une carte.
+**`aspect-ratio: 1 / 1` on the mount area, not the `width × 0.6` calculation of the site's default height** (see "Rules common to all visualizations" in the general `technical-specifications.md`): the only visualization on the site whose rendering is a radial dial, whose geometry requires a square area (the SVG `viewBox` is sized on `size = width`, see "Rendering" above); applying a non-square rectangle to it would distort the circle rather than simply reframe a map.
 
-Reste toutefois soumise au même plafond que les autres visualisations (espace disponible entre header et footer, contrôles compris) : plutôt qu'une hauteur bridée (qui casserait le carré, largeur et hauteur restant liées par `aspect-ratio`), c'est la largeur du carré qui est bridée (`max-width` recalculé au redimensionnement, en plus du `max-width: 640px` fixe déjà en CSS) à la valeur qui, une fois la hauteur dérivée par `aspect-ratio`, respecte ce plafond.
+It nevertheless remains subject to the same cap as the other visualizations (space available between header and footer, controls included): rather than a capped height (which would break the square, since width and height remain linked by `aspect-ratio`), it is the width of the square that is capped (`max-width` recomputed on resize, in addition to the fixed `max-width: 640px` already in CSS) at the value which, once the height is derived through `aspect-ratio`, respects this cap.
 
-## Nouvelles dépendances
+## New dependencies
 
-| Dépendance | Usage | Portée |
+| Dependency | Usage | Scope |
 |---|---|---|
-| `d3-shape` | Générateur d'arcs (bande p10-p90, tick de médiane) | Scopée à cette visualisation (île Astro) |
-| `d3-scale` | Échelle angulaire linéaire du jour de l'année (déjà une dépendance du site via `bird-migrations`) | Partagée par convention npm, usage scopé à cette visualisation |
-| `d3-selection`, `d3-transition` | Sélections DOM et transition d'un anneau lors d'un changement de décennie (déjà `d3-selection` via `bird-migrations`) | Scopée à cette visualisation |
+| `d3-shape` | Arc generator (p10-p90 band, median tick) | Scoped to this visualization (Astro island) |
+| `d3-scale` | Linear angular scale of the day of the year (already a site dependency via `bird-migrations`) | Shared by npm convention, usage scoped to this visualization |
+| `d3-selection`, `d3-transition` | DOM selections and transition of a ring on a decade change (`d3-selection` already present via `bird-migrations`) | Scoped to this visualization |
 
-## Fond du calendrier (tranché à l'implémentation)
+## Calendar background (decided during implementation)
 
-**Fond clair standard (`--dv-surface`)**, cohérent avec le reste du site en thème clair fixe (voir "Couleurs" dans `style-guide.md`) : pas de rupture visuelle avec le reste de la page. Contrepartie assumée : contraste plus faible pour les teintes claires de la palette bespoke (voir "Palette" ci-dessous), mitigée par un liseré neutre autour de chaque arc plutôt que par un changement de fond.
+**Standard light background (`--dv-surface`)**, consistent with the rest of the site in its fixed light theme (see "Colors" in `style-guide.md`): no visual break with the rest of the page. Accepted trade-off: lower contrast for the light hues of the bespoke palette (see "Palette" below), mitigated by a neutral outline around each arc rather than by a background change.
 
-## Palette (exception documentée)
+## Palette (documented exception)
 
-Palette bespoke "couleur réelle de la fleur" plutôt que la palette catégorielle officielle (voir "Palette dataviz" dans `style-guide.md`, qui permet une exception documentée et validée pour un besoin propre à une visualisation).
+Bespoke "real flower color" palette rather than the official categorical palette (see "Dataviz palette" in `style-guide.md`, which allows a documented and validated exception for a need specific to a visualization).
 
-**Justification :** la palette officielle est plafonnée à huit teintes fixes ("jamais cyclée au-delà"), incompatible avec jusqu'à 15 espèces affichées simultanément ; et le concept éditorial de cette pièce repose sur la couleur comme évocation directe de la fleur elle-même (jaune du pissenlit, rouge du coquelicot...), pas comme code catégoriel arbitraire.
+**Rationale:** the official palette is capped at eight fixed hues ("never cycled beyond"), incompatible with up to 15 species displayed simultaneously; and the editorial concept of this piece relies on color as a direct evocation of the flower itself (dandelion yellow, poppy red...), not as an arbitrary categorical code.
 
-**Validation effectuée** (`scripts/validate_palette.js` du skill dataviz, `--mode light`, fond `--dv-surface`) sur les douze couleurs de `flowerColor` (voir "Sélection des espèces" dans `data-model.md`) :
+**Validation performed** (the dataviz skill's `scripts/validate_palette.js`, `--mode light`, `--dv-surface` background) on the twelve `flowerColor` colors (see "Species selection" in `data-model.md`):
 
-- **Séparation CVD / vision normale :** un doublon quasi indissociable a été détecté et corrigé avant retenue définitive des couleurs : le crocus (`#B89AE0` dans le draft) et la lavande (`#9B72CF`) ne passaient pas le seuil de 15 ΔE même après la "correction" déjà notée dans le draft d'origine ; le crocus a été éclairci à `#C9A8E8` (ΔE 15.8, passe). La jonquille sauvage (nouvelle espèce, voir `data-model.md`) a été choisie en `#C97A0A`, un ambre nettement séparé du jaune du pissenlit (`#F0C040`, ΔE 18.7) après plusieurs essais trop proches.
-- **Limite résiduelle assumée, non corrigible dans la contrainte éditoriale :** les trois teintes quasi blanches (prunellier `#F4F1EA`, muguet `#EDEAE0`, anémone `#E5E2D8`) restent en-dessous du seuil de séparation deux à deux (ΔE ~2-5), y compris après plusieurs tentatives de les distinguer par la teinte tout en restant crédibles comme "blanc de fleur" (voir "Blanc pur évité" dans `data-model.md`). Le validateur échoue aussi sur le plancher de chroma et la bande de luminosité pour ces mêmes teintes claires, et sur le contraste au fond (`--dv-surface`) pour la plupart des couleurs pâles de la palette (sous 3:1). Ces échecs sont **acceptés comme limite documentée** de l'exception "couleur réelle de la fleur" (même logique que les trois teintes sous 3:1 déjà acceptées dans la palette catégorielle officielle du site, voir `style-guide.md`) : la lecture ne repose jamais sur la teinte seule (voir mitigation ci-dessous).
-- **Mitigation (contrepartie obligatoire d'un WARN de contraste non ignorable, voir le skill dataviz) :** chaque arc porte un liseré `1px` `var(--dv-gridline)` pour rester visible quel que soit son contraste de remplissage contre le fond ; le nom de l'espèce reste affiché en toutes lettres à côté de sa pastille dans le sélecteur (jamais la couleur seule) ; le tooltip nomme l'espèce au survol/tap de son arc.
+- **CVD / normal vision separation:** a near-indistinguishable duplicate was detected and corrected before the colors were finalized: the crocus (`#B89AE0` in the draft) and the lavender (`#9B72CF`) did not pass the 15 ΔE threshold even after the "correction" already noted in the original draft; the crocus was lightened to `#C9A8E8` (ΔE 15.8, passes). The wild daffodil (new species, see `data-model.md`) was chosen as `#C97A0A`, an amber clearly separated from the dandelion yellow (`#F0C040`, ΔE 18.7) after several attempts that were too close.
+- **Accepted residual limitation, not correctable within the editorial constraint:** the three near-white hues (blackthorn `#F4F1EA`, lily of the valley `#EDEAE0`, anemone `#E5E2D8`) remain below the pairwise separation threshold (ΔE ~2-5), even after several attempts to distinguish them by hue while remaining credible as "flower white" (see "Pure white avoided" in `data-model.md`). The validator also fails on the chroma floor and the lightness band for these same light hues, and on contrast against the background (`--dv-surface`) for most of the palette's pale colors (below 3:1). These failures are **accepted as a documented limitation** of the "real flower color" exception (same logic as the three hues below 3:1 already accepted in the site's official categorical palette, see `style-guide.md`): reading never relies on hue alone (see mitigation below).
+- **Mitigation (mandatory counterpart of a non-ignorable contrast WARN, see the dataviz skill):** each arc carries a `1px` `var(--dv-gridline)` outline to remain visible regardless of its fill contrast against the background; the species name remains spelled out next to its swatch in the selector (never color alone); the tooltip names the species on hover/tap of its arc.
 
-## Sélecteur d'espèces : plafond de quinze non implémenté
+## Species selector: fifteen-species cap not implemented
 
-Avec les douze espèces finalisées dans `data-model.md`, le plafond de quinze sélections simultanées documenté dans `functional-specifications.md` ("Interactions") ne peut pas être atteint : aucune logique de blocage ou d'éviction n'a été implémentée pour ce cas (voir "Minimalisme" dans `CLAUDE.md`). Si la liste d'espèces est étendue au-delà de quinze dans une future itération, cette logique reste à ajouter.
+With the twelve species finalized in `data-model.md`, the cap of fifteen simultaneous selections documented in `functional-specifications.md` ("Interactions") cannot be reached: no blocking or eviction logic was implemented for this case (see "Minimalisme" in the global `CLAUDE.md`). If the species list is extended beyond fifteen in a future iteration, this logic remains to be added.
 
-## Hydratation
+## Hydration
 
 `client:visible`.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cette visualisation.
+See "Accessibility (known limitation)" in this visualization's `functional-specifications.md`.
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation.
+See "Responsive" in this visualization's `functional-specifications.md`.
 
-## État dans l'URL
+## State in the URL
 
-Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+See "State in the URL" in the general `technical-specifications.md` for the common mechanism.
 
-| Paramètre | Valeurs | Défaut (absent de l'URL) |
+| Parameter | Values | Default (absent from the URL) |
 |---|---|---|
-| `species` | Noms scientifiques (`species`, voir `data-model.md`) des espèces affichées, séparés par des virgules, dans l'ordre du sélecteur ; vide (`species=`) si aucune espèce n'est cochée | Toutes les espèces |
-| `inner` | Décennie de l'anneau intérieur (`1970s` à `2020s`) | `1970s` |
-| `outer` | Décennie de l'anneau extérieur (`1970s` à `2020s`) | `2020s` |
+| `species` | Scientific names (`species`, see `data-model.md`) of the displayed species, separated by commas, in selector order; empty (`species=`) if no species is checked | All species |
+| `inner` | Decade of the inner ring (`1970s` to `2020s`) | `1970s` |
+| `outer` | Decade of the outer ring (`1970s` to `2020s`) | `2020s` |
 
-- Les noms scientifiques contiennent une espace, encodée `+` dans l'URL (`species=Papaver+rhoeas,Centaurea+cyanus`) : c'est l'identifiant des données tel quel, pas un slug dérivé.
-- Un nom inconnu dans `species` est ignoré ; une liste dont aucun nom n'est reconnu est traitée comme invalide (retour à toutes les espèces), pour qu'un lien cassé ne tombe pas sur l'état vide.
-- À la lecture, les décennies restaurées sont dessinées directement, sans la transition de changement de décennie (voir "Rendu" ci-dessus), qui n'a de sens qu'en réponse à un choix du visiteur.
+- Scientific names contain a space, encoded as `+` in the URL (`species=Papaver+rhoeas,Centaurea+cyanus`): this is the data identifier as is, not a derived slug.
+- An unknown name in `species` is ignored; a list in which no name is recognized is treated as invalid (falls back to all species), so that a broken link does not land on the empty state.
+- On reading, the restored decades are drawn directly, without the decade-change transition (see "Rendering" above), which only makes sense in response to a visitor's choice.

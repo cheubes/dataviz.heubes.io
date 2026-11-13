@@ -1,70 +1,70 @@
-# Spécifications techniques : La migration des monarques
+# Technical specifications: The Monarch Migration
 
-Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
+Supplements the general `technical-specifications.md`: technical choices specific to this visualization, beyond the common rules.
 
-## Techno carte
+## Map technology
 
-D3 v7, même stack que `bird-migrations`, pas de Leaflet.
+D3 v7, same stack as `bird-migrations`, no Leaflet.
 
-- **Fond de carte, cours d'eau, relief : réutilisation directe des assets de `bird-migrations`, copiés (pas référencés) dans `public/data/monarch-migration/`.** `basemap.json` (silhouette terrestre), `rivers.json` (cours d'eau) et `relief.webp` (relief ombré) couvrent déjà le monde entier, pas seulement le rectangle Europe/Afrique cadré par `bird-migrations` (voir "Couverture mondiale" dans son `data-model.md` et "Fond de carte"/"Cours d'eau"/"Relief" dans son `technical-specifications.md`) : les trois fichiers sont copiés tels quels, sans nouvelle extraction ni nouveau prétraitement, seul le cadrage change. Copie plutôt que référence directe entre dossiers, cohérent avec "chaque visualisation a ses propres données" (voir `CLAUDE.md`) : chaque dossier `public/data/<viz-slug>/` reste autonome, au prix d'une duplication (basemap + relief + rivières, environ 1,2 Mo) jugée raisonnable au regard du reste du site.
-- **Projection :** `d3.geoNaturalEarth1` (même choix que `bird-migrations`), `fitExtent` sur un rectangle Amérique du Nord (128°O-62°O, 12°N-54°N), soit l'emprise de la grille de densité (14°N-52°N, 125°O-65°O, voir "Prétraitement" dans `data-model.md`) avec une petite marge. Anneau de cadrage orienté dans le sens horaire (et non la convention RFC 7946), comme dans `bird-migrations` : la règle d'enroulement sphérique de `d3-geo` est inversée, et un anneau anti-horaire est lu comme "tout sauf ce rectangle", ce qui cadre le monde entier. Le planisphère n'est pas affiché en entier ici : seule l'Amérique du Nord l'est (voir "Vue initiale" dans `functional-specifications.md`).
-- **Zoom :** `d3-zoom`, `scaleExtent [1, 6]`, identique à `bird-migrations`. Le cadrage régional par défaut rend inutile un plafond plus élevé, tel qu'envisagé quand la carte était un planisphère (voir "Périmètre recentré" dans `data-model.md`).
+- **Basemap, rivers, relief: direct reuse of the `bird-migrations` assets, copied (not referenced) into `public/data/monarch-migration/`.** `basemap.json` (land silhouette), `rivers.json` (rivers) and `relief.webp` (shaded relief) already cover the whole world, not only the Europe/Africa rectangle framed by `bird-migrations` (see "Worldwide coverage" in its `data-model.md` and "Basemap"/"Rivers"/"Relief" in its `technical-specifications.md`): the three files are copied as is, with no new extraction or new preprocessing, only the framing changes. Copy rather than direct reference between folders, consistent with "each visualization has its own data" (see `CLAUDE.md`): each `public/data/<viz-slug>/` folder remains self-contained, at the cost of a duplication (basemap + relief + rivers, about 1.2 MB) judged reasonable in light of the rest of the site.
+- **Projection:** `d3.geoNaturalEarth1` (same choice as `bird-migrations`), `fitExtent` on a North America rectangle (128°W-62°W, 12°N-54°N), i.e. the footprint of the density grid (14°N-52°N, 125°W-65°W, see "Preprocessing" in `data-model.md`) with a small margin. Framing ring oriented clockwise (and not following the RFC 7946 convention), as in `bird-migrations`: the spherical winding rule of `d3-geo` is inverted, and a counterclockwise ring is read as "everything except this rectangle", which frames the whole world. The world map is not displayed in full here: only North America is (see "Initial view" in `functional-specifications.md`).
+- **Zoom:** `d3-zoom`, `scaleExtent [1, 6]`, identical to `bird-migrations`. The default regional framing makes a higher cap unnecessary, as was considered when the map was a world map (see "Refocused scope" in `data-model.md`).
 
-## Relief : alignement au redimensionnement
+## Relief: alignment on resize
 
-Même mécanisme que `bird-migrations` (voir sa section du même nom dans son `technical-specifications.md`) : `relief.webp` est une image statique pré-rendue une seule fois, réalignée à chaque redimensionnement via une paire d'appels `fitExtent` (une fois sur un rectangle de référence fixe pour obtenir l'échelle/translation de calibration, une fois sur le cadrage réellement affiché pour en déduire l'échelle/décalage à appliquer à l'image).
+Same mechanism as `bird-migrations` (see its section of the same name in its `technical-specifications.md`): `relief.webp` is a static image pre-rendered once, realigned on each resize via a pair of `fitExtent` calls (once on a fixed reference rectangle to obtain the calibration scale/translation, once on the framing actually displayed to derive the scale/offset to apply to the image).
 
-**Aucune recalibration n'est nécessaire, contrairement à ce qu'une première version de cette spec anticipait.** Le calcul de calibration (`RELIEF_REF_WIDTH`/`HEIGHT`/`ORIGIN_X`/`ORIGIN_Y`, et le rectangle Europe/Afrique de `bird-migrations`) est réutilisé strictement à l'identique dans `render.ts` (`REFERENCE_VIEW_BOUNDS`), sans jamais être affiché : il ne sert que d'ancre de calibration. Le cadrage réellement affiché (`VIEW_BOUNDS`, Amérique du Nord) est un second rectangle indépendant. Justification géométrique : la projection (`geoNaturalEarth1`, rotation/centre par défaut, jamais modifiés) est la même dans les deux visualisations, et `fitExtent` recalcule entièrement échelle et translation à chaque appel à partir de la géométrie et du rectangle cible fournis, donc la relation affine entre le cadre de calibration et n'importe quel cadre affiché reste valable tant que la projection elle-même ne change pas. Régénérer `relief.webp` ou recalculer de nouvelles constantes aurait été inutile et risquait d'introduire l'exact désalignement que ce mécanisme cherche à éviter (voir "Piège potentiel à surveiller" dans le `technical-specifications.md` de `bird-migrations`).
+**No recalibration is needed, contrary to what a first version of this spec anticipated.** The calibration computation (`RELIEF_REF_WIDTH`/`HEIGHT`/`ORIGIN_X`/`ORIGIN_Y`, and the Europe/Africa rectangle of `bird-migrations`) is reused strictly identically in `render.ts` (`REFERENCE_VIEW_BOUNDS`), without ever being displayed: it serves only as a calibration anchor. The framing actually displayed (`VIEW_BOUNDS`, North America) is a second, independent rectangle. Geometric justification: the projection (`geoNaturalEarth1`, default rotation/center, never modified) is the same in both visualizations, and `fitExtent` fully recomputes scale and translation on each call from the geometry and the target rectangle provided, so the affine relationship between the calibration frame and any displayed frame remains valid as long as the projection itself does not change. Regenerating `relief.webp` or computing new constants would have been unnecessary and risked introducing the exact misalignment this mechanism seeks to avoid (see "Potential pitfall to watch out for" in the `technical-specifications.md` of `bird-migrations`).
 
-**Vérifié à l'écran, à ce cadrage régional où un décalage serait immédiatement visible :** relief, littoral et cours d'eau restent alignés (captures d'écran de l'implémentation, en janvier et en août).
+**Verified on screen, at this regional framing where an offset would be immediately visible:** relief, coastline and rivers stay aligned (implementation screenshots, in January and in August).
 
-## Rendu
+## Rendering
 
-**Canvas 2D**, deux calques superposés : fond (silhouette, relief, cours d'eau, redessiné au redimensionnement et au zoom) et densité (vidé et redessiné intégralement à chaque frame : il représente un état courant, pas une traînée qui s'accumule comme les trajectoires de `bird-migrations`).
+**Canvas 2D**, two stacked layers: background (silhouette, relief, rivers, redrawn on resize and on zoom) and density (cleared and fully redrawn on each frame: it represents a current state, not a trail that accumulates like the trajectories of `bird-migrations`).
 
-- **Cases de densité :** chaque cellule de la grille (voir "Format de sortie" dans `data-model.md`) est peinte comme un quadrilatère à quatre coins projetés, pas comme un rectangle défini par deux coins opposés : deux cellules voisines partagent alors exactement les mêmes points, et la courbure de la projection ne peut pas ouvrir de couture entre elles. Opacité pilotée par le volume d'observations du mois simulé courant (interpolation linéaire entre le mois courant et le suivant plutôt qu'un changement abrupt à chaque bascule de mois, pour une "vague" progressive plutôt que par à-coups), échelle `d3.scalePow` d'exposant 0,25, alpha de 0 à 0,95, calée sur le maximum global toutes cellules/mois confondus (4 904 observations). **Pourquoi un exposant aussi bas :** les effectifs sont très inégaux (case médiane : 28 observations sur l'année, maximum : 4 904), et une racine carrée (première version, alpha de 0,05 à 0,8) laissait la plupart des cases presque invisibles sur le fond beige, retour explicite de l'utilisateur. Avec l'exposant 0,25, une observation isolée donne un alpha d'environ 0,11 et 28 observations d'environ 0,26, tandis que la case la plus chargée reste à 0,95. L'échelle part de zéro (et non d'un plancher) pour qu'une case s'efface progressivement, sans à-coup, quand sa valeur interpolée tend vers zéro entre deux mois. `DENSITY_CELL_DEGREES = 1` répliqué comme constante dans `render.ts`, doit rester synchronisé avec la grille du prétraitement. **Coût de dessin :** jusqu'à 960 cases actives le mois le plus chargé, soit environ trois fois plus qu'à 2° (331 en août) ; mesuré en rendu logiciel dans Chromium headless, 60 images par seconde tenues (moyenne 16,7 ms, pire image 18,8 ms sur six secondes) : pas de mémoïsation des coins projetés, qui resterait à envisager si un appareil plus modeste peinait.
-- **Tooltip :** élément DOM en HTML standard, superposé au Canvas, même approche que `bird-migrations`. Pourcentage relatif au maximum annuel *de la case* (pas un rang global), voir "Interactions" dans `functional-specifications.md`. Case retrouvée à partir de la position du pointeur par projection inverse (écran vers longitude/latitude) puis test d'appartenance à la case, pas par une géométrie de pixels mémorisée.
+- **Density cells:** each grid cell (see "Output format" in `data-model.md`) is painted as a quadrilateral with four projected corners, not as a rectangle defined by two opposite corners: two neighboring cells then share exactly the same points, and the curvature of the projection cannot open a seam between them. Opacity driven by the volume of observations in the current simulated month (linear interpolation between the current month and the next rather than an abrupt change at each month switch, for a progressive "wave" rather than a jerky one), `d3.scalePow` scale with exponent 0.25, alpha from 0 to 0.95, fitted to the global maximum across all cells/months (4,904 observations). **Why such a low exponent:** counts are very uneven (median cell: 28 observations over the year, maximum: 4,904), and a square root (first version, alpha from 0.05 to 0.8) left most cells almost invisible on the beige background, explicit user feedback. With the exponent 0.25, a single observation gives an alpha of about 0.11 and 28 observations about 0.26, while the busiest cell stays at 0.95. The scale starts from zero (and not from a floor) so that a cell fades out gradually, without a jump, when its interpolated value tends toward zero between two months. `DENSITY_CELL_DEGREES = 1` replicated as a constant in `render.ts`, must stay in sync with the preprocessing grid. **Drawing cost:** up to 960 active cells in the busiest month, about three times more than at 2° (331 in August); measured with software rendering in headless Chromium, 60 frames per second sustained (average 16.7 ms, worst frame 18.8 ms over six seconds): no memoization of the projected corners, which would remain an option if a more modest device struggled.
+- **Tooltip:** standard HTML DOM element, overlaid on the Canvas, same approach as `bird-migrations`. Percentage relative to the annual maximum *of the cell* (not a global rank), see "Interactions" in `functional-specifications.md`. Cell found from the pointer position by inverse projection (screen to longitude/latitude) then a containment test on the cell, not through a stored pixel geometry.
 
-## Nouvelles dépendances
+## New dependencies
 
-Aucune nouvelle dépendance par rapport à `bird-migrations` : `d3-geo`, `d3-scale`, `d3-timer`, `d3-zoom`, `d3-selection`, `topojson-client` suffisent (même liste, voir "Nouvelles dépendances" dans son `technical-specifications.md`), seulement nouvelles pour cette visualisation.
+No new dependency compared with `bird-migrations`: `d3-geo`, `d3-scale`, `d3-timer`, `d3-zoom`, `d3-selection`, `topojson-client` are sufficient (same list, see "New dependencies" in its `technical-specifications.md`), new only for this visualization.
 
 ## Palette
 
-Une seule série : teinte Orange (`#eb6834`, slot 2 de la palette catégorielle officielle, voir "Palette dataviz" dans `style-guide.md`). Le slot 1 (Bleu) n'est pas retenu, contrairement à l'ordre par défaut d'une série unique : l'orange évoque les ailes du monarque, ressort sur la silhouette beige et son relief, et évite le bleu des cours d'eau (`#a8c5da`, voir "Fond de carte (illustration)" dans `style-guide.md`) qui se confondrait avec les cases.
+A single series: Orange hue (`#eb6834`, slot 2 of the official categorical palette, see "Dataviz palette" in `style-guide.md`). Slot 1 (Blue) is not used, unlike the default order for a single series: orange evokes the monarch's wings, stands out on the beige silhouette and its relief, and avoids the blue of the rivers (`#a8c5da`, see "Basemap (illustration)" in `style-guide.md`) which would blend with the cells.
 
-**Jaune écarté après essai :** la teinte retenue à l'origine était le Jaune (`#eda100`, slot 4, la couleur du monarque quand il était la quatrième espèce d'un planisphère, voir "Périmètre recentré" dans `data-model.md`). Comparé à l'orange sur le rendu réel (janvier, avril, août, avec la même échelle d'opacité), le jaune restait trop doux sur le beige : les cases faibles s'y fondaient. Le jaune fait aussi partie des trois teintes sous 3:1 de contraste sur fond clair (voir "Palette dataviz" dans `style-guide.md`), ce qui n'est pas le cas de l'orange.
+**Yellow ruled out after testing:** the hue originally chosen was Yellow (`#eda100`, slot 4, the monarch's color when it was the fourth species of a world map, see "Refocused scope" in `data-model.md`). Compared with orange on the actual rendering (January, April, August, with the same opacity scale), yellow remained too soft on the beige: the faint cells blended into it. Yellow is also one of the three hues below 3:1 contrast on a light background (see "Dataviz palette" in `style-guide.md`), which is not the case for orange.
 
-Ici la teinte n'encode aucune catégorie : c'est l'opacité qui encode le volume d'observations. La lecture repose sur le texte de présentation et le tooltip plutôt que sur la couleur seule (pas de légende, voir "Limites connues" dans `functional-specifications.md`).
+Here the hue encodes no category: it is the opacity that encodes the volume of observations. Reading relies on the presentation text and the tooltip rather than on color alone (no legend, see "Known limitations" in `functional-specifications.md`).
 
 ## Animation
 
-- Boucle `d3-timer`, pilotée par un temps simulé en jours (0-365, cyclique) : un seul cycle continu, 36 secondes par année à vitesse normale.
-- Valeur affichée par case : interpolation linéaire entre le `count` du mois simulé courant et celui du mois suivant (janvier suit décembre), selon la fraction écoulée du mois courant. Le mois est celui de la date simulée (année de référence non bissextile), et sa fraction est calculée sur sa vraie durée en jours plutôt que sur un douzième d'année.
-- Sélecteur de vitesse (×0,5 / ×1 / ×2) et nom du mois simulé (`Intl.DateTimeFormat(lang, { month: 'long' })`) : même mécanisme que `bird-migrations`.
-- Tooltip rafraîchi à chaque frame tant qu'une case est survolée ou épinglée ; retiré si la case tombe à zéro au mois simulé courant.
+- `d3-timer` loop, driven by a simulated time in days (0-365, cyclic): a single continuous cycle, 36 seconds per year at normal speed.
+- Displayed value per cell: linear interpolation between the `count` of the current simulated month and that of the following month (January follows December), according to the elapsed fraction of the current month. The month is that of the simulated date (non-leap reference year), and its fraction is computed over its actual length in days rather than over a twelfth of a year.
+- Speed selector (×0.5 / ×1 / ×2) and name of the simulated month (`Intl.DateTimeFormat(lang, { month: 'long' })`): same mechanism as `bird-migrations`.
+- Tooltip refreshed on each frame as long as a cell is hovered or pinned; removed if the cell drops to zero in the current simulated month.
 
-## Hydratation
+## Hydration
 
-`client:visible`, via un `IntersectionObserver` sur la zone de montage, même mécanisme que les autres visualisations du site.
+`client:visible`, via an `IntersectionObserver` on the mount area, same mechanism as the other visualizations on the site.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cette visualisation.
+See "Accessibility (known limitation)" in this visualization's `functional-specifications.md`.
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pan/zoom tactile via `d3-zoom`, tooltip déclenché par `click` plutôt que `pointermove` sur tactile, même mécanisme que `bird-migrations`.
+See "Responsive" in this visualization's `functional-specifications.md`. Touch pan/zoom via `d3-zoom`, tooltip triggered by `click` rather than `pointermove` on touch, same mechanism as `bird-migrations`.
 
-## État dans l'URL
+## State in the URL
 
-Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+See "State in the URL" in the general `technical-specifications.md` for the common mechanism.
 
-| Paramètre | Valeurs | Défaut (absent de l'URL) |
+| Parameter | Values | Default (absent from the URL) |
 |---|---|---|
-| `month` | Mois entier, de 1 (janvier) à 12 (décembre) | Lecture en cours |
-| `zoom` | `<k>,<lon>,<lat>` (format commun) | Amérique du Nord entière |
+| `month` | Whole month, from 1 (January) to 12 (December) | Playback running |
+| `zoom` | `<k>,<lon>,<lat>` (common format) | Whole of North America |
 
-- **Position temporelle arrondie au mois :** le temps simulé est un jour fractionnaire, mais l'indicateur n'affiche que le nom du mois et les données sont mensuelles (voir "Animation" ci-dessus). `month` est le mois affiché au moment de la pause. Un lien porteur de `month` ouvre la carte en pause sur le premier jour de ce mois, où l'interpolation est nulle : l'image montre exactement les effectifs de ce mois. Elle peut donc différer légèrement de celle du visiteur qui a partagé, s'il a mis en pause en fin de mois (interpolation déjà avancée vers le mois suivant), mais le mois affiché est le même. Un jour de l'année aurait reproduit l'image au pixel près, pour un paramètre que l'interface n'expose nulle part.
-- `month` est écrit à la pause et retiré à la reprise de la lecture. Pas de curseur temporel dans cette visualisation.
-- Le tooltip épinglé n'est pas capturé (état transitoire).
+- **Time position rounded to the month:** the simulated time is a fractional day, but the indicator only displays the month name and the data is monthly (see "Animation" above). `month` is the month displayed at the moment of the pause. A link carrying `month` opens the map paused on the first day of that month, where the interpolation is zero: the image shows exactly that month's counts. It may therefore differ slightly from that of the visitor who shared it, if they paused at the end of the month (interpolation already advanced toward the following month), but the displayed month is the same. A day of the year would have reproduced the image down to the pixel, for a parameter that the interface exposes nowhere.
+- `month` is written on pause and removed when playback resumes. No time slider in this visualization.
+- The pinned tooltip is not captured (transient state).

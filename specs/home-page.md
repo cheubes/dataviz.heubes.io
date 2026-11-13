@@ -1,28 +1,28 @@
-# Page d'accueil
+# Home page
 
-## Objectif
+## Goal
 
-Donner au visiteur un aperçu du catalogue de visualisations disponibles et lui permettre d'accéder à celle qui l'intéresse.
+Give the visitor an overview of the catalog of available visualizations and let them access the one that interests them.
 
-## Contenu et structure
+## Content and structure
 
-- En-tête du site (voir "En-tête" dans `style-guide.md`).
-- Filtre thématique : une chip par thème (voir "Thème" dans `data-model.md` et "Chips de filtre (catalogue)" dans `style-guide.md`), au-dessus de la grille de tuiles, sélection unique.
-- Une grille de tuiles de toutes les visualisations disponibles dans la langue courante (voir "Tuiles (catalogue)" dans `style-guide.md`), triées par ordre alphabétique de `slug` : un ordre stable et prévisible, indépendant de la date de publication ou de l'ordre interne des collections d'Astro (qui a changé entre Astro 5 et 7).
-- Tuile de visualisation (voir "Tuiles (catalogue)" dans `style-guide.md`) : couverture, titre, résumé.
-- Pied de page (voir "Pied de page" dans `style-guide.md`).
+- Site header (see "Header" in `style-guide.md`).
+- Theme filter: one chip per theme (see "Theme" in `data-model.md` and "Filter chips (catalog)" in `style-guide.md`), above the tile grid, single selection.
+- A grid of tiles of all the visualizations available in the current language (see "Tiles (catalog)" in `style-guide.md`), sorted alphabetically by `slug`: a stable and predictable order, independent of the publication date or of the internal order of Astro collections (which changed between Astro 5 and 7).
+- Visualization tile (see "Tiles (catalog)" in `style-guide.md`): cover, title, summary.
+- Footer (see "Footer" in `style-guide.md`).
 
 ## Interactions
 
-- Clic sur une tuile : navigue vers la page de la visualisation (voir `<viz-slug>/functional-specifications.md` pour son contenu).
-- Clic sur une chip de thème : sélectionne ce thème et désélectionne automatiquement le thème précédemment actif (un seul thème actif à la fois) ; cliquer sur le thème déjà actif le désélectionne. La grille affiche alors les visualisations associées au thème sélectionné ; aucun thème sélectionné affiche toutes les visualisations disponibles, l'état par défaut. La sélection est un état d'affichage propre à la visite en cours : elle n'est ni conservée dans l'URL ni mémorisée d'une visite à l'autre, à la différence de la préférence de langue (voir "Multilingue" dans `functional-specifications.md`).
-- Changement de langue via le sélecteur : réaffiche l'accueil dans la langue choisie (voir "Multilingue" dans `functional-specifications.md`) ; la sélection de thèmes en cours n'est pas conservée au changement de langue.
+- Click on a tile: navigates to the visualization's page (see `<viz-slug>/functional-specifications.md` for its content).
+- Click on a theme chip: selects that theme and automatically deselects the previously active theme (only one active theme at a time); clicking the already active theme deselects it. The grid then displays the visualizations associated with the selected theme; no selected theme displays all available visualizations, the default state. The selection is a display state specific to the current visit: it is neither kept in the URL nor remembered from one visit to the next, unlike the language preference (see "Multilingual" in `functional-specifications.md`).
+- Language change via the selector: redisplays the home page in the chosen language (see "Multilingual" in `functional-specifications.md`); the current theme selection is not kept on language change.
 
-## États (chargement, erreur, vide, indisponible)
+## States (loading, error, empty, unavailable)
 
-- Vide : aucune visualisation publiée dans la langue courante (état actuel du site, avant toute première visualisation) → message l'indiquant plutôt qu'une page blanche ou une grille silencieusement vide.
-- Aucun résultat : un thème sélectionné mais aucune visualisation ne lui correspond → message dédié invitant à choisir un autre thème, distinct du message de l'état vide ci-dessus.
+- Empty: no visualization published in the current language (current state of the site, before any first visualization) → message saying so rather than a blank page or a silently empty grid.
+- No results: a theme is selected but no visualization matches it → dedicated message inviting the visitor to choose another theme, distinct from the empty state message above.
 
 ## Responsive
 
-La grille de tuiles passe d'une à plusieurs colonnes selon la largeur disponible (grille CSS fluide, voir "Espacements, grille et responsive" dans `style-guide.md`) ; l'en-tête et le pied de page restent accessibles sans recouvrir le contenu.
+The tile grid goes from one to several columns depending on the available width (fluid CSS grid, see "Spacing, grid and responsive" in `style-guide.md`); the header and footer remain accessible without covering the content.

@@ -1,66 +1,66 @@
-# Spécifications techniques : Le désert médical de demain
+# Technical specifications: Tomorrow's Medical Desert
 
-Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
+Complements the general `technical-specifications.md`: technical choices specific to this visualization, beyond the common rules.
 
-**Statut : implémenté.**
+**Status: implemented.**
 
-## Source des données
+## Data source
 
-Fichiers DREES (XLSX) et data.gouv.fr (TopoJSON), voir "Dataset source" et "Prétraitement" dans `data-model.md`. Récupération et jointure ponctuelles au moment du prétraitement, pas à chaque build.
+DREES (XLSX) and data.gouv.fr (TopoJSON) files, see "Source dataset" and "Preprocessing" in `data-model.md`. One-off retrieval and join at preprocessing time, not at each build.
 
-## Rendu
+## Rendering
 
-**Canvas 2D**, volume le plus important du site à ce jour (34 728 polygones communaux). Projection `d3.geoMercator()` avec `fitExtent` sur l'étendue complète de la collection de communes (`topojson-client`, `feature()`).
+**Canvas 2D**, the largest volume on the site to date (34,728 commune polygons). `d3.geoMercator()` projection with `fitExtent` on the full extent of the commune collection (`topojson-client`, `feature()`).
 
-**Écart avec le brouillon de cadrage, sur trois points, tous des simplifications techniques adoptées après mesure des contraintes réelles :**
+**Departure from the framing draft, on three points, all technical simplifications adopted after measuring the actual constraints:**
 
-1. **Bascule aujourd'hui/demain : deux canvas pré-rendus avec fondu CSS, pas une interpolation de couleur par commune.** Le brouillon envisageait `d3-interpolate` pour animer chaque commune individuellement d'une teinte à l'autre, ce qui aurait demandé de redessiner les 34 728 polygones à chaque frame de la transition (potentiellement des dizaines de fois en quelques centaines de millisecondes). À la place : `canvasToday` et `canvasTomorrow` sont chacun dessinés une seule fois au chargement (et au redimensionnement), superposés, et la bascule anime uniquement l'opacité CSS (`transition: opacity`) du second par-dessus le premier. Le résultat visuel (un fondu progressif entre les deux états) est identique à ce que demandait la spec fonctionnelle, pour un coût de rendu bien moindre (aucun redessin de polygone pendant la transition elle-même).
-2. **Survol/tap : canvas d'index par "color picking", pas de test point-dans-polygone.** Tester l'appartenance du curseur à l'un des 34 728 polygones à chaque déplacement de souris (même avec un index spatial en grille façon `paris-trees`) restait plus coûteux que nécessaire. À la place : un troisième canvas invisible (`indexCanvas`), jamais transformé par le zoom/pan, où chaque commune est remplie d'une couleur unique dérivée de son index dans le tableau (`(r<<16)|(g<<8)|b`). Le survol lit un seul pixel (`getImageData(x,y,1,1)`) pour retrouver instantanément la commune, quel que soit le nombre de polygones — complexité constante plutôt que linéaire.
-3. **Zoom/pan par transformation CSS du calque, pas par redessin à la projection.** Les autres visualisations à carte du site (`bird-migrations`, `monument-layers`...) recalculent la projection et redessinent au zoom. Ici, le zoom `d3-zoom` pilote une transformation CSS (`translate`/`scale`) appliquée à un `<div>` englobant les trois canvas (aujourd'hui, demain, index visible mais pas le canvas d'index caché) : aucun redessin de polygone pendant le zoom/pan, seule une transformation du bitmap déjà rendu. Chaque canvas est rendu à une résolution supérieure à l'affichage (`RENDER_OVERSAMPLE = 2`, en plus du `devicePixelRatio`) pour rester net dans la plage de zoom retenue (`scaleExtent [1, 8]`, plus réduite que les 1 000 de `monument-layers` : un contenu bitmap zoomé se dégrade au-delà d'un certain facteur, contrairement à des points redessinés à chaque frame). **Piège :** `d3-zoom` est attaché à la scène (`dv-medical-deserts__stage`), qui ne bouge pas, et non au canvas d'interaction, qui vit dans le calque transformé. Attaché au canvas, il calculait la position du pointeur par rapport à une boîte déjà translatée et agrandie : une fois la carte zoomée, la molette ne gardait plus le point visé sous le curseur et le glisser ne déplaçait la carte que d'une fraction du mouvement de la souris (divisé par le facteur de zoom). Un filtre limite les gestes au canvas, pour que les boutons de zoom posés sur la scène ne lancent pas de déplacement.
+1. **Today/tomorrow toggle: two pre-rendered canvases with a CSS fade, not a per-commune color interpolation.** The draft considered `d3-interpolate` to animate each commune individually from one hue to the other, which would have required redrawing the 34,728 polygons at each frame of the transition (potentially dozens of times in a few hundred milliseconds). Instead: `canvasToday` and `canvasTomorrow` are each drawn only once on load (and on resize), stacked, and the toggle animates only the CSS opacity (`transition: opacity`) of the second over the first. The visual result (a progressive fade between the two states) is identical to what the functional spec asked for, at a much lower rendering cost (no polygon redraw during the transition itself).
+2. **Hover/tap: index canvas by "color picking", not a point-in-polygon test.** Testing whether the cursor belongs to one of the 34,728 polygons at each mouse move (even with a grid spatial index like `paris-trees`) remained more costly than necessary. Instead: a third invisible canvas (`indexCanvas`), never transformed by zoom/pan, where each commune is filled with a unique color derived from its index in the array (`(r<<16)|(g<<8)|b`). Hover reads a single pixel (`getImageData(x,y,1,1)`) to retrieve the commune instantly, whatever the number of polygons: constant rather than linear complexity.
+3. **Zoom/pan by CSS transform of the layer, not by redrawing at the projection.** The site's other map visualizations (`bird-migrations`, `monument-layers`...) recompute the projection and redraw on zoom. Here, the `d3-zoom` zoom drives a CSS transform (`translate`/`scale`) applied to a `<div>` wrapping the three canvases (today, tomorrow, visible index but not the hidden index canvas): no polygon redraw during zoom/pan, only a transform of the already-rendered bitmap. Each canvas is rendered at a resolution higher than the display (`RENDER_OVERSAMPLE = 2`, on top of `devicePixelRatio`) to stay sharp within the chosen zoom range (`scaleExtent [1, 8]`, narrower than the 1,000 of `monument-layers`: zoomed bitmap content degrades beyond a certain factor, unlike points redrawn at each frame). **Pitfall:** `d3-zoom` is attached to the stage (`dv-medical-deserts__stage`), which does not move, and not to the interaction canvas, which lives in the transformed layer. Attached to the canvas, it computed the pointer position relative to a box already translated and enlarged: once the map was zoomed, the wheel no longer kept the targeted point under the cursor and dragging moved the map only by a fraction of the mouse movement (divided by the zoom factor). A filter restricts gestures to the canvas, so that the zoom buttons placed on the stage do not trigger a pan.
 
 ## Palette
 
-Palette **séquentielle** (voir "Palette dataviz" dans `style-guide.md`) : l'APL est un ordre continu, pas des catégories. `d3.scaleLinear<string>().domain([0, 1.5, 6.5]).range(['#eef5fc', '#3987e5', '#0d366b']).clamp(true)` (`d3-scale` seul, pas `d3-scale-chromatic`, qui aurait été une dépendance nouvelle non discutée pour un résultat équivalent). Domaine calé sur la distribution réelle mesurée à l'implémentation (voir "Distribution réelle" dans `data-model.md`), pas sur le maximum brut. Même domaine et même échelle utilisés pour les deux états de la bascule.
+**Sequential** palette (see "Dataviz palette" in `style-guide.md`): the APL is a continuous order, not categories. `d3.scaleLinear<string>().domain([0, 1.5, 6.5]).range(['#eef5fc', '#3987e5', '#0d366b']).clamp(true)` (`d3-scale` alone, not `d3-scale-chromatic`, which would have been a new undiscussed dependency for an equivalent result). Domain set on the actual distribution measured during implementation (see "Actual distribution" in `data-model.md`), not on the raw maximum. Same domain and same scale used for both states of the toggle.
 
-**Échelle à trois paliers plutôt qu'un dégradé linéaire simple, déviation par visualisation par rapport au défaut du style-guide** (voir "Palette dataviz" dans `style-guide.md`, clause de déviation documentée) : un dégradé linéaire simple sur tout le domaine `[0, 6,5]` ne place le seuil éditorial de 1,5 (retenu pour mettre en évidence les communes dont l'accès aux soins est le plus dégradé) qu'à 23% du dégradé, insuffisant pour le faire ressortir. À la place, la teinte extrême claire `#eef5fc` (à peine plus claire que le palier 100, `#cde2fb`, du style-guide, pour rester visuellement distincte de `--dv-surface`, `#ffffff` — éviter toute confusion avec une commune manquante, voir "Piège rencontré et corrigé" dans `data-model.md`) est atteinte à 0, une teinte intermédiaire saturée (`#3987e5`, palier 400 du style-guide) au seuil de 1,5, et la teinte sombre `#0d366b` (palier 700, inchangée) au plafond du domaine (6,5). Le dégradé est ainsi concentré sous 1,5 et plus doux au-delà, tout en restant lisible sur le reste de la distribution (médiane à 2,84, voir "Distribution réelle" dans `data-model.md`).
+**Three-stop scale rather than a simple linear gradient, a per-visualization deviation from the style guide default** (see "Dataviz palette" in `style-guide.md`, documented deviation clause): a simple linear gradient over the whole `[0, 6.5]` domain places the editorial threshold of 1.5 (chosen to highlight the communes with the most degraded access to care) at only 23% of the gradient, not enough to make it stand out. Instead, the light extreme hue `#eef5fc` (barely lighter than step 100, `#cde2fb`, of the style guide, to remain visually distinct from `--dv-surface`, `#ffffff`, and avoid any confusion with a missing commune, see "Pitfall encountered and fixed" in `data-model.md`) is reached at 0, a saturated intermediate hue (`#3987e5`, step 400 of the style guide) at the 1.5 threshold, and the dark hue `#0d366b` (step 700, unchanged) at the top of the domain (6.5). The gradient is thus concentrated below 1.5 and gentler above, while remaining readable over the rest of the distribution (median at 2.84, see "Actual distribution" in `data-model.md`).
 
-## Nouvelles dépendances
+## New dependencies
 
-| Dépendance | Usage | Portée |
+| Dependency | Use | Scope |
 |---|---|---|
-| `d3-geo` | Projection, tracé des polygones communaux (`geoPath`) | Scopée à cette visualisation (île Astro) |
-| `d3-scale` | Échelle de couleur séquentielle | Idem |
-| `d3-zoom` | Pan/zoom (souris et tactile), piloté en CSS plutôt qu'en redessin (voir "Rendu" ci-dessus) | Idem |
-| `d3-selection` | Requis par `d3-zoom` pour s'attacher à la scène (voir "Rendu" ci-dessus, point 3) | Idem |
-| `topojson-client` | Conversion TopoJSON → `Feature[]` exploitables par `d3-geo` | Idem |
+| `d3-geo` | Projection, drawing of the commune polygons (`geoPath`) | Scoped to this visualization (Astro island) |
+| `d3-scale` | Sequential color scale | Same |
+| `d3-zoom` | Pan/zoom (mouse and touch), driven by CSS rather than by redrawing (see "Rendering" above) | Same |
+| `d3-selection` | Required by `d3-zoom` to attach to the stage (see "Rendering" above, point 3) | Same |
+| `topojson-client` | Conversion of TopoJSON → `Feature[]` usable by `d3-geo` | Same |
 
-**`d3-interpolate` n'est finalement pas utilisée** (voir "Rendu" ci-dessus, point 1) malgré sa présence dans le brouillon de cadrage.
+**`d3-interpolate` is ultimately not used** (see "Rendering" above, point 1) despite its presence in the framing draft.
 
-## Chargement progressif
+## Progressive loading
 
-`communes.json` (9,0 Mo, voir "Poids du fichier" dans `data-model.md`) est récupéré via `fetch` puis lu en flux (`response.body.getReader()`) plutôt qu'un simple `.json()` : la progression réelle (pourcentage d'octets reçus sur `content-length`) alimente l'indicateur de chargement (voir "États" dans `functional-specifications.md`), le corps complet n'étant parsé (`JSON.parse`) qu'une fois entièrement reçu.
+`communes.json` (9.0 MB, see "File size" in `data-model.md`) is fetched via `fetch` then read as a stream (`response.body.getReader()`) rather than with a simple `.json()`: the actual progress (percentage of bytes received over `content-length`) feeds the loading indicator (see "States" in `functional-specifications.md`), the full body being parsed (`JSON.parse`) only once entirely received.
 
-## Hydratation
+## Hydration
 
-`client:visible`, via un `IntersectionObserver` sur la zone de montage, même mécanisme que les autres visualisations du site.
+`client:visible`, via an `IntersectionObserver` on the mount area, same mechanism as the site's other visualizations.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cette visualisation.
+See "Accessibility (known limitation)" in this visualization's `functional-specifications.md`.
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pan/zoom tactile via `d3-zoom` ; fiche de détail déclenchée par `pointerdown`/`click` plutôt que `pointermove` sur tactile.
+See "Responsive" in this visualization's `functional-specifications.md`. Touch pan/zoom via `d3-zoom`; detail card triggered by `pointerdown`/`click` rather than `pointermove` on touch.
 
-## État dans l'URL
+## State in the URL
 
-Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+See "State in the URL" in the general `technical-specifications.md` for the common mechanism.
 
-| Paramètre | Valeurs | Défaut (absent de l'URL) |
+| Parameter | Values | Default (absent from the URL) |
 |---|---|---|
-| `view` | `tomorrow` (état "Sans les médecins de 65 ans et plus") | État "Aujourd'hui" |
-| `zoom` | `<k>,<lon>,<lat>` (format commun) | France métropolitaine entière |
+| `view` | `tomorrow` ("Sans les médecins de 65 ans et plus" state) | "Aujourd'hui" state |
+| `zoom` | `<k>,<lon>,<lat>` (common format) | Whole of metropolitan France |
 
-- **Cadrage malgré le zoom par transformation CSS** (voir "Rendu" ci-dessus, point 3) : le calque transformé a son origine en `0 0` (`transform-origin`) et ses canvas ont les dimensions de la zone de carte, sur lesquelles la projection est cadrée. La transformation `d3-zoom` relie donc les pixels de la projection à ceux de la zone de carte exactement comme sur les cartes redessinées, et le format commun s'applique sans adaptation.
-- Les boutons de zoom animent leur transformation (`transition`) : l'URL est écrite à l'événement `end`, en fin de transition.
-- `view=tomorrow` est appliqué avant le premier dimensionnement de la carte, avant tout calcul de style des canvas : la carte s'ouvre directement sur cet état au lieu de jouer au chargement le fondu CSS de la bascule.
+- **Framing despite the CSS-transform zoom** (see "Rendering" above, point 3): the transformed layer has its origin at `0 0` (`transform-origin`) and its canvases have the dimensions of the map area, on which the projection is framed. The `d3-zoom` transform therefore maps the projection's pixels to those of the map area exactly as on the redrawn maps, and the common format applies without adaptation.
+- The zoom buttons animate their transform (`transition`): the URL is written on the `end` event, at the end of the transition.
+- `view=tomorrow` is applied before the map's first sizing, before any style computation of the canvases: the map opens directly in that state instead of playing the toggle's CSS fade on load.

@@ -1,10 +1,10 @@
-# Modèle de données : Les routes de migration
+# Data model: The Migration Routes
 
-Complète `data-model.md` général : schéma du dataset propre à cette visualisation.
+Complements the general `data-model.md`: schema of the dataset specific to this visualization.
 
-## Dataset source
+## Source dataset
 
-Quatre jeux de données, un par espèce (voir "Sélection des études" ci-dessous) :
+Four datasets, one per species (see "Study selection" below):
 
 | `name` | `publisher` | `url` | `license` | `retrieved` |
 |---|---|---|---|---|
@@ -13,159 +13,159 @@ Quatre jeux de données, un par espèce (voir "Sélection des études" ci-dessou
 | Flying on their own wings — young and adult cuckoos respond similarly to long-distance displacement during migration | Movebank Data Repository | https://doi.org/10.5441/001/1.vk36vq82 | CC0 1.0 Universal | 2026-09-08 |
 | GPS tracking of honey buzzards in Finland | Movebank Data Repository | https://doi.org/10.5441/001/1.335 | Attribution-NonCommercial 4.0 International | 2026-09-08 |
 
-Seul le jeu de la bondrée porte une restriction (usage non commercial) : exception validée explicitement par l'utilisateur (voir "Historique" ci-dessous), compatible avec la licence déjà non commerciale du site (CC BY-NC-SA, voir "Pied de page" dans `style-guide.md`) mais plus restrictive que les trois autres jeux (CC0). Affichée telle quelle dans le bloc de crédit des sources de la page (voir "Page de visualisation" dans `style-guide.md`), sans traitement particulier.
+Only the honey buzzard dataset carries a restriction (non-commercial use): an exception explicitly approved by the user (see "History" below), compatible with the site's already non-commercial license (CC BY-NC-SA, see "Footer" in `style-guide.md`) but more restrictive than the other three datasets (CC0). Displayed as is in the page's source credit block (see "Visualization page" in `style-guide.md`), with no special treatment.
 
-## Sélection des études (réalisée à l'implémentation)
+## Study selection (done during implementation)
 
-Quatre espèces en v3 (une en v1, trois en v2, voir "Historique" ci-dessous) : cigogne blanche, busard cendré, coucou gris, bondrée apivore. Trouvées via la même méthode (recherche dans l'index du Movebank Data Repository, `datarepository.movebank.org/server/api/discover/search/objects`).
+Four species in v3 (one in v1, three in v2, see "History" below): white stork, Montagu's harrier, common cuckoo, European honey buzzard. Found using the same method (search in the Movebank Data Repository index, `datarepository.movebank.org/server/api/discover/search/objects`).
 
-### Cigogne blanche (`white-stork`)
+### White stork (`white-stork`)
 
-[LifeTrack White Stork Bavaria (2014-2023)](https://doi.org/10.5441/001/1.v1cs4nn0_2), Movebank Data Repository, licence CC0 1.0 Universal, menée par l'Institut Max Planck du comportement animal (Fiedler, Leppelsack, Leppelsack, Stahl, Wieding, Wikelski). Étude publique, accessible sans compte via l'API Movebank Data Repository (REST DSpace, `datarepository.movebank.org/server/api/...`), distincte de l'étude "vivante" homonyme sur movebank.org (celle-ci nécessite un compte). Balises GPS embarquées (eobs), fixes toutes les 5 minutes.
+[LifeTrack White Stork Bavaria (2014-2023)](https://doi.org/10.5441/001/1.v1cs4nn0_2), Movebank Data Repository, CC0 1.0 Universal license, led by the Max Planck Institute of Animal Behavior (Fiedler, Leppelsack, Leppelsack, Stahl, Wieding, Wikelski). Public study, accessible without an account via the Movebank Data Repository API (DSpace REST, `datarepository.movebank.org/server/api/...`), distinct from the homonymous "live" study on movebank.org (which requires an account). On-board GPS tags (eobs), fixes every 5 minutes.
 
-| `individualId` | Nom Movebank (anonymisé en sortie) | Portée sud atteinte |
+| `individualId` | Movebank name (anonymized in output) | Southern reach |
 |---|---|---|
-| `CC_001` | Sophie + / DER AT898 (eobs 2664) | Afrique australe (-29,1°) |
-| `CC_002` | Klippi / DER AU955 (e-obs 3018) | Sahel (10,7°N) |
-| `CC_003` | Sepp + / DER AF369 (eobs 3949) | Sahel (11,5°N) |
-| `CC_004` | Vitus + / DER AT886 (eobs2760) | Sahel (13,5°N) |
+| `CC_001` | Sophie + / DER AT898 (eobs 2664) | Southern Africa (-29.1°) |
+| `CC_002` | Klippi / DER AU955 (e-obs 3018) | Sahel (10.7°N) |
+| `CC_003` | Sepp + / DER AF369 (eobs 3949) | Sahel (11.5°N) |
+| `CC_004` | Vitus + / DER AT886 (eobs2760) | Sahel (13.5°N) |
 
-### Busard cendré (`montagus-harrier`)
+### Montagu's harrier (`montagus-harrier`)
 
-[Trierweiler et al. (2014)](https://doi.org/10.5441/001/1.tb272jc1), *Migratory connectivity and population specific migration routes in a long-distance migratory bird*, Proc. R. Soc. B. Licence CC0. Étude riche (34 individus, plusieurs populations européennes, plusieurs années 2005-2011), balises **Argos Doppler à un seul satellite** (`sensor-type = argos-doppler-shift`), pas GPS comme les trois autres espèces.
+[Trierweiler et al. (2014)](https://doi.org/10.5441/001/1.tb272jc1), *Migratory connectivity and population specific migration routes in a long-distance migratory bird*, Proc. R. Soc. B. CC0 license. Rich study (34 individuals, several European populations, several years 2005-2011), **single-satellite Argos Doppler** tags (`sensor-type = argos-doppler-shift`), not GPS like the other three species.
 
-**Anomalie découverte et corrigée après coup :** les premières trajectoires publiées pour cette espèce montraient des individus atteignant l'Afrique australe (jusqu'à -27,9°), rendant la carte spectaculaire mais fausse. Une positionnement Argos Doppler à un seul satellite est intrinsèquement ambigu : chaque mesure produit deux solutions possibles, symétriques de part et d'autre de la trace au sol du satellite (deux couples lat/lon distincts dans le fichier source, `location-lat/long` et `argos:lat2/lon2`). Le fichier source retient par défaut l'une des deux solutions, parfois la mauvaise : c'est ce qui plaçait certains points en plein océan Atlantique ou au Groenland, à des milliers de kilomètres d'un trajet plausible. Le filtrage par classe de qualité Argos (`argos:lc`, standard pour ce type de données) ne suffisait pas à lui seul : une mesure peut être d'excellente précision (classe 3, 2 ou 1) tout en ayant retenu la mauvaise des deux solutions. Corrigé en choisissant, pour chaque point, celle des deux solutions la plus proche du dernier point accepté (méthode standard de résolution de cette ambiguïté) ; voir "Prétraitement" ci-dessous.
+**Anomaly discovered and corrected after the fact:** the first trajectories published for this species showed individuals reaching southern Africa (down to -27.9°), making the map spectacular but wrong. Single-satellite Argos Doppler positioning is intrinsically ambiguous: each measurement produces two possible solutions, symmetrical on either side of the satellite's ground track (two distinct lat/lon pairs in the source file, `location-lat/long` and `argos:lat2/lon2`). The source file keeps one of the two solutions by default, sometimes the wrong one: this is what placed some points in the middle of the Atlantic Ocean or in Greenland, thousands of kilometers from a plausible route. Filtering by Argos quality class (`argos:lc`, standard for this type of data) was not enough on its own: a measurement can be of excellent precision (class 3, 2 or 1) while having kept the wrong one of the two solutions. Corrected by choosing, for each point, whichever of the two solutions is closest to the last accepted point (standard method for resolving this ambiguity); see "Preprocessing" below.
 
-**Conséquence :** la portée réelle de cette espèce dans ce jeu de données est bien plus modeste qu'annoncé au premier passage : aucun des individus retenus n'atteint le Sahara, la limite sud réelle se situe dans le Sahel/la savane soudanienne (10-16°N environ). Corrigé dans le texte éditorial et dans la table ci-dessous.
+**Consequence:** the actual reach of this species in this dataset is much more modest than announced in the first pass: none of the chosen individuals reaches the Sahara, the actual southern limit lies in the Sahel/Sudanian savanna (roughly 10-16°N). Corrected in the editorial text and in the table below.
 
-| `individualId` | Nom Movebank | Portée sud atteinte |
+| `individualId` | Movebank name | Southern reach |
 |---|---|---|
-| `CP_001` | Klaus Dieter | Sahel (14,1°N) — printemps uniquement |
-| `CP_002` | Jinthe | Sahel (15,7°N) — automne uniquement |
-| `CP_003` | Mathilde | Sahel (10,9°N) |
-| `CP_004` | Hanna Luise | Sahel (13,9°N) |
-| `CP_006` | Iben | Sahel (14,6°N) — automne uniquement |
-| `CP_008` | Tania | Sahel (11,5°N) — automne uniquement |
-| `CP_009` | Jo | Golfe de Guinée (10,0°N) — printemps uniquement |
-| `CP_010` | Michael | Sahel (13,6°N) — printemps uniquement |
+| `CP_001` | Klaus Dieter | Sahel (14.1°N), spring only |
+| `CP_002` | Jinthe | Sahel (15.7°N), autumn only |
+| `CP_003` | Mathilde | Sahel (10.9°N) |
+| `CP_004` | Hanna Luise | Sahel (13.9°N) |
+| `CP_006` | Iben | Sahel (14.6°N), autumn only |
+| `CP_008` | Tania | Sahel (11.5°N), autumn only |
+| `CP_009` | Jo | Gulf of Guinea (10.0°N), spring only |
+| `CP_010` | Michael | Sahel (13.6°N), spring only |
 
-(`CP_005` Dominik et `CP_007` Karen écartées : aucun de leurs legs ne passe le filtre de cohérence une fois l'ambiguïté Doppler résolue ; les identifiants ne sont pas réattribués, d'où le saut dans la numérotation.)
+(`CP_005` Dominik and `CP_007` Karen ruled out: none of their legs passes the consistency filter once the Doppler ambiguity is resolved; identifiers are not reassigned, hence the gap in the numbering.)
 
-### Coucou gris (`common-cuckoo`)
+### Common cuckoo (`common-cuckoo`)
 
-[Thorup et al. (2020)](https://doi.org/10.5441/001/1.vk36vq82), *Flying on their own wings: young and adult cuckoos respond similarly to long-distance displacement during migration*, Scientific Reports. Licence CC0. Étude de déplacement expérimental (des coucous ont été capturés en migration et déplacés de 1 800 km avant relâcher) ; les deux individus retenus ici sont ceux dont les positions valides (`visible = true`) forment un trajet migratoire réel exploitable, pas les segments de déplacement expérimental eux-mêmes (non repris). Balises satellite Argos/GPS à très faible fréquence (quelques points par semaine, contre plusieurs par heure pour les deux autres espèces) : trajectoires nettement plus anguleuses une fois affichées, assumé comme tel plutôt que lissé artificiellement. Automne uniquement pour les deux individus : pas de retour printanier dans les données disponibles (tags qui cessent d'émettre, ou n'ont simplement pas été suivis assez longtemps).
+[Thorup et al. (2020)](https://doi.org/10.5441/001/1.vk36vq82), *Flying on their own wings: young and adult cuckoos respond similarly to long-distance displacement during migration*, Scientific Reports. CC0 license. Experimental displacement study (cuckoos were captured during migration and displaced by 1,800 km before release); the two individuals chosen here are those whose valid positions (`visible = true`) form a real, usable migration route, not the experimental displacement segments themselves (not included). Very low-frequency Argos/GPS satellite tags (a few points per week, compared with several per hour for the other two species): noticeably more angular trajectories once displayed, accepted as such rather than artificially smoothed. Autumn only for both individuals: no spring return in the available data (tags that stop transmitting, or simply were not tracked long enough).
 
-| `individualId` | Nom Movebank | Portée sud/ouest atteinte |
+| `individualId` | Movebank name | Southern/western reach |
 |---|---|---|
-| `CC2_001` | PB143376 | Afrique de l'Ouest (-9,7°), route en boucle vers l'ouest à travers le Sahel |
-| `CC2_002` | PB143114 | Sahara/Sahel (18,0°N) |
+| `CC2_001` | PB143376 | West Africa (-9.7°), looping route west across the Sahel |
+| `CC2_002` | PB143114 | Sahara/Sahel (18.0°N) |
 
-### Bondrée apivore (`honey-buzzard`)
+### European honey buzzard (`honey-buzzard`)
 
-[Byholm, Mirski, Vansteelant (2025)](https://doi.org/10.5441/001/1.335), *GPS tracking of honey buzzards in Finland*, Movebank Data Repository, en lien avec une publication dans Animal Behaviour. **Licence Attribution-NonCommercial 4.0 International** (seule exception à CC0 parmi les jeux de cette visualisation, voir "Dataset source" et "Historique"). 28 individus, balises GPS (bonne fréquence, comparable à la cigogne).
+[Byholm, Mirski, Vansteelant (2025)](https://doi.org/10.5441/001/1.335), *GPS tracking of honey buzzards in Finland*, Movebank Data Repository, linked to a publication in Animal Behaviour. **Attribution-NonCommercial 4.0 International license** (the only exception to CC0 among this visualization's datasets, see "Source dataset" and "History"). 28 individuals, GPS tags (good frequency, comparable to the stork).
 
-Particularité biologique qui a demandé d'adapter le prétraitement : les bondrées de cette étude passent souvent 8 à 9 mois quasi immobiles sur leur site d'hivernage (parfois des positions quotidiennes identiques à la décimale près, un vrai site fidèle plutôt qu'une panne de balise, confirmé par la reprise de mouvement ensuite) et certaines ne repartent en migration de retour qu'au bout d'un an complet ("année sabbatique", comportement documenté chez cette espèce). La fenêtre fixe de 120 jours ne suffit pas à capturer ce retour ; voir "Prétraitement" ci-dessous pour l'adaptation apportée.
+Biological peculiarity that required adapting the preprocessing: the honey buzzards in this study often spend 8 to 9 months nearly motionless at their wintering site (sometimes identical daily positions down to the decimal, a genuinely faithful site rather than a tag failure, confirmed by movement resuming afterwards) and some only set off on their return migration after a full year (a "sabbatical year", a documented behavior in this species). The fixed 120-day window is not enough to capture this return; see "Preprocessing" below for the adaptation made.
 
-| `individualId` | Nom Movebank | Portée sud atteinte |
+| `individualId` | Movebank name | Southern reach |
 |---|---|---|
-| `PA_001` | Jaana | Afrique australe (-17,8°) — automne et printemps |
-| `PA_002` | Lars | Afrique de l'Ouest (-10,7°) — automne et printemps |
-| `PA_003` | Senta | Afrique centrale (-5,6°) — automne uniquement |
-| `PA_004` | Matti | Golfe de Guinée (4,4°N) — automne uniquement |
-| `PA_005` | Venus | Golfe de Guinée (7,1°N) — automne uniquement |
-| `PA_006` | Roosa | Golfe de Guinée (0,2°N) — automne uniquement |
-| `PA_007` | Anni | Afrique de l'Ouest (-10,2°) — automne uniquement |
-| `PA_008` | Mohammed | Afrique centrale (-6,9°) — automne uniquement |
-| `PA_010` | Ulla | Golfe de Guinée (2,8°N) — automne uniquement |
+| `PA_001` | Jaana | Southern Africa (-17.8°), autumn and spring |
+| `PA_002` | Lars | West Africa (-10.7°), autumn and spring |
+| `PA_003` | Senta | Central Africa (-5.6°), autumn only |
+| `PA_004` | Matti | Gulf of Guinea (4.4°N), autumn only |
+| `PA_005` | Venus | Gulf of Guinea (7.1°N), autumn only |
+| `PA_006` | Roosa | Gulf of Guinea (0.2°N), autumn only |
+| `PA_007` | Anni | West Africa (-10.2°), autumn only |
+| `PA_008` | Mohammed | Central Africa (-6.9°), autumn only |
+| `PA_010` | Ulla | Gulf of Guinea (2.8°N), autumn only |
 
-(`PA_009` Edit écartée : ni son leg d'automne ni son leg de printemps ne passaient le filtre de cohérence.)
+(`PA_009` Edit ruled out: neither its autumn leg nor its spring leg passed the consistency filter.)
 
-Préfixes d'anonymisation par espèce : `CC` (cigogne, *Ciconia Ciconia*), `CP` (busard, *Circus Pygargus*), `CC2` (coucou, distinct de `CC` malgré l'initiale identique), `PA` (bondrée, *Pernis Apivorus*).
+Anonymization prefixes per species: `CC` (stork, *Ciconia Ciconia*), `CP` (harrier, *Circus Pygargus*), `CC2` (cuckoo, distinct from `CC` despite the identical initial), `PA` (honey buzzard, *Pernis Apivorus*).
 
-## Historique
+## History
 
-**v1 (une seule espèce) :** seule la cigogne blanche avait un jeu de données exploitable trouvé dans le temps disponible ; les autres candidates de l'époque (hirondelle, milan noir, balbuzard, pigeon ramier) n'en avaient pas (ex. le jeu "Black Kites at the Strait of Gibraltar", pourtant CC0, ne couvre que quelques jours autour du détroit, pas un trajet migratoire complet).
+**v1 (a single species):** only the white stork had a usable dataset found in the time available; the other candidates at the time (swallow, black kite, osprey, wood pigeon) had none (e.g. the "Black Kites at the Strait of Gibraltar" dataset, although CC0, only covers a few days around the strait, not a complete migration route).
 
-**v2 :** ajout du busard cendré et du coucou gris à la demande explicite de l'utilisateur, qui a listé cinq espèces candidates (balbuzard, tourterelle, busard, bondrée, coucou). Recherche refaite pour ces cinq :
-- **Busard** → busard cendré (*Circus pygargus*), le plus documenté sur Movebank pour une migration Europe-Afrique complète : jeu trouvé, CC0, ajouté.
-- **Coucou** → coucou gris (*Cuculus canorus*) : jeu trouvé, CC0, ajouté (voir limite de résolution ci-dessus).
-- **Balbuzard** (*Pandion haliaetus*) : aucun jeu Europe-Afrique en accès libre trouvé dans le Movebank Data Repository ; les jeux CC0 disponibles pour cette espèce couvrent des populations nord-américaines (mauvaise géographie pour cette visualisation). Toujours absent.
-- **Tourterelle** (*Streptopelia turtur*) : aucun résultat dans l'index du Movebank Data Repository ; les études de suivi existantes (ex. programme "TURTUR_VLAANDEREN") sont des études "vivantes" sur movebank.org nécessitant un compte, pas des jeux publiés en repository. Toujours absente.
-- **Bondrée** (*Pernis apivorus*) : un jeu trouvé, mais sous licence Attribution-NonCommercial 4.0 ; laissée de côté à cette étape, en attente d'une décision explicite de l'utilisateur sur l'usage d'une licence NC.
+**v2:** Montagu's harrier and the common cuckoo added at the explicit request of the user, who listed five candidate species (osprey, turtle dove, harrier, honey buzzard, cuckoo). Search redone for these five:
+- **Harrier** → Montagu's harrier (*Circus pygargus*), the best documented on Movebank for a complete Europe-Africa migration: dataset found, CC0, added.
+- **Cuckoo** → common cuckoo (*Cuculus canorus*): dataset found, CC0, added (see resolution limitation above).
+- **Osprey** (*Pandion haliaetus*): no openly accessible Europe-Africa dataset found in the Movebank Data Repository; the CC0 datasets available for this species cover North American populations (wrong geography for this visualization). Still absent.
+- **Turtle dove** (*Streptopelia turtur*): no results in the Movebank Data Repository index; existing tracking studies (e.g. the "TURTUR_VLAANDEREN" program) are "live" studies on movebank.org requiring an account, not datasets published in the repository. Still absent.
+- **Honey buzzard** (*Pernis apivorus*): a dataset found, but under an Attribution-NonCommercial 4.0 license; set aside at this stage, pending an explicit decision from the user on using an NC license.
 
-**v3 :** l'utilisateur a validé l'usage de la licence CC BY-NC pour la bondrée (voir "Dataset source" ci-dessus) ; ajoutée.
+**v3:** the user approved using the CC BY-NC license for the honey buzzard (see "Source dataset" above); added.
 
-**v4 :** en étendant le cadrage de la carte vers le nord (voir "Limite connue : cadrage nord" dans `technical-specifications.md`) pour de bon montrer les aires de reproduction des espèces ajoutées en v2, plusieurs trajectoires de busard cendré sont apparues comme des traits rectilignes aberrants traversant la carte de part en part. Diagnostic : des positions Argos Doppler mal résolues (voir "Busard cendré" ci-dessus), présentes dès la v2 mais peu visibles tant que le cadrage restreint les coupait hors champ. Corrigé à la source (voir "Prétraitement" ci-dessous) ; les portées sud du busard cendré documentées en v2 (jusqu'à -27,9°) étaient donc déjà fausses et sont corrigées ici.
+**v4:** while extending the map framing northward (see "Known limitation: northern framing" in `technical-specifications.md`) to properly show the breeding grounds of the species added in v2, several Montagu's harrier trajectories appeared as aberrant straight lines crossing the entire map. Diagnosis: poorly resolved Argos Doppler positions (see "Montagu's harrier" above), present since v2 but barely visible as long as the restricted framing cut them off out of view. Corrected at the source (see "Preprocessing" below); the Montagu's harrier southern reaches documented in v2 (down to -27.9°) were therefore already wrong and are corrected here.
 
-Balbuzard et tourterelle restent absents de `tracks.json` faute de source adaptée ; les ajouter plus tard n'implique aucun changement de code (voir "Format de sortie").
+Osprey and turtle dove remain absent from `tracks.json` for lack of a suitable source; adding them later involves no code change (see "Output format").
 
-**v5 (cette révision) :** fond de carte enrichi de cours d'eau et d'un relief ombré, à la demande explicite de l'utilisateur. Aucun changement côté `tracks.json` ni côté espèces ; voir "Cours d'eau (fond de carte)" et "Relief (fond de carte)" ci-dessous pour les sources et le prétraitement, et "Cours d'eau" / "Relief : alignement au redimensionnement" dans `technical-specifications.md` pour le rendu.
+**v5 (this revision):** basemap enriched with rivers and shaded relief, at the explicit request of the user. No change to `tracks.json` or to the species; see "Rivers (basemap)" and "Relief (basemap)" below for the sources and preprocessing, and "Rivers" / "Relief: alignment on resize" in `technical-specifications.md` for rendering.
 
-## Cours d'eau (fond de carte)
+## Rivers (basemap)
 
-Ajouté en v5 (voir "Historique" ci-dessus), à la demande explicite de l'utilisateur. Source : Natural Earth, jeu "1:50m Rivers + Lake Centerlines" (domaine public, aucune attribution requise), même filiation que la silhouette terrestre de `basemap.json` (voir "Techno carte" dans `technical-specifications.md`) : cohérent avec l'échelle très dézoomée de cette carte, à la différence de l'approche OpenStreetMap/Overpass utilisée pour `paris-trees` et `monument-layers` (précision locale, pensée pour une carte de ville ou de pays, pas adaptée ici sans curation manuelle lourde d'une liste de « grands fleuves » par pays).
+Added in v5 (see "History" above), at the explicit request of the user. Source: Natural Earth, "1:50m Rivers + Lake Centerlines" dataset (public domain, no attribution required), same lineage as the land silhouette in `basemap.json` (see "Map technology" in `technical-specifications.md`): consistent with the very zoomed-out scale of this map, unlike the OpenStreetMap/Overpass approach used for `paris-trees` and `monument-layers` (local precision, designed for a city or country map, not suitable here without heavy manual curation of a list of "major rivers" per country).
 
-Récupéré via le mirroir GeoJSON communautaire de Natural Earth ([nvkelso/natural-earth-vector](https://github.com/nvkelso/natural-earth-vector), maintenu par un ancien responsable du projet Natural Earth ; mêmes données du domaine public que le shapefile officiel, évite une étape de conversion shapefile → GeoJSON pour un prétraitement ponctuel), fichier `ne_50m_rivers_lake_centerlines.geojson`, 462 entités à l'échelle mondiale, `retrieved` 2026-09-11.
+Retrieved via the community GeoJSON mirror of Natural Earth ([nvkelso/natural-earth-vector](https://github.com/nvkelso/natural-earth-vector), maintained by a former lead of the Natural Earth project; same public-domain data as the official shapefile, avoids a shapefile → GeoJSON conversion step for a one-off preprocessing), file `ne_50m_rivers_lake_centerlines.geojson`, 462 features worldwide, `retrieved` 2026-09-11.
 
-**Couverture mondiale, pas seulement Europe/Afrique :** un premier essai limitait les tronçons retenus à ceux tombant dans le rectangle de cadrage de la carte (lng -25/45, lat -36/68, voir "Projection" dans `technical-specifications.md`) — cohérent avec le fait que le zoom/pan reste borné à cette zone (voir "Interactions" dans `functional-specifications.md`), mais la silhouette terrestre elle-même n'est pas découpée à cette zone (voir "Fond de carte" dans `technical-specifications.md`) : le reste du monde (Amériques, Asie, Océanie) déborde visiblement sur les côtés dès le chargement, sans jamais nécessiter de pan pour l'atteindre selon la forme de la fenêtre (rapport largeur/hauteur variable, voir "Hauteur par défaut de la zone de montage" dans `technical-specifications.md` général). Élargi à la demande explicite de l'utilisateur pour couvrir la carte entière plutôt que ce seul rectangle.
+**Worldwide coverage, not just Europe/Africa:** a first attempt limited the segments kept to those falling within the map's framing rectangle (lng -25/45, lat -36/68, see "Projection" in `technical-specifications.md`), consistent with the fact that zoom/pan remains bounded to this area (see "Interactions" in `functional-specifications.md`), but the land silhouette itself is not clipped to this area (see "Basemap" in `technical-specifications.md`): the rest of the world (Americas, Asia, Oceania) visibly overflows on the sides as soon as the page loads, never requiring a pan to reach it depending on the shape of the window (variable width/height ratio, see "Default mount area height" in the general `technical-specifications.md`). Widened at the explicit request of the user to cover the entire map rather than just this rectangle.
 
-**Prétraitement (script ponctuel, non committé) :** aucun filtre géographique ni seuil sur l'attribut `scalerank` du jeu source (un seuil global aurait exclu à tort des cours d'eau très reconnaissables à l'échelle Europe/Afrique, comme le Rhône ou le Pô, qui portent le rang le plus bas de ce jeu ; la couverture mondiale rend de toute façon la question sans objet). Chaque entité source (`MultiLineString`, un cours d'eau étant souvent coupé en plusieurs tronçons) est aplatie telle quelle. Coordonnées arrondies à six décimales (même convention que `rivers.json`/`seine.json` de `monument-layers`/`paris-trees`), tronçons rassemblés en une unique géométrie `MultiLineString` sans propriétés, écrite dans `public/data/bird-migrations/rivers.json`.
+**Preprocessing (one-off script, not committed):** no geographic filter or threshold on the source dataset's `scalerank` attribute (a global threshold would have wrongly excluded very recognizable rivers at the Europe/Africa scale, such as the Rhône or the Po, which carry the lowest rank in this dataset; worldwide coverage makes the question moot anyway). Each source feature (`MultiLineString`, since a river is often split into several segments) is flattened as is. Coordinates rounded to six decimals (same convention as `rivers.json`/`seine.json` in `monument-layers`/`paris-trees`), segments gathered into a single `MultiLineString` geometry with no properties, written to `public/data/bird-migrations/rivers.json`.
 
-**Format de sortie**, même forme que `rivers.json` de `monument-layers`/`seine.json` de `paris-trees` — géométrie brute, pas de `Feature`, pas de propriétés, purement décoratif (aucune interaction, aucune donnée dérivée) :
+**Output format**, same shape as `rivers.json` in `monument-layers`/`seine.json` in `paris-trees`: raw geometry, no `Feature`, no properties, purely decorative (no interaction, no derived data):
 
 ```json
 { "type": "MultiLineString", "coordinates": [[[2.3522, 48.8566], [4.8, 47.3]], ...] }
 ```
 
-895 tronçons (couverture mondiale), 25 641 points, 566 Ko.
+895 segments (worldwide coverage), 25,641 points, 566 KB.
 
-## Relief (fond de carte)
+## Relief (basemap)
 
-Ajouté en v5 (voir "Historique" ci-dessus), à la demande explicite de l'utilisateur, sous réserve explicite de faisabilité : premier asset raster du site, rupture avec le style 100 % silhouette vectorielle des trois autres cartes (`biodiversity`, `flower-phenology`, et `bird-migrations` lui-même jusqu'ici), validée après un prototype comparant une teinte « douce » et une teinte « marquée » (teinte douce retenue, voir "Relief" dans `technical-specifications.md`).
+Added in v5 (see "History" above), at the explicit request of the user, explicitly subject to feasibility: the site's first raster asset, a break from the 100% vector silhouette style of the other three maps (`biodiversity`, `flower-phenology`, and `bird-migrations` itself until now), approved after a prototype comparing a "soft" tint and a "strong" tint (soft tint chosen, see "Relief" in `technical-specifications.md`).
 
-Source : Natural Earth, jeu raster "Gray Earth with Shaded Relief, Water" à l'échelle 1:50m (`GRAY_50M_SR_W`, domaine public, aucune attribution requise), même filiation que la silhouette terrestre. Récupéré une fois depuis la distribution officielle Natural Earth (`naturalearth.s3.amazonaws.com/50m_raster/GRAY_50M_SR_W.zip`, 11 Mo compressé, `retrieved` 2026-09-11) : TIFF source 10 800 × 5 400 px, grille équirectangulaire (1/30° par pixel).
+Source: Natural Earth, "Gray Earth with Shaded Relief, Water" raster dataset at 1:50m scale (`GRAY_50M_SR_W`, public domain, no attribution required), same lineage as the land silhouette. Retrieved once from the official Natural Earth distribution (`naturalearth.s3.amazonaws.com/50m_raster/GRAY_50M_SR_W.zip`, 11 MB compressed, `retrieved` 2026-09-11): source TIFF 10,800 × 5,400 px, equirectangular grid (1/30° per pixel).
 
-**Couverture mondiale, pas seulement Europe/Afrique :** même raison que pour les cours d'eau ci-dessus (retour utilisateur après un premier essai limité au rectangle de cadrage) — un essai limité à ce rectangle laissait les portions de silhouette hors cadre (Amériques, Asie, Océanie, visibles sur les côtés dès le chargement selon la forme de la fenêtre) en aplat beige uni sans relief ni cours d'eau, incohérent avec le reste de la silhouette. Voir "Relief : alignement au redimensionnement" dans `technical-specifications.md` pour la technique d'alignement d'une image dont l'étendue dépasse largement le cadrage Europe/Afrique.
+**Worldwide coverage, not just Europe/Africa:** same reason as for the rivers above (user feedback after a first attempt limited to the framing rectangle): an attempt limited to this rectangle left the out-of-frame portions of the silhouette (Americas, Asia, Oceania, visible on the sides as soon as the page loads depending on the shape of the window) as a flat plain beige with no relief or rivers, inconsistent with the rest of the silhouette. See "Relief: alignment on resize" in `technical-specifications.md` for the technique used to align an image whose extent goes far beyond the Europe/Africa framing.
 
-**Prétraitement (script ponctuel Node, non committé) :**
+**Preprocessing (one-off Node script, not committed):**
 
-1. Calculer l'emprise en pixels de la silhouette terrestre complète (`objects.land` de `basemap.json`, mêmes données que le fond de carte, bornes calculées via `path.bounds()` sur la géométrie complète plutôt que sur le seul rectangle Europe/Afrique) sous la projection réelle de la carte (`d3.geoNaturalEarth1`, module `d3-geo` déjà utilisé côté client) calibrée sur le rectangle de cadrage Europe/Afrique (`viewBounds`, même calibrage que `render.ts` pour l'alignement au rendu, voir "Résolution de référence" ci-dessous) : cette emprise dépasse largement ce rectangle dans les deux dimensions (les Amériques et l'Asie/Océanie débordent loin à gauche et à droite), d'où une image nettement plus grande que le seul cadrage Europe/Afrique.
-2. Reprojeter le raster source (équirectangulaire) sur cette emprise complète : pour chaque pixel de sortie, `projection.invert()` donne la coordonnée géographique correspondante, dont le pixel le plus proche est échantillonné dans le TIFF source.
-3. Teinter chaque pixel en mélangeant la couleur de fond de la silhouette (`#e4e2da`) avec un facteur dérivé du niveau de gris source (relief ombré) : `0,78 + 0,22 × (niveau de gris / 255)`, teinte « douce » retenue après comparaison avec une teinte « marquée » (`0,55 + 0,45 × ...`) — un ombrage à peine perceptible qui ne concurrence jamais les couleurs de trajectoires ni la lisibilité de la carte.
-4. Exporter en WebP (contenu photographique à dégradés doux, se compresse nettement mieux qu'en PNG pour ce type de contenu), écrit dans `public/data/bird-migrations/relief.webp`.
+1. Compute the pixel extent of the complete land silhouette (`objects.land` from `basemap.json`, same data as the basemap, bounds computed via `path.bounds()` on the complete geometry rather than on the Europe/Africa rectangle alone) under the map's actual projection (`d3.geoNaturalEarth1`, `d3-geo` module already used client-side) calibrated on the Europe/Africa framing rectangle (`viewBounds`, same calibration as `render.ts` for alignment at render time, see "Reference resolution" below): this extent goes far beyond this rectangle in both dimensions (the Americas and Asia/Oceania overflow far to the left and right), hence an image much larger than the Europe/Africa framing alone.
+2. Reproject the source raster (equirectangular) onto this complete extent: for each output pixel, `projection.invert()` gives the corresponding geographic coordinate, whose nearest pixel is sampled in the source TIFF.
+3. Tint each pixel by blending the silhouette background color (`#e4e2da`) with a factor derived from the source gray level (shaded relief): `0.78 + 0.22 × (gray level / 255)`, "soft" tint chosen after comparison with a "strong" tint (`0.55 + 0.45 × ...`): a barely perceptible shading that never competes with the trajectory colors or the map's readability.
+4. Export as WebP (photographic content with soft gradients, compresses much better than PNG for this type of content), written to `public/data/bird-migrations/relief.webp`.
 
-Pas de découpe à la silhouette terrestre dans l'asset lui-même (l'océan reste visible en gris neutre dans le fichier source) : le découpage se fait au rendu, via le même tracé vectoriel (`ctx.clip()`) que le remplissage actuel de la silhouette (voir "Relief" dans `technical-specifications.md`) — le littoral reste donc net (tracé vectoriel), seule la texture intérieure est une image raster.
+No clipping to the land silhouette in the asset itself (the ocean remains visible in neutral gray in the source file): clipping is done at render time, via the same vector path (`ctx.clip()`) as the current silhouette fill (see "Relief" in `technical-specifications.md`), so the coastline remains sharp (vector path), only the interior texture is a raster image.
 
-**Résolution de référence :** la densité de pixels (px par degré) reprise pour l'ensemble de l'image est celle calibrée sur le rectangle Europe/Afrique à 2600 × 4348 px (`RELIEF_REF_WIDTH`/`RELIEF_REF_HEIGHT` dans `render.ts`), choisie après essais à plusieurs résolutions (1000 à 3200 px de large sur ce seul rectangle) : le raster source (1/30° par pixel) plafonne le détail réellement disponible sur cette emprise autour de 2000-3000 px, au-delà l'image n'apporterait qu'une interpolation sans détail réel supplémentaire. Appliquée à l'emprise complète de la silhouette (12 922 × 6 716 px, avec une origine `RELIEF_ORIGIN_X`/`RELIEF_ORIGIN_Y` = (-5523, -496) décalée par rapport au rectangle Europe/Afrique, voir "Relief : alignement au redimensionnement" dans `technical-specifications.md`). Le poids reste raisonnable malgré la surface nettement plus grande (WebP compressant très efficacement ce type de contenu à dégradés doux) : 547 Ko pour la couverture mondiale, contre 83 Ko pour le seul rectangle Europe/Afrique du premier essai. Contrepartie assumée : au zoom maximal de la carte (×6, voir "Interactions" dans `functional-specifications.md`), la texture de relief peut légèrement s'adoucir au-delà de sa résolution native, à la différence du littoral (resté vectoriel) qui reste net à tout niveau de zoom.
+**Reference resolution:** the pixel density (px per degree) used for the entire image is the one calibrated on the Europe/Africa rectangle at 2600 × 4348 px (`RELIEF_REF_WIDTH`/`RELIEF_REF_HEIGHT` in `render.ts`), chosen after trials at several resolutions (1000 to 3200 px wide on this rectangle alone): the source raster (1/30° per pixel) caps the detail actually available over this extent at around 2000-3000 px; beyond that, the image would only add interpolation without any real additional detail. Applied to the complete extent of the silhouette (12,922 × 6,716 px, with an origin `RELIEF_ORIGIN_X`/`RELIEF_ORIGIN_Y` = (-5523, -496) offset from the Europe/Africa rectangle, see "Relief: alignment on resize" in `technical-specifications.md`). The file size remains reasonable despite the much larger surface (WebP compresses this type of soft-gradient content very efficiently): 547 KB for worldwide coverage, compared with 83 KB for the Europe/Africa rectangle alone in the first attempt. Accepted trade-off: at the map's maximum zoom (×6, see "Interactions" in `functional-specifications.md`), the relief texture may soften slightly beyond its native resolution, unlike the coastline (still vector), which stays sharp at every zoom level.
 
-## Schéma des données brutes (source Movebank)
+## Raw data schema (Movebank source)
 
-Champs du fichier GPS de l'étude utilisés lors du prétraitement :
+Fields of the study's GPS file used during preprocessing:
 
-| Champ Movebank | Usage |
+| Movebank field | Usage |
 |---|---|
-| `individual-local-identifier` | Identifiant individu (anonymisé en sortie, voir "Format de sortie") |
-| `location-lat`, `location-long` | Position GPS |
-| `timestamp` | Horodatage de la position |
+| `individual-local-identifier` | Individual identifier (anonymized in output, see "Output format") |
+| `location-lat`, `location-long` | GPS position |
+| `timestamp` | Timestamp of the position |
 
-## Prétraitement (réalisé à l'implémentation, hors build)
+## Preprocessing (done during implementation, outside the build)
 
-Un script ponctuel par espèce (non committé, à rejouer manuellement si les données ou la sélection d'individus changent), partageant la même logique de base :
+One one-off script per species (not committed, to be rerun manually if the data or the selection of individuals changes), sharing the same base logic:
 
-1. Télécharger l'export GPS/Argos complet de l'étude (un seul fichier CSV pour tous les individus par étude ; ≈ 196 Mo pour la cigogne, ≈ 13 Mo pour le busard, ≈ 12 Mo pour la bondrée, ≈ 22 Ko pour le coucou).
-2. Isoler les points des individus retenus, en ne gardant que les positions marquées valides (`visible = true` dans le CSV Movebank ; les jeux du busard, du coucou et de la bondrée en contiennent, contrairement à celui de la cigogne).
-3. **Busard uniquement — résoudre l'ambiguïté Argos Doppler :** garder seulement les positions de classe de qualité 3, 2 ou 1 (`argos:lc`, les classes sans estimation d'erreur ou explicitement invalides sont écartées), puis, pour chaque position restante, choisir laquelle des deux solutions Doppler (`location-lat/long` ou `argos:lat2/lon2`) est la plus proche du dernier point accepté de l'individu (voir "Busard cendré" ci-dessus). Un filtre de vitesse implicite (rejeter un point si le déplacement impliqué dépasse 150 km/h *et* 1 500 km depuis le dernier point accepté) reste appliqué ensuite en filet de sécurité, mais ne déclenche plus sur ce jeu une fois l'ambiguïté résolue à la source.
-4. Convertir chaque date en jour de l'année (1-365), en "dépliant" la séquence (+365 à chaque retour en arrière) pour obtenir un axe temporel continu par individu, indépendant de l'année calendaire réelle : nécessaire pour rejouer plusieurs oiseaux, suivis des années différentes, sur un même cycle simulé (voir "Cycle calendaire unique" dans `functional-specifications.md`).
-5. Repérer le point de latitude minimale (le séjour hivernal) dans une fenêtre initiale (les ~250 à 430 premiers jours de l'individu selon l'espèce, pour ne pas confondre avec un hivernage d'une année suivante) ; découper en deux legs : `autumn` = 120 jours avant ce point, `spring` = à partir de ce point (voir étape suivante pour sa durée, variable selon l'espèce).
-6. **Durée du leg de printemps, adaptée par espèce :** fenêtre fixe de 120 jours pour la cigogne et le busard (retour rapide, quelques semaines) ; pour la bondrée, fenêtre étendue de façon adaptative jusqu'à ce que l'individu revienne à moins de 15° de sa latitude de départ, plafonnée à 700 jours (retour parfois très tardif, voire différé d'une année complète, voir "Bondrée apivore" ci-dessus). Sans cette adaptation, aucun retour de bondrée n'était capturé par la fenêtre fixe de 120 jours utilisée pour les deux autres espèces.
-7. **Filtre de cohérence** (ajouté pour le busard, étendu à la bondrée, dont plusieurs individus produisaient un découpage incohérent avec l'heuristique brute) : rejeter un leg `autumn` dont le mois d'arrivée n'est pas entre septembre et février ou dont la variation nette de latitude n'est pas d'au moins 15° vers le sud ; rejeter un leg `spring` qui n'atteint pas, dans sa fenêtre, une latitude à moins de 15° de la latitude de départ de l'individu. Un individu qui ne passe le filtre que sur une direction n'apparaît que pour celle-ci (voir tables par espèce ci-dessus).
-8. Simplifier chaque leg (Douglas-Peucker, ligne brisée en lat/lng, sans dépendance ajoutée : implémenté directement dans le script de prétraitement) pour réduire le volume de points tout en conservant la forme générale du trajet. Non appliqué au coucou (déjà très peu de points par individu).
-9. Anonymiser l'identifiant individu (`<préfixe-espèce>_<numéro séquentiel>`, voir préfixes ci-dessus), sans lien vers le nom Movebank d'origine dans les données publiées. Un individu dont aucun leg ne passe le filtre de cohérence (ex. `CP_005`, `CP_007`) n'apparaît pas dans la sortie, mais son numéro n'est pas réattribué à un autre individu.
-10. Fusionner les quatre espèces dans un unique `public/data/bird-migrations/tracks.json` (200 Ko, 32 legs, 1935 points au total) et `public/data/bird-migrations/basemap.json` (silhouette terrestre mondiale, dérivée de Natural Earth via le paquet `world-atlas`, objet `land` uniquement, sans les frontières par pays : 90 Ko, inchangé).
+1. Download the study's complete GPS/Argos export (a single CSV file for all individuals per study; ≈ 196 MB for the stork, ≈ 13 MB for the harrier, ≈ 12 MB for the honey buzzard, ≈ 22 KB for the cuckoo).
+2. Isolate the points of the chosen individuals, keeping only positions marked as valid (`visible = true` in the Movebank CSV; the harrier, cuckoo and honey buzzard datasets contain this flag, unlike the stork dataset).
+3. **Harrier only: resolve the Argos Doppler ambiguity:** keep only positions of quality class 3, 2 or 1 (`argos:lc`; classes with no error estimate or explicitly invalid ones are discarded), then, for each remaining position, choose which of the two Doppler solutions (`location-lat/long` or `argos:lat2/lon2`) is closest to the individual's last accepted point (see "Montagu's harrier" above). An implicit speed filter (reject a point if the implied movement exceeds 150 km/h *and* 1,500 km since the last accepted point) is still applied afterwards as a safety net, but no longer triggers on this dataset once the ambiguity is resolved at the source.
+4. Convert each date to a day of the year (1-365), "unwrapping" the sequence (+365 at each backward step) to obtain a continuous time axis per individual, independent of the actual calendar year: necessary to replay several birds, tracked in different years, on a single simulated cycle (see "Single calendar cycle" in `functional-specifications.md`).
+5. Find the point of minimum latitude (the winter stay) within an initial window (the individual's first ~250 to 430 days depending on the species, so as not to confuse it with a wintering in a later year); split into two legs: `autumn` = 120 days before this point, `spring` = from this point onward (see next step for its duration, which varies by species).
+6. **Spring leg duration, adapted per species:** fixed 120-day window for the stork and the harrier (quick return, a few weeks); for the honey buzzard, window extended adaptively until the individual comes back to within 15° of its starting latitude, capped at 700 days (return sometimes very late, or even deferred by a full year, see "European honey buzzard" above). Without this adaptation, no honey buzzard return was captured by the fixed 120-day window used for the other two species.
+7. **Consistency filter** (added for the harrier, extended to the honey buzzard, several individuals of which produced a split inconsistent with the raw heuristic): reject an `autumn` leg whose arrival month is not between September and February or whose net latitude change is not at least 15° southward; reject a `spring` leg that does not reach, within its window, a latitude within 15° of the individual's starting latitude. An individual that passes the filter in only one direction appears only for that direction (see per-species tables above).
+8. Simplify each leg (Douglas-Peucker, polyline in lat/lng, with no added dependency: implemented directly in the preprocessing script) to reduce the number of points while preserving the general shape of the route. Not applied to the cuckoo (already very few points per individual).
+9. Anonymize the individual identifier (`<species-prefix>_<sequential number>`, see prefixes above), with no link to the original Movebank name in the published data. An individual none of whose legs passes the consistency filter (e.g. `CP_005`, `CP_007`) does not appear in the output, but its number is not reassigned to another individual.
+10. Merge the four species into a single `public/data/bird-migrations/tracks.json` (200 KB, 32 legs, 1935 points in total) and `public/data/bird-migrations/basemap.json` (worldwide land silhouette, derived from Natural Earth via the `world-atlas` package, `land` object only, without country borders: 90 KB, unchanged).
 
-**Limite connue du découpage automne/printemps :** l'heuristique (point de latitude minimale, filtre de cohérence à l'étape 6) suppose un trajet net dans une direction, dans un délai raisonnable même adapté par espèce. Des individus dont le comportement s'écarte de ça (hivernage long et stationnaire, mouvements erratiques en Afrique, retour au-delà de la fenêtre même étendue) sont rejetés par le filtre plutôt que mal étiquetés : plusieurs cigognes, busards et bondrées candidats ont été écartés pour cette raison (voir tables par espèce ci-dessus, individus non listés ou listés "automne uniquement"/"printemps uniquement").
+**Known limitation of the autumn/spring split:** the heuristic (minimum latitude point, consistency filter in step 6) assumes a clear route in one direction, within a reasonable time frame even when adapted per species. Individuals whose behavior departs from this (long, stationary wintering, erratic movements in Africa, return beyond even the extended window) are rejected by the filter rather than mislabeled: several candidate storks, harriers and honey buzzards were ruled out for this reason (see per-species tables above, individuals not listed or listed as "autumn only"/"spring only").
 
-## Format de sortie
+## Output format
 
 ```json
 {
@@ -189,15 +189,15 @@ Un script ponctuel par espèce (non committé, à rejouer manuellement si les do
 }
 ```
 
-`speciesId` en kebab-case anglais (voir conventions générales de `data-model.md`) ; la couleur de chaque espèce n'est pas stockée dans les données (voir palette dans `technical-specifications.md`), assignée côté client par ordre d'apparition dans `species`. Ajouter une espèce revient à ajouter une entrée dans `species` et ses `tracks` associés, sans changement de schéma.
+`speciesId` in English kebab-case (see the general conventions of `data-model.md`); the color of each species is not stored in the data (see palette in `technical-specifications.md`), it is assigned client-side by order of appearance in `species`. Adding a species amounts to adding an entry in `species` and its associated `tracks`, with no schema change.
 
-## Champs dérivés côté client (pas dans le JSON)
+## Client-side derived fields (not in the JSON)
 
-- **Distance totale parcourue :** calculée à l'affichage à partir de la séquence de points (grand cercle entre points consécutifs), pas précalculée.
-- **Durée de la migration :** différence entre la première et la dernière date de `points`.
+- **Total distance traveled:** computed at display time from the sequence of points (great circle between consecutive points), not precomputed.
+- **Migration duration:** difference between the first and the last date of `points`.
 
-## Contraintes de validation propres à cette visualisation
+## Validation constraints specific to this visualization
 
-- Chaque `speciesId` référencé dans `tracks` existe dans `species`.
-- Chaque trajectoire (`points`) est triée par `date` croissante.
-- Un individu (`individualId`) n'apparaît qu'une fois par `direction` (une trajectoire d'automne et, si disponible, une de printemps, jamais deux trajectoires pour la même direction).
+- Each `speciesId` referenced in `tracks` exists in `species`.
+- Each trajectory (`points`) is sorted by ascending `date`.
+- An individual (`individualId`) appears only once per `direction` (one autumn trajectory and, if available, one spring trajectory, never two trajectories for the same direction).
