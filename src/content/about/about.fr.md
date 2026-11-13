@@ -24,7 +24,7 @@ Aucune mesure d'audience, aucun cookie : seule votre préférence de langue est
 
 ## Licence
 
-La présentation et le code du site sont publiés sous licence [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr). Chaque jeu de données reste sous la licence de sa source, indiquée sur la page de la visualisation.
+La présentation et le code du site sont versés dans le domaine public sous [CC0 1.0 Universel](https://creativecommons.org/publicdomain/zero/1.0/deed.fr) : vous pouvez les copier, les modifier et les réutiliser librement, sans demander d'autorisation. Chaque jeu de données reste sous la licence de sa source, indiquée sur la page de la visualisation.
 
 ## Auteur
 

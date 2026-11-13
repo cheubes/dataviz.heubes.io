@@ -28,7 +28,7 @@ Checked at retrieval, on three pages of the source:
 
 The general data policy of the Royal Observatory of Belgium (`https://www.astro.oma.be/en/information/data-policy/`) confirms the restriction: any commercial use requires the prior written consent of the director general.
 
-**Consequence for this site:** compatible use (non-commercial site, under CC BY-NC-SA 4.0, see "Footer" in `style-guide.md`), same situation as the honey buzzard of `bird-migrations` (CC BY-NC 4.0) and as `volcanic-eruptions` (non-commercial use with citation). The three license obligations are met as follows:
+**Consequence for this site:** compatible use (non-commercially operated site; its CC0 license, see "Footer" in `style-guide.md`, covers only its original presentation and code and does not extend to this dataset, which remains under CC BY-NC 4.0), same situation as the honey buzzard of `bird-migrations` (CC BY-NC 4.0) and as `volcanic-eruptions` (non-commercial use with citation). The three license obligations are met as follows:
 
 - **Credit:** the page's source credit block (`name`, `publisher`, `license`, link to the DOI), which reproduces the requested minimal credit.
 - **Link to the license:** the displayed `license` label ("CC BY-NC 4.0").

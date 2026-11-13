@@ -13,7 +13,7 @@ Four datasets, one per species (see "Study selection" below):
 | Flying on their own wings — young and adult cuckoos respond similarly to long-distance displacement during migration | Movebank Data Repository | https://doi.org/10.5441/001/1.vk36vq82 | CC0 1.0 Universal | 2026-09-08 |
 | GPS tracking of honey buzzards in Finland | Movebank Data Repository | https://doi.org/10.5441/001/1.335 | Attribution-NonCommercial 4.0 International | 2026-09-08 |
 
-Only the honey buzzard dataset carries a restriction (non-commercial use): an exception explicitly approved by the user (see "History" below), compatible with the site's already non-commercial license (CC BY-NC-SA, see "Footer" in `style-guide.md`) but more restrictive than the other three datasets (CC0). Displayed as is in the page's source credit block (see "Visualization page" in `style-guide.md`), with no special treatment.
+Only the honey buzzard dataset carries a restriction (non-commercial use): an exception explicitly approved by the user (see "History" below), compatible with the site's non-commercial operation (the site's own CC0 license, see "Footer" in `style-guide.md`, covers only its original presentation and code and does not extend to this dataset, which remains under its own license) but more restrictive than the other three datasets (CC0). Displayed as is in the page's source credit block (see "Visualization page" in `style-guide.md`), with no special treatment.
 
 ## Study selection (done during implementation)
 

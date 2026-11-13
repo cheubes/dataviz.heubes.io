@@ -1,6 +1,6 @@
 # Incremental build plan
 
-Twenty-four steps, each demonstrable in a browser before moving on to the next. See `CLAUDE.md` for the structure of `specs/` and the rules for using the specifications.
+Twenty-five steps, each demonstrable in a browser before moving on to the next. See `CLAUDE.md` for the structure of `specs/` and the rules for using the specifications.
 
 Each step has a ready-to-use prompt to start it, except step 8, whose prompt depends on a dataset choice not yet made. Steps 2 to 6 rely on a throwaway test visualization (see step 2), since no real first visualization has been chosen at this stage: step 7 removes this test content, replaced by the real first visualization in step 8, before deployment (step 9).
 
@@ -539,3 +539,23 @@ Complete specs (`data-model.md`, `functional-specifications.md`, `technical-spec
 **Criterion:** each spec validated by the author, "Points to validate" decided, before implementation.
 
 **Status:** specs written, awaiting validation; no implementation.
+
+## ✅ 25. CC0 license
+
+The presentation and code of the site move from CC BY-NC-SA 4.0 to CC0 1.0 Universal (public domain dedication), with a `LICENSE` file at the root of the repository. Footer notice with the `creative-commons` and `creative-commons-zero` icons, "About" page, `CreativeWork` license in the structured data and README updated. Datasets, the Ubuntu font and the Font Awesome icons keep their own licenses. See "Footer" and "Iconography" in `style-guide.md`, `about-page.md`.
+
+**Criterion:** GitHub detects the CC0 1.0 license, the footer and the "About" page show CC0 1.0 in both languages, and no mention of CC BY-NC-SA remains outside the history of earlier steps.
+
+**Status:** done.
+
+**Prompt:**
+```
+Implement step 25 of the build plan (BUILD-PLAN.md): CC0 license.
+
+Add the CC0 1.0 Universal text as LICENSE at the root, update the footer notice and icons
+("Footer" and "Iconography" in style-guide.md), the "About" page (about-page.md), the site
+license in src/scripts/structured-data.ts and the README, and reword the specs that relied
+on the former non-commercial license.
+
+Completion criterion: CC0 1.0 shown everywhere, third-party licenses unchanged.
+```
