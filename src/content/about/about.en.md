@@ -24,7 +24,7 @@ No audience tracking, no cookies: only your language preference is stored, in yo
 
 ## License
 
-The site's presentation and code are published under the [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) license. Each dataset remains under its source's license, shown on the visualization's page.
+The site's presentation and code are dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/deed.en): you can copy, modify and reuse them freely, without asking permission. Each dataset remains under its source's license, shown on the visualization's page.
 
 ## Author
 

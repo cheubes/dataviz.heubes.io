@@ -91,7 +91,7 @@ Indicative, to be reconfirmed at implementation time:
   - The `d3-*` and `topojson-client` modules do not ship their type declarations: they come from the `@types/d3-*` packages (one per d3 module used) and `@types/topojson-client`, as development dependencies. Any new d3 dependency adds its corresponding `@types` package.
   - No `as any` in d3 calls: zoom calls are written `zoomBehavior.scaleBy(select(...), k)` rather than `select(...).call(zoomBehavior.scaleBy, k)`, whose overloads cannot be typed without a cast; constant geometries passed to `fitExtent`/`path` are typed `Polygon` (`geojson`) rather than declared `as const`, whose read-only arrays are rejected; arc generators with constant accessors are typed `d3Arc<null>()` and called with `null`.
   - Known limitation: the TopoJSON basemaps loaded at runtime remain annotated `any` (`basemapTopology: any`, `fetchJson<any>`), so the geometries extracted from them partly escape checking. Typing them (`Topology` from `topojson-specification`) will be done as each visualization is modified.
-- No CSS dependency or icon library: the four Creative Commons icons of the footer are inline SVGs (see "Iconography" in `style-guide.md`).
+- No CSS dependency or icon library: the two Creative Commons icons of the footer are inline SVGs (see "Iconography" in `style-guide.md`).
 - No chrome JS dependency beyond vanilla.
 - Visualization-specific dependencies: added and documented case by case, discussed before adding (see "Rules common to all visualizations" and the project's global security rules).
 
@@ -352,7 +352,7 @@ The dataset URLs (`url` attribute of each `datasets` entry, see "Source dataset"
 - Meta and Open Graph tags (title, description = `summary`, image = cover) generated directly in `BaseLayout.astro`, no dedicated plugin needed (unlike `jekyll-seo-tag`).
 - `@astrojs/sitemap` for an automatically generated `sitemap.xml`.
 - **schema.org structured data** (JSON-LD), in the `<head>` of each visualization page, built at build time by `src/scripts/structured-data.ts` from the frontmatter:
-  - the visualization, as a `CreativeWork`: title, summary, publication date, author, cover, themes, site license (CC BY-NC-SA 4.0), and its cited sources as `isBasedOn` (each as a `Dataset` with publisher, URL and license);
+  - the visualization, as a `CreativeWork`: title, summary, publication date, author, cover, themes, site license (CC0 1.0), and its cited sources as `isBasedOn` (each as a `Dataset` with publisher, URL and license);
   - when the visualization declares downloadable files (see "Prepared data download" in `functional-specifications.md`), these files as a derived `Dataset`: the summary as description (between 50 and 5,000 characters, as required by Google Dataset Search), one `DataDownload` per file, the same sources as `isBasedOn`, and as license the list of these sources' licenses, since the files remain subject to each of them (same rule as the notice displayed below the download links).
 
   Rendered by `BaseLayout.astro` (`structuredData` property) in a `<script type="application/ld+json">`, with `<` escaped so that no content text can close the tag.

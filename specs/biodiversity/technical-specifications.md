@@ -44,7 +44,7 @@ Intensity per cell (number of observations for the current filter): default blue
 
 ## Filter iconography
 
-No Font Awesome for the group filter buttons (the draft proposed `fa-feather`, `fa-paw`, etc.): `style-guide.md` reserves Font Awesome for the four Creative Commons icons of the footer. **Departure from the initial intent** ("minimalist inline SVG icons per group"): during implementation, a simple color swatch (circle, `--dv-*-swatch`) per group was chosen rather than dedicated pictograms, for consistency with the pattern already established by `bird-migrations` (species) and `flower-phenology` (species): the legend there also serves as the filter, with a color swatch and a label, without iconography specific to each entry.
+No Font Awesome for the group filter buttons (the draft proposed `fa-feather`, `fa-paw`, etc.): `style-guide.md` reserves Font Awesome for the two Creative Commons icons of the footer. **Departure from the initial intent** ("minimalist inline SVG icons per group"): during implementation, a simple color swatch (circle, `--dv-*-swatch`) per group was chosen rather than dedicated pictograms, for consistency with the pattern already established by `bird-migrations` (species) and `flower-phenology` (species): the legend there also serves as the filter, with a color swatch and a label, without iconography specific to each entry.
 
 ## "Live data" mode
 

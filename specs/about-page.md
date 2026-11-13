@@ -18,7 +18,7 @@ Explain to the visitor what the site is and how it is made: the approach of the 
   - **The data**: public sources, cited on each page with their producer, their license and their retrieval date; data frozen at the time of its preparation; limitations (biases, partial coverage) flagged on the relevant page; download of the prepared data when the licenses allow it (see "Prepared data download" in `functional-specifications.md`).
   - **Sharing a view**: a visualization's address keeps the filters, the paused year and the framing (see "Shareable state in the URL" in `functional-specifications.md`).
   - **How it's made**: static site, visualizations coded one by one, hosting, public source code; no audience measurement and no cookie, only the language preference is remembered in the browser (see "Language detection and persistence" in `technical-specifications.md`); fonts and icons served by the site, without any request to a third-party service when a page is displayed (see "Fonts" in `technical-specifications.md`).
-  - **License**: presentation and code of the site under CC BY-NC-SA 4.0; each dataset remains under its source's license (see "Footer" in `style-guide.md`).
+  - **License**: presentation and code of the site dedicated to the public domain under CC0 1.0 Universal; each dataset remains under its source's license (see "Footer" in `style-guide.md`).
   - **Author**: the author's name, linking to their site. No other personal information.
 - The text only describes what is true of the site: any change to the specs cited above (new feature, added audience measurement, license change) requires rereading this page.
 
