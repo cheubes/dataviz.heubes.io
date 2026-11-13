@@ -13,7 +13,7 @@ A visualization is an interactive piece dedicated to an open data dataset. It co
 | `title` | Yes | Displayed title |
 | `summary` | Yes | Short text displayed on the catalog tile (see "Tiles (catalog)" in `style-guide.md`) and at the top of the visualization's page |
 | `datasets` | — | List of open data datasets used (see "Source dataset" below) |
-| `themes` | No | One or more theme identifiers, used for filtering the catalog and selecting related visualizations (see "Theme" below, "Theme filter" in `home-page.md` and "Related visualizations" in `functional-specifications.md`) |
+| `themes` | No | One or more theme identifiers, used for filtering the catalog and selecting related visualizations (see "Theme" below, "Content and structure" in `home-page.md` and "Related visualizations" in `functional-specifications.md`) |
 | `publication-date` | No | Date of the visualization's first publication, used to order related visualizations (see "Related visualizations" in `functional-specifications.md`) |
 | `downloads` | No | Optional. Names of the files of `public/data/<viz-slug>/` offered for download on the visualization's page (e.g. `[trees.json, national-gardens.json]`). Absent: no download link (see "Prepared data download" in `functional-specifications.md`) |
 
@@ -21,7 +21,7 @@ The cover image is not an attribute: it is associated with the visualization by 
 
 ### Theme
 
-Thematic category associated with a visualization, used for filtering the catalog (see "Theme filter" in `home-page.md`) and for selecting related visualizations on a visualization's page (see "Related visualizations" in `functional-specifications.md`). Closed list, no free vocabulary: any new value is added here before being used in a visualization's frontmatter.
+Thematic category associated with a visualization, used for filtering the catalog (see "Content and structure" in `home-page.md`) and for selecting related visualizations on a visualization's page (see "Related visualizations" in `functional-specifications.md`). Closed list, no free vocabulary: any new value is added here before being used in a visualization's frontmatter.
 
 | `id` | French | English |
 |---|---|---|

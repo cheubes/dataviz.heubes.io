@@ -12,7 +12,7 @@ Supplements the general `data-model.md`: schema of the dataset specific to this 
 
 Satellite nighttime radiance data, native resolution of 15 arc seconds (~500 m at the equator), global coverage (65°S to 75°N). Originally public domain (National Oceanic and Atmospheric Administration, a US federal agency), republished by the Earth Observation Group under CC BY 4.0 with a citation requirement. Same primary source as existing light pollution maps (ANPCEN, AVEX, lightpollutionmap.info), used here directly rather than a third-party republication (see scoping discussions).
 
-Two versions of the "Annual VNL V2" product were used to cover the whole period (see "Preprocessing" below): **v2.1** for 2013-2021 and **v2.2** for 2022-2025, EOG publishing this product in versioned annual increments rather than as a single continuously renumbered series. Both versions share the same processing methodology (same filtering thresholds, same "Annual VNL V2" pipeline): unlike the V1→V2 break (an algorithm change documented in the literature), there is no change of method between v2.1 and v2.2, only the addition of subsequent years. No artificial discontinuity found at the 2021/2022 junction in the resulting series (see "Points to validate during implementation" in `technical-specifications.md`).
+Two versions of the "Annual VNL V2" product were used to cover the whole period (see "Preprocessing" below): **v2.1** for 2013-2021 and **v2.2** for 2022-2025, EOG publishing this product in versioned annual increments rather than as a single continuously renumbered series. Both versions share the same processing methodology (same filtering thresholds, same "Annual VNL V2" pipeline): unlike the V1→V2 break (an algorithm change documented in the literature), there is no change of method between v2.1 and v2.2, only the addition of subsequent years. No artificial discontinuity found at the 2021/2022 junction in the resulting series (see "Decisions made during implementation" in `technical-specifications.md`).
 
 ## Geographic and temporal coverage
 
@@ -80,7 +80,7 @@ Unlike the site's other visualizations, preprocessing starts from **raster** dat
 }
 ```
 
-`geometry` identical to that of the corresponding cell in `biodiversity/hexbins.json` (see "Grid reuse" above). `scale` references the levels of the table above; `years` lists the thirteen years 2013-2025 (continuity confirmed, see "Source dataset" above and "Points to validate during implementation" in `technical-specifications.md`).
+`geometry` identical to that of the corresponding cell in `biodiversity/hexbins.json` (see "Grid reuse" above). `scale` references the levels of the table above; `years` lists the thirteen years 2013-2025 (continuity confirmed, see "Source dataset" above and "Decisions made during implementation" in `technical-specifications.md`).
 
 ## Validation constraints specific to this visualization
 

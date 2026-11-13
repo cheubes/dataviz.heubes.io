@@ -7,7 +7,7 @@
 - **Astro**, static output (`output: 'static'`), no server rendering.
 - `compressHTML: true` in `astro.config.mjs`: Astro 7 switched by default to the `'jsx'` mode, which removes whitespace between inline elements ("À propos · Réalisée par…", download links separated by commas). The `true` value keeps Astro 5's behavior: the rendered text remained identical word for word during the version upgrade.
 - The files of `public/` read at build time (covers, downloadable data) are located from the project root (`process.cwd()`), not from `import.meta.url`: the latter designates the location of the compiled file, which changes from one Vite version to another (broken during the upgrade to Astro 7).
-- **Content collections** (`src/content.config.ts`, Zod schema) for the visualizations (see "File structure" below). The themes (see "Theme" in `data-model.md`) are a closed enum carried by this collection's schema, not a separate collection: they have no content or page of their own (see "Theme filter" in `home-page.md`).
+- **Content collections** (`src/content.config.ts`, Zod schema) for the visualizations (see "File structure" below). The themes (see "Theme" in `data-model.md`) are a closed enum carried by this collection's schema, not a separate collection: they have no content or page of their own (see "Content and structure" in `home-page.md`).
 - `.astro` components for the shared chrome (layout, header, footer, language selector, catalog tile). Each visualization adds its own components (see "Rules common to all visualizations").
 
 ### CSS / UI
