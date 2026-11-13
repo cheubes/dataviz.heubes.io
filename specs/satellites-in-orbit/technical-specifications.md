@@ -1,115 +1,115 @@
-# Spécifications techniques : La ruée vers l'orbite
+# Technical specifications: The Orbital Rush
 
-Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
+Supplements the general `technical-specifications.md`: technical choices specific to this visualization, beyond the common rules.
 
-**Statut : implémenté.**
+**Status: implemented.**
 
-## Source des données
+## Data source
 
-CelesTrak SATCAT, catalogue complet au format CSV (`https://celestrak.org/pub/satcat.csv`, voir "Dataset source" et "Prétraitement" dans `data-model.md` pour le choix de ce format plutôt que `records.php`). Récupération ponctuelle au moment du prétraitement, pas à chaque build (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général) : conforme à la politique d'usage de CelesTrak, qui décourage les requêtes répétées et recommande de ne récupérer les données qu'au moment du besoin. Citation d'attribution (CelesTrak, USSPACECOM/Space-Track.org) dans le bloc de crédit des sources de la page (voir "Dataset source" dans `data-model.md` pour la décision de licence).
+CelesTrak SATCAT, full catalog in CSV format (`https://celestrak.org/pub/satcat.csv`, see "Source dataset" and "Preprocessing" in `data-model.md` for the choice of this format over `records.php`). One-off retrieval at preprocessing time, not at every build (see "Rules common to all visualizations" in the general `technical-specifications.md`): in line with CelesTrak's usage policy, which discourages repeated requests and recommends retrieving data only when needed. Attribution citation (CelesTrak, USSPACECOM/Space-Track.org) in the page's source credit block (see "Source dataset" in `data-model.md` for the license decision).
 
-## Rendu
+## Rendering
 
-**Canvas 2D, pas SVG**, même choix que `bird-migrations` et pour la même raison : volume de points important (20 020, voir `data-model.md`), hors de portée d'un rendu SVG performant.
+**Canvas 2D, not SVG**, same choice as `bird-migrations` and for the same reason: a large number of points (20,020, see `data-model.md`), beyond the reach of performant SVG rendering.
 
-- Globe : silhouette terrestre réelle (continents/océans, sans frontières par pays), projection orthographique `d3-geo` (`geoOrthographic`, `clipAngle(90)` pour ne montrer que l'hémisphère visible), sur un canvas de fond dédié. À la différence du choix initial (cercle uni à dégradé radial, sans géographie), ce canvas est désormais redessiné à chaque frame plutôt qu'au seul redimensionnement, pour porter la rotation continue (voir "Animation" ci-dessous). Fond de carte `public/data/satellites-in-orbit/basemap.json`, objet TopoJSON `land` (une seule géométrie fusionnée) issu du paquet `world-atlas` (données Natural Earth, domaine public), converti en GeoJSON côté client via `topojson-client` : même source et même traitement (réduction au seul objet `land`) que le fond de carte de `bird-migrations`, récupéré indépendamment pour cette visualisation plutôt que partagé entre les deux (chaque visualisation a ses propres données sous `public/data/<viz-slug>/`, voir "Structure des fichiers" dans `technical-specifications.md` général). 92 Ko.
-- Nuée de points : canvas de premier plan, superposé au canvas du globe. À la différence de `bird-migrations` (points mobiles avec effet de traînée), les points ici sont statiques une fois apparus : pas besoin d'effacer/redessiner l'ensemble de la nuée à chaque frame. Chaque nouveau point (satellite dont la date de lancement simulée vient d'être atteinte) est simplement peint par-dessus le canvas existant. Un changement de filtre zone, un déplacement manuel du curseur d'année (voir "Curseur d'année" ci-dessous) ou une reprise de passage (voir "Animation" ci-dessous) vide le canvas de premier plan et reconstruit la nuée déjà accumulée en une seule passe avant de reprendre l'accumulation frame par frame. Le halo de points ne suit pas la rotation du globe (voir "Positionnement des points" ci-dessous) : les deux canvas sont animés indépendamment, seul celui du globe tourne.
-- D3 utilisé pour les calculs (échelle de couleur catégorielle par zone via `d3-scale`, échelle temporelle pour l'animation, projection géographique et tracé de chemin via `d3-geo`, boucle d'animation via `d3-timer`), pas pour le rendu DOM des points ni des continents.
-- Couleurs du globe, décoratives, hors palette dataviz (voir "Palette" ci-dessous pour la distinction avec la palette catégorielle des zones) : océan `#b7c2ca`, continents `#c7c0a8`, contour `#8b959c` — tons neutres et désaturés, choisis pour que les points de couleur vive de la nuée restent le seul élément saturé de la composition.
+- Globe: real Earth silhouette (continents/oceans, no country borders), `d3-geo` orthographic projection (`geoOrthographic`, `clipAngle(90)` to show only the visible hemisphere), on a dedicated background canvas. Unlike the initial choice (plain circle with a radial gradient, no geography), this canvas is now redrawn at every frame rather than only on resize, to carry the continuous rotation (see "Animation" below). Basemap `public/data/satellites-in-orbit/basemap.json`, TopoJSON object `land` (a single merged geometry) from the `world-atlas` package (Natural Earth data, public domain), converted to GeoJSON client-side via `topojson-client`: same source and same processing (reduction to the `land` object only) as the `bird-migrations` basemap, retrieved independently for this visualization rather than shared between the two (each visualization has its own data under `public/data/<viz-slug>/`, see "File structure" in the general `technical-specifications.md`). 92 KB.
+- Swarm of points: foreground canvas, overlaid on the globe canvas. Unlike `bird-migrations` (moving points with a trail effect), the points here are static once they have appeared: no need to clear/redraw the whole swarm at every frame. Each new point (a satellite whose simulated launch date has just been reached) is simply painted over the existing canvas. A region filter change, a manual move of the year slider (see "Year slider" below) or a pass restart (see "Animation" below) clears the foreground canvas and rebuilds the already accumulated swarm in a single pass before resuming frame-by-frame accumulation. The halo of points does not follow the globe's rotation (see "Point positioning" below): the two canvases are animated independently, only the globe one rotates.
+- D3 used for computations (categorical color scale per region via `d3-scale`, time scale for the animation, geographic projection and path drawing via `d3-geo`, animation loop via `d3-timer`), not for DOM rendering of the points or the continents.
+- Globe colors, decorative, outside the dataviz palette (see "Palette" below for the distinction with the regions' categorical palette): ocean `#b7c2ca`, continents `#c7c0a8`, outline `#8b959c`, neutral and desaturated tones, chosen so that the swarm's brightly colored points remain the only saturated element of the composition.
 
-## Positionnement des points
+## Point positioning
 
-Pas d'orbite réelle représentée (décision explicite, voir échanges de cadrage) : chaque satellite occupe une position en halo autour du globe, pas sa position orbitale réelle.
+No real orbit is represented (explicit decision, see scoping discussions): each satellite occupies a position in a halo around the globe, not its real orbital position.
 
-- Angle : tiré uniformément entre 0 et 360°.
-- Rayon : tiré dans une bande fixe au-delà du rayon du globe (ex. entre 1,15 et 1,6 fois le rayon du globe), pour donner un effet de profondeur à la nuée sans porter de signification orbitale (pas de correspondance avec l'altitude réelle).
-- Tirage déterministe, dérivé de l'index du satellite dans `satellites.json` (ex. générateur pseudo-aléatoire à seed fixe) plutôt qu'un vrai `Math.random()` : la disposition reste identique entre un chargement de page et une reprise de passage (voir "Animation" ci-dessous), pas de re-tirage à chaque boucle.
-- Position fixe dans le référentiel de l'écran, indépendante de la rotation du globe (voir "Rendu" ci-dessus) : un point ne suit pas la silhouette continentale sous-jacente au fil de sa rotation, cohérent avec l'absence de signification orbitale de sa position.
+- Angle: drawn uniformly between 0 and 360°.
+- Radius: drawn within a fixed band beyond the globe's radius (e.g. between 1.15 and 1.6 times the globe's radius), to give the swarm a sense of depth without carrying any orbital meaning (no correspondence with real altitude).
+- Deterministic draw, derived from the satellite's index in `satellites.json` (e.g. a pseudo-random generator with a fixed seed) rather than a true `Math.random()`: the layout stays identical between a page load and a pass restart (see "Animation" below), no redraw at every loop.
+- Fixed position in the screen's frame of reference, independent of the globe's rotation (see "Rendering" above): a point does not follow the underlying continental silhouette as it rotates, consistent with its position carrying no orbital meaning.
 
 ## Animation
 
-- Boucle `d3-timer`, pilotée par une date simulée continue (pas un compteur de jours cyclique comme `bird-migrations` : ici l'échelle couvre l'intégralité du jeu de données, du premier lancement (Vanguard 1, 17 mars 1958, voir `data-model.md`) au plus récent).
-- Mapping temps de lecture écoulé → temps simulé, linéaire sur l'échelle complète des années couvertes (`d3-scale`, `scaleLinear`, domaine en millisecondes de lecture écoulées, image en dates). Durée d'un passage complet à vitesse Normal : 25 secondes (vérifiée visuellement à l'implémentation, voir "Vitesse de lecture" ci-dessous pour les deux autres vitesses).
-- **Bouclage continu :** contrairement au choix initial (passage unique, arrêt à la date la plus récente), l'animation boucle en continu comme `bird-migrations`, décision explicite de l'utilisateur. À la différence de `bird-migrations` (cycle saisonnier, boucle "naturellement" fluide), le passage 1958 → aujourd'hui n'a pas de raccord naturel avec son propre redémarrage : un temps d'arrêt de 2,5 secondes est marqué sur l'état final (nuée complète, compteur au total) avant de vider les canvas et de relancer un passage depuis 1958, pour laisser voir cet état comme un aboutissement plutôt que de couper brutalement de "aujourd'hui" à "1958".
-- **Vitesse de lecture :** Lent (×0,5), Normal (×1, par défaut), Rapide (×2), même mécanisme que `bird-migrations` (`SPEED_FACTORS`, multiplie le temps de lecture accumulé par frame). Modifie uniquement la durée d'un passage (12,5 à 50 secondes) et du temps d'arrêt en fin de passage ; sans effet sur la rotation du globe (ci-dessous), cadencée indépendamment.
-- **Rotation du globe :** ambiante et décorative, à vitesse fixe (~3°/seconde, un tour complet toutes les deux minutes environ), non cyclique au sens propre de "Bouclage continu" ci-dessus puisqu'elle ne repart jamais de zéro. Gelée par Play/Pause en même temps que le reste de l'animation (voir "Accessibilité" dans `functional-specifications.md`).
-- À chaque frame, tous les satellites dont `launchDate` est désormais atteinte et qui n'ont pas encore été peints sont ajoutés au canvas de premier plan (voir "Rendu" ci-dessus) ; `satellites.json` étant trié par date croissante (voir "Contraintes de validation" dans `data-model.md`), un simple curseur d'index suffit, pas de parcours complet du tableau à chaque frame.
-- Année simulée affichée via `Intl.DateTimeFormat(lang, { year: 'numeric' })`, comme le mois simulé de `bird-migrations`.
+- `d3-timer` loop, driven by a continuous simulated date (not a cyclic day counter like `bird-migrations`: here the scale covers the entire dataset, from the first launch (Vanguard 1, March 17, 1958, see `data-model.md`) to the most recent one).
+- Mapping from elapsed playback time → simulated time, linear over the full scale of covered years (`d3-scale`, `scaleLinear`, domain in elapsed playback milliseconds, range in dates). Duration of a full pass at Normal speed: 25 seconds (checked visually during implementation, see "Playback speed" below for the other two speeds).
+- **Continuous looping:** unlike the initial choice (single pass, stopping at the most recent date), the animation loops continuously like `bird-migrations`, an explicit decision by the user. Unlike `bird-migrations` (seasonal cycle, "naturally" smooth loop), the 1958 → today pass has no natural join with its own restart: a 2.5-second pause is held on the final state (complete swarm, counter at the total) before clearing the canvases and starting a new pass from 1958, so that this state reads as a culmination rather than cutting abruptly from "today" to "1958".
+- **Playback speed:** Slow (×0.5), Normal (×1, default), Fast (×2), same mechanism as `bird-migrations` (`SPEED_FACTORS`, multiplies the playback time accumulated per frame). Changes only the duration of a pass (12.5 to 50 seconds) and of the end-of-pass pause; no effect on the globe's rotation (below), which is paced independently.
+- **Globe rotation:** ambient and decorative, at a fixed speed (~3°/second, one full turn roughly every two minutes), not cyclic in the strict sense of "Continuous looping" above since it never restarts from zero. Frozen by Play/Pause together with the rest of the animation (see "Accessibility" in `functional-specifications.md`).
+- At each frame, all satellites whose `launchDate` has now been reached and that have not yet been painted are added to the foreground canvas (see "Rendering" above); since `satellites.json` is sorted by ascending date (see "Validation constraints" in `data-model.md`), a simple index cursor is enough, with no full traversal of the array at every frame.
+- Simulated year displayed via `Intl.DateTimeFormat(lang, { year: 'numeric' })`, like the simulated month in `bird-migrations`.
 
-## Curseur d'année
+## Year slider
 
-Élément `<input type="range">` natif, même choix que `light-pollution` et `monument-layers` (voir "Curseur d'année" dans leurs `technical-specifications.md` respectifs) : pas d'interaction complexe à gérer, la sémantique et l'accessibilité clavier natives suffisent (voir "Accessibilité (limite connue)" dans `functional-specifications.md`). Bornes `[année du premier satellite retenu, année du dernier]`, calculées depuis `launchMs` plutôt que codées en dur. Pas de `<datalist>` de graduations, à la différence de `light-pollution` : comme `monument-layers`, la plage est continue (chaque année entre les deux bornes est une position valide sur une accumulation), sans petit ensemble d'années "de référence" à matérialiser en crans.
+Native `<input type="range">` element, same choice as `light-pollution` and `monument-layers` (see "Year slider" in their respective `technical-specifications.md`): no complex interaction to handle, native semantics and keyboard accessibility are enough (see "Accessibility (known limitation)" in `functional-specifications.md`). Bounds `[year of the first retained satellite, year of the last]`, computed from `launchMs` rather than hard-coded. No `<datalist>` of tick marks, unlike `light-pollution`: like `monument-layers`, the range is continuous (every year between the two bounds is a valid position on an accumulation), with no small set of "reference" years to materialize as notches.
 
-Granularité annuelle plutôt que la précision réelle (jour) de `launchDate`, cohérente avec l'indicateur d'année affiché par ailleurs (ci-dessus) : une recherche binaire (`cursorForYear`) retrouve l'index du dernier satellite dont `launchMs` tombe au plus tard le 31 décembre de l'année choisie, dans le tableau `satellites` trié par `launchMs` croissante (voir "Contraintes de validation" dans `data-model.md`).
+Yearly granularity rather than the actual (daily) precision of `launchDate`, consistent with the year indicator displayed elsewhere (above): a binary search (`cursorForYear`) finds the index of the last satellite whose `launchMs` falls no later than December 31 of the chosen year, in the `satellites` array sorted by ascending `launchMs` (see "Validation constraints" in `data-model.md`).
 
-Comme le curseur de `monument-layers`, et contrairement à celui de `light-pollution` (qui recolore un état figé, sans notion d'historique), celui-ci pilote une accumulation : le déplacer implique de pouvoir revenir en arrière, ce qu'une simple avancée de curseur d'index (la boucle d'animation par frame, monotone) ne permet pas. Une fonction dédiée (`seekToCursor`) recompte les satellites par zone depuis le début et reconstruit le canvas de premier plan en une passe, même mécanisme que `rebuildForeground` (voir "Rendu" ci-dessus) plutôt qu'un dessin incrémental.
+Like the `monument-layers` slider, and unlike the `light-pollution` one (which recolors a frozen state, with no notion of history), this one drives an accumulation: moving it implies being able to go backward, which a simple index cursor advance (the per-frame animation loop, monotonic) does not allow. A dedicated function (`seekToCursor`) recounts the satellites per region from the start and rebuilds the foreground canvas in one pass, same mechanism as `rebuildForeground` (see "Rendering" above) rather than incremental drawing.
 
-- **Interruption par le curseur manuel :** l'évènement `input` du curseur met `playing` à `false` (même convention que `light-pollution` et `monument-layers`), pour éviter que la lecture automatique ne fasse repartir le curseur pendant que le visiteur le manipule. `playedMs` est recalculé par inversion de l'échelle temporelle (`simTimeScale.invert`), pour que la reprise de la lecture automatique continue depuis la position choisie plutôt que de sauter ailleurs.
-- Déplacer le curseur jusqu'à sa valeur maximale déclenche le même état `holding` (pause avant bouclage, voir "Animation" ci-dessus) que l'arrivée naturelle de l'animation à son terme ; comme `playing` est mis à `false` par le scrub, la pause n'avance cependant pas tant que le visiteur n'a pas relancé la lecture (même comportement que `monument-layers`).
+- **Interruption by the manual slider:** the slider's `input` event sets `playing` to `false` (same convention as `light-pollution` and `monument-layers`), to prevent autoplay from moving the slider while the visitor is handling it. `playedMs` is recomputed by inverting the time scale (`simTimeScale.invert`), so that resuming autoplay continues from the chosen position rather than jumping elsewhere.
+- Moving the slider to its maximum value triggers the same `holding` state (pause before looping, see "Animation" above) as the animation naturally reaching its end; since `playing` is set to `false` by the scrub, however, the pause does not progress until the visitor restarts playback (same behavior as `monument-layers`).
 
-## Nouvelles dépendances
+## New dependencies
 
-Aucune : `d3-scale`, `d3-timer`, `d3-geo` et `topojson-client` sont déjà des dépendances du projet (introduites par `bird-migrations`, voir son propre `technical-specifications.md`), réutilisées ici sans ajout au `package.json`.
+None: `d3-scale`, `d3-timer`, `d3-geo` and `topojson-client` are already project dependencies (introduced by `bird-migrations`, see its own `technical-specifications.md`), reused here without any addition to `package.json`.
 
-| Dépendance | Usage dans cette visualisation | Portée |
+| Dependency | Usage in this visualization | Scope |
 |---|---|---|
-| `d3-scale` | Échelle de couleur catégorielle par zone (`scaleOrdinal`), échelle temporelle (`scaleLinear`) | Scopée à cette visualisation (île Astro) |
-| `d3-timer` | Boucle d'animation (`timer`, wrapper de `requestAnimationFrame`) | Idem |
-| `d3-geo` | Projection orthographique du globe (`geoOrthographic`), tracé du globe et des continents sur canvas (`geoPath`) | Idem |
-| `topojson-client` | Conversion du fond de carte TopoJSON → GeoJSON côté client | Idem |
+| `d3-scale` | Categorical color scale per region (`scaleOrdinal`), time scale (`scaleLinear`) | Scoped to this visualization (Astro island) |
+| `d3-timer` | Animation loop (`timer`, wrapper around `requestAnimationFrame`) | Same |
+| `d3-geo` | Orthographic projection of the globe (`geoOrthographic`), drawing of the globe and continents on canvas (`geoPath`) | Same |
+| `topojson-client` | Conversion of the TopoJSON basemap → GeoJSON client-side | Same |
 
-À la différence de `bird-migrations`, pas de `d3-zoom` ni de `d3-selection` ici : pas de zoom/pan sur le globe (voir "Interactions" dans `functional-specifications.md`, aucune interaction de ce type prévue).
+Unlike `bird-migrations`, no `d3-zoom` or `d3-selection` here: no zoom/pan on the globe (see "Interactions" in `functional-specifications.md`, no interaction of this kind planned).
 
 ## Palette
 
-**Exception documentée à la règle générale de la palette dataviz** (voir "Palette dataviz" dans `style-guide.md`) : la nuée est une disposition où tous les points peuvent se toucher (type "nuage de points"), qui ne garantit normalement que trois teintes distinguables en daltonisme. Cette visualisation utilise malgré tout les cinq premiers slots de la palette catégorielle, décision explicite de l'utilisateur (voir échanges de cadrage), compensée par :
+**Documented exception to the general dataviz palette rule** (see "Dataviz palette" in `style-guide.md`): the swarm is a layout in which all points can touch each other ("scatter plot" type), which normally guarantees only three hues that remain distinguishable under color blindness. This visualization nevertheless uses the first five slots of the categorical palette, an explicit decision by the user (see scoping discussions), offset by:
 
-- une légende toujours visible (couleur + nom de zone, pas la couleur seule) ;
-- le filtre zone (voir "Interactions" dans `functional-specifications.md`), qui permet d'isoler une ou plusieurs zones à la fois pour lever toute ambiguïté de teinte.
+- an always visible legend (color + region name, not color alone);
+- the region filter (see "Interactions" in `functional-specifications.md`), which makes it possible to isolate one or more regions at a time to remove any hue ambiguity.
 
-| Slot | Teinte | Zone |
+| Slot | Hue | Region |
 |---|---|---|
-| 1 | Bleu | États-Unis |
-| 2 | Orange | Russie / URSS |
-| 3 | Aqua | Chine |
-| 4 | Jaune | Europe |
-| 5 | Magenta | Reste du monde |
+| 1 | Blue | United States |
+| 2 | Orange | Russia / USSR |
+| 3 | Aqua | China |
+| 4 | Yellow | Europe |
+| 5 | Magenta | Rest of the world |
 
-Assignation par ordre d'apparition dans `regions` (voir "Format de sortie" dans `data-model.md`), même mécanisme que `bird-migrations`.
+Assignment by order of appearance in `regions` (see "Output format" in `data-model.md`), same mechanism as `bird-migrations`.
 
-Cette palette catégorielle ne s'applique qu'aux points de la nuée : les couleurs du globe lui-même (océan, continents, voir "Rendu" ci-dessus) sont hors de son périmètre, au même titre que la teinte `#e4e2da` du fond de carte de `bird-migrations` n'est pas non plus un slot de la palette dataviz — ce sont des couleurs d'illustration, pas des couleurs encodant une donnée.
+This categorical palette applies only to the swarm's points: the colors of the globe itself (ocean, continents, see "Rendering" above) are outside its scope, just as the `#e4e2da` tint of the `bird-migrations` basemap is not a slot of the dataviz palette either: these are illustration colors, not colors encoding data.
 
-## Hydratation
+## Hydration
 
-`client:visible`, via un `IntersectionObserver` sur la zone de montage, même mécanisme que `bird-migrations` et `flower-phenology` (voir "Hydratation" dans leurs `technical-specifications.md` respectifs) : le montage réel (fetch du JSON, initialisation Canvas) ne se déclenche qu'à l'approche du viewport.
+`client:visible`, via an `IntersectionObserver` on the mount area, same mechanism as `bird-migrations` and `flower-phenology` (see "Hydration" in their respective `technical-specifications.md`): the actual mount (JSON fetch, Canvas initialization) is only triggered as it approaches the viewport.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cette visualisation.
+See "Accessibility (known limitation)" in this visualization's `functional-specifications.md`.
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Le canvas de fond (globe) et le canvas de premier plan (nuée) sont redimensionnés ensemble au redimensionnement de la zone de montage ; la nuée déjà accumulée est reconstruite en une seule passe après redimensionnement plutôt qu'étirée (mêmes positions relatives, recalculées au nouveau rayon).
+See "Responsive" in this visualization's `functional-specifications.md`. The background canvas (globe) and the foreground canvas (swarm) are resized together when the mount area is resized; the already accumulated swarm is rebuilt in a single pass after resizing rather than stretched (same relative positions, recomputed at the new radius).
 
-## État dans l'URL
+## State in the URL
 
-Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+See "State in the URL" in the general `technical-specifications.md` for the shared mechanism.
 
-| Paramètre | Valeurs | Défaut (absent de l'URL) |
+| Parameter | Values | Default (absent from the URL) |
 |---|---|---|
-| `regions` | Identifiants de zones actives (`us`, `russia-ussr`, `china`, `europe`, `other`), séparés par des virgules ; vide (`regions=`) pour aucune zone | Les cinq zones actives |
-| `year` | Année entière entre les bornes du curseur d'année | Lecture en cours |
+| `regions` | Identifiers of active regions (`us`, `russia-ussr`, `china`, `europe`, `other`), comma-separated; empty (`regions=`) for no region | All five regions active |
+| `year` | Integer year between the year slider's bounds | Playback running |
 
-- `regions` : identifiants inconnus ignorés ; une liste non vide dont aucun identifiant n'est connu est invalide et laisse les cinq zones actives. `regions=` restaure l'état vide voulu (voir "États" dans `functional-specifications.md`).
-- `year` est écrit à la pause (bouton) et au relâchement du curseur d'année, et retiré à la reprise de la lecture. Un lien porteur de `year` ouvre la visualisation en pause, par le même chemin qu'un déplacement manuel du curseur (voir "Curseur d'année" ci-dessus) : la nuée est reconstruite jusqu'au 31 décembre de cette année. Une pause en cours d'année est donc restaurée à la fin de cette même année, cohérent avec la granularité annuelle du curseur.
-- La rotation du globe n'est pas capturée : décorative, elle n'est pas un cadrage choisi par le visiteur (voir "Animation" ci-dessus).
+- `regions`: unknown identifiers ignored; a non-empty list with no known identifier is invalid and leaves all five regions active. `regions=` restores the intended empty state (see "States" in `functional-specifications.md`).
+- `year` is written on pause (button) and on release of the year slider, and removed when playback resumes. A link carrying `year` opens the visualization paused, through the same path as a manual slider move (see "Year slider" above): the swarm is rebuilt up to December 31 of that year. A pause in the middle of a year is therefore restored at the end of that same year, consistent with the slider's yearly granularity.
+- The globe's rotation is not captured: being decorative, it is not a framing chosen by the visitor (see "Animation" above).
 
-## Décisions prises à l'implémentation
+## Decisions made during implementation
 
-- Mapping exact des codes `OWNER` du SATCAT vers les cinq zones : établi sur les 106 codes distincts du catalogue réel, voir "Regroupement géographique" dans `data-model.md`.
-- Volume et taille du fichier : 20 020 objets, 892 Ko, pas de compaction nécessaire (voir "Prétraitement" dans `data-model.md`).
-- Durée totale de l'animation : 25 secondes conservées après vérification visuelle (voir "Animation" ci-dessus).
-- Relecture du texte exact de l'accord utilisateur Space-Track.org : faite (`space-track.org/documentation#/agreement`), confirme la lecture retenue sur la licence (voir "Dataset source" dans `data-model.md`).
-- Habillage du globe (continents/océans, rotation) et bouclage continu : ajoutés après la première implémentation (initialement un globe uni sans géographie et un passage unique sans bouclage, voir "Rendu" et "Animation" ci-dessus), à la demande explicite de l'utilisateur.
-- Vitesse de rotation du globe (~3°/s) et durée du temps d'arrêt en fin de passage (2,5 secondes) : choisies par défaut et vérifiées visuellement, sans échange de cadrage préalable sur ces deux valeurs précises — à ajuster si besoin.
-- Curseur d'année ajouté après la première implémentation (qui ne proposait que Play/Pause et le sélecteur de vitesse), à la demande explicite de l'utilisateur, sur le modèle déjà établi par `monument-layers` (curseur continu par année, avec reconstruction complète de la nuée lors d'un déplacement manuel) plutôt que celui de `light-pollution` (recoloration d'un état figé), ce dernier ne s'appliquant pas à une accumulation progressive comme celle-ci.
+- Exact mapping of SATCAT `OWNER` codes to the five regions: established on the 106 distinct codes of the actual catalog, see "Geographic grouping" in `data-model.md`.
+- Volume and file size: 20,020 objects, 892 KB, no compaction needed (see "Preprocessing" in `data-model.md`).
+- Total animation duration: 25 seconds kept after visual check (see "Animation" above).
+- Rereading of the exact text of the Space-Track.org user agreement: done (`space-track.org/documentation#/agreement`), confirms the reading adopted on the license (see "Source dataset" in `data-model.md`).
+- Globe dressing (continents/oceans, rotation) and continuous looping: added after the first implementation (initially a plain globe with no geography and a single pass with no looping, see "Rendering" and "Animation" above), at the user's explicit request.
+- Globe rotation speed (~3°/s) and duration of the end-of-pass pause (2.5 seconds): chosen by default and checked visually, without prior scoping discussion on these two exact values; to be adjusted if needed.
+- Year slider added after the first implementation (which offered only Play/Pause and the speed selector), at the user's explicit request, on the model already established by `monument-layers` (continuous yearly slider, with a full rebuild of the swarm on a manual move) rather than that of `light-pollution` (recoloring a frozen state), the latter not applying to a progressive accumulation like this one.

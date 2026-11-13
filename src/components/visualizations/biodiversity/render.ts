@@ -480,8 +480,8 @@ export async function mountBiodiversity(root: HTMLElement, lang: 'fr' | 'en', la
     }
   });
 
-  // functional-specifications.md: "un changement de filtre... relance
-  // automatiquement la requête" while live mode is active. resize() re-renders
+  // functional-specifications.md: "a filter change... automatically reruns
+  // the request" while live mode is active. resize() re-renders
   // the map on its own and only needs the existing live points reprojected
   // (handled inline there), never a fresh fetch, so it calls renderMap()
   // directly instead of going through this.

@@ -22,7 +22,7 @@ export interface DataTable {
 export type DataTableBuilder = (lang: 'fr' | 'en') => DataTable;
 
 // Build-time only: reads a prepared data file from public/data/<viz-slug>/,
-// located from the project root (see "Génération de site" in
+// located from the project root (see "Site generation" in
 // technical-specifications.md for why not import.meta.url).
 export function readDataFile<T>(slug: string, file: string): T {
   return JSON.parse(readFileSync(join(process.cwd(), 'public', 'data', slug, file), 'utf8'));

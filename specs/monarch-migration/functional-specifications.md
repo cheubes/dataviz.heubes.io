@@ -1,75 +1,75 @@
-# Spécification fonctionnelle : La migration des monarques
+# Functional specification: The Monarch Migration
 
-Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
+Supplements the general `functional-specifications.md`: screen of this visualization (goal, content, interactions, states, responsive).
 
-## Angle éditorial
+## Editorial angle
 
-| Langue | Titre | Résumé |
+| Language | Title | Summary |
 |---|---|---|
 | FR | La migration des monarques | Un voyage qu'aucun papillon ne fait en entier : le relais des monarques entre le Mexique et le Canada, mois après mois, à partir de près de 400 000 observations. |
 | EN | The Monarch Migration | A journey no single butterfly completes: the monarchs' relay between Mexico and Canada, month after month, drawn from nearly 400,000 observations. |
 
-**Présentation longue FR :**
+**Long FR presentation:**
 > Un papillon monarque ne fait jamais le trajet complet. La migration qui le porte du Mexique jusqu'au Canada et retour est un relais entre plusieurs générations successives, dont aucune ne connaît le point de départ ni le point d'arrivée du voyage entier.
 >
 > Cette carte anime, mois après mois, près de 400 000 observations de monarques répertoriées dans GBIF en Amérique du Nord, regroupées sur une grille d'un degré : plus une case est opaque, plus elle recense d'observations à cette période de l'année. La vague remonte du Mexique vers le nord au printemps, atteint le sud du Canada en été, puis reflue vers le sud à l'automne, sans qu'aucun individu ne l'ait vécue en entier. Attention : ce sont des observations, pas un recensement. La densité reflète aussi l'effort d'observation, pas seulement la présence des papillons.
 
-La version EN (`src/content/visualizations/monarch-migration.en.md`) en est la traduction fidèle. Le chiffre "près de 400 000" est celui du jeu affiché (395 170 observations, voir "Prétraitement" dans `data-model.md`) : le brouillon initial parlait à tort de "millions d'observations".
+The EN version (`src/content/visualizations/monarch-migration.en.md`) is its faithful translation. The figure "près de 400 000" is that of the displayed dataset (395,170 observations, see "Preprocessing" in `data-model.md`): the initial draft wrongly spoke of "millions d'observations".
 
-## Objectif
+## Goal
 
-Faire voir, sur une carte animée au long d'une année, la migration du monarque comme une vague collective : une densité d'observations qui remonte vers le nord puis reflue, sans qu'aucun individu ne parcoure le trajet complet.
+To show, on a map animated over the course of a year, the monarch migration as a collective wave: a density of observations that moves north and then recedes, without any individual traveling the full route.
 
-## Contenu (zone de montage)
+## Content (mount area)
 
-- Carte de l'Amérique du Nord (silhouette terrestre, cours d'eau et relief, voir "Techno carte" dans `technical-specifications.md`).
-- Grille de cases de 1° × 1°, dont l'opacité varie avec le nombre d'observations du mois simulé courant.
-- Indicateur du mois simulé en cours.
-- Contrôles de lecture : Play/Pause, sélecteur de vitesse (Lent / Normal / Rapide).
-- Tooltip contextuel au survol/tap d'une case.
+- Map of North America (land silhouette, rivers and relief, see "Map technology" in `technical-specifications.md`).
+- Grid of 1° × 1° cells, whose opacity varies with the number of observations in the current simulated month.
+- Indicator of the current simulated month.
+- Playback controls: Play/Pause, speed selector (Slow / Normal / Fast).
+- Contextual tooltip on hover/tap of a cell.
 
 ## Interactions
 
-- **Lecture automatique :** démarre dès le chargement de la page et boucle en continu sur une année simulée (un seul cycle calendaire, de janvier à décembre puis retour à janvier).
-- **Vitesse :** Lent / Normal / Rapide, facteurs ×0,5 / ×1 / ×2 (36 secondes par année à vitesse normale).
-- **Survol/tap d'une case :** tooltip indiquant, pour le mois simulé courant, le volume d'observations de cette case en pourcentage de son propre maximum annuel (par exemple "Observations en août : 32 % du pic annuel ici"). Volume relatif à la case elle-même, pas un comptage absolu ni un rang global : il dit si la période courante est haute ou basse pour cet endroit précis, pas s'il y a plus de papillons ici qu'ailleurs. Pas de fiche individuelle (aucun individu à identifier). Le pourcentage se met à jour en continu tant que la case est survolée ou épinglée, puisque le mois avance sous le pointeur.
-- **Épinglage :** un clic (ou un tap) sur une case épingle le tooltip, un clic ailleurs le retire.
-- **Zoom/pan :** libre (souris/molette, tactile), jusqu'à ×6.
-- **Vue initiale :** Amérique du Nord entière visible, lecture automatique déjà en cours.
-- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : le mois et le cadrage sont restaurés. Un mois partagé ouvre la carte en pause au début de ce mois (voir "État dans l'URL" dans `technical-specifications.md`).
-- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause au début du mois d'août. Le cycle n'a pas d'état final : août est le mois où la densité couvre le plus de cases et totalise le plus d'observations (960 cases, un peu plus de 100 000 observations), soit l'image la plus complète de la vague.
+- **Autoplay:** starts as soon as the page loads and loops continuously over a simulated year (a single calendar cycle, from January to December then back to January).
+- **Speed:** Slow / Normal / Fast, factors ×0.5 / ×1 / ×2 (36 seconds per year at normal speed).
+- **Hover/tap on a cell:** tooltip indicating, for the current simulated month, the volume of observations in this cell as a percentage of its own annual maximum (for example "Observations in August: 32% of the annual peak here"). A volume relative to the cell itself, not an absolute count or a global rank: it tells whether the current period is high or low for this precise place, not whether there are more butterflies here than elsewhere. No individual card (no individual to identify). The percentage updates continuously as long as the cell is hovered or pinned, since the month advances under the pointer.
+- **Pinning:** a click (or a tap) on a cell pins the tooltip, a click elsewhere removes it.
+- **Zoom/pan:** free (mouse/wheel, touch), up to ×6.
+- **Initial view:** whole of North America visible, autoplay already running.
+- **Shared link** (see "Shareable state in the URL" in the general `functional-specifications.md`): the month and the framing are restored. A shared month opens the map paused at the beginning of that month (see "State in the URL" in `technical-specifications.md`).
+- **Reduced motion** (see "Reduced motion" in the general `functional-specifications.md`): the map opens paused at the beginning of August. The cycle has no final state: August is the month in which the density covers the most cells and totals the most observations (960 cells, a little over 100,000 observations), i.e. the most complete picture of the wave.
 
-## Vue tableau
+## Table view
 
-Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+See "Data table view" in the general `functional-specifications.md`.
 
-- **Légende :** "Observations de monarques par mois, en Amérique du Nord" / "Monarch observations by month, in North America".
-- **Lignes :** les douze mois.
-- **Colonnes :** Observations ; Cases occupées (sur la grille d'un degré) ; Latitude moyenne (°N, pondérée par le nombre d'observations) ; Case la plus au nord (°N).
-- **Ligne de total :** "Année" : total des observations, nombre de cases occupées au moins un mois, latitude moyenne et case la plus au nord sur l'ensemble de l'année.
+- **Caption:** "Observations de monarques par mois, en Amérique du Nord" / "Monarch observations by month, in North America".
+- **Rows:** the twelve months.
+- **Columns:** Observations; Occupied cells (on the one-degree grid); Mean latitude (°N, weighted by the number of observations); Northernmost cell (°N).
+- **Total row:** "Year": total observations, number of cells occupied in at least one month, mean latitude and northernmost cell over the whole year.
 
-## États
+## States
 
-- **Chargement :** le temps que le fichier de densité et le fond de carte soient récupérés et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
-- **Erreur :** échec de récupération d'un des fichiers (ou fichier de densité vide) : message d'erreur, pas de carte vide silencieuse.
-- **Pas d'état vide :** aucun filtre, donc aucune combinaison qui ne montre rien.
+- **Loading:** while the density file and the basemap are fetched and the animation initializes; mount area reserved without layout shift.
+- **Error:** failure to fetch one of the files (or empty density file): error message, no silent empty map.
+- **No empty state:** no filter, hence no combination that shows nothing.
 
 ## Responsive
 
-Pan/zoom au geste tactile, tooltip et épinglage au tap, contrôles sur une ligne qui se replie sur petit écran.
+Pan/zoom by touch gesture, tooltip and pinning on tap, controls on a single line that wraps on small screens.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-L'interaction principale (carte animée, zoom/pan, survol des cases) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet. Le bouton Play/Pause reste accessible au clavier (élément `<button>` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention.
+The main interaction (animated map, zoom/pan, hover on cells) is not natively accessible by keyboard or screen reader. Documented as a known limitation, without fallback, in accordance with the project's default rule. The Play/Pause button remains keyboard-accessible (standard `<button>` element), to make it possible to stop content that moves continuously without intervention.
 
-Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
+Fallback: the table view (see "Table view" above) gives access to the same data, in summary form, by keyboard and screen reader.
 
-## Limites connues
+## Known limitations
 
-- **Pas de légende de l'échelle d'opacité :** l'explication tient dans le texte de présentation ("plus une case est opaque, plus elle recense d'observations"), pas dans un composant dédié sur la carte.
-- **Cases visibles à l'œil nu :** environ 100 km de côté. Un pas plus fin multiplierait le nombre de requêtes GBIF du prétraitement, déjà contraintes par la limite de fréquence de l'API (voir "Prétraitement" dans `data-model.md`).
-- **Pourcentage instable sur les cases à faible effectif :** une case qui ne compte qu'une observation dans l'année affiche 100 % du pic annuel le mois de cette observation. À 1°, une case active sur cinq (22 %) totalise moins de cinq observations sur l'année, et une sur trois (32 %) moins de dix ; le tooltip reste donc un ordre de grandeur, pas une mesure précise.
+- **No legend for the opacity scale:** the explanation lies in the presentation text ("plus une case est opaque, plus elle recense d'observations"), not in a dedicated component on the map.
+- **Cells visible to the naked eye:** about 100 km per side. A finer step would multiply the number of GBIF requests in the preprocessing, already constrained by the API rate limit (see "Preprocessing" in `data-model.md`).
+- **Unstable percentage on low-count cells:** a cell that has only one observation in the year displays 100% of the annual peak in the month of that observation. At 1°, one active cell in five (22%) totals fewer than five observations over the year, and one in three (32%) fewer than ten; the tooltip therefore remains an order of magnitude, not a precise measurement.
 
-## Contenu non traduit
+## Untranslated content
 
-Aucun nom scientifique n'est affiché dans l'interface de la carte (seule la citation du jeu de données, dans le bloc de crédit, porte *Danaus plexippus*). Pas de contenu non traduit à signaler au-delà des règles générales.
+No scientific name is displayed in the map interface (only the dataset citation, in the credit block, carries *Danaus plexippus*). No untranslated content to report beyond the general rules.

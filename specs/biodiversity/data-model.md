@@ -1,58 +1,58 @@
-# Modèle de données : La biodiversité française
+# Data model: French Biodiversity
 
-Complète `data-model.md` général : schéma du dataset propre à cette visualisation.
+Complements the general `data-model.md`: schema of the dataset specific to this visualization.
 
-## Dataset source
+## Source dataset
 
-| Champ | Valeur |
+| Field | Value |
 |---|---|
 | `name` | GBIF Occurrence Data (France) |
 | `publisher` | GBIF.org (Global Biodiversity Information Facility) |
 | `url` | https://www.gbif.org/occurrence/search?country=FR |
-| `license` | CC0 / CC BY (variable par occurrence individuelle, voir "Attribution" ci-dessous) |
+| `license` | CC0 / CC BY (varies per individual occurrence, see "Attribution" below) |
 | `retrieved` | 2026-09-08 |
 
-Deux exports SQL formels (avec DOI, voir "Prétraitement" ci-dessous) ont été utilisés à l'implémentation plutôt qu'un usage agrégé générique de l'API de recherche : `https://doi.org/10.15468/dl.h5srta` (agrégation groupe × saison) et `https://doi.org/10.15468/dl.mmqnrd` (dominance par espèce), cités individuellement dans `datasets` du frontmatter (`biodiversity.fr.md` / `.en.md`) plutôt que l'URL de recherche générique ci-dessus.
+Two formal SQL exports (with DOI, see "Preprocessing" below) were used during implementation rather than a generic aggregated use of the search API: `https://doi.org/10.15468/dl.h5srta` (group × season aggregation) and `https://doi.org/10.15468/dl.mmqnrd` (dominance per species), cited individually in the frontmatter `datasets` (`biodiversity.fr.md` / `.en.md`) rather than the generic search URL above.
 
-**Couverture géographique :** France métropolitaine uniquement (voir "Décisions" ci-dessous ; les DOM sont hors périmètre). En pratique, le code pays GBIF `FR` couvre déjà uniquement la métropole : les DOM (Guadeloupe, Martinique, Guyane, Réunion, Mayotte) portent chacun leur propre code ISO 3166-1 distinct côté occurrences GBIF, donc aucune exclusion supplémentaire n'est nécessaire au prétraitement des données elles-mêmes (voir "Prétraitement" ci-dessous pour la nuance équivalente sur le fond de carte, qui lui bundle les DOM sous la même géométrie).
+**Geographic coverage:** metropolitan France only (see "Decisions" below; the overseas departments are out of scope). In practice, the GBIF country code `FR` already covers only metropolitan France: the overseas departments (Guadeloupe, Martinique, French Guiana, Réunion, Mayotte) each carry their own distinct ISO 3166-1 code on the GBIF occurrence side, so no additional exclusion is needed when preprocessing the data itself (see "Preprocessing" below for the equivalent nuance on the basemap, which bundles the overseas departments under the same geometry).
 
-**Couverture temporelle :** occurrences avec date complète (jour/mois/année), 2010 à l'année du prétraitement. La borne haute réelle est celle de `retrieved`, jamais "présent" au sens littéral puisque les données sont figées au moment du build (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général).
+**Temporal coverage:** occurrences with a complete date (day/month/year), 2010 to the preprocessing year. The actual upper bound is that of `retrieved`, never "present" in the literal sense since the data is frozen at build time (see "Rules common to all visualizations" in the general `technical-specifications.md`).
 
-**Attribution :** GBIF agrège des occurrences de licences variables par jeu de données contributeur (majoritairement CC0 et CC BY). La mention de crédit générique (voir "Crédit dataset" ci-dessous) suffit pour un usage agrégé de ce type ; elle ne remplace pas une citation DOI dédiée si un export GBIF formel (avec DOI) est utilisé au moment de l'implémentation.
+**Attribution:** GBIF aggregates occurrences whose licenses vary per contributing dataset (mostly CC0 and CC BY). The generic credit line (see "Dataset credit" below) is enough for an aggregated use of this kind; it does not replace a dedicated DOI citation if a formal GBIF export (with DOI) is used at implementation time.
 
-## Deux modes de données
+## Two data modes
 
-Cette visualisation a deux modes, l'un par défaut (données figées, conforme à la règle commune), l'autre une exception documentée à cette règle (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général, qui permet une exception "documentée et justifiée").
+This visualization has two modes, one default (frozen data, in line with the common rule), the other a documented exception to that rule (see "Rules common to all visualizations" in the general `technical-specifications.md`, which allows a "documented and justified" exception).
 
-### Mode par défaut : instantané précalculé
+### Default mode: precomputed snapshot
 
-Grille hexagonale H3, agrégée hors ligne, committée en JSON statique. Aucun appel réseau vers GBIF depuis le site publié dans ce mode.
+H3 hexagonal grid, aggregated offline, committed as static JSON. No network call to GBIF from the published site in this mode.
 
-### Mode "données en direct"
+### "Live data" mode
 
-Bascule explicite (voir `functional-specifications.md`) qui interroge l'API de recherche GBIF en direct depuis le navigateur, pour la combinaison de filtres courante. Voir "Mode données en direct" ci-dessous pour le détail technique.
+Explicit toggle (see `functional-specifications.md`) that queries the GBIF search API live from the browser, for the current filter combination. See "Live data" mode below for the technical details.
 
-**Justification de l'exception :** ce mode est un choix éditorial assumé (montrer que le dataset vit, au-delà de l'instantané figé), pas une nécessité technique — le mode par défaut reste pleinement fonctionnel sans lui. Il est donc traité comme une fonctionnalité secondaire optionnelle plutôt que comme le mode de fonctionnement normal de la page.
+**Justification of the exception:** this mode is a deliberate editorial choice (showing that the dataset is alive, beyond the frozen snapshot), not a technical necessity: the default mode remains fully functional without it. It is therefore treated as an optional secondary feature rather than as the page's normal mode of operation.
 
-## Schéma des données brutes (source GBIF)
+## Raw data schema (GBIF source)
 
-Champs GBIF utilisés lors du prétraitement, via l'API SQL Downloads (voir "Prétraitement" ci-dessous, table `occurrence`) :
+GBIF fields used during preprocessing, via the SQL Downloads API (see "Preprocessing" below, `occurrence` table):
 
-| Champ GBIF | Usage |
+| GBIF field | Usage |
 |---|---|
-| `decimalLatitude`, `decimalLongitude` | Position, arrondie à 0,1° côté SQL puis affectée à une cellule H3 côté script local (voir "Prétraitement") |
-| `kingdom`, `phylum`, `class` | Détermination du groupe taxonomique (voir mapping ci-dessous) |
-| `month` | Détermination de la saison d'observation (échappé `"month"` en SQL, collision avec une fonction intégrée du moteur, voir "Prétraitement") |
-| `scientificName` | Calcul de l'espèce dominante par cellule/groupe |
-| `countryCode` | Filtre `FR` (suffit à exclure les DOM, voir ci-dessus) |
-| `hasCoordinate`, `hasGeospatialIssues` | Filtre qualité : coordonnées présentes et valides. Nom de colonne au pluriel dans le schéma SQL Downloads, alors que le paramètre équivalent de l'API de recherche (voir "Mode données en direct" ci-dessous) est au singulier (`hasGeospatialIssue`) — une incohérence de nommage propre à GBIF, pas une erreur d'implémentation. |
-| `year` | Filtre 2010 à l'année de récupération (échappé `"year"` en SQL, même collision que `month`) |
+| `decimalLatitude`, `decimalLongitude` | Position, rounded to 0.1° on the SQL side then assigned to an H3 cell by the local script (see "Preprocessing") |
+| `kingdom`, `phylum`, `class` | Determining the taxonomic group (see mapping below) |
+| `month` | Determining the observation season (escaped as `"month"` in SQL, collision with a built-in function of the engine, see "Preprocessing") |
+| `scientificName` | Computing the dominant species per cell/group |
+| `countryCode` | `FR` filter (enough to exclude the overseas departments, see above) |
+| `hasCoordinate`, `hasGeospatialIssues` | Quality filter: coordinates present and valid. Plural column name in the SQL Downloads schema, whereas the equivalent search API parameter (see "Live data" mode below) is singular (`hasGeospatialIssue`): a naming inconsistency specific to GBIF, not an implementation error. |
+| `year` | Filter from 2010 to the retrieval year (escaped as `"year"` in SQL, same collision as `month`) |
 
-## Groupes taxonomiques
+## Taxonomic groups
 
-Filtre unique (radio, un groupe actif à la fois, "Tous les groupes" par défaut). Reptiles et amphibiens sont fusionnés en un seul groupe filtrable (comme dans la palette du draft d'origine), soit six groupes :
+Single filter (radio, one active group at a time, "Tous les groupes" by default). Reptiles and amphibians are merged into a single filterable group (as in the palette of the original draft), giving six groups:
 
-| Identifiant (données) | Libellé FR | Libellé EN | Filtre GBIF (`class`) |
+| Identifier (data) | FR label | EN label | GBIF filter (`class`) |
 |---|---|---|---|
 | `birds` | Oiseaux | Birds | Aves |
 | `mammals` | Mammifères | Mammals | Mammalia |
@@ -61,35 +61,35 @@ Filtre unique (radio, un groupe actif à la fois, "Tous les groupes" par défaut
 | `plants` | Plantes | Plants | Tracheophyta (`phylum`) |
 | `fungi` | Champignons | Fungi | Fungi (`kingdom`) |
 
-## Définition des saisons
+## Season definition
 
-Saisons météorologiques (pas calendaires), calculées à partir du mois d'observation :
+Meteorological seasons (not calendar seasons), computed from the observation month:
 
-| Identifiant | Libellé FR | Libellé EN | Mois |
+| Identifier | FR label | EN label | Months |
 |---|---|---|---|
-| `winter` | Hiver | Winter | Décembre, janvier, février |
-| `spring` | Printemps | Spring | Mars, avril, mai |
-| `summer` | Été | Summer | Juin, juillet, août |
-| `autumn` | Automne | Autumn | Septembre, octobre, novembre |
+| `winter` | Hiver | Winter | December, January, February |
+| `spring` | Printemps | Spring | March, April, May |
+| `summer` | Été | Summer | June, July, August |
+| `autumn` | Automne | Autumn | September, October, November |
 
-## Prétraitement (réalisé à l'implémentation)
+## Preprocessing (done during implementation)
 
-Le principe documenté avant implémentation (interroger `occurrence/search` par facette, ou télécharger les occurrences brutes) s'est révélé impraticable une fois le volume réel mesuré : 123 millions d'occurrences France 2010-2026 à coordonnées valides. Un téléchargement brut aurait représenté plusieurs dizaines de Go à traiter localement ; une boucle de facettes par cellule H3 (résolution 5, ~15 000 requêtes) aurait pris plusieurs heures avec un risque de limitation par l'API. Méthode effectivement utilisée :
+The approach documented before implementation (querying `occurrence/search` by facet, or downloading the raw occurrences) turned out to be impractical once the actual volume was measured: 123 million France 2010-2026 occurrences with valid coordinates. A raw download would have meant several tens of GB to process locally; a loop of facets per H3 cell (resolution 5, ~15,000 requests) would have taken several hours with a risk of API rate limiting. Method actually used:
 
-1. **Agrégation côté serveur via l'API SQL Downloads de GBIF** (`POST /v1/occurrence/download/request`, `format: SQL_TSV_ZIP`, authentification par compte GBIF), qui exécute un `GROUP BY` sur la table `occurrence` avant export : le fichier résultant ne contient que les combinaisons déjà comptées, pas les enregistrements individuels. Deux requêtes SQL soumises séparément (voir DOI dans "Dataset source" ci-dessus) :
-   - **Requête A** (comptage) : `SELECT ROUND(decimalLatitude,1) AS glat, ROUND(decimalLongitude,1) AS glon, class, phylum, kingdom, "month", COUNT(*) FROM occurrence WHERE countryCode='FR' AND hasCoordinate=TRUE AND hasGeospatialIssues=FALSE AND "year">=2010 AND "year"<=2026 AND "month" IS NOT NULL AND (class IN (...) OR phylum='Tracheophyta' OR kingdom='Fungi') GROUP BY ...` — 665 964 lignes en sortie.
-   - **Requête B** (dominance par espèce) : même filtre, groupé par `class, phylum, kingdom, scientificName` sans le mois — 9 181 740 lignes en sortie (une clause `HAVING COUNT(*) >= 5` prévue pour réduire le bruit des espèces rares a dû être retirée, `HAVING` n'étant pas supporté par ce moteur SQL ; le filtrage du bruit se fait donc côté script local, voir point 4).
-   - **Pièges de dialecte SQL rencontrés** (documentés ici pour toute requête SQL Downloads future) : les identifiants ne s'échappent pas avec des accents graves façon Hive/MySQL (erreur lexicale), mais avec des guillemets doubles façon Trino/ANSI — nécessaire uniquement pour `month` et `year`, qui collisionnent avec des fonctions intégrées du moteur (`class` n'a pas ce problème) ; `HAVING` n'est pas supporté ; la colonne est `hasGeospatialIssues` (pluriel) alors que le paramètre équivalent de l'API de recherche est `hasGeospatialIssue` (singulier, voir tableau ci-dessus).
-2. **Script Node local** (ponctuel, non commité, cohérent avec `bird-migrations`/`flower-phenology`) lisant les deux fichiers TSV en flux (`readline`, sans charger les 9,18 millions de lignes de la requête B en mémoire — une première version naïve saturait le tas Node) :
-   - Rattache chaque ligne à un groupe taxonomique (mapping ci-dessus) et, pour la requête A, à une saison (mapping ci-dessus).
-   - **Filtre de plausibilité géographique, grossier :** une poignée de lignes portent `countryCode=FR` mais des coordonnées manifestement fausses (au large du Costa Rica/Panama dans cet export — une erreur de saisie/interprétation en amont chez GBIF, `hasGeospatialIssues=FALSE` ne les détecte pas). Rejetées avant binning via une bbox généreuse (lon -12 à 12, lat 39 à 52).
-   - Agrège en grille H3 **résolution 4** (~1770 km²/cellule), pas la résolution 5 prévue par la spec initiale : outre le gain de volume de requêtes évoqué au point 1, la grille source (arrondi 0,1°, ≈ 8 × 11 km) est presque aussi grande qu'une cellule de résolution 5 (≈ 17 km de diamètre), ce qui aurait introduit un biais de réaffectation aux bords ; à la résolution 4 (≈ 45 km de diamètre) ce biais devient négligeable.
-   - Pour chaque cellule : somme les compteurs par groupe **et** par saison (requête A), et détermine l'espèce la plus fréquente par groupe en sommant les compteurs par espèce de la requête B (le maximum réel, sans seuil artificiel — le `HAVING >= 5` initialement prévu n'a plus d'utilité une fois les données rapatriées localement).
-   - **Filtre de plausibilité géographique, précis (après binning) :** la bbox grossière ci-dessus ne suffit pas à distinguer une vraie observation marine/côtière d'un simple bruit de géolocalisation — 44 % des 603 cellules obtenues avant ce filtre avaient leur centre hors du polygone terrestre de la France (jusqu'à 579 km au large). Analyse de la densité par tranche de distance à la côte réelle (calculée sur le polygone de `basemap.json`) : la densité s'effondre nettement au-delà de 20-30 km (7,6 M des 8,6 M d'observations "hors polygone" tiennent dans les vingt premiers km ; au-delà de 50 km, 166 cellules ne totalisent que ~195 000 observations, du bruit dispersé plutôt qu'un signal réel). Les cellules dont le centre est à plus de **30 km** de la côte (test point-dans-polygone puis distance au segment le plus proche, calculs géométriques directs, sans dépendance) sont donc rejetées — 208 cellules, ~1 260 observations perdues en moyenne par cellule rejetée contre ~283 000 par cellule conservée. Repéré après un premier passage en production où la carte affichait de nombreuses tuiles en pleine mer, loin de toute côte plausible.
-   - **Piège de winding rencontré** (à surveiller pour toute géométrie construite programmatiquement, déjà documenté pour `bird-migrations/render.ts` au sujet de son rectangle de cadrage) : `h3.cellToBoundary(cell, true)` renvoie l'anneau en sens anti-horaire (convention GeoJSON RFC 7946), mais la règle de winding sphérique de d3-geo est inverse pour un petit anneau local — laissé tel quel, chaque hexagone se rend comme "tout sauf cette cellule" (un immense polygone dégénéré recouvrant toute la page, repéré via un test navigateur réel : il bloquait toutes les interactions souris). L'anneau est donc inversé (`.reverse()`) avant écriture.
-3. Sortie : `public/data/biodiversity/hexbins.json` (voir "Structure des fichiers" dans `technical-specifications.md` général, mis à jour pour ce projet) — 395 cellules.
+1. **Server-side aggregation via the GBIF SQL Downloads API** (`POST /v1/occurrence/download/request`, `format: SQL_TSV_ZIP`, authentication with a GBIF account), which runs a `GROUP BY` on the `occurrence` table before export: the resulting file only contains the already counted combinations, not the individual records. Two SQL queries submitted separately (see DOIs in "Source dataset" above):
+   - **Query A** (count): `SELECT ROUND(decimalLatitude,1) AS glat, ROUND(decimalLongitude,1) AS glon, class, phylum, kingdom, "month", COUNT(*) FROM occurrence WHERE countryCode='FR' AND hasCoordinate=TRUE AND hasGeospatialIssues=FALSE AND "year">=2010 AND "year"<=2026 AND "month" IS NOT NULL AND (class IN (...) OR phylum='Tracheophyta' OR kingdom='Fungi') GROUP BY ...`: 665,964 output rows.
+   - **Query B** (dominance per species): same filter, grouped by `class, phylum, kingdom, scientificName` without the month: 9,181,740 output rows (a `HAVING COUNT(*) >= 5` clause planned to reduce noise from rare species had to be removed, `HAVING` not being supported by this SQL engine; noise filtering is therefore done in the local script, see point 4).
+   - **SQL dialect pitfalls encountered** (documented here for any future SQL Downloads query): identifiers are not escaped with backticks Hive/MySQL style (lexical error), but with double quotes Trino/ANSI style, needed only for `month` and `year`, which collide with built-in functions of the engine (`class` does not have this problem); `HAVING` is not supported; the column is `hasGeospatialIssues` (plural) whereas the equivalent search API parameter is `hasGeospatialIssue` (singular, see table above).
+2. **Local Node script** (one-off, not committed, consistent with `bird-migrations`/`flower-phenology`) reading both TSV files as streams (`readline`, without loading the 9.18 million rows of query B into memory: a first naive version exhausted the Node heap):
+   - Assigns each row to a taxonomic group (mapping above) and, for query A, to a season (mapping above).
+   - **Coarse geographic plausibility filter:** a handful of rows carry `countryCode=FR` but obviously wrong coordinates (off Costa Rica/Panama in this export: an upstream entry/interpretation error at GBIF, which `hasGeospatialIssues=FALSE` does not detect). Rejected before binning via a generous bbox (lon -12 to 12, lat 39 to 52).
+   - Aggregates into an H3 grid at **resolution 4** (~1,770 km²/cell), not the resolution 5 planned by the initial spec: besides the gain in request volume mentioned in point 1, the source grid (0.1° rounding, ≈ 8 × 11 km) is almost as large as a resolution 5 cell (≈ 17 km in diameter), which would have introduced a reassignment bias at the edges; at resolution 4 (≈ 45 km in diameter) this bias becomes negligible.
+   - For each cell: sums the counters per group **and** per season (query A), and determines the most frequent species per group by summing the per-species counters of query B (the actual maximum, without an artificial threshold: the `HAVING >= 5` initially planned is no longer useful once the data has been brought back locally).
+   - **Precise geographic plausibility filter (after binning):** the coarse bbox above is not enough to distinguish a genuine marine/coastal observation from mere geolocation noise: 44% of the 603 cells obtained before this filter had their center outside France's land polygon (up to 579 km offshore). Analysis of density by distance band from the actual coastline (computed on the `basemap.json` polygon): density drops sharply beyond 20-30 km (7.6 M of the 8.6 M "outside polygon" observations fall within the first twenty km; beyond 50 km, 166 cells total only ~195,000 observations, scattered noise rather than a real signal). Cells whose center is more than **30 km** from the coast (point-in-polygon test then distance to the nearest segment, direct geometric computations, with no dependency) are therefore rejected: 208 cells, ~1,260 observations lost on average per rejected cell versus ~283,000 per kept cell. Spotted after a first production pass where the map showed many tiles far out at sea, far from any plausible coast.
+   - **Winding pitfall encountered** (to watch for in any programmatically built geometry, already documented for `bird-migrations/render.ts` regarding its framing rectangle): `h3.cellToBoundary(cell, true)` returns the ring counterclockwise (GeoJSON RFC 7946 convention), but d3-geo's spherical winding rule is the opposite for a small local ring. Left as is, each hexagon renders as "everything except this cell" (a huge degenerate polygon covering the whole page, spotted via a real browser test: it blocked all mouse interactions). The ring is therefore reversed (`.reverse()`) before writing.
+3. Output: `public/data/biodiversity/hexbins.json` (see "File structure" in the general `technical-specifications.md`, updated for this project): 395 cells.
 
-## Format des données statifiées (mode par défaut)
+## Static data format (default mode)
 
 ```json
 {
@@ -122,28 +122,28 @@ Le principe documenté avant implémentation (interroger `occurrence/search` par
 }
 ```
 
-`counts` porte toutes les combinaisons groupe × saison précalculées : le total "tous groupes" ou "toutes saisons" affiché pour un filtre se somme côté client à partir de cette structure, sans nouvel appel réseau.
+`counts` carries all precomputed group × season combinations: the "all groups" or "all seasons" total displayed for a filter is summed on the client from this structure, with no new network call.
 
-## Mode "données en direct"
+## "Live data" mode
 
-- **Endpoint :** `https://api.gbif.org/v1/occurrence/search` (API de recherche, pas `occurrence/download` qui est un export en masse asynchrone impropre à une requête déclenchée par un changement de filtre).
-- **Paramètres type :** `country=FR`, `taxonKey=<id du groupe sélectionné>` (répété si plusieurs clés, voir table ci-dessous ; omis si "Tous les groupes"), `month=<mois de la saison sélectionnée>` (répété par mois, ou omis si "Toutes saisons"), `hasCoordinate=true`, `hasGeospatialIssue=false` (singulier ici, voir note sur `hasGeospatialIssues` plus haut), `limit=300`.
-- **`taxonKey` par groupe** (vérifiés via `GET /v1/species/match` sur le référentiel GBIF Backbone Taxonomy) :
+- **Endpoint:** `https://api.gbif.org/v1/occurrence/search` (search API, not `occurrence/download`, which is an asynchronous bulk export unsuited to a request triggered by a filter change).
+- **Typical parameters:** `country=FR`, `taxonKey=<id of the selected group>` (repeated if several keys, see table below; omitted if "Tous les groupes"), `month=<month of the selected season>` (repeated per month, or omitted if "Toutes saisons"), `hasCoordinate=true`, `hasGeospatialIssue=false` (singular here, see note on `hasGeospatialIssues` above), `limit=300`.
+- **`taxonKey` per group** (verified via `GET /v1/species/match` against the GBIF Backbone Taxonomy):
 
-  | Groupe | `taxonKey` |
+  | Group | `taxonKey` |
   |---|---|
-  | `birds` | 212 (classe Aves) |
-  | `mammals` | 359 (classe Mammalia) |
-  | `reptiles-amphibians` | 131 (classe Amphibia), 11418114 (Testudines), 11592253 (Squamata), 11493978 (Crocodylia) |
-  | `insects` | 216 (classe Insecta) |
+  | `birds` | 212 (class Aves) |
+  | `mammals` | 359 (class Mammalia) |
+  | `reptiles-amphibians` | 131 (class Amphibia), 11418114 (Testudines), 11592253 (Squamata), 11493978 (Crocodylia) |
+  | `insects` | 216 (class Insecta) |
   | `plants` | 7707728 (phylum Tracheophyta) |
-  | `fungi` | 5 (règne Fungi) |
+  | `fungi` | 5 (kingdom Fungi) |
 
-  Le référentiel GBIF ne reconnaît plus "Reptilia" comme classe valide (synonyme pro parte sans occurrence rattachée) : les reptiles y sont répartis en plusieurs classes de rang équivalent (Testudines, Squamata, Crocodylia), d'où les clés multiples pour ce groupe.
-- **Rendu :** points bruts (pas d'agrégation H3 côté client, voir "Techno cartes" dans `technical-specifications.md`), plafonnés à une page de résultats (300, sans pagination automatique) pour rester réactif.
-- **Limite connue à documenter dans l'interface :** un échantillon, pas une vue exhaustive ; CORS validé à l'implémentation (`Access-Control-Allow-Origin: *` sur `api.gbif.org`, sans restriction).
+  The GBIF backbone no longer recognizes "Reptilia" as a valid class (pro parte synonym with no attached occurrence): reptiles are split there into several classes of equivalent rank (Testudines, Squamata, Crocodylia), hence the multiple keys for this group.
+- **Rendering:** raw points (no client-side H3 aggregation, see "Map technology" in `technical-specifications.md`), capped at one page of results (300, without automatic pagination) to stay responsive.
+- **Known limitation to document in the interface:** a sample, not an exhaustive view; CORS validated during implementation (`Access-Control-Allow-Origin: *` on `api.gbif.org`, with no restriction).
 
-## Contraintes de validation propres à cette visualisation
+## Validation constraints specific to this visualization
 
-- Chaque cellule H3 du JSON de sortie porte les six groupes et les quatre saisons dans `counts`, même à zéro (pas de clé omise), pour simplifier la lecture côté client.
-- La somme des `counts` par groupe sur les quatre saisons doit être cohérente avec un éventuel total par groupe si celui-ci est aussi exposé (non prévu dans le format ci-dessus, calculable côté client).
+- Each H3 cell of the output JSON carries the six groups and the four seasons in `counts`, even at zero (no omitted key), to simplify reading on the client.
+- The sum of `counts` per group over the four seasons must be consistent with a possible per-group total if one is also exposed (not planned in the format above, computable on the client).

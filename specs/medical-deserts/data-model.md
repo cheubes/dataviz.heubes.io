@@ -1,63 +1,63 @@
-# Modèle de données : Le désert médical de demain
+# Data model: Tomorrow's Medical Desert
 
-Complète `data-model.md` général : schéma du dataset propre à cette visualisation.
+Complements the general `data-model.md`: schema of the dataset specific to this visualization.
 
-**Statut : implémenté.**
+**Status: implemented.**
 
-## Dataset source
+## Source dataset
 
-Deux jeux de données, tous deux vérifiés directement (fichiers téléchargés et inspectés) :
+Two datasets, both verified directly (files downloaded and inspected):
 
 | `name` | `publisher` | `url` | `license` | `retrieved` |
 |---|---|---|---|---|
 | Accessibilité potentielle localisée (APL) aux médecins généralistes | Direction de la recherche, des études, de l'évaluation et des statistiques (DREES) | https://www.data.gouv.fr/datasets/accessibilite-potentielle-localisee-apl-aux-professionnels-de-sante/ | Licence Ouverte v2.0 | 2026-09-22 |
-| Contours des communes de France simplifié | data.gouv.fr (dérivé d'IGN ADMIN EXPRESS COG) | https://www.data.gouv.fr/datasets/contours-des-communes-de-france-simplifie-avec-regions-et-departement-doutre-mer-rapproches/ | Licence Ouverte v2.0 | 2026-09-22 |
+| Contours des communes de France simplifié | data.gouv.fr (derived from IGN ADMIN EXPRESS COG) | https://www.data.gouv.fr/datasets/contours-des-communes-de-france-simplifie-avec-regions-et-departement-doutre-mer-rapproches/ | Licence Ouverte v2.0 | 2026-09-22 |
 
-Le premier (`Indicateur d'APL aux médecins généralistes.xlsx`, millésime 2024, trois onglets 2022/2023/2024) couvre 34 900 communes (France hors Mayotte). Le second (`a-com2022-topo.json`, TopoJSON, coordonnées WGS84, 13,3 Mo brut, objet `a_com2022`, 34 955 géométries communales, millésime COG 2022) fournit les contours réels.
+The first (`Indicateur d'APL aux médecins généralistes.xlsx`, 2024 edition, three sheets 2022/2023/2024) covers 34,900 communes (France excluding Mayotte). The second (`a-com2022-topo.json`, TopoJSON, WGS84 coordinates, 13.3 MB raw, object `a_com2022`, 34,955 commune geometries, COG 2022 edition) provides the actual boundaries.
 
-## Angle retenu : le désert médical de demain
+## Chosen angle: tomorrow's medical desert
 
-Décidé explicitement avec l'utilisateur (voir échanges de cadrage) : plutôt qu'un simple instantané de densité actuelle, comparaison de l'APL 2024 tel quel à l'APL 2024 recalculé sans les médecins généralistes âgés de 65 ans ou plus — un indicateur prospectif que la DREES publie déjà dans le même fichier, pas un calcul propre à cette visualisation. Montre concrètement combien de communes basculeraient sous un accès dégradé si les médecins proches de la retraite cessaient leur activité.
+Decided explicitly with the user (see framing discussions): rather than a simple snapshot of current density, a comparison of the 2024 APL as is with the 2024 APL recomputed without general practitioners aged 65 or over, a forward-looking indicator that DREES already publishes in the same file, not a computation specific to this visualization. Shows concretely how many communes would tip into degraded access if doctors close to retirement stopped practicing.
 
-## Périmètre retenu
+## Chosen scope
 
-**France métropolitaine uniquement**, même décision que `biodiversity`/`monument-layers`/`paris-trees` (voir "Couverture géographique" dans `biodiversity/data-model.md`) : les communes ultramarines sont exclues, une carte à silhouette unique ne se prêtant pas à leur échelle très différente sans maquette à encarts. Filtrage par code département (départements 971 à 976 exclus, Mayotte déjà absente de la source APL elle-même).
+**Metropolitan France only**, same decision as `biodiversity`/`monument-layers`/`paris-trees` (see "Geographic coverage" in `biodiversity/data-model.md`): overseas communes are excluded, since a single-silhouette map does not suit their very different scale without an inset layout. Filtering by department code (departments 971 to 976 excluded, Mayotte already absent from the APL source itself).
 
-## Champs source utilisés
+## Source fields used
 
-| Champ | Source | Usage |
+| Field | Source | Use |
 |---|---|---|
-| `Code commune INSEE` | APL | Jointure avec `codgeo` du fond de carte |
-| `Commune` | APL | Fiche de détail (redondant avec `libgeo` du fond de carte, l'un des deux suffit) |
-| `APL aux médecins généralistes` | APL, onglet "APL 2024" | Valeur "aujourd'hui" |
-| `APL aux médecins généralistes de 65 ans ou moins` | APL, onglet "APL 2024" | Valeur "demain" (voir "Angle retenu" ci-dessus) |
-| `Population totale 2022` | APL | Fiche de détail |
-| `codgeo` | Contours | Jointure avec `Code commune INSEE` |
-| Géométrie (polygone) | Contours | Silhouette de la commune sur la carte |
+| `Code commune INSEE` | APL | Join with `codgeo` of the basemap |
+| `Commune` | APL | Detail card (redundant with `libgeo` of the basemap, either one is enough) |
+| `APL aux médecins généralistes` | APL, sheet "APL 2024" | "Today" value |
+| `APL aux médecins généralistes de 65 ans ou moins` | APL, sheet "APL 2024" | "Tomorrow" value (see "Chosen angle" above) |
+| `Population totale 2022` | APL | Detail card |
+| `codgeo` | Boundaries | Join with `Code commune INSEE` |
+| Geometry (polygon) | Boundaries | Silhouette of the commune on the map |
 
-Les indicateurs "62 ans ou moins" et "60 ans ou moins" du fichier source ne sont pas retenus : le seuil de 65 ans (âge de départ à la retraite le plus directement pertinent) suffit à l'angle retenu, les deux autres n'auraient fait qu'ajouter des états supplémentaires à la bascule sans enrichir le récit.
+The "62 ans ou moins" and "60 ans ou moins" indicators of the source file are not used: the 65-year threshold (the most directly relevant retirement age) is enough for the chosen angle, and the other two would only have added extra states to the toggle without enriching the story.
 
-## Jointure
+## Join
 
-**Résolue à l'implémentation :** sur 34 778 communes APL métropolitaines et 34 826 géométries de contours métropolitaines (34 955 moins 129 DOM/COM), la jointure par code commune INSEE aboutit à **34 728 communes dans le fichier final** — 53 communes APL sans géométrie correspondante, 101 géométries sans valeur APL correspondante, écart attendu entre les deux millésimes (APL 2024 vs COG 2022 : fusions/scissions de communes dans l'intervalle). Les non-appariées sont exclues plutôt que publiées avec une valeur manquante, conformément à la contrainte de validation ci-dessous.
+**Resolved during implementation:** out of 34,778 metropolitan APL communes and 34,826 metropolitan boundary geometries (34,955 minus 129 DOM/COM), the join by INSEE commune code results in **34,728 communes in the final file**: 53 APL communes without a matching geometry, 101 geometries without a matching APL value, an expected gap between the two editions (APL 2024 vs COG 2022: commune mergers/splits in the interval). The unmatched ones are excluded rather than published with a missing value, in accordance with the validation constraint below.
 
-**Piège rencontré et corrigé : Paris, Lyon et Marseille absentes de la carte.** Le fichier APL découpe ces trois villes par arrondissement (codes 75101-75120, 69381-69389, 13201-13216, soit 45 lignes au total), alors que le fond de carte ne porte qu'un seul polygone par ville (75056, 69123, 13055) : aucune ligne d'arrondissement ne joignait donc le polygone correspondant, et les trois plus grandes villes de France disparaissaient silencieusement de la carte. Corrigé au prétraitement : les codes d'arrondissement sont ramenés au code commune parent, puis agrégés par **moyenne pondérée par la population standardisée** (méthodologie documentée par la DREES elle-même pour l'agrégation de l'APL sur un territoire plus large que la commune) plutôt qu'une moyenne simple. La population affichée pour ces trois communes est la somme des populations totales des arrondissements. Sans ce correctif, la jointure aurait abouti à 34 725 communes (45 lignes d'arrondissement perdues, 3 communes gagnées après agrégation) ; avec, elle aboutit à 34 728.
+**Pitfall encountered and fixed: Paris, Lyon and Marseille missing from the map.** The APL file splits these three cities by arrondissement (codes 75101-75120, 69381-69389, 13201-13216, i.e. 45 rows in total), whereas the basemap carries only one polygon per city (75056, 69123, 13055): no arrondissement row therefore joined the corresponding polygon, and the three largest cities in France silently disappeared from the map. Fixed during preprocessing: the arrondissement codes are mapped to the parent commune code, then aggregated by **mean weighted by the standardized population** (methodology documented by DREES itself for aggregating the APL over an area larger than the commune) rather than a simple mean. The population displayed for these three communes is the sum of the total populations of the arrondissements. Without this fix, the join would have resulted in 34,725 communes (45 arrondissement rows lost, 3 communes gained after aggregation); with it, it results in 34,728.
 
-## Prétraitement (script Node ponctuel, non committé)
+## Preprocessing (one-off Node script, not committed)
 
-1. Extraire l'onglet "APL 2024" du fichier XLSX (librairie `xlsx`/SheetJS, utilisée ponctuellement, pas une dépendance du projet).
-2. Filtrer les deux jeux sur la France métropolitaine (voir "Périmètre retenu" ci-dessus, filtrage sur le préfixe `97`/`98` du code département/commune).
-3. Ramener les codes d'arrondissement de Paris/Lyon/Marseille à leur code commune parent (75056/69123/13055) et agréger les lignes APL correspondantes par moyenne pondérée par la population standardisée (voir "Piège rencontré et corrigé" dans "Jointure" ci-dessus).
-4. Joindre les deux jeux par code commune INSEE (voir "Jointure" ci-dessus).
-5. Réduire chaque géométrie aux seules propriétés nécessaires (voir "Format de sortie" ci-dessous), en écartant les champs du fond de carte non utilisés ici (`xcl2154`/`ycl2154`, `reg`).
-6. Simplifier la géométrie (`mapshaper -simplify 10%`, outil CLI utilisé ponctuellement au prétraitement, pas une dépendance du projet) : 13,2 Mo → 9,4 Mo, voir "Poids du fichier" ci-dessous pour la suite.
-7. Écrire `public/data/medical-deserts/communes.json` (9,0 Mo avec les propriétés jointes, 2,3 Mo compressé gzip).
+1. Extract the "APL 2024" sheet from the XLSX file (`xlsx`/SheetJS library, used once, not a project dependency).
+2. Filter both datasets to metropolitan France (see "Chosen scope" above, filtering on the `97`/`98` prefix of the department/commune code).
+3. Map the arrondissement codes of Paris/Lyon/Marseille to their parent commune code (75056/69123/13055) and aggregate the corresponding APL rows by mean weighted by the standardized population (see "Pitfall encountered and fixed" in "Join" above).
+4. Join the two datasets by INSEE commune code (see "Join" above).
+5. Reduce each geometry to the necessary properties only (see "Output format" below), discarding the basemap fields not used here (`xcl2154`/`ycl2154`, `reg`).
+6. Simplify the geometry (`mapshaper -simplify 10%`, CLI tool used once during preprocessing, not a project dependency): 13.2 MB → 9.4 MB, see "File size" below for what follows.
+7. Write `public/data/medical-deserts/communes.json` (9.0 MB with the joined properties, 2.3 MB gzip-compressed).
 
-## Poids du fichier
+## File size
 
-**Point à l'origine réservé au cadrage, résolu à l'implémentation.** `communes.json` (9,0 Mo, 2,3 Mo gzip) reste le fichier de données le plus lourd du site à ce jour, de loin : un ordre de grandeur au-dessus de `paris-trees` (752 Ko) ou `monument-layers`. Une passe de simplification supplémentaire (`mapshaper -simplify 3%`, testée) n'a réduit le poids que marginalement (9,1 Mo) : l'essentiel du poids ne vient pas de la densité de points des contours (déjà assez simplifiés à la source) mais du nombre de communes lui-même (34 728) et des clés de propriété répétées dans le JSON. Accepté tel quel : la compression gzip (servie automatiquement par GitHub Pages) ramène le coût réseau réel à 2,3 Mo, chargé une fois avec un indicateur de progression (voir "États" dans `functional-specifications.md`).
+**Point originally reserved for framing, resolved during implementation.** `communes.json` (9.0 MB, 2.3 MB gzip) remains the heaviest data file on the site to date, by far: an order of magnitude above `paris-trees` (752 KB) or `monument-layers`. An additional simplification pass (`mapshaper -simplify 3%`, tested) reduced the size only marginally (9.1 MB): most of the size does not come from the point density of the boundaries (already fairly simplified at the source) but from the number of communes itself (34,728) and from the property keys repeated in the JSON. Accepted as is: gzip compression (served automatically by GitHub Pages) brings the actual network cost down to 2.3 MB, loaded once with a progress indicator (see "States" in `functional-specifications.md`).
 
-## Format de sortie
+## Output format
 
 ```json
 {
@@ -86,14 +86,14 @@ Les indicateurs "62 ans ou moins" et "60 ans ou moins" du fichier source ne sont
 }
 ```
 
-Reste au format TopoJSON (pas reconverti en GeoJSON au prétraitement) : les arcs partagés entre communes limitrophes restent mutualisés, cohérent avec la technique déjà utilisée pour les fonds de carte du site (voir "Fond de carte" dans `bird-migrations/technical-specifications.md`).
+Stays in TopoJSON format (not converted back to GeoJSON during preprocessing): the arcs shared between neighboring communes remain shared, consistent with the technique already used for the site's basemaps (see "Basemap" in `bird-migrations/technical-specifications.md`).
 
-## Distribution réelle (mesurée à l'implémentation)
+## Actual distribution (measured during implementation)
 
-Sert de base au domaine de l'échelle de couleur (voir "Palette" dans `technical-specifications.md`) : médiane à 2,84 (APL aujourd'hui), 95ᵉ centile à 5,07, 99ᵉ centile à 6,56, maximum à 23,9 (une poignée de communes très peu peuplées avec un seul praticien, qui écraserait le dégradé sur le reste du territoire si le domaine allait jusqu'au maximum réel). 513 communes à 0 exactement (aucune consultation accessible). Domaine retenu : `[0, 6,5]`, avec écrêtage (`clamp`), commun aux deux états de la bascule (voir "Angle retenu" ci-dessus : un domaine partagé est ce qui rend la comparaison honnête).
+Serves as the basis for the color scale domain (see "Palette" in `technical-specifications.md`): median at 2.84 (APL today), 95th percentile at 5.07, 99th percentile at 6.56, maximum at 23.9 (a handful of very sparsely populated communes with a single practitioner, which would crush the gradient over the rest of the territory if the domain went up to the actual maximum). 513 communes at exactly 0 (no accessible consultation). Chosen domain: `[0, 6.5]`, with clipping (`clamp`), shared by both states of the toggle (see "Chosen angle" above: a shared domain is what makes the comparison honest).
 
-## Contraintes de validation propres à cette visualisation
+## Validation constraints specific to this visualization
 
-- Chaque géométrie porte `apl` et `apl65` numériques (pas de commune sans valeur exploitable : une commune non joignable aux deux sources est exclue plutôt que publiée avec une valeur manquante).
-- `codgeo` unique par géométrie.
-- Toutes les géométries appartiennent à un département métropolitain (voir "Périmètre retenu" ci-dessus).
+- Each geometry carries numeric `apl` and `apl65` (no commune without a usable value: a commune that cannot be joined to both sources is excluded rather than published with a missing value).
+- `codgeo` unique per geometry.
+- All geometries belong to a metropolitan department (see "Chosen scope" above).

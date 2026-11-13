@@ -1,78 +1,78 @@
-# Spécification fonctionnelle : Le pouls du globe
+# Functional specification: The Pulse of the Earth
 
-Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
+Supplements the general `functional-specifications.md`: screen of this visualization (goal, content, interactions, states, responsive).
 
-**Statut : implémenté.**
+**Status: implemented.**
 
-## Angle éditorial
+## Editorial angle
 
-| Langue | Titre | Résumé |
+| Language | Title | Summary |
 |---|---|---|
 | FR | Le pouls du globe | Dix mille ans d'éruptions volcaniques rejouées en boucle : la Terre n'a jamais cessé de trembler, la ceinture de feu à peine visible au repos. |
 | EN | The Pulse of the Earth | Ten thousand years of volcanic eruptions replayed on a loop: the Earth has never stopped shaking, the ring of fire barely visible at rest. |
 
-**Présentation longue FR :**
+**Long FR presentation:**
 > Le Global Volcanism Program de la Smithsonian Institution recense chaque éruption volcanique connue depuis le début de l'Holocène, il y a environ dix mille ans : mille deux cent quatorze volcans, plus de onze mille éruptions documentées, de l'observation directe la plus récente à la trace géologique la plus ancienne.
 >
 > Ce planisphère fait pulser chaque volcan au moment réel de ses éruptions, rejouées en boucle continue sur l'ensemble de la période. Le rythme s'accélère nettement à mesure que la lecture approche du présent : en partie parce que le volcanisme s'est réellement concentré à certaines périodes, mais aussi, pour une large part, parce que les éruptions récentes sont bien mieux documentées que celles d'il y a plusieurs millénaires, un biais du catalogue à garder à l'esprit plutôt qu'une accélération univoque du phénomène lui-même.
 
-**Présentation longue EN :**
+**Long EN presentation:**
 > The Smithsonian Institution's Global Volcanism Program records every known volcanic eruption since the start of the Holocene, roughly ten thousand years ago: one thousand two hundred and fourteen volcanoes, over eleven thousand documented eruptions, from the most recent direct observation to the oldest geological trace.
 >
 > This world map makes every volcano pulse at the real moment of its eruptions, replayed on a continuous loop across the whole period. The pace clearly picks up as the playback nears the present: partly because volcanism has genuinely clustered in certain periods, but largely because recent eruptions are far better documented than those from several millennia ago, a bias in the catalog worth keeping in mind, not a one-directional acceleration of the phenomenon itself.
 
-## Objectif
+## Goal
 
-Faire voir, sur un planisphère animé en boucle continue sur dix mille ans, le rythme réel des éruptions volcaniques mondiales et leur concentration géographique, tout en donnant à comprendre le biais de complétude du catalogue sur lequel elle repose.
+Show, on a world map animated in a continuous loop over ten thousand years, the real rhythm of volcanic eruptions worldwide and their geographic concentration, while conveying the completeness bias of the catalog on which it is based.
 
-## Contenu (zone de montage)
+## Content (mount area)
 
-- Planisphère illustré (silhouette terrestre mondiale, cours d'eau et relief, voir "Rendu" dans `technical-specifications.md`).
-- Chaque volcan pulse (bref halo qui s'étend et s'estompe) au moment simulé de chacune de ses éruptions réelles, taille et intensité du pulse liées à l'indice d'explosivité volcanique (VEI).
-- Annotation textuelle brève (nom et année) lors du pulse d'une éruption retenue comme notable (voir "Sélection des éruptions à annoter" dans `data-model.md`).
-- Indicateur de l'année simulée en cours, doublé d'un curseur d'année natif (`<input type="range">`, granularité annuelle, même modèle que `earthquakes`).
-- Contrôles de lecture : Play/Pause, sélecteur de vitesse (Lent / Normal / Rapide), curseur d'année.
-- Boutons zoomer/dézoomer/réinitialiser le zoom, en haut à droite du planisphère (mêmes contrôles que `earthquakes`), en complément du zoom/pan à la souris et au tactile.
-- Tooltip contextuel au survol/tap d'un volcan (position fixe, à tout moment de la lecture).
+- Illustrated world map (global Earth silhouette, rivers and relief, see "Rendering" in `technical-specifications.md`).
+- Each volcano pulses (a brief halo that expands and fades) at the simulated time of each of its real eruptions, with the size and intensity of the pulse tied to the volcanic explosivity index (VEI).
+- Brief text annotation (name and year) during the pulse of an eruption selected as notable (see "Selection of eruptions to annotate" in `data-model.md`).
+- Indicator of the current simulated year, doubled by a native year slider (`<input type="range">`, yearly granularity, same model as `earthquakes`).
+- Playback controls: Play/Pause, speed selector (Slow / Normal / Fast), year slider.
+- Zoom in/zoom out/reset zoom buttons, at the top right of the world map (same controls as `earthquakes`), in addition to mouse and touch zoom/pan.
+- Contextual tooltip on hover/tap of a volcano (fixed position, at any point during playback).
 
 ## Interactions
 
-- **Lecture automatique en boucle :** démarre dès le chargement de la page et boucle en continu sur l'ensemble de la période couverte (dix mille ans), comme `bird-migrations` — pas un passage unique avec état final figé, à la différence de `monument-layers`/`glacier-retreat`/`endangered-species` (voir "Angle retenu" dans `data-model.md`).
-- **Play/Pause :** interrompt ou reprend la lecture à l'instant simulé courant.
-- **Vitesse :** Lent / Normal / Rapide, mêmes facteurs que `bird-migrations` (×0,5 / ×1 / ×2).
-- **Curseur d'année :** pilotable manuellement (interrompt la lecture automatique, comme un appui sur Pause) ou automatiquement (suit la lecture en cours). Sauter à une année efface les pulses en cours sans en afficher de figés pour cette année : seuls ceux déclenchés à la reprise de la lecture apparaissent. Les volcans au repos et leur fiche de détail restent disponibles.
-- **Survol/tap d'un volcan :** fiche de détail (nom, localisation, nombre total d'éruptions recensées sur la période, éruption la plus récente, VEI maximal atteint) — accessible à tout moment, indépendamment du fait que le volcan pulse ou non à l'instant simulé courant.
-- **Zoom/pan :** libre sur l'ensemble du planisphère (souris/molette, tactile, boutons zoomer/dézoomer/réinitialiser), utile pour distinguer les volcans rapprochés le long d'une même ceinture (Indonésie, Japon, Amérique centrale notamment).
-- **Vue initiale :** planisphère entier visible, lecture automatique déjà en cours, quelque part dans le cycle (pas nécessairement au tout début des dix mille ans).
-- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : l'année et le cadrage sont restaurés. Comme pour `earthquakes`, une année partagée relance la lecture à partir de cette année au lieu de figer la carte en pause, puisqu'une image en pause ne montrerait que les volcans au repos, identiques à toute année (voir "État dans l'URL" dans `technical-specifications.md`).
-- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause au début de la période, avec les volcans au repos et leurs fiches de détail disponibles. Une année partagée reste alors en pause au lieu de relancer la lecture.
+- **Looping autoplay:** starts as soon as the page loads and loops continuously over the whole covered period (ten thousand years), like `bird-migrations`, not a single pass with a frozen final state, unlike `monument-layers`/`glacier-retreat`/`endangered-species` (see "Chosen angle" in `data-model.md`).
+- **Play/Pause:** stops or resumes playback at the current simulated instant.
+- **Speed:** Slow / Normal / Fast, same factors as `bird-migrations` (×0.5 / ×1 / ×2).
+- **Year slider:** can be driven manually (interrupts autoplay, like pressing Pause) or automatically (follows the current playback). Jumping to a year clears the ongoing pulses without displaying frozen ones for that year: only those triggered when playback resumes appear. Volcanoes at rest and their detail card remain available.
+- **Volcano hover/tap:** detail card (name, location, total number of eruptions recorded over the period, most recent eruption, maximum VEI reached), accessible at any time, regardless of whether the volcano is pulsing at the current simulated instant.
+- **Zoom/pan:** free over the whole world map (mouse/wheel, touch, zoom in/zoom out/reset buttons), useful to tell apart volcanoes close together along the same belt (Indonesia, Japan, Central America in particular).
+- **Initial view:** whole world map visible, autoplay already running, somewhere in the cycle (not necessarily at the very start of the ten thousand years).
+- **Shared link** (see "Shareable state in the URL" in the general `functional-specifications.md`): the year and the framing are restored. As for `earthquakes`, a shared year restarts playback from that year instead of freezing the map in pause, since a paused image would only show the volcanoes at rest, identical for every year (see "State in the URL" in `technical-specifications.md`).
+- **Reduced motion** (see "Reduced motion" in the general `functional-specifications.md`): the map opens paused at the start of the period, with the volcanoes at rest and their detail cards available. A shared year then stays paused instead of restarting playback.
 
-## Vue tableau
+## Table view
 
-Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+See "Data table view" in the general `functional-specifications.md`.
 
-- **Légende :** "Éruptions recensées par millénaire" / "Recorded eruptions by millennium".
-- **Lignes :** un millénaire par ligne, de 8000 av. J.-C. à aujourd'hui, avec les mêmes formats d'année que la visualisation.
-- **Colonnes :** Éruptions ; Éruptions d'indice d'explosivité 4 ou plus ; Volcans actifs (au moins une éruption dans le millénaire).
-- **Ligne de total :** toute la période.
-- Le tableau rend directement lisible le biais de documentation décrit dans la présentation : le dernier millénaire complet compte à lui seul près des deux tiers des éruptions recensées.
+- **Caption:** "Éruptions recensées par millénaire" / "Recorded eruptions by millennium".
+- **Rows:** one millennium per row, from 8000 BC to today, with the same year formats as the visualization.
+- **Columns:** Eruptions; Eruptions with an explosivity index of 4 or more; Active volcanoes (at least one eruption in the millennium).
+- **Total row:** the whole period.
+- The table makes the documentation bias described in the presentation directly readable: the last complete millennium alone accounts for nearly two thirds of the recorded eruptions.
 
-## États
+## States
 
-- **Chargement :** le temps que le JSON des volcans/éruptions et le fond de carte soient récupérés et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
-- **Erreur :** échec de récupération du JSON → message d'erreur, pas de carte vide silencieuse.
-- **Vide :** sans objet ici (le catalogue reste fixe, pas de filtre pouvant réduire l'affichage à rien).
+- **Loading:** while the volcanoes/eruptions JSON and the basemap are retrieved and the animation initializes; mount area reserved with no layout shift.
+- **Error:** failure to retrieve the JSON → error message, no silent empty map.
+- **Empty:** not applicable here (the catalog stays fixed, no filter can reduce the display to nothing).
 
 ## Responsive
 
-Même traitement que `bird-migrations`/`monarch-migration` (voir "Responsive" dans leurs `functional-specifications.md` respectifs) : pan/zoom au geste tactile, tooltip et fiche de détail au tap, contrôles repositionnés pour rester utilisables sur petit écran.
+Same treatment as `bird-migrations`/`monarch-migration` (see "Responsive" in their respective `functional-specifications.md`): pan/zoom by touch gesture, tooltip and detail card on tap, controls repositioned to remain usable on small screens.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-L'interaction principale (planisphère animé, zoom/pan, survol des volcans) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documentée comme limite connue, sans repli, conformément à la règle par défaut du projet. Le bouton Play/Pause reste accessible au clavier (élément `<button>` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention.
+The main interaction (animated world map, zoom/pan, hovering over volcanoes) is not natively accessible by keyboard or screen reader. Documented as a known limitation, with no fallback, in line with the project's default rule. The Play/Pause button remains keyboard accessible (standard `<button>` element), to make it possible to stop content that moves continuously without intervention.
 
-Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
+Fallback: the table view (see "Table view" above) gives access to the same data, as a summary, by keyboard and screen reader.
 
-## Contenu non traduit
+## Untranslated content
 
-Les noms de volcans restent identiques ou quasi identiques dans les deux langues dans la plupart des cas (noms propres). Le pays affiché dans la fiche de détail (`Country` du GVP, voir "Champs source utilisés" dans `data-model.md`) reste en anglais dans les deux langues, comme les noms de volcans : c'est une donnée source du catalogue, pas un texte éditorial du site, même traitement que les autres champs non traduits.
+Volcano names remain identical or nearly identical in both languages in most cases (proper nouns). The country displayed in the detail card (the GVP's `Country`, see "Source fields used" in `data-model.md`) remains in English in both languages, like the volcano names: it is source data from the catalog, not editorial text of the site, same treatment as the other untranslated fields.

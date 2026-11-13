@@ -96,8 +96,8 @@ export interface ParisTreesLabels {
   nationalGardensLabel: string;
 }
 
-// Eight dominant-genus slots (style-guide.md "Palette dataviz"), assigned by
-// order of appearance in `genera` (data-model.md "Format de sortie"); the
+// Eight dominant-genus slots (style-guide.md "Dataviz palette"), assigned by
+// order of appearance in `genera` (data-model.md "Output format"); the
 // trailing "other" entry gets a neutral tone outside the palette instead.
 const GENUS_PALETTE = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#4a3aa7', '#e34948'];
 const OTHER_COLOR = '#666666';
@@ -134,7 +134,7 @@ function normalizeForSearch(s: string): string {
 }
 
 // Streamed rather than a plain fetch().json(): trees.json is multiple
-// megabytes (functional-specifications.md "États" calls for a progress
+// megabytes (functional-specifications.md "States" calls for a progress
 // indicator rather than a binary loaded/not-loaded state on this file).
 // `Content-Length` isn't reliably the size of the *decoded* stream read here
 // (a gzip-compressed response reports its compressed length on some servers,

@@ -1,137 +1,137 @@
-# Spécifications techniques : Les mondes découverts
+# Technical specifications: The Discovered Worlds
 
-Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
+Supplements the general `technical-specifications.md`: technical choices specific to this visualization, beyond the common rules.
 
-**Statut : spécifié, non implémenté.** Les choix listés dans "Points à valider" ci-dessous attendent la confirmation de l'utilisateur.
+**Status: specified, not implemented.** The choices listed in "Points to validate" below await the user's confirmation.
 
-## Source des données
+## Data source
 
-NASA Exoplanet Archive, table `pscomppars`, interrogée une fois par le service TAP au moment du prétraitement, pas à chaque build (voir "Accès" et "Prétraitement" dans `data-model.md`). Repères du Système solaire relevés sur la fiche NSSDCA. Dans le bloc de crédit des sources, la ligne de l'archive est complétée par le texte de remerciement demandé par l'archive ("This research has made use of the NASA Exoplanet Archive, which is operated by the California Institute of Technology, under contract with the National Aeronautics and Space Administration under the Exoplanet Exploration Program."), repris tel quel dans les deux langues (voir "Dataset source" dans `data-model.md`).
+NASA Exoplanet Archive, `pscomppars` table, queried once through the TAP service at preprocessing time, not at each build (see "Access" and "Preprocessing" in `data-model.md`). Solar System landmarks read from the NSSDCA fact sheet. In the source credit block, the archive's line is supplemented by the acknowledgement text requested by the archive ("This research has made use of the NASA Exoplanet Archive, which is operated by the California Institute of Technology, under contract with the National Aeronautics and Space Administration under the Exoplanet Exploration Program."), reproduced as is in both languages (see "Source dataset" in `data-model.md`).
 
-Les deux URL de source (`url` des datasets) répondent 200 à une requête GET simple au 2026-09-24. L'archive est derrière Cloudflare : un verdict "indéterminé" de la surveillance des sources (voir "Surveillance des sources" dans `technical-specifications.md` général) ne signalerait pas forcément une source disparue.
+Both source URLs (the datasets' `url`) respond 200 to a simple GET request as of 2026-09-24. The archive is behind Cloudflare: an "undetermined" verdict from source monitoring (see "Source monitoring" in the general `technical-specifications.md`) would not necessarily indicate a vanished source.
 
-## Forme retenue
+## Chosen form
 
-**Nuage masse × demi-grand axe, en deux axes logarithmiques, qui se remplit année après année**, plutôt que le nuage rayon × période orbitale envisagé au cadrage. Raison, mesurée sur les données (voir "Mesures" et "Nature des valeurs" dans `data-model.md`) :
+**Mass × semi-major axis scatter plot, on two logarithmic axes, filling up year after year**, rather than the radius × orbital period scatter plot considered during scoping. Reason, measured on the data (see "Measurements" and "Nature of the values" in `data-model.md`):
 
-- **Le rayon × période efface deux des quatre signatures.** La période manque pour 277 des 289 planètes par microlentille et 71 des 97 par imagerie directe ; le rayon de 1 130 planètes par vitesse radiale, de toutes celles par microlentille et de 52 par imagerie n'est pas mesuré mais calculé par l'archive à partir de la masse. Ce plan est celui des transits, et montrerait surtout Kepler et TESS.
-- **Le masse × demi-grand axe les montre toutes.** 6 327 planètes sur 6 366 y ont une position, et les quatre grandes familles y occupent des régions nettement séparées (médianes : transit 0,076 ua / 7 masses terrestres, vitesse radiale 0,97 ua / 359, microlentille 2,35 ua / 190, imagerie 182 ua / 3 970). C'est ce qui porte l'angle "chaque méthode laisse sa signature".
-- **Les repères du Système solaire y ont un sens direct** (distance au Soleil, masse), et la région de la Terre (1 ua, 1 masse terrestre) y est visiblement presque vide : deux planètes seulement entre 0,5 et 2 ua et entre 0,5 et 2 masses terrestres.
+- **Radius × period erases two of the four signatures.** The period is missing for 277 of the 289 microlensing planets and 71 of the 97 direct imaging planets; the radius of 1,130 radial velocity planets, of all microlensing planets and of 52 imaging planets is not measured but computed by the archive from the mass. This plane belongs to transits, and would mostly show Kepler and TESS.
+- **Mass × semi-major axis shows them all.** 6,327 planets out of 6,366 have a position in it, and the four major families occupy clearly separate regions (medians: transit 0.076 AU / 7 Earth masses, radial velocity 0.97 AU / 359, microlensing 2.35 AU / 190, imaging 182 AU / 3,970). This is what carries the "each method leaves its signature" angle.
+- **The Solar System landmarks have a direct meaning there** (distance to the Sun, mass), and Earth's region (1 AU, 1 Earth mass) is visibly almost empty: only two planets between 0.5 and 2 AU and between 0.5 and 2 Earth masses.
 
-Contrepartie assumée : 2 974 masses de transits sont estimées d'après le rayon (relation de Chen et Kipping), et 892 sont des masses minimales. Elles restent représentées, signalées en fiche de détail (voir "Points à valider").
+Accepted trade-off: 2,974 transit masses are estimated from the radius (Chen and Kipping relation), and 892 are minimum masses. They remain plotted, flagged in the detail card (see "Points to validate").
 
-**Frise des découvertes** en complément du nuage : un nuage qui s'accumule montre mal le rythme (une année de 1 504 découvertes ne se distingue d'une année de 150 que par un éclat plus dense). L'histogramme annuel empilé donne ce rythme sans second graphique à part entière, et sert de repère visuel au curseur d'année.
+**Discovery strip** alongside the scatter plot: an accumulating scatter plot conveys rhythm poorly (a year with 1,504 discoveries is distinguished from a year with 150 only by a denser flash). The stacked annual histogram conveys this rhythm without a full-fledged second chart, and serves as a visual reference for the year slider.
 
-## Rendu
+## Rendering
 
-**Canvas 2D pour les points, SVG pour le reste**, même partage que les visualisations cartographiques du site entre données denses et habillage :
+**Canvas 2D for the points, SVG for the rest**, the same split between dense data and chrome as the site's map visualizations:
 
-- **Canvas des points installés :** chaque planète dont l'année simulée est atteinte y est peinte une fois, par-dessus l'existant (même mécanisme incrémental que la nuée de `satellites-in-orbit`). Un changement de filtre, un déplacement manuel du curseur, une reprise de passage ou un redimensionnement vide ce canvas et le reconstruit en une passe. Disque plein de rayon 2,5 px (2 px sous 480 px de large), opacité 0,75, sans contour : la superposition fait monter la densité là où les points s'accumulent.
-- **Canvas des éclats :** au-dessus, effacé et redessiné à chaque image. L'apparition d'une planète y dessine un anneau de sa couleur, dont le rayon passe de trois fois à une fois celui du point et l'opacité de 1 à 0, en **700 ms en temps réel**, indépendamment de la vitesse de lecture. Jusqu'à environ un millier d'éclats simultanés pendant l'année 2016 à vitesse Normal : un millier d'arcs par image reste dans le budget d'un canvas 2D.
-- **SVG d'habillage**, au-dessus des deux canvas, sans capture du pointeur : axes et grille (voir "Axes"), repères du Système solaire (cercle vide de 5 px de rayon, trait de 1,5 px en `--dv-ink-primary`, nom en `0.75rem` graisse 500, même couleur, avec un liseré `--dv-surface` derrière le texte, `paint-order: stroke`, pour rester lisible sur un nuage dense). Au-dessus des points, pour ne jamais être recouverts.
-- **Frise :** SVG sous le nuage, hauteur fixe (64 px, 48 px sous 480 px de large), une colonne par année alignée sur une échelle de bande (`scaleBand`), segments empilés dans l'ordre de la légende. Échelle verticale linéaire commune à toutes les années (maximum : 1 504 en 2016), avec une hauteur minimale de 1 px pour toute année non nulle, pour qu'aucune découverte isolée des années 1990 ne disparaisse. Les segments d'une année ne sont dessinés que quand l'année simulée l'a atteinte ; repère vertical de l'année simulée en `--dv-ink-primary`.
-- D3 pour les calculs uniquement (échelles, boucle d'animation), pas pour le DOM : SVG construit en JS natif (`document.createElementNS`), interactions par `addEventListener`, même approche que `grape-harvest-almanac`.
+- **Canvas of settled points:** each planet whose simulated year has been reached is painted onto it once, on top of what is already there (same incremental mechanism as the swarm of `satellites-in-orbit`). A filter change, a manual slider move, a pass restart or a resize clears this canvas and rebuilds it in one pass. Filled disk with a 2.5 px radius (2 px under 480 px wide), opacity 0.75, no outline: overlap increases density where points accumulate.
+- **Canvas of flashes:** on top, cleared and redrawn at every frame. A planet's appearance draws a ring in its color, whose radius goes from three times to one times that of the point and whose opacity goes from 1 to 0, over **700 ms in real time**, regardless of playback speed. Up to about a thousand simultaneous flashes during the year 2016 at Normal speed: a thousand arcs per frame stays within a 2D canvas budget.
+- **Chrome SVG**, above both canvases, without pointer capture: axes and grid (see "Axes"), Solar System landmarks (empty circle with a 5 px radius, 1.5 px stroke in `--dv-ink-primary`, name in `0.75rem` weight 500, same color, with a `--dv-surface` halo behind the text, `paint-order: stroke`, to remain readable over a dense scatter plot). Above the points, so they are never covered.
+- **Strip:** SVG below the scatter plot, fixed height (64 px, 48 px under 480 px wide), one column per year aligned on a band scale (`scaleBand`), stacked segments in legend order. Linear vertical scale common to all years (maximum: 1,504 in 2016), with a minimum height of 1 px for any non-zero year, so that no isolated discovery of the 1990s disappears. A year's segments are only drawn once the simulated year has reached it; vertical marker for the simulated year in `--dv-ink-primary`.
+- D3 for computations only (scales, animation loop), not for the DOM: SVG built in native JS (`document.createElementNS`), interactions via `addEventListener`, same approach as `grape-harvest-almanac`.
 
 ## Axes
 
-- **Abscisse :** demi-grand axe, `scaleLog`, domaine fixe `[0,003 ; 30 000]` ua, qui contient toutes les planètes (0,0044 à 19 000 ua) et les huit repères. Graduations aux puissances de dix de 0,01 à 10 000, libellés formatés selon la langue (`Intl.NumberFormat` : "0,01", "10 000" / "0.01", "10,000"). Titre : "Distance moyenne à l'étoile (ua, 1 = Terre-Soleil)" / "Average distance to the star (AU, 1 = Earth-Sun)".
-- **Ordonnée :** masse, `scaleLog`, domaine fixe `[0,01 ; 20 000]` masses terrestres (données : 0,02 à 9 535). Mêmes graduations aux puissances de dix. Titre : "Masse (1 = Terre)" / "Mass (1 = Earth)".
-- Grille aux puissances de dix en `--dv-gridline`, libellés en texte secondaire (`--dv-ink-secondary`, `0.75rem`). Sur grand écran, graduations intermédiaires sans libellé (2 et 5 de chaque décade) ; sous 480 px de large, puissances de dix seulement, un libellé sur deux en abscisse.
-- Domaines fixes plutôt que calculés sur les données : l'image d'une année donnée ne change pas d'échelle au fil de la lecture (le nuage se remplit dans un cadre stable), et un rafraîchissement des données qui reste dans ces bornes n'y touche pas. Une planète hors domaine au prochain rafraîchissement est dessinée au bord du cadre plutôt qu'omise, et signalée par le prétraitement.
-- Pas de `d3-axis` (non installé) : graduations obtenues par `scale.ticks()` et tracées à la main, comme l'axe des années de `grape-harvest-almanac`.
+- **X axis:** semi-major axis, `scaleLog`, fixed domain `[0.003, 30000]` AU, which contains all planets (0.0044 to 19,000 AU) and the eight landmarks. Ticks at powers of ten from 0.01 to 10,000, labels formatted according to the language (`Intl.NumberFormat`: "0,01", "10 000" / "0.01", "10,000"). Title: "Distance moyenne à l'étoile (ua, 1 = Terre-Soleil)" / "Average distance to the star (AU, 1 = Earth-Sun)".
+- **Y axis:** mass, `scaleLog`, fixed domain `[0.01, 20000]` Earth masses (data: 0.02 to 9,535). Same ticks at powers of ten. Title: "Masse (1 = Terre)" / "Mass (1 = Earth)".
+- Grid at powers of ten in `--dv-gridline`, labels in secondary text (`--dv-ink-secondary`, `0.75rem`). On large screens, unlabeled intermediate ticks (2 and 5 of each decade); under 480 px wide, powers of ten only, one label out of two on the x axis.
+- Fixed domains rather than computed from the data: the frame for a given year does not change scale during playback (the scatter plot fills up within a stable frame), and a data refresh that stays within these bounds does not affect it. A planet outside the domain at the next refresh is drawn at the edge of the frame rather than omitted, and flagged by the preprocessing.
+- No `d3-axis` (not installed): ticks obtained via `scale.ticks()` and drawn by hand, like the year axis of `grape-harvest-almanac`.
 
 ## Palette
 
-**Exception documentée à la règle générale de la palette dataviz** (voir "Palette dataviz" dans `style-guide.md`), la même que `satellites-in-orbit` : un nuage de points est une disposition où toutes les paires de couleurs peuvent se toucher, qui ne garantit que trois teintes distinguables en daltonisme. Cette visualisation en utilise cinq, compensées par :
+**Documented exception to the general dataviz palette rule** (see "Dataviz palette" in `style-guide.md`), the same as `satellites-in-orbit`: a scatter plot is a layout where all color pairs can touch, which only guarantees three hues distinguishable under color blindness. This visualization uses five, offset by:
 
-- la position, qui porte déjà l'essentiel de l'information : les familles occupent des régions distinctes du plan (voir "Forme retenue"), la couleur confirme plus qu'elle ne distingue ;
-- une légende toujours visible (couleur + nom + effectif, jamais la couleur seule) ;
-- le filtre méthode, qui isole une famille pour lever toute ambiguïté ;
-- la méthode affichée en toutes lettres dans la fiche de détail.
+- position, which already carries most of the information: the families occupy distinct regions of the plane (see "Chosen form"), color confirms more than it distinguishes;
+- an always visible legend (color + name + count, never color alone);
+- the method filter, which isolates a family to remove any ambiguity;
+- the method spelled out in full in the detail card.
 
-| Slot | Teinte | Famille |
+| Slot | Hue | Family |
 |---|---|---|
-| 1 | Bleu | Transit |
-| 2 | Orange | Vitesse radiale |
-| 3 | Aqua | Microlentille |
-| 4 | Jaune | Imagerie directe |
-| 5 | Magenta | Autres méthodes |
+| 1 | Blue | Transit |
+| 2 | Orange | Radial velocity |
+| 3 | Aqua | Microlensing |
+| 4 | Yellow | Direct imaging |
+| 5 | Magenta | Other methods |
 
-Assignation par ordre d'apparition dans `methods` (voir "Format de sortie" dans `data-model.md`), dans l'ordre fixe des slots. Les trois familles les plus proches dans le plan (transit, vitesse radiale, microlentille, qui se chevauchent entre 0,05 et 5 ua) reçoivent les trois slots garantis distinguables deux à deux. Le jaune et le magenta, sous 3:1 de contraste sur fond blanc en trait fin, sont portés par des disques pleins et non des traits ; l'imagerie directe (jaune) occupe une région presque exclusive (90 % de ses planètes au-delà de 10 ua). Les mêmes couleurs servent à la frise.
+Assignment by order of appearance in `methods` (see "Output format" in `data-model.md`), in the fixed slot order. The three families closest in the plane (transit, radial velocity, microlensing, which overlap between 0.05 and 5 AU) get the three slots guaranteed to be pairwise distinguishable. Yellow and magenta, below 3:1 contrast on a white background as thin strokes, are carried by filled disks rather than strokes; direct imaging (yellow) occupies an almost exclusive region (90% of its planets beyond 10 AU). The same colors are used for the strip.
 
-Les repères du Système solaire sont en `--dv-ink-primary`, hors palette catégorielle : ce ne sont pas une sixième série de données mais un habillage de référence, au même titre que la grille.
+The Solar System landmarks are in `--dv-ink-primary`, outside the categorical palette: they are not a sixth data series but reference chrome, just like the grid.
 
-À valider au script du skill dataviz à l'implémentation, avec les valeurs d'opacité retenues (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général).
+To be validated with the dataviz skill script during implementation, with the chosen opacity values (see "Rules common to all visualizations" in the general `technical-specifications.md`).
 
 ## Animation
 
-- Boucle `d3-timer`, année simulée continue sur `[1992, dernière année + 1)`. Mapping linéaire temps de lecture → année simulée, une année par seconde à vitesse Normal : **35 s par passage** pour 1992-2026. Lent (×0,5, 70 s) et Rapide (×2, 17,5 s), même mécanisme `SPEED_FACTORS` que `satellites-in-orbit`.
-- Temps linéaire plutôt que proportionnel au nombre de découvertes : les années creuses des débuts passent aussi vite que 2016, et c'est ce contraste (une poignée de points par an, puis un millier d'un coup) qui donne à voir les vagues Kepler.
-- **Temps d'arrêt de fin de passage :** 2,5 s sur le nuage complet, puis les deux canvas et la frise sont vidés et le passage reprend en 1992 (même convention et même durée que `satellites-in-orbit`). Durée multipliée par le facteur de vitesse.
-- `planets` étant trié par `year` (voir "Contraintes de validation" dans `data-model.md`), un curseur d'index avance à chaque image. `simYear` (voir "Champs dérivés côté client" dans `data-model.md`) étale l'apparition des planètes d'une année sur toute cette année. Les 39 planètes sans position font avancer le compteur et la frise, sans point ni éclat.
-- Année simulée affichée via `Intl.DateTimeFormat(lang, { year: 'numeric' })`. Si la dernière année du fichier est aussi l'année de `generatedAt`, elle porte la mention "année en cours" / "current year" : sa colonne de la frise est incomplète, ce qu'on ne doit pas lire comme un effondrement des découvertes.
+- `d3-timer` loop, continuous simulated year over `[1992, last year + 1)`. Linear mapping of playback time → simulated year, one year per second at Normal speed: **35 s per pass** for 1992-2026. Slow (×0.5, 70 s) and Fast (×2, 17.5 s), same `SPEED_FACTORS` mechanism as `satellites-in-orbit`.
+- Linear time rather than proportional to the number of discoveries: the sparse early years go by as fast as 2016, and it is this contrast (a handful of points per year, then a thousand at once) that reveals the Kepler waves.
+- **End-of-pass hold:** 2.5 s on the complete scatter plot, then both canvases and the strip are cleared and the pass restarts in 1992 (same convention and same duration as `satellites-in-orbit`). Duration multiplied by the speed factor.
+- Since `planets` is sorted by `year` (see "Validation constraints" in `data-model.md`), an index cursor advances at each frame. `simYear` (see "Client-side derived fields" in `data-model.md`) spreads the appearance of a year's planets over that whole year. The 39 planets without a position advance the counter and the strip, with no point or flash.
+- Simulated year displayed via `Intl.DateTimeFormat(lang, { year: 'numeric' })`. If the last year in the file is also the year of `generatedAt`, it carries the "année en cours" / "current year" label: its strip column is incomplete, which must not be read as a collapse in discoveries.
 
-## Curseur d'année
+## Year slider
 
-`<input type="range">` natif, bornes `[1992, dernière année]` calculées depuis `planets`, granularité annuelle, sans graduations : même composant et même comportement que `satellites-in-orbit` (voir "Curseur d'année" dans son `technical-specifications.md`). L'évènement `input` met la lecture en pause ; une recherche binaire sur `year` retrouve le dernier index de l'année choisie ; le canvas des points et la frise sont reconstruits en une passe jusqu'à la fin de cette année, canvas des éclats vidé ; `playedMs` est recalculé par inversion du mapping, pour que la reprise continue depuis ce point.
+Native `<input type="range">`, bounds `[1992, last year]` computed from `planets`, yearly granularity, no tick marks: same component and same behavior as `satellites-in-orbit` (see "Year slider" in its `technical-specifications.md`). The `input` event pauses playback; a binary search on `year` finds the last index of the chosen year; the points canvas and the strip are rebuilt in one pass up to the end of that year, flashes canvas cleared; `playedMs` is recomputed by inverting the mapping, so that resuming continues from that point.
 
-## Survol
+## Hover
 
-Recherche linéaire, à chaque `pointermove` (regroupée à une fois par image), du point visible le plus proche du pointeur dans un rayon de 6 px (12 px sur tactile), parmi les points installés et les familles actives, sur leurs coordonnées écran précalculées au dernier redimensionnement. Environ 6 300 distances par recherche : négligeable, sans index spatial. Tactile : fiche au `pointerdown`/`click`, comme `volcanic-eruptions`. La fiche est un élément DOM superposé au graphique, même approche que le tooltip de `bird-migrations`, avec le point ciblé cerclé en `--dv-ink-primary` sur le canvas des éclats.
+Linear search, at each `pointermove` (batched to once per frame), for the visible point closest to the pointer within a 6 px radius (12 px on touch), among the settled points and active families, on their screen coordinates precomputed at the last resize. About 6,300 distances per search: negligible, no spatial index. Touch: card on `pointerdown`/`click`, like `volcanic-eruptions`. The card is a DOM element overlaid on the chart, same approach as the tooltip of `bird-migrations`, with the targeted point circled in `--dv-ink-primary` on the flashes canvas.
 
-## Nouvelles dépendances
+## New dependencies
 
-Aucune : `d3-scale` (`scaleLog`, `scaleLinear`, `scaleBand`) et `d3-timer` sont déjà des dépendances du site, réutilisées sans ajout au `package.json`.
+None: `d3-scale` (`scaleLog`, `scaleLinear`, `scaleBand`) and `d3-timer` are already dependencies of the site, reused without adding anything to `package.json`.
 
-| Dépendance | Usage dans cette visualisation | Portée |
+| Dependency | Usage in this visualization | Scope |
 |---|---|---|
-| `d3-scale` | Échelles logarithmiques des axes, échelle linéaire du temps et de la frise, échelle de bande des années | Scopée à cette visualisation (île Astro) |
-| `d3-timer` | Boucle d'animation | Idem |
+| `d3-scale` | Logarithmic scales of the axes, linear scale for time and the strip, band scale for the years | Scoped to this visualization (Astro island) |
+| `d3-timer` | Animation loop | Same |
 
-Écartés : `d3-axis` et `d3-quadtree`, qui seraient de nouvelles dépendances (à discuter avant ajout), sans nécessité ici (graduations tracées à la main, recherche linéaire suffisante au volume mesuré). Pas de `d3-zoom` ni de `d3-selection` : pas de zoom, DOM en JS natif.
+Ruled out: `d3-axis` and `d3-quadtree`, which would be new dependencies (to be discussed before adding), not needed here (ticks drawn by hand, linear search sufficient at the measured volume). No `d3-zoom` or `d3-selection`: no zoom, DOM in native JS.
 
-## Hydratation
+## Hydration
 
-`client:visible`, via un `IntersectionObserver` sur la zone de montage, même mécanisme que les autres visualisations du site.
+`client:visible`, via an `IntersectionObserver` on the mount area, same mechanism as the site's other visualizations.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cette visualisation. Mouvement réduit : `prefersReducedMotion()` (voir "Accessibilité" dans `technical-specifications.md` général) ouvre la visualisation en pause sur la dernière année par le même chemin qu'une année restaurée depuis l'URL, sans l'écrire ; le canvas des éclats n'est alors jamais dessiné, lecture lancée ou non.
+See "Accessibility (known limitation)" in this visualization's `functional-specifications.md`. Reduced motion: `prefersReducedMotion()` (see "Accessibility" in the general `technical-specifications.md`) opens the visualization paused on the last year through the same path as a year restored from the URL, without writing it; the flashes canvas is then never drawn, whether playback is started or not.
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Hauteur de la zone de montage selon la règle commune (`max(320px, min(largeur × 0,6, plafond))`, frise et contrôles compris). Au redimensionnement, canvas et SVG sont redimensionnés ensemble et le nuage installé est reconstruit en une passe (positions recalculées, pas d'étirement). Sous 480 px de large, seuls les repères Terre, Jupiter et Neptune gardent leur nom, pour éviter le chevauchement des étiquettes de Mercure, Vénus, Terre et Mars, serrées sur moins d'une demi-décade en abscisse.
+See "Responsive" in this visualization's `functional-specifications.md`. Mount area height according to the common rule (`max(320px, min(width × 0.6, cap))`, strip and controls included). On resize, canvases and SVG are resized together and the settled scatter plot is rebuilt in one pass (positions recomputed, no stretching). Under 480 px wide, only the Earth, Jupiter and Neptune landmarks keep their name, to avoid overlapping labels for Mercury, Venus, Earth and Mars, squeezed into less than half a decade on the x axis.
 
-## État dans l'URL
+## State in the URL
 
-Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+See "State in the URL" in the general `technical-specifications.md` for the common mechanism.
 
-| Paramètre | Valeurs | Défaut (absent de l'URL) |
+| Parameter | Values | Default (absent from the URL) |
 |---|---|---|
-| `methods` | Identifiants des familles actives (`transit`, `radial-velocity`, `microlensing`, `imaging`, `other`), séparés par des virgules ; vide (`methods=`) pour aucune famille | Les cinq familles actives |
-| `year` | Année entière entre les bornes du curseur d'année | Lecture en cours |
+| `methods` | Identifiers of the active families (`transit`, `radial-velocity`, `microlensing`, `imaging`, `other`), comma-separated; empty (`methods=`) for no family | All five families active |
+| `year` | Integer year within the year slider bounds | Playback running |
 
-- `methods` : identifiants inconnus ignorés ; une liste non vide dont aucun identifiant n'est connu est invalide et laisse les cinq familles actives. `methods=` restaure l'état vide voulu (voir "États" dans `functional-specifications.md`). Écrit à chaque bascule de la légende.
-- `year` est écrit à la pause (bouton) et au relâchement du curseur d'année, et retiré à la reprise de la lecture. Un lien porteur de `year` ouvre la visualisation en pause, nuage et frise reconstruits jusqu'à la fin de cette année, comme `satellites-in-orbit`. Pas d'écart à la règle générale : à la différence de `earthquakes`, l'image en pause a un sens (le nuage accumulé).
-- La vitesse et la fiche de détail ne sont pas capturées.
+- `methods`: unknown identifiers ignored; a non-empty list in which no identifier is known is invalid and leaves all five families active. `methods=` restores the intended empty state (see "States" in `functional-specifications.md`). Written at each legend toggle.
+- `year` is written on pause (button) and on release of the year slider, and removed when playback resumes. A link carrying `year` opens the visualization paused, with the scatter plot and strip rebuilt up to the end of that year, like `satellites-in-orbit`. No deviation from the general rule: unlike `earthquakes`, the paused frame is meaningful (the accumulated scatter plot).
+- The speed and the detail card are not captured.
 
-## Points à valider
+## Points to validate
 
-Décisions de conception à confirmer par l'utilisateur avant implémentation :
+Design decisions to be confirmed by the user before implementation:
 
-1. **Forme :** nuage masse × demi-grand axe plutôt que rayon × période du cadrage, pour les raisons mesurées dans "Forme retenue". Alternative écartée : rayon × période, qui ne montre que les transits.
-2. **Masses estimées et minimales :** conservées (2 974 masses estimées d'après le rayon, toutes des transits, et 892 masses minimales), rendu identique aux masses mesurées, nature précisée en fiche de détail seulement. Alternative : les distinguer visuellement (disque vide pour une masse estimée), au prix d'un second codage dans un nuage déjà dense. Alternative écartée : les exclure, ce qui retirerait 63 % des transits et les vagues Kepler.
-3. **Demi-grand axe calculé par la troisième loi de Kepler** pour 422 planètes sans `pl_orbsmax` (écart médian de 0,6 % avec les valeurs publiées quand les deux existent), signalé en fiche. Sans ce calcul, 430 planètes, surtout des découvertes TESS récentes, n'auraient pas de point.
-4. **Regroupement en cinq familles** (quatre méthodes principales + "Autres méthodes" pour 72 planètes et sept méthodes).
-5. **Palette :** cinq slots de la palette catégorielle dans un nuage de points, exception identique à `satellites-in-orbit`. Alternative : "Autres méthodes" en gris neutre pour rester à quatre teintes, ce qui demanderait d'ajouter une valeur à `style-guide.md`.
-6. **Axes :** logarithmiques à domaines fixes (`[0,003 ; 30 000]` ua, `[0,01 ; 20 000]` masses terrestres) englobant toutes les planètes. Alternative : couper au 1er et au 99e centile pour élargir le cœur du nuage, au prix d'une cinquantaine de planètes par imagerie au bord du cadre.
-7. **Point de départ en 1992** (planètes du pulsar PSR B1257+12) plutôt qu'en 1995 comme au cadrage : ce sont les premières planètes confirmées de l'archive, et 51 Peg b (1995) reste nommée dans la présentation.
-8. **Frise annuelle empilée** sous le nuage : ajout par rapport au cadrage, à confirmer, ainsi que sa hauteur minimale de 1 px par année non nulle (légère exagération des années 1990).
-9. **Pas de zoom ni de déplacement** dans le nuage : à confirmer, notamment pour le cœur dense des transits (0,01 à 0,3 ua).
-10. **Rythme :** 35 s par passage à vitesse Normal (une année par seconde, temps linéaire), éclats de 700 ms, temps d'arrêt de 2,5 s. Valeurs de départ à confirmer sur un premier rendu observé.
-11. **Mouvement réduit :** éclats d'apparition supprimés même quand le visiteur lance la lecture (les points apparaissent sans éclat). Le `functional-specifications.md` général ne tranche pas explicitement ce cas.
-12. **Étiquettes du Système solaire sur petit écran :** Terre, Jupiter et Neptune seulement sous 480 px.
-13. **Licence et téléchargement :** l'archive ne publie pas de licence formelle mais autorise la réutilisation "with the appropriate acknowledgements" (voir "Dataset source" dans `data-model.md`). Proposition : déclarer `exoplanets.json` dans `downloads`, au titre des sources "sans licence formalisée mais autorisant la redistribution avec citation" de la règle générale, avec le texte de remerciement de l'archive dans le bloc de crédit. Réserve : aucun texte de l'archive ne parle explicitement de redistribution ; si l'utilisateur juge ce silence insuffisant, pas de `downloads`.
-14. **Second dataset crédité** pour les huit valeurs du Système solaire (fiche NSSDCA) plutôt que des constantes non sourcées.
-15. **Présence de 2026, année partielle,** dans la lecture, la frise et le tableau, avec la mention "année en cours", plutôt que d'arrêter la visualisation à la dernière année complète (2025).
-16. **Titre, résumé et présentations** (voir "Angle éditorial" dans `functional-specifications.md`), thème unique `space`.
+1. **Form:** mass × semi-major axis scatter plot rather than the radius × period of the scoping, for the reasons measured in "Chosen form". Alternative ruled out: radius × period, which only shows transits.
+2. **Estimated and minimum masses:** kept (2,974 masses estimated from the radius, all transits, and 892 minimum masses), rendered identically to measured masses, nature stated in the detail card only. Alternative: distinguish them visually (empty disk for an estimated mass), at the cost of a second encoding in an already dense scatter plot. Alternative ruled out: exclude them, which would remove 63% of the transits and the Kepler waves.
+3. **Semi-major axis computed using Kepler's third law** for 422 planets without `pl_orbsmax` (median deviation of 0.6% from the published values when both exist), flagged in the card. Without this computation, 430 planets, mostly recent TESS discoveries, would have no point.
+4. **Grouping into five families** (four main methods + "Other methods" for 72 planets and seven methods).
+5. **Palette:** five slots of the categorical palette in a scatter plot, same exception as `satellites-in-orbit`. Alternative: "Other methods" in neutral gray to stay at four hues, which would require adding a value to `style-guide.md`.
+6. **Axes:** logarithmic with fixed domains (`[0.003, 30000]` AU, `[0.01, 20000]` Earth masses) encompassing all planets. Alternative: cut at the 1st and 99th percentiles to widen the core of the scatter plot, at the cost of about fifty imaging planets at the edge of the frame.
+7. **Starting point in 1992** (planets of the pulsar PSR B1257+12) rather than 1995 as in the scoping: these are the first confirmed planets in the archive, and 51 Peg b (1995) is still named in the presentation.
+8. **Stacked annual strip** below the scatter plot: an addition compared to the scoping, to be confirmed, along with its minimum height of 1 px per non-zero year (slight exaggeration of the 1990s).
+9. **No zoom or pan** in the scatter plot: to be confirmed, in particular for the dense core of transits (0.01 to 0.3 AU).
+10. **Pace:** 35 s per pass at Normal speed (one year per second, linear time), 700 ms flashes, 2.5 s hold. Starting values to be confirmed on a first observed rendering.
+11. **Reduced motion:** appearance flashes suppressed even when the visitor starts playback (points appear without a flash). The general `functional-specifications.md` does not explicitly decide this case.
+12. **Solar System labels on small screens:** Earth, Jupiter and Neptune only under 480 px.
+13. **License and download:** the archive does not publish a formal license but allows reuse "with the appropriate acknowledgements" (see "Source dataset" in `data-model.md`). Proposal: declare `exoplanets.json` in `downloads`, under the "no formalized license but allowing redistribution with citation" sources of the general rule, with the archive's acknowledgement text in the credit block. Caveat: no text from the archive explicitly mentions redistribution; if the user deems this silence insufficient, no `downloads`.
+14. **Second credited dataset** for the eight Solar System values (NSSDCA fact sheet) rather than unsourced constants.
+15. **Inclusion of 2026, a partial year,** in playback, the strip and the table, with the "année en cours" label, rather than stopping the visualization at the last complete year (2025).
+16. **Title, summary and presentations** (see "Editorial angle" in `functional-specifications.md`), single theme `space`.

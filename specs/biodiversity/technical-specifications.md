@@ -1,79 +1,79 @@
-# Spécifications techniques : La biodiversité française
+# Technical specifications: French Biodiversity
 
-Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
+Complements the general `technical-specifications.md`: technical choices specific to this visualization, beyond the common rules.
 
-## Techno cartes
+## Map technology
 
-D3 v7 seul, pas de Leaflet (voir échanges de cadrage : cohérence entre les trois visualisations, pas de dépendance à un serveur de tuiles tiers en runtime, esthétique illustrée plutôt que carte générique).
+D3 v7 only, no Leaflet (see framing discussions: consistency across the three visualizations, no runtime dependency on a third-party tile server, illustrated aesthetic rather than a generic map).
 
-- **Fond de carte :** silhouette SVG de la France métropolitaine (`public/data/biodiversity/basemap.json`), dérivée du paquet `world-atlas` (`countries-50m.json`, données Natural Earth, domaine public), même famille de source que `bird-migrations` mais résolution 50m (pas 110m) puisqu'un seul pays isolé, plus détaillé, reste léger. Récupéré une fois via le CDN jsDelivr, la géométrie France (id `250`) en est extraite puis retopologisée en un fichier TopoJSON autonome (objet `france`, 3 arcs, ~18 Ko) via `topojson-server`/`topojson-simplify` (outils utilisés ponctuellement au prétraitement, pas des dépendances npm du projet, comme `h3-js` ci-dessous). **Piège rencontré :** `world-atlas` regroupe les départements et territoires d'outre-mer (Mayotte, Réunion, Guadeloupe, Guyane...) comme polygones supplémentaires de la même géométrie "France" (contrairement au code pays GBIF, qui les distingue nativement, voir `data-model.md`) ; filtrés par bounding box (lon -6 à 10, lat 41 à 52) avant retopologisation.
-- **Grille hexagonale :** géométries H3 précalculées côté script de prétraitement (voir `data-model.md`), livrées comme polygones GeoJSON dans le JSON de sortie. Aucun calcul H3 côté client, donc pas de dépendance `h3-js` dans le navigateur (utilisée uniquement par le script de prétraitement local, non commité, comme `topojson-server` ci-dessus).
-- **Rendu :** SVG (`d3-geo` pour la projection, `d3-scale` pour l'intensité de couleur par cellule). Projection `d3.geoMercator()` avec `fitExtent` directement sur la géométrie France (pas de rectangle de cadrage manuel comme `bird-migrations`, un seul pays plutôt qu'une zone multi-continents).
-- **Pas de pan/zoom** (écart à l'intention initiale, demande explicite à l'implémentation, voir "Interactions" dans `functional-specifications.md`) : `d3-zoom` retiré, la carte reste fixe sur la vue `fitExtent` (silhouette entière de la France toujours visible). `d3-selection` n'est donc plus nécessaire non plus (elle ne servait qu'à attacher le comportement de zoom).
-- **Résolution H3 :** 4 (~1770 km²/cellule, 395 cellules après filtrage côtier), pas 5 comme envisagé initialement — voir "Prétraitement" dans `data-model.md` pour la justification (volume de requêtes à la préparation, et concordance avec la granularité de la grille source).
+- **Basemap:** SVG silhouette of metropolitan France (`public/data/biodiversity/basemap.json`), derived from the `world-atlas` package (`countries-50m.json`, Natural Earth data, public domain), same source family as `bird-migrations` but at 50m resolution (not 110m) since a single isolated country, more detailed, stays light. Retrieved once via the jsDelivr CDN, the France geometry (id `250`) is extracted from it then retopologized into a standalone TopoJSON file (`france` object, 3 arcs, ~18 KB) via `topojson-server`/`topojson-simplify` (tools used once during preprocessing, not npm dependencies of the project, like `h3-js` below). **Pitfall encountered:** `world-atlas` groups the overseas departments and territories (Mayotte, Réunion, Guadeloupe, French Guiana...) as additional polygons of the same "France" geometry (unlike the GBIF country code, which distinguishes them natively, see `data-model.md`); filtered by bounding box (lon -6 to 10, lat 41 to 52) before retopologizing.
+- **Hexagonal grid:** H3 geometries precomputed by the preprocessing script (see `data-model.md`), delivered as GeoJSON polygons in the output JSON. No H3 computation on the client, hence no `h3-js` dependency in the browser (used only by the local preprocessing script, not committed, like `topojson-server` above).
+- **Rendering:** SVG (`d3-geo` for the projection, `d3-scale` for the color intensity per cell). `d3.geoMercator()` projection with `fitExtent` directly on the France geometry (no manual framing rectangle as in `bird-migrations`, a single country rather than a multi-continent area).
+- **No pan/zoom** (departure from the initial intent, explicit request during implementation, see "Interactions" in `functional-specifications.md`): `d3-zoom` removed, the map stays fixed on the `fitExtent` view (whole silhouette of France always visible). `d3-selection` is therefore no longer needed either (it was only used to attach the zoom behavior).
+- **H3 resolution:** 4 (~1,770 km²/cell, 395 cells after coastal filtering), not 5 as initially considered: see "Preprocessing" in `data-model.md` for the rationale (request volume during preparation, and consistency with the granularity of the source grid).
 
-## Périmètre carte
+## Map extent
 
-France métropolitaine uniquement, pas les DOM (voir échanges de cadrage : une carte illustrée à silhouette unique ne se prête pas à l'échelle très différente des DOM sans une maquette à encarts, hors périmètre de cette visualisation). Deux mécanismes distincts assurent cette exclusion en pratique (voir `data-model.md`, "Couverture géographique" et "Prétraitement") : le code pays GBIF `FR` exclut déjà nativement les DOM côté données (ils portent chacun leur propre code ISO), tandis que le fond de carte `world-atlas` les bundle dans la même géométrie "France" et nécessite un filtrage explicite par bounding box.
+Metropolitan France only, not the overseas departments (see framing discussions: an illustrated map with a single silhouette does not lend itself to the very different scale of the overseas departments without an inset layout, out of scope for this visualization). Two distinct mechanisms ensure this exclusion in practice (see `data-model.md`, "Geographic coverage" and "Preprocessing"): the GBIF country code `FR` already natively excludes the overseas departments on the data side (they each carry their own ISO code), whereas the `world-atlas` basemap bundles them into the same "France" geometry and requires explicit filtering by bounding box.
 
-## Nouvelles dépendances
+## New dependencies
 
-| Dépendance | Usage | Portée |
+| Dependency | Usage | Scope |
 |---|---|---|
-| `d3-geo`, `d3-scale` | Rendu de la carte et de la grille (projection, échelles de couleur) | Scopée à cette visualisation (île Astro), voir "Règles communes" dans `technical-specifications.md` général ; déjà présentes au `package.json` depuis `bird-migrations`, aucun ajout nécessaire |
-| `topojson-client` | Conversion du fond de carte TopoJSON → GeoJSON côté client | Idem, déjà présente |
+| `d3-geo`, `d3-scale` | Rendering of the map and the grid (projection, color scales) | Scoped to this visualization (Astro island), see "Rules common to all visualizations" in the general `technical-specifications.md`; already in `package.json` since `bird-migrations`, no addition needed |
+| `topojson-client` | Conversion of the TopoJSON basemap → GeoJSON on the client | Same, already present |
 
-Pas de `d3-fetch` : `fetch` natif suffit (`fetch('/data/biodiversity/hexbins.json')`), cohérent avec `bird-migrations`/`flower-phenology` qui font de même. `h3-js`, `topojson-server` et `topojson-simplify` (prétraitement uniquement, voir `data-model.md`) ne sont pas des dépendances du projet : installées ponctuellement en local (`npm install --no-save`) pour le script hors-build, jamais ajoutées au `package.json`.
+No `d3-fetch`: native `fetch` is enough (`fetch('/data/biodiversity/hexbins.json')`), consistent with `bird-migrations`/`flower-phenology` which do the same. `h3-js`, `topojson-server` and `topojson-simplify` (preprocessing only, see `data-model.md`) are not project dependencies: installed once locally (`npm install --no-save`) for the script outside the build, never added to `package.json`.
 
 ## Palette
 
-Palette catégorielle officielle (voir "Palette dataviz" dans `style-guide.md`), six groupes ≤ huit slots disponibles, assignés dans l'ordre :
+Official categorical palette (see "Dataviz palette" in `style-guide.md`), six groups ≤ eight available slots, assigned in order:
 
-| Slot | Teinte | Groupe |
+| Slot | Hue | Group |
 |---|---|---|
-| 1 | Bleu | Oiseaux |
-| 2 | Orange | Mammifères |
-| 3 | Aqua | Reptiles et amphibiens |
-| 4 | Jaune | Insectes |
-| 5 | Magenta | Plantes |
-| 6 | Vert | Champignons |
+| 1 | Blue | Birds |
+| 2 | Orange | Mammals |
+| 3 | Aqua | Reptiles and amphibians |
+| 4 | Yellow | Insects |
+| 5 | Magenta | Plants |
+| 6 | Green | Fungi |
 
-**Écart assumé par rapport au draft d'origine :** l'ordre fixe de la palette officielle ne permet pas de reproduire l'association intuitive "vert = plantes, brun = champignons" du draft. Le vert échoit ici aux champignons. Signalé pour validation à la relecture ; à réordonner si une autre affectation est préférée, tant que l'ordre des slots reste respecté pour la cohérence inter-visualisations.
+**Deliberate departure from the original draft:** the fixed order of the official palette does not allow reproducing the draft's intuitive association "green = plants, brown = fungi". Green falls to fungi here. Flagged for validation at review; to be reordered if another assignment is preferred, as long as the slot order is respected for cross-visualization consistency.
 
-Intensité par cellule (nombre d'observations pour le filtre courant) : échelle séquentielle bleue par défaut (voir "Palette séquentielle" dans `style-guide.md`) quand "Tous les groupes" est actif ; teinte du groupe sélectionné sinon.
+Intensity per cell (number of observations for the current filter): default blue sequential scale (see "Sequential palette" in `style-guide.md`) when "Tous les groupes" is active; hue of the selected group otherwise.
 
-## Iconographie des filtres
+## Filter iconography
 
-Pas de Font Awesome pour les boutons de filtre par groupe (le draft proposait `fa-feather`, `fa-paw`, etc.) : `style-guide.md` réserve Font Awesome aux quatre icônes Creative Commons du pied de page. **Écart à l'intention initiale** ("icônes SVG inline minimalistes par groupe") : à l'implémentation, choix d'une simple pastille de couleur (cercle, `--dv-*-swatch`) par groupe plutôt que des pictogrammes dédiés, par cohérence avec le motif déjà établi par `bird-migrations` (espèces) et `flower-phenology` (espèces) — la légende y sert aussi de filtre, avec une pastille de couleur et un libellé, sans iconographie propre à chaque entrée.
+No Font Awesome for the group filter buttons (the draft proposed `fa-feather`, `fa-paw`, etc.): `style-guide.md` reserves Font Awesome for the four Creative Commons icons of the footer. **Departure from the initial intent** ("minimalist inline SVG icons per group"): during implementation, a simple color swatch (circle, `--dv-*-swatch`) per group was chosen rather than dedicated pictograms, for consistency with the pattern already established by `bird-migrations` (species) and `flower-phenology` (species): the legend there also serves as the filter, with a color swatch and a label, without iconography specific to each entry.
 
-## Mode "données en direct"
+## "Live data" mode
 
-Voir `data-model.md` pour l'endpoint, les paramètres et le format de réponse.
+See `data-model.md` for the endpoint, the parameters and the response format.
 
-- Requête déclenchée au clic sur la bascule et à chaque changement de filtre tant que le mode est actif (`fetch` natif, pas de librairie HTTP supplémentaire).
-- CORS de l'API GBIF (`api.gbif.org`) validé à l'implémentation : `Access-Control-Allow-Origin: *`, sans restriction d'origine.
-- Rendu des points bruts : cercles SVG simples (DOM natif, `document.createElementNS`), pas de nouvelle dépendance.
-- Aucune donnée locale envoyée à GBIF : seuls les filtres choisis par le visiteur (groupe, saison) deviennent des paramètres de requête publique, pas de donnée personnelle.
+- Request triggered on click on the toggle and on each filter change while the mode is active (native `fetch`, no additional HTTP library).
+- CORS of the GBIF API (`api.gbif.org`) validated during implementation: `Access-Control-Allow-Origin: *`, with no origin restriction.
+- Rendering of raw points: simple SVG circles (native DOM, `document.createElementNS`), no new dependency.
+- No local data sent to GBIF: only the filters chosen by the visitor (group, season) become public request parameters, no personal data.
 
-## Hydratation
+## Hydration
 
-`client:visible` (la carte n'est pas critique au premier affichage de la page, voir "Performance" dans `technical-specifications.md` général).
+`client:visible` (the map is not critical to the page's first render, see "Performance" in the general `technical-specifications.md`).
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cette visualisation.
+See "Accessibility (known limitation)" in this visualization's `functional-specifications.md`.
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation pour le comportement attendu ; sans pan/zoom (voir "Techno cartes" ci-dessus), le seul geste tactile à gérer est le tap sur une cellule pour le tooltip, via l'API Pointer Events unifiée (déjà utilisée pour le survol souris).
+See "Responsive" in this visualization's `functional-specifications.md` for the expected behavior; without pan/zoom (see "Map technology" above), the only touch gesture to handle is the tap on a cell for the tooltip, via the unified Pointer Events API (already used for mouse hover).
 
-## État dans l'URL
+## State in the URL
 
-Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+See "State in the URL" in the general `technical-specifications.md` for the common mechanism.
 
-| Paramètre | Valeurs | Défaut (absent de l'URL) |
+| Parameter | Values | Default (absent from the URL) |
 |---|---|---|
-| `group` | `birds`, `mammals`, `reptiles-amphibians`, `insects`, `plants`, `fungi` | Tous les groupes |
-| `season` | `winter`, `spring`, `summer`, `autumn` | Toutes saisons |
+| `group` | `birds`, `mammals`, `reptiles-amphibians`, `insects`, `plants`, `fungi` | All groups |
+| `season` | `winter`, `spring`, `summer`, `autumn` | All seasons |
 
-- **Bascule "Données en direct" exclue :** elle n'est ni écrite ni relue, puisqu'elle déclenche des requêtes vers l'API GBIF (voir la section du mode "données en direct" ci-dessus) et qu'un lien partagé ne doit pas provoquer de requête externe sans action du visiteur. Un lien ouvre donc toujours la grille précalculée, avec le groupe et la saison du lien. Quand le mode est actif, `group` et `season` continuent d'être écrits à chaque changement de filtre.
+- **"Données en direct" toggle excluded:** it is neither written nor read back, since it triggers requests to the GBIF API (see the "live data" mode section above) and a shared link must not cause an external request without action from the visitor. A link therefore always opens the precomputed grid, with the link's group and season. When the mode is active, `group` and `season` keep being written on each filter change.

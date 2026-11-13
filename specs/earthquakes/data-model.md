@@ -1,47 +1,47 @@
-# Modèle de données : Les lignes de faille
+# Data model: The Fault Lines
 
-Complète `data-model.md` général : schéma du dataset propre à cette visualisation.
+Complements the general `data-model.md`: schema of the dataset specific to this visualization.
 
-**Statut : implémenté.**
+**Status: implemented.**
 
-## Dataset source
+## Source dataset
 
-Deux jeux de données :
+Two datasets:
 
 | `name` | `publisher` | `url` | `license` | `retrieved` |
 |---|---|---|---|---|
-| Earthquake Catalog (fdsnws/event) | United States Geological Survey (USGS) | https://earthquake.usgs.gov/fdsnws/event/1/ | Domaine public, confirmé à l'implémentation sur la page officielle des politiques USGS ("USGS-authored or produced data and information are considered to be in the U.S. Public Domain") | 2026-09-16 |
-| Tectonic plate boundaries (modèle de Bird, 2003) | Peter Bird, redistribué par Hugo Ahlenius/Nordpil (dépôt `fraxen/tectonicplates`) | https://github.com/fraxen/tectonicplates | Open Data Commons Attribution License (ODC-BY), attribution à Hugo Ahlenius, Nordpil et Peter Bird requise | 2026-09-16 |
+| Earthquake Catalog (fdsnws/event) | United States Geological Survey (USGS) | https://earthquake.usgs.gov/fdsnws/event/1/ | Public domain, confirmed during implementation on the official USGS policies page ("USGS-authored or produced data and information are considered to be in the U.S. Public Domain") | 2026-09-16 |
+| Tectonic plate boundaries (Bird model, 2003) | Peter Bird, redistributed by Hugo Ahlenius/Nordpil (`fraxen/tectonicplates` repository) | https://github.com/fraxen/tectonicplates | Open Data Commons Attribution License (ODC-BY), attribution to Hugo Ahlenius, Nordpil and Peter Bird required | 2026-09-16 |
 
-API USGS interrogée directement (`fdsnws/event/1/query?format=geojson&starttime=1900-01-01&minmagnitude=6&orderby=time-asc`), format GeoJSON natif, champs riches (magnitude, profondeur, date, localisation, intensité), aucun blocage rencontré. Frontières de plaques récupérées depuis `GeoJSON/PB2002_boundaries.json` du dépôt `fraxen/tectonicplates` (241 tronçons de frontière, `LineString` chacun).
+USGS API queried directly (`fdsnws/event/1/query?format=geojson&starttime=1900-01-01&minmagnitude=6&orderby=time-asc`), native GeoJSON format, rich fields (magnitude, depth, date, location, intensity), no blocking encountered. Plate boundaries retrieved from `GeoJSON/PB2002_boundaries.json` in the `fraxen/tectonicplates` repository (241 boundary segments, each a `LineString`).
 
-## Angle retenu : même mécanique que volcanic-eruptions, plaques révélées
+## Chosen angle: same mechanics as volcanic-eruptions, plates revealed
 
-Décidé explicitement avec l'utilisateur (voir échanges de cadrage) : reprise assumée du mécanisme de `volcanic-eruptions` (planisphère en boucle continue, chaque événement pulse à sa date réelle, intensité du pulse liée à la magnitude), plutôt qu'une différenciation forcée. Deux éléments distinguent malgré tout cette visualisation :
+Decided explicitly with the user (see framing discussions): a deliberate reuse of the `volcanic-eruptions` mechanism (world map on a continuous loop, each event pulses at its real date, pulse intensity tied to magnitude), rather than forced differentiation. Two elements nonetheless set this visualization apart:
 
-1. **Frontières de plaques tectoniques dessinées en superposition statique** (voir "Rendu" dans `technical-specifications.md`) : les pulses sismiques, calculés uniquement à partir des données USGS, viennent épouser ces lignes tracées indépendamment (modèle géophysique de Bird, 2003) — rend visible la structure géologique sans l'affirmer dans le texte.
-2. **Fenêtre temporelle et volume radicalement différents** : depuis le début de l'ère instrumentale (~1900) plutôt que dix mille ans, séismes majeurs uniquement (voir "Périmètre retenu" ci-dessous) plutôt que l'intégralité d'un catalogue géologique — un ordre de grandeur de densité et de rythme très différent de `volcanic-eruptions`, même si le mécanisme visuel de base est le même.
+1. **Tectonic plate boundaries drawn as a static overlay** (see "Rendering" in `technical-specifications.md`): the seismic pulses, computed solely from USGS data, come to follow these independently drawn lines (Bird's geophysical model, 2003), making the geological structure visible without stating it in the text.
+2. **Radically different time window and volume**: since the start of the instrumental era (~1900) rather than ten thousand years, major earthquakes only (see "Chosen scope" below) rather than the whole of a geological catalog: an order of magnitude of density and rhythm very different from `volcanic-eruptions`, even though the basic visual mechanism is the same.
 
-## Périmètre retenu
+## Chosen scope
 
-Décidé explicitement avec l'utilisateur (voir échanges de cadrage) : **magnitude ≥ 6,0, depuis 1900**. Volume réel mesuré à l'implémentation : **14 453 séismes** (1900 à 2026), nettement plus dense que les "quelques milliers" pressentis au cadrage (voir "Points tranchés à l'implémentation" dans `technical-specifications.md` pour l'effet sur le calibrage de l'animation). Répartition par décennie relativement stable (de 350 événements sur 1900-1909 à un pic de 1 585 sur 2000-2009), pas de biais de complétude marqué comparable à celui documenté pour `volcanic-eruptions` : le seuil de magnitude 6 semble suffisamment élevé pour rester correctement détecté dès le début de l'ère instrumentale.
+Decided explicitly with the user (see framing discussions): **magnitude ≥ 6.0, since 1900**. Actual volume measured during implementation: **14,453 earthquakes** (1900 to 2026), markedly denser than the "a few thousand" anticipated during framing (see "Points decided during implementation" in `technical-specifications.md` for the effect on the animation calibration). Distribution by decade relatively stable (from 350 events in 1900-1909 to a peak of 1,585 in 2000-2009), no marked completeness bias comparable to the one documented for `volcanic-eruptions`: the magnitude 6 threshold seems high enough to be reliably detected from the start of the instrumental era.
 
-Le catalogue USGS renvoyé pour cette requête inclut aussi des événements non sismiques enregistrés par les mêmes réseaux (`properties.type`) : 69 essais nucléaires et 1 explosion, exclus du fichier de sortie (voir "Contraintes de validation" ci-dessous) pour ne garder que `type: "earthquake"` (14 453 sur 14 523 événements bruts renvoyés par l'API).
+The USGS catalog returned for this query also includes non-seismic events recorded by the same networks (`properties.type`): 69 nuclear tests and 1 explosion, excluded from the output file (see "Validation constraints" below) to keep only `type: "earthquake"` (14,453 of the 14,523 raw events returned by the API).
 
-## Champs USGS utilisés
+## USGS fields used
 
-| Champ (`properties`/`geometry` GeoJSON) | Usage |
+| Field (GeoJSON `properties`/`geometry`) | Usage |
 |---|---|
-| `mag` | Intensité/taille du pulse (voir "Rendu" dans `technical-specifications.md`) |
-| `place` | Fiche de détail |
-| `time` | Position sur la chronologie simulée |
-| `coordinates` (longitude, latitude, profondeur) | Position sur le planisphère ; profondeur affichée en fiche de détail, pas encodée visuellement (voir échanges de cadrage : la magnitude reste la seule dimension visuelle principale, comme le VEI pour `volcanic-eruptions`) |
+| `mag` | Pulse intensity/size (see "Rendering" in `technical-specifications.md`) |
+| `place` | Detail card |
+| `time` | Position on the simulated timeline |
+| `coordinates` (longitude, latitude, depth) | Position on the world map; depth shown in the detail card, not visually encoded (see framing discussions: magnitude remains the only main visual dimension, like the VEI for `volcanic-eruptions`) |
 
-## Sélection des séismes à annoter
+## Selection of earthquakes to annotate
 
-Les sept candidats pressentis au cadrage ont tous été retrouvés dans le catalogue réel, avec leur véritable identifiant USGS : San Francisco (`official19060418131226300_12`, M7,9, 1906), Chili (`official19600522191120_30`, M9,5, 1960, le plus puissant jamais enregistré), Alaska (`official19640328033616_30`, M9,2, 1964), Tangshan (`usp0000hjg`, M7,5, 1976, identifié par l'horodatage exact du séisme principal, 1976-07-27T19:42:54 UTC soit le 28 juillet à 3h42 heure de Pékin, une date historique bien documentée), Sumatra-Andaman (`official20041226005853450_30`, M9,1, 2004), Haïti (`usp000h60h`, M7,0, 2010), Tōhoku (`official20110311054624120_30`, M9,1, 2011). Ces sept entrées portent `notable: true`.
+The seven candidates anticipated during framing were all found in the actual catalog, with their real USGS identifier: San Francisco (`official19060418131226300_12`, M7.9, 1906), Chile (`official19600522191120_30`, M9.5, 1960, the most powerful ever recorded), Alaska (`official19640328033616_30`, M9.2, 1964), Tangshan (`usp0000hjg`, M7.5, 1976, identified by the exact timestamp of the main shock, 1976-07-27T19:42:54 UTC, i.e. July 28 at 3:42 a.m. Beijing time, a well-documented historical date), Sumatra-Andaman (`official20041226005853450_30`, M9.1, 2004), Haiti (`usp000h60h`, M7.0, 2010), Tōhoku (`official20110311054624120_30`, M9.1, 2011). These seven entries carry `notable: true`.
 
-## Format de sortie
+## Output format
 
 ```json
 {
@@ -53,11 +53,11 @@ Les sept candidats pressentis au cadrage ont tous été retrouvés dans le catal
 }
 ```
 
-`plateBoundaries` porte directement la géométrie des frontières de plaques (voir "Dataset source" ci-dessus), pas de fichier séparé : un seul jeu de données statique, contrairement aux `earthquakes` qui portent la dimension temporelle. `notable`/`nameFr`/`nameEn` uniquement pour les séismes retenus (voir "Sélection des séismes à annoter" ci-dessus), même convention que `volcanic-eruptions`. `depthKm` est `null` pour 103 séismes anciens sans profondeur renseignée dans le catalogue (principalement les événements historiques repris du catalogue centennial ISC-GEM, réseau `cent`) : affiché comme tel en fiche de détail plutôt que remplacé par une valeur inventée. `id` reprend directement l'identifiant natif de l'événement USGS (`properties.id` / `feature.id` du GeoJSON source), pas un identifiant reconstruit.
+`plateBoundaries` directly carries the plate boundary geometry (see "Source dataset" above), no separate file: a single static dataset, unlike `earthquakes`, which carries the time dimension. `notable`/`nameFr`/`nameEn` only for the selected earthquakes (see "Selection of earthquakes to annotate" above), same convention as `volcanic-eruptions`. `depthKm` is `null` for 103 old earthquakes with no depth recorded in the catalog (mainly the historical events taken from the ISC-GEM centennial catalog, `cent` network): shown as such in the detail card rather than replaced by an invented value. `id` directly reuses the native identifier of the USGS event (`properties.id` / `feature.id` of the source GeoJSON), not a reconstructed identifier.
 
-## Contraintes de validation propres à cette visualisation
+## Validation constraints specific to this visualization
 
-- `earthquakes` est trié par `year` croissant (par horodatage exact avant simplification en année, pour un ordre stable entre séismes d'une même année).
-- Un séisme marqué `notable: true` porte `nameFr` et `nameEn`.
-- `plateBoundaries` est une géométrie valide (`MultiLineString`), pas un `FeatureCollection` complet : pas besoin des propriétés par plaque (nom, type de frontière) pour cette visualisation, une simplification volontaire par rapport au jeu de données source complet.
-- `earthquakes` ne contient que les événements dont `properties.type` vaut `"earthquake"` dans la réponse USGS : exclut les essais nucléaires et explosions enregistrés par les mêmes réseaux sismiques (voir "Périmètre retenu" ci-dessus).
+- `earthquakes` is sorted by ascending `year` (by exact timestamp before simplification to the year, for a stable order between earthquakes of the same year).
+- An earthquake marked `notable: true` carries `nameFr` and `nameEn`.
+- `plateBoundaries` is a valid geometry (`MultiLineString`), not a full `FeatureCollection`: no need for per-plate properties (name, boundary type) for this visualization, a deliberate simplification compared to the full source dataset.
+- `earthquakes` only contains events whose `properties.type` is `"earthquake"` in the USGS response: excludes nuclear tests and explosions recorded by the same seismic networks (see "Chosen scope" above).

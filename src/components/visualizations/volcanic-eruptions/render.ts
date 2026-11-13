@@ -71,7 +71,7 @@ type Speed = 'slow' | 'normal' | 'fast';
 const SPEED_FACTORS: Record<Speed, number> = { slow: 0.5, normal: 1, fast: 2 };
 
 // Continuous loop across the whole covered period, no hold-at-end (same
-// "Lecture automatique en boucle" convention as bird-migrations/earthquakes).
+// "Looping autoplay" convention as bird-migrations/earthquakes).
 // 120s, longer than earthquakes' 90s: 10,937 eruptions over ~10,026 years is a
 // bigger catalog over a far longer span (technical-specifications.md
 // "Animation" - an order-of-magnitude jump in temporal compression versus
@@ -80,8 +80,8 @@ const SPEED_FACTORS: Record<Speed, number> = { slow: 0.5, normal: 1, fast: 2 };
 const TOTAL_DURATION_MS = 120_000;
 
 // Fixed real-time pulse life, independent of playback speed
-// (technical-specifications.md "Rendu"): a pulse must stay legible even at
-// "Rapide". Shorter than earthquakes' 850ms - a resting point is always
+// (technical-specifications.md "Rendering"): a pulse must stay legible even at
+// "Fast". Shorter than earthquakes' 850ms - a resting point is always
 // there to click on, so the pulse itself only needs to register as a flash,
 // not double as the hover/tap window like it does for earthquakes.
 const PULSE_DURATION_MS = 700;
@@ -97,7 +97,7 @@ const MAX_ZOOM = 8;
 const ZOOM_BUTTON_STEP = 1.5;
 
 // Sequential orange, not the site's default sequential blue (reserved by
-// earthquakes for magnitude, see style-guide.md "Palette dataviz"): the two
+// earthquakes for magnitude, see style-guide.md "Dataviz palette"): the two
 // visualizations share the same basemap and the same looping-pulse
 // mechanism, so a distinct hue keeps them visually distinguishable. Same
 // generation method as the blue ramp (OKLCH lightness steps, hue rotated to
@@ -111,7 +111,7 @@ const VEI_DOMAIN: [number, number] = [0, 8];
 const RADIUS_RANGE_PX: [number, number] = [3, 30];
 
 // Permanent marker for every volcano, VEI-independent (technical-specifications.md
-// "Palette"): style-guide.md "Fond de carte (illustration)".
+// "Palette"): style-guide.md "Basemap (illustration)".
 const RESTING_POINT_COLOR = '#6b6455';
 const RESTING_POINT_RADIUS_PX = 2.5;
 
@@ -157,8 +157,8 @@ const RELIEF_REFERENCE_BOUNDS: Polygon = {
 
 // Same year-only grouping, spread evenly across the year for a smoother
 // per-frame trigger cadence, as earthquakes/render.ts assignSimYears. `list`
-// is already sorted by `year` ascending (data-model.md "Contraintes de
-// validation"), ties keep the GVP catalog's own order.
+// is already sorted by `year` ascending (data-model.md "Validation
+// constraints"), ties keep the GVP catalog's own order.
 function assignSimYears(list: RawEruption[]): Eruption[] {
   const result = new Array<Eruption>(list.length);
   let i = 0;
@@ -433,7 +433,7 @@ export async function mountVolcanicEruptions(
     const refTranslate = projection.translate();
 
     // Live frame: the whole world silhouette, per technical-specifications.md
-    // "Techno carte".
+    // "Map technology".
     projection.fitExtent(
       [
         [24, 24],
@@ -656,7 +656,7 @@ export async function mountVolcanicEruptions(
   // earthquakes'/monument-layers' year sliders. Jumping the cursor clears
   // whatever pulse is mid-flight, but NOT the resting points or the
   // tooltip/pin state: a resting point stays hoverable independent of the
-  // playhead (functional-specifications.md "Survol/tap d'un volcan"),
+  // playhead (functional-specifications.md "Volcano hover/tap"),
   // unlike earthquakes' transient epicenters.
   yearSlider.addEventListener('input', () => {
     playing = false;
@@ -727,7 +727,7 @@ export async function mountVolcanicEruptions(
   // Hit-test against every resting point, not just active pulses (unlike
   // earthquakes' findActiveNear): a volcano is hoverable/tappable at any
   // time, whether or not it happens to be pulsing right now
-  // (functional-specifications.md "Survol/tap d'un volcan"). A linear scan
+  // (functional-specifications.md "Volcano hover/tap"). A linear scan
   // over 1,214 points per pointer event is cheap enough to not need a
   // spatial index (unlike paris-trees' ~194,000 trees).
   function findNearestVolcano(x: number, y: number): Volcano | null {

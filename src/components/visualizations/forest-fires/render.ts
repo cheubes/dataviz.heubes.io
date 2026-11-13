@@ -70,18 +70,18 @@ const SPEED_FACTORS: Record<Speed, number> = { slow: 0.5, normal: 1, fast: 2 };
 const STEP_MS = 900;
 const HOLD_MS = 2000;
 
-// Style-guide.md "Palette dataviz", slot 2 (orange), light value only: the
-// site has no active dark theme yet (see "Couleurs" in style-guide.md), and
+// Style-guide.md "Dataviz palette", slot 2 (orange), light value only: the
+// site has no active dark theme yet (see "Colors" in style-guide.md), and
 // this is a fixed illustration tint for the subject (technical-specifications.md
 // "Palette"), not a data encoding that would need a scale.
 const FIRE_COLOR = '#eb6834';
 // Same illustration fill/stroke pair as monument-layers/paris-trees (style-guide.md
-// "Fond de carte (illustration)"), the other Canvas-rendered France silhouette maps.
+// "Basemap (illustration)"), the other Canvas-rendered France silhouette maps.
 const BASEMAP_FILL = '#e4e2da';
 const BASEMAP_STROKE = '#acb2b8';
 
 // Range floor keeps the very numerous sub-hectare fires (median burnt area is
-// 0.1 ha, see data-model.md "Statistiques mesurées") visible and clickable;
+// 0.1 ha, see data-model.md "Measured statistics") visible and clickable;
 // range ceiling keeps the 2022 Gironde/Landiras fire (12,552 ha, by far the
 // largest in the dataset) from covering a disproportionate share of the map.
 const MIN_RADIUS_PX = 1.5;
@@ -153,8 +153,8 @@ export async function mountForestFires(root: HTMLElement, lang: 'fr' | 'en', lab
   const years: number[] = [];
   for (let y = startYear; y <= endYear; y++) years.push(y);
 
-  // `fires` is sorted by year ascending (data-model.md "Contraintes de
-  // validation"): each year's slice is a contiguous range, found once at
+  // `fires` is sorted by year ascending (data-model.md "Validation
+  // constraints"): each year's slice is a contiguous range, found once at
   // mount rather than filtering the full array on every year change.
   function lowerBound(year: number): number {
     let lo = 0;

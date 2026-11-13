@@ -58,13 +58,13 @@ const OCEAN_COLOR = '#b7c2ca';
 const LAND_COLOR = '#c7c0a8';
 const GLOBE_STROKE_COLOR = '#8b959c';
 const GLOBE_TILT_DEG = -18;
-// Ambient, decorative rotation, unrelated to playback speed (see "Rendu" in
+// Ambient, decorative rotation, unrelated to playback speed (see "Rendering" in
 // technical-specifications.md): about one full turn every two minutes.
 const ROTATION_DEG_PER_SEC = 3;
 
 // Deterministic PRNG (mulberry32) seeded once and advanced sequentially, one
 // call per satellite in dataset order: the halo layout stays identical across
-// reloads and loop passes (see "Positionnement des points" in
+// reloads and loop passes (see "Point positioning" in
 // technical-specifications.md), without needing to reseed per satellite index.
 function mulberry32(seed: number) {
   let state = seed;
@@ -351,9 +351,9 @@ export async function mountSatellitesInOrbit(
   }
 
   // Clears and repaints every already-elapsed (index < cursor), currently
-  // active satellite in one pass, per "Rendu" in technical-specifications.md:
+  // active satellite in one pass, per "Rendering" in technical-specifications.md:
   // used both after a filter change and after a resize (new globeRadius). The
-  // halo itself never rotates with the globe (see "Positionnement des points"):
+  // halo itself never rotates with the globe (see "Point positioning"):
   // only the decorative land/ocean layer underneath does.
   function rebuildForeground() {
     swarmCtx.clearRect(0, 0, width, height);
@@ -375,7 +375,7 @@ export async function mountSatellitesInOrbit(
   let playedMs = 0;
   let speed: Speed = 'normal';
   // True during the pause on the final, fully-accumulated frame before a pass
-  // loops back to the start (see "Lecture automatique" in functional-specifications.md).
+  // loops back to the start (see "Autoplay" in functional-specifications.md).
   let holding = false;
   let holdElapsedMs = 0;
   const countByRegion = new Map(data.regions.map((r) => [r.id, 0]));
@@ -449,7 +449,7 @@ export async function mountSatellitesInOrbit(
       lastFrameTime = now;
 
       // Pausing freezes every form of motion at once, including the
-      // ambient rotation (see "Accessibilité" in functional-specifications.md).
+      // ambient rotation (see "Accessibility" in functional-specifications.md).
       if (playing) rotationLambda = (rotationLambda + ROTATION_DEG_PER_SEC * (dtMs / 1000)) % 360;
 
       if (holding) {

@@ -1,118 +1,118 @@
-# Spécifications techniques : Le cœur battant du Soleil
+# Technical specifications: The Sun's Heartbeat
 
-Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
+Supplements the general `technical-specifications.md`: technical choices specific to this visualization, beyond the common rules.
 
-## Rendu
+## Rendering
 
-D3 v7 : `d3-shape` (`lineRadial` pour les lignes de base et le trait mensuel, `areaRadial` pour la bande lissée), `d3-scale` (échelle linéaire du nombre de taches vers les pixels), `d3-timer` (animation d'ouverture). Interactions (liste déroulante, survol, tap, bouton) en JS natif (`addEventListener`), sans `d3-selection` ni `d3-transition`, comme `grape-harvest-almanac`. Rendu SVG : 3 332 mois, soit trois tracés de quelques milliers de points (ligne de base, bande, trait mensuel), sans enjeu de performance justifiant Canvas.
+D3 v7: `d3-shape` (`lineRadial` for the baselines and the monthly line, `areaRadial` for the smoothed band), `d3-scale` (linear scale from sunspot number to pixels), `d3-timer` (opening animation). Interactions (dropdown list, hover, tap, button) in plain JS (`addEventListener`), without `d3-selection` or `d3-transition`, like `grape-harvest-almanac`. SVG rendering: 3,332 months, i.e. three traces of a few thousand points (baseline, band, monthly line), with no performance concern justifying Canvas.
 
-Pas de carte, pas de TopoJSON.
+No map, no TopoJSON.
 
-## Géométrie de la spirale
+## Spiral geometry
 
-Notations : pour chaque cycle c (0 à 25), L_c son nombre de mois, P_c le maximum de sa série lissée (valeurs non nulles seulement), k l'échelle du nombre de taches en pixels, g un écart fixe entre tours (de l'ordre de 2px).
+Notation: for each cycle c (0 to 25), L_c its number of months, P_c the maximum of its smoothed series (non-null values only), k the scale of the sunspot number in pixels, g a fixed gap between turns (around 2px).
 
-- **Angle :** le mois d'indice j dans son cycle (j = 0 au minimum) est placé à θ = 2π · j / L_c, dans le sens horaire depuis midi. Chaque tour fait exactement 360°, quelle que soit la durée du cycle (voir "Forme retenue" dans `functional-specifications.md`).
-  - **Cycles incomplets :** le cycle 25 (en cours) et le cycle 0 (commencé avant la série) n'ont pas de durée connue. On leur applique la durée moyenne des cycles complets (132,4 mois à la récupération, calculée depuis les données, pas codée en dur). Le cycle 0 est calé pour finir à midi : ses 73 mois occupent la fin de son tour, à partir d'environ 160°. Le cycle 25 commence à midi ; ses 81 mois en couvrent environ 220°, le reste du tour est tracé en pointillé (voir "Contenu" dans `functional-specifications.md`).
-- **Ligne de base :** son rayon croît linéairement le long de chaque tour, de R_c à midi au début du cycle jusqu'à R_c+1 à la fin : une vraie spirale, continue d'un tour au suivant. R_0 est un petit rayon intérieur (de l'ordre de 6 % du rayon disponible).
-- **Pas variable :** R_c+1 − R_c = k · max(P_c−1, P_c) + g, avec P_−1 = 0. Le pas d'un tour couvre donc l'intensité du cycle qu'il porte et celle du précédent.
-- **Tracé :** au mois de valeur v, le point est au rayon base(θ) + k · v, vers l'extérieur.
-- **Garantie de non-chevauchement** de la bande lissée : à la fraction f du tour, l'écart entre la ligne de base du tour c+1 et celle du tour c vaut (1 − f) · (R_c+1 − R_c) + f · (R_c+2 − R_c+1), combinaison de deux pas tous deux supérieurs ou égaux à k · P_c. Il reste donc toujours au moins k · P_c entre les deux lignes de base, assez pour la bande du cycle c. C'est pour cela que chaque pas prend le maximum de deux cycles et non l'intensité d'un seul : un pas calé sur le seul cycle suivant laisserait un cycle intense déborder sur un cycle faible (cycle 4, 235,3, suivi du cycle 5, 82,0).
-- **Le trait mensuel peut déborder :** les moyennes mensuelles dépassent la moyenne lissée (jusqu'à 134 de plus en mai 1778). Réserver leur pic élargirait tous les pas d'environ un tiers, au détriment de l'amplitude. Ce trait fin et translucide peut donc mordre de quelques pixels sur l'écart avec le tour suivant ; la bande, qui porte la lecture, ne déborde jamais.
-- **Échelle k :** déduite du rayon disponible R_max (demi-côté de la zone de montage, moins une marge pour les étiquettes) : k = (R_max − R_0 − 26 · g) / (Σ max(P_c−1, P_c) + P_25). À la récupération, la somme du dénominateur vaut environ 5 460 (unités du nombre de taches). Avec un rayon disponible de 400px (zone de montage d'environ 900px de côté, possible sur un écran de bureau), k vaut environ 0,06 px par unité : bande du cycle 19 d'environ 17px, tours de Dalton d'environ 5px. Sur un téléphone (rayon disponible d'environ 160px), ces valeurs tombent à 5px et 1,5px : limite assumée, documentée dans "Responsive" de `functional-specifications.md`.
-- **Survol et tap :** le mois retenu est celui dont le segment radial (de la ligne de base au tracé lissé) passe au plus près du pointeur, par une recherche exhaustive sur les 3 332 mois à chaque déplacement (coût négligeable ; pas de `d3-quadtree`). Au-delà d'une tolérance (de l'ordre de 12px à la souris, 20px au doigt), pas d'infobulle. Le clic ou le tap sélectionne le cycle de ce mois.
+- **Angle:** the month of index j within its cycle (j = 0 at the minimum) is placed at θ = 2π · j / L_c, clockwise from twelve o'clock. Each turn is exactly 360°, whatever the duration of the cycle (see "Chosen form" in `functional-specifications.md`).
+  - **Incomplete cycles:** cycle 25 (ongoing) and cycle 0 (started before the series) have no known duration. They are given the average duration of complete cycles (132.4 months at retrieval, computed from the data, not hard-coded). Cycle 0 is aligned to end at twelve o'clock: its 73 months occupy the end of its turn, from about 160°. Cycle 25 starts at twelve o'clock; its 81 months cover about 220°, and the rest of the turn is drawn dotted (see "Content" in `functional-specifications.md`).
+- **Baseline:** its radius grows linearly along each turn, from R_c at twelve o'clock at the start of the cycle to R_c+1 at the end: a true spiral, continuous from one turn to the next. R_0 is a small inner radius (around 6% of the available radius).
+- **Variable pitch:** R_c+1 − R_c = k · max(P_c−1, P_c) + g, with P_−1 = 0. The pitch of a turn therefore covers the strength of the cycle it carries and that of the previous one.
+- **Trace:** at a month of value v, the point is at radius base(θ) + k · v, outwards.
+- **Non-overlap guarantee** for the smoothed band: at fraction f of the turn, the gap between the baseline of turn c+1 and that of turn c is (1 − f) · (R_c+1 − R_c) + f · (R_c+2 − R_c+1), a combination of two pitches both greater than or equal to k · P_c. There is therefore always at least k · P_c between the two baselines, enough for the band of cycle c. This is why each pitch takes the maximum of two cycles and not the strength of a single one: a pitch based only on the next cycle would let a strong cycle spill over a weak one (cycle 4, 235.3, followed by cycle 5, 82.0).
+- **The monthly line may spill over:** monthly means exceed the smoothed mean (by up to 134 more in May 1778). Reserving room for their peak would widen every pitch by about a third, at the expense of amplitude. This thin, translucent line may therefore bite a few pixels into the gap with the next turn; the band, which carries the reading, never spills over.
+- **Scale k:** derived from the available radius R_max (half the side of the mount area, minus a margin for labels): k = (R_max − R_0 − 26 · g) / (Σ max(P_c−1, P_c) + P_25). At retrieval, the denominator sum is about 5,460 (sunspot number units). With an available radius of 400px (mount area about 900px wide, possible on a desktop screen), k is about 0.06 px per unit: cycle 19 band about 17px, Dalton turns about 5px. On a phone (available radius about 160px), these values drop to 5px and 1.5px: an accepted limitation, documented in "Responsive" of `functional-specifications.md`.
+- **Hover and tap:** the month picked is the one whose radial segment (from the baseline to the smoothed trace) passes closest to the pointer, through an exhaustive search over the 3,332 months on each move (negligible cost; no `d3-quadtree`). Beyond a tolerance (around 12px with a mouse, 20px with a finger), no tooltip. A click or tap selects the cycle of that month.
 
-## Zone de montage : ratio 1:1 (exception documentée)
+## Mount area: 1:1 ratio (documented exception)
 
-`aspect-ratio: 1 / 1`, pas le calcul `largeur × 0,6` de la hauteur par défaut (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général) : une spirale exige un carré, même raisonnement que `flower-phenology`. Le plafond commun s'applique de la même façon : c'est la largeur du carré qui est bridée pour que le carré et le bandeau de contrôles tiennent entre l'en-tête et le pied de page.
+`aspect-ratio: 1 / 1`, not the default `width × 0.6` height calculation (see "Rules common to all visualizations" in the general `technical-specifications.md`): a spiral requires a square, same reasoning as `flower-phenology`. The common cap applies in the same way: it is the width of the square that is constrained so that the square and the control bar fit between the header and the footer.
 
-À la différence de `flower-phenology`, pas de `max-width: 640px` fixe en plus de ce plafond : l'amplitude lisible dépend directement du rayon (voir "Échelle k" ci-dessus), et chaque pixel gagné sur un grand écran profite aux tours serrés.
+Unlike `flower-phenology`, there is no fixed `max-width: 640px` on top of this cap: the readable amplitude depends directly on the radius (see "Scale k" above), and every pixel gained on a large screen benefits the tight turns.
 
-## Animation d'ouverture
+## Opening animation
 
-- Pilotée par `d3-timer` : à chaque image, l'indice du dernier mois affiché est proportionnel au temps écoulé (vitesse constante dans le temps, pas le long du tracé : les tours extérieurs, plus longs, ne ralentissent pas la lecture). La bande, le trait mensuel et les lignes de base sont tracés jusqu'à cet indice.
-- Durée totale : environ douze secondes (voir "Points à valider").
-- Les étiquettes des repères apparaissent en fondu d'opacité quand le tracé atteint leur mois (le dernier mois pour `current-cycle`, le premier mois du cycle 5 pour `dalton-minimum`).
-- "Passer", la sélection d'un cycle ou la restauration d'un cycle depuis l'URL arrêtent le timer et dessinent l'état final directement.
-- Mouvement réduit : `prefersReducedMotion()` (`src/scripts/reduced-motion.ts`) lu une fois au montage ; s'il est actif, l'état final est dessiné sans démarrer le timer, et "Rejouer" reste disponible (voir "Interactions" dans `functional-specifications.md`).
+- Driven by `d3-timer`: on each frame, the index of the last displayed month is proportional to the elapsed time (constant speed in time, not along the trace: the outer turns, which are longer, do not slow down the playback). The band, the monthly line and the baselines are drawn up to this index.
+- Total duration: about twelve seconds (see "Points to validate").
+- The landmark labels fade in through an opacity transition when the trace reaches their month (the last month for `current-cycle`, the first month of cycle 5 for `dalton-minimum`).
+- "Passer", selecting a cycle or restoring a cycle from the URL stop the timer and draw the final state directly.
+- Reduced motion: `prefersReducedMotion()` (`src/scripts/reduced-motion.ts`) read once at mount; if it is active, the final state is drawn without starting the timer, and "Rejouer" remains available (see "Interactions" in `functional-specifications.md`).
 
 ## Palette
 
-Palette officielle du site (voir "Palette dataviz" dans `style-guide.md`), pas d'exception : une seule série, en **orange, slot 2 (`#eb6834`)**.
+The site's official palette (see "Dataviz palette" in `style-guide.md`), no exception: a single series, in **orange, slot 2 (`#eb6834`)**.
 
-- **Pourquoi l'orange :** une seule série, aucune catégorie à distinguer ; l'orange évoque le Soleil sans couleur hors charte. Le bleu du slot 1 reste celui des liens et des éléments interactifs (`--dv-accent`), qu'il vaut mieux ne pas confondre avec la donnée sur une page où l'on clique sur la spirale. Le jaune du slot 4, plus solaire encore, n'atteint pas 3:1 sur fond blanc en trait fin (voir `style-guide.md`).
-- **Contraste mesuré** (formule de luminance WCAG) : `#eb6834` sur `--dv-surface` (`#ffffff`) = 3,2:1, au-dessus du seuil de 3:1 des éléments graphiques.
+- **Why orange:** a single series, no category to distinguish; orange evokes the Sun without a color outside the style guide. The blue of slot 1 remains that of links and interactive elements (`--dv-accent`), which is better not confused with the data on a page where the spiral is clicked. The yellow of slot 4, even more solar, does not reach 3:1 on a white background as a thin line (see `style-guide.md`).
+- **Measured contrast** (WCAG luminance formula): `#eb6834` on `--dv-surface` (`#ffffff`) = 3.2:1, above the 3:1 threshold for graphical elements.
 
-| Élément | Couleur |
+| Element | Color |
 |---|---|
-| Bande lissée | `#eb6834`, remplissage translucide, bord extérieur plein (porte le contraste de 3,2:1) |
-| Trait mensuel | `#eb6834`, 1px, translucide (sous 3:1 : élément secondaire, la bande porte la lecture) |
-| Lignes de base, graduations annuelles, rayon de midi, suite pointillée du cycle 25 | `var(--dv-gridline)` |
-| Point du dernier mois | `#eb6834`, liseré `var(--dv-ink-primary)` |
-| Étiquettes des repères et des années, traits de rappel | `var(--dv-ink-secondary)` (texte secondaire, voir "Typographie" dans `style-guide.md`) et `var(--dv-gridline)` |
-| Tours non sélectionnés | Mêmes couleurs, opacité réduite (de l'ordre de 0,2) |
+| Smoothed band | `#eb6834`, translucent fill, solid outer edge (carries the 3.2:1 contrast) |
+| Monthly line | `#eb6834`, 1px, translucent (below 3:1: a secondary element, the band carries the reading) |
+| Baselines, yearly ticks, twelve o'clock radius, dotted continuation of cycle 25 | `var(--dv-gridline)` |
+| Last month dot | `#eb6834`, `var(--dv-ink-primary)` outline |
+| Landmark and year labels, leader lines | `var(--dv-ink-secondary)` (secondary text, see "Typography" in `style-guide.md`) and `var(--dv-gridline)` |
+| Unselected turns | Same colors, reduced opacity (around 0.2) |
 
-Fond : `--dv-surface`, comme le reste du site en thème clair fixe. Aucune nouvelle valeur de couleur n'est introduite, donc rien à ajouter à `style-guide.md` ni à valider avec le script du skill dataviz.
+Background: `--dv-surface`, like the rest of the site in its fixed light theme. No new color value is introduced, so nothing needs to be added to `style-guide.md` or validated with the dataviz skill script.
 
-## Nouvelles dépendances
+## New dependencies
 
-Aucune. `d3-shape`, `d3-scale` et `d3-timer` sont déjà des dépendances du site (`d3-timer` via `bird-migrations`, `earthquakes`, `satellites-in-orbit` notamment), avec leurs paquets `@types` (voir "Dépendances (versions figées)" dans `technical-specifications.md` général), réutilisés à l'identique et scopés à cette visualisation.
+None. `d3-shape`, `d3-scale` and `d3-timer` are already dependencies of the site (`d3-timer` via `bird-migrations`, `earthquakes`, `satellites-in-orbit` among others), with their `@types` packages (see "Dependencies (pinned versions)" in the general `technical-specifications.md`), reused as is and scoped to this visualization.
 
-## Textes et formats
+## Copy and formats
 
-- Textes d'interface (légende, bandeau, infobulle, ligne de synthèse, tableau) dans le dictionnaire i18n, sous la clé `sunspots` (voir "Textes d'interface" dans `technical-specifications.md` général). Libellés des repères : dans le fichier de données (voir "Format de sortie" dans `data-model.md`).
-- Mois et nombres formatés selon la langue (`Intl.DateTimeFormat`, `Intl.NumberFormat`, une décimale pour le nombre de taches), y compris dans la vue tableau (`table.ts`, voir "Vue tableau des données" dans `technical-specifications.md` général).
+- Interface copy (legend, control bar, tooltip, summary line, table) in the i18n dictionary, under the `sunspots` key (see "Interface copy" in the general `technical-specifications.md`). Landmark labels: in the data file (see "Output format" in `data-model.md`).
+- Months and numbers formatted according to the language (`Intl.DateTimeFormat`, `Intl.NumberFormat`, one decimal place for the sunspot number), including in the table view (`table.ts`, see "Data table view" in the general `technical-specifications.md`).
 
-## Téléchargement
+## Download
 
-**Fichier proposé : `downloads: [sunspots.json]`** (environ 234 Ko, voir "Prétraitement" dans `data-model.md`).
+**Proposed file: `downloads: [sunspots.json]`** (about 234 KB, see "Preprocessing" in `data-model.md`).
 
-Vérification des licences (voir "Téléchargement des données préparées" dans le `functional-specifications.md` général) : la source est sous CC BY-NC 4.0, qui autorise explicitement le partage et l'adaptation, sous condition de crédit, de lien vers la licence, d'indication des modifications et d'usage non commercial (termes cités dans "Licence et citation" de `data-model.md`). Le site étant lui-même non commercial (CC BY-NC-SA 4.0), la redistribution du fichier préparé est permise, comme pour `bird-migrations` (CC BY-NC 4.0) et `volcanic-eruptions` (usage non commercial avec citation). La licence s'affiche dans le bloc de crédit juste au-dessus du lien, et la mention commune rappelle que la réutilisation reste soumise à cette licence.
+License check (see "Prepared data download" in the general `functional-specifications.md`): the source is under CC BY-NC 4.0, which explicitly allows sharing and adaptation, subject to credit, a link to the license, indication of changes and non-commercial use (terms quoted in "License and citation" of `data-model.md`). Since the site itself is non-commercial (CC BY-NC-SA 4.0), redistributing the prepared file is permitted, as for `bird-migrations` (CC BY-NC 4.0) and `volcanic-eruptions` (non-commercial use with citation). The license is displayed in the credit block just above the link, and the common notice reminds that reuse remains subject to this license.
 
-Particularité : le fichier porte lui-même un champ `attribution` (source, licence, date de récupération, modifications apportées), parce que la licence exige d'indiquer les modifications et que le fichier, une fois téléchargé, circule sans la page qui le crédite. Aucune autre visualisation ne le fait à ce stade (voir "Points à valider").
+Particularity: the file itself carries an `attribution` field (source, license, retrieval date, changes made), because the license requires indicating changes and the file, once downloaded, circulates without the page that credits it. No other visualization does this at this stage (see "Points to validate").
 
-## Hydratation
+## Hydration
 
-`client:visible` : l'animation d'ouverture démarre quand la spirale entre à l'écran, pas pendant que le visiteur lit la présentation au-dessus.
+`client:visible`: the opening animation starts when the spiral enters the screen, not while the visitor is reading the presentation above it.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cette visualisation. La ligne de synthèse du bandeau est une région `aria-live="polite"`, annoncée à chaque changement de sélection ; elle n'est pas mise à jour pendant l'animation d'ouverture, qui ne change pas la sélection.
+See "Accessibility (known limitation)" in this visualization's `functional-specifications.md`. The control bar summary line is an `aria-live="polite"` region, announced on each selection change; it is not updated during the opening animation, which does not change the selection.
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation.
+See "Responsive" in this visualization's `functional-specifications.md`.
 
-## État dans l'URL
+## State in the URL
 
-Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+See "State in the URL" in the general `technical-specifications.md` for the common mechanism.
 
-| Paramètre | Valeurs | Défaut (absent de l'URL) |
+| Parameter | Values | Default (absent from the URL) |
 |---|---|---|
-| `cycle` | Numéro d'un cycle présent dans les données (`number`, voir `data-model.md`), de `0` à `25` à la récupération | Aucun cycle sélectionné |
+| `cycle` | Number of a cycle present in the data (`number`, see `data-model.md`), from `0` to `25` at retrieval | No cycle selected |
 
-- Écrit à chaque sélection (clic, tap ou liste déroulante), retiré quand la sélection est levée.
-- Un paramètre présent et valide fait ouvrir la visualisation sur la spirale complète, sans animation d'ouverture (voir "Interactions" dans `functional-specifications.md`). Un paramètre invalide (non entier, cycle inexistant) est ignoré : la visualisation s'ouvre comme sans paramètre, animation comprise sauf mouvement réduit.
-- Non capturés : l'infobulle (consultation passagère) et l'avancement de l'animation d'ouverture (pas de position temporelle, voir l'écart documenté dans "Interactions" de `functional-specifications.md`).
+- Written on each selection (click, tap or dropdown list), removed when the selection is cleared.
+- A present and valid parameter makes the visualization open on the complete spiral, without the opening animation (see "Interactions" in `functional-specifications.md`). An invalid parameter (not an integer, nonexistent cycle) is ignored: the visualization opens as without a parameter, animation included unless reduced motion is on.
+- Not captured: the tooltip (transient consultation) and the progress of the opening animation (no time position, see the documented departure in "Interactions" of `functional-specifications.md`).
 
-## Points à valider
+## Points to validate
 
-Décisions de conception prises dans ces specs, à confirmer avant implémentation. Pour chacune : l'option retenue, puis les alternatives.
+Design decisions made in these specs, to be confirmed before implementation. For each: the chosen option, then the alternatives.
 
-1. **Forme :** spirale à un tour par cycle, minima alignés à midi (voir "Forme retenue" dans `functional-specifications.md`). Écartées : spirale à période fixe de 11 ans (l'idée de départ), cycles superposés alignés sur leur minimum.
-2. **Pas variable selon l'intensité** (voir "Géométrie de la spirale"), qui garantit qu'aucune bande ne chevauche le tour suivant au prix d'une amplitude modeste (5 à 17px sur grand écran, 1,5 à 5px sur téléphone). Écarté : pas constant avec chevauchement des tracés autour des cycles intenses, plus spectaculaire mais moins lisible.
-3. **Deux séries tracées :** bande lissée sur 13 mois (lecture principale, définit les minima et maxima officiels) et trait mensuel translucide (texture du pouls, seule trace des six derniers mois). Écartées : la seule série lissée (le cycle 25 s'arrêterait en février 2026), la seule série mensuelle (trop bruitée pour comparer les cycles).
-4. **Cycle 0 partiel** (janvier 1749 à janvier 1755) affiché au centre, non numéroté par SILSO, exclu du tableau. Écarté : commencer la spirale au minimum de février 1755 et perdre six ans de données, dont le pic de 1750.
-5. **Durée provisoire des cycles incomplets** égale à la durée moyenne des cycles complets (132,4 mois), avec le reste du tour du cycle 25 en pointillé. Écarté : tour du cycle 25 laissé ouvert sans durée de référence, ce qui empêche de placer ses mois en angle.
-6. **Maximum du cycle 25** (octobre 2024, 160,9) repris de la série lissée, faute de figurer dans les fichiers TXT et CSV de la table des cycles, alors que la page HTML "Solar Cycles Min/Max" de SILSO l'affiche (voir "Écart relevé" dans `data-model.md`).
-7. **Animation d'ouverture** d'environ douze secondes, avec "Passer" et "Rejouer", sans pause ni position dans l'URL. Écartées : visualisation statique (plus simple, mais perd le battement qui donne son titre à la pièce) ; lecteur complet avec pause et curseur (une image en pause n'apporte rien ici).
-8. **Quatre repères annotés** (Dalton, mai 1778, cycle 19, cycle 25). Écarté pour l'instant : un cinquième repère sur le cycle 24, le plus faible depuis plus d'un siècle, au prix d'une étiquette de plus sur une spirale déjà dense.
-9. **Graduations annuelles** sur chaque tour, pour lire la durée réelle d'un cycle ramené à 360°. Écarté : s'en passer et laisser la durée au tableau et à la ligne de synthèse.
-10. **Liste déroulante de cycles** en plus du clic sur la spirale, pour le clavier, le lecteur d'écran et les tours serrés sur téléphone. Écarté : sélection au seul clic.
-11. **Palette :** orange du slot 2, sans exception à la charte. Écartées : bleu du slot 1 (confondu avec les éléments interactifs), jaune du slot 4 (contraste insuffisant), palette séquentielle "solaire" propre à la visualisation (exception à valider, sans gain de lecture pour une seule série).
-12. **Vue tableau :** une ligne par cycle numéroté, cinq colonnes (début, maximum, nombre au maximum, montée, durée) et une ligne de moyenne des cycles complets. Écartés : une ligne par décennie (coupe les cycles en deux), une colonne de mois à zéro (chiffre fragile avant 1818).
-13. **Téléchargement** de `sunspots.json` avec un champ `attribution` dans le fichier. Écartés : pas de téléchargement (rien dans la licence ne l'impose), ou téléchargement sans champ `attribution` comme les autres visualisations (la mention d'indication des modifications ne suivrait alors pas le fichier).
-14. **`url` du dataset :** le DOI (`https://doi.org/10.24414/qnza-ac80`), que SILSO demande de citer. Écartée : la page de téléchargement `https://www.sidc.be/SILSO/datafiles`, plus directe mais absente du crédit demandé.
-15. **`name` et `publisher`** en anglais, tels que publiés par la source ("International Sunspot Number V2.0 (…)", "WDC-SILSO, Royal Observatory of Belgium, Brussels"), puisque ces attributs ne sont pas localisés.
-16. **Thème unique `space`.** Écarté : ajouter `climate`, qui ferait remonter `grape-harvest-almanac` et `flower-phenology` dans les visualisations liées, mais suggérerait un lien Soleil-climat que la visualisation ne montre pas.
-17. **Titre, résumé et présentations longues** (voir "Angle éditorial" dans `functional-specifications.md`), dont la mise en garde sur la version 2.0. Les espaces insécables avant les ponctuations doubles sont à saisir en U+00A0 dans les fichiers de contenu (voir "Typographie" dans `style-guide.md`).
+1. **Form:** spiral with one turn per cycle, minima aligned at twelve o'clock (see "Chosen form" in `functional-specifications.md`). Ruled out: fixed-period 11-year spiral (the initial idea), overlaid cycles aligned on their minimum.
+2. **Pitch varying with strength** (see "Spiral geometry"), which guarantees that no band overlaps the next turn at the cost of a modest amplitude (5 to 17px on a large screen, 1.5 to 5px on a phone). Ruled out: constant pitch with traces overlapping around the strong cycles, more spectacular but less readable.
+3. **Two plotted series:** 13-month smoothed band (main reading, defines the official minima and maxima) and translucent monthly line (texture of the pulse, the only trace of the last six months). Ruled out: the smoothed series alone (cycle 25 would stop in February 2026), the monthly series alone (too noisy to compare cycles).
+4. **Partial cycle 0** (January 1749 to January 1755) displayed at the center, not numbered by SILSO, excluded from the table. Ruled out: starting the spiral at the February 1755 minimum and losing six years of data, including the 1750 peak.
+5. **Provisional duration of incomplete cycles** equal to the average duration of complete cycles (132.4 months), with the rest of the cycle 25 turn dotted. Ruled out: cycle 25 turn left open with no reference duration, which prevents placing its months by angle.
+6. **Cycle 25 maximum** (October 2024, 160.9) taken from the smoothed series, since it is missing from the TXT and CSV files of the cycle table, whereas SILSO's HTML page "Solar Cycles Min/Max" shows it (see "Discrepancy found" in `data-model.md`).
+7. **Opening animation** of about twelve seconds, with "Passer" and "Rejouer", without pause or position in the URL. Ruled out: static visualization (simpler, but loses the beat that gives the piece its title); full player with pause and slider (a paused image adds nothing here).
+8. **Four annotated landmarks** (Dalton, May 1778, cycle 19, cycle 25). Ruled out for now: a fifth landmark on cycle 24, the weakest in more than a century, at the cost of one more label on an already dense spiral.
+9. **Yearly ticks** on each turn, to read the actual duration of a cycle scaled to 360°. Ruled out: doing without them and leaving the duration to the table and the summary line.
+10. **Cycle dropdown list** in addition to clicking on the spiral, for keyboard, screen reader and tight turns on phones. Ruled out: click-only selection.
+11. **Palette:** orange of slot 2, with no exception to the style guide. Ruled out: blue of slot 1 (confused with interactive elements), yellow of slot 4 (insufficient contrast), a "solar" sequential palette specific to the visualization (an exception to validate, with no reading gain for a single series).
+12. **Table view:** one row per numbered cycle, five columns (start, maximum, number at maximum, rise, duration) and an average row for complete cycles. Ruled out: one row per decade (splits cycles in two), a column of zero months (a fragile figure before 1818).
+13. **Download** of `sunspots.json` with an `attribution` field in the file. Ruled out: no download (nothing in the license requires it), or download without an `attribution` field like the other visualizations (the indication-of-changes notice would then not follow the file).
+14. **Dataset `url`:** the DOI (`https://doi.org/10.24414/qnza-ac80`), which SILSO asks to be cited. Ruled out: the download page `https://www.sidc.be/SILSO/datafiles`, more direct but absent from the requested credit.
+15. **`name` and `publisher`** in English, as published by the source ("International Sunspot Number V2.0 (…)", "WDC-SILSO, Royal Observatory of Belgium, Brussels"), since these attributes are not localized.
+16. **Single theme `space`.** Ruled out: adding `climate`, which would bring `grape-harvest-almanac` and `flower-phenology` into the related visualizations, but would suggest a Sun-climate link that the visualization does not show.
+17. **Title, summary and long presentations** (see "Editorial angle" in `functional-specifications.md`), including the caveat about version 2.0. Non-breaking spaces before double punctuation marks are to be entered as U+00A0 in the content files (see "Typography" in `style-guide.md`).

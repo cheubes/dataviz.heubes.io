@@ -1,147 +1,147 @@
-# Spécifications techniques : Ce qui nous tombe du ciel
+# Technical specifications: What Falls from the Sky
 
-Complète `technical-specifications.md` général : choix techniques propres à cette visualisation, au-delà des règles communes.
+Complements the general `technical-specifications.md`: technical choices specific to this visualization, beyond the common rules.
 
-**Statut : spécifié, non implémenté.** Plusieurs choix restent à confirmer (voir "Points à valider" ci-dessous).
+**Status: specified, not implemented.** Several choices remain to be confirmed (see "Points to validate" below).
 
-## Source des données
+## Data source
 
-Copie du Meteoritical Bulletin Database publiée sur le NASA Open Data Portal, voir "Dataset source", "Accès" et "Licence" dans `data-model.md`. Récupération ponctuelle au moment du prétraitement (fichier CSV "legacy" du portail), pas à chaque build. Script de prétraitement Node ponctuel, non committé (voir "Prétraitement" dans `data-model.md`).
+Copy of the Meteoritical Bulletin Database published on the NASA Open Data Portal, see "Source dataset", "Access" and "License" in `data-model.md`. One-off retrieval at preprocessing time (the portal's "legacy" CSV file), not at each build. One-off Node preprocessing script, not committed (see "Preprocessing" in `data-model.md`).
 
-Bloc de crédit des sources : "The Meteoritical Society, Meteoritical Bulletin Database, via le NASA Open Data Portal", licence affichée "Non spécifiée par la source" / "Not specified by the source". Pas de lien de téléchargement (voir "Licence" dans `data-model.md`).
+Source credit block: "The Meteoritical Society, Meteoritical Bulletin Database, via le NASA Open Data Portal", license displayed as "Non spécifiée par la source" / "Not specified by the source". No download link (see "License" in `data-model.md`).
 
-## Forme retenue
+## Chosen form
 
-Le cadrage proposait un planisphère de points dimensionnés par la masse, avec une bascule vues tomber / trouvées. Les mesures sur le fichier réel (voir "Mesures" dans `data-model.md`) conduisent à garder cette base et à lui ajouter deux pièces :
+The initial framing proposed a world map of points sized by mass, with a seen falling / found toggle. Measurements on the actual file (see "Measurements" in `data-model.md`) lead to keeping this base and adding two pieces to it:
 
-1. **Planisphère de points** avec bascule : conservé. Les 1 096 chutes observées positionnées, dessinées par-dessus, restent lisibles sur les 30 867 trouvailles ; la bascule permet de les isoler.
-2. **Profil latitudinal** (ajout) : sur la carte, plus de 70 % des trouvailles positionnées se réduisent à quelques dizaines de points empilés en Antarctique (4 761 météorites sur un seul point), ce qui inverse visuellement le rapport de forces. Le profil rétablit les proportions, sans changer l'encodage de la carte.
-3. **Encart antarctique** (ajout) : la projection `geoNaturalEarth1` aplatit les hautes latitudes, précisément là où se concentrent les trouvailles. Une vue polaire les rend lisibles sans forcer le zoom.
+1. **World map of points** with toggle: kept. The 1,096 positioned observed falls, drawn on top, remain legible over the 30,867 finds; the toggle allows isolating them.
+2. **Latitudinal profile** (addition): on the map, more than 70% of positioned finds shrink to a few dozen stacked points in Antarctica (4,761 meteorites on a single point), which visually reverses the balance of power. The profile restores the proportions, without changing the map's encoding.
+3. **Antarctic inset** (addition): the `geoNaturalEarth1` projection flattens high latitudes, precisely where finds are concentrated. A polar view makes them legible without forcing the zoom.
 
-Alternatives écartées :
+Alternatives ruled out:
 
-- **Deux planisphères côte à côte** (petits multiples vues tomber / trouvées) : chaque carte perd la moitié de la largeur, et les 1 096 chutes deviennent des points d'un pixel. La bascule et le profil en miroir font la même comparaison sans ce coût.
-- **Carte de densité en hexagones** : masque les chutes, trop rares pour une grille, et reprend la forme de `biodiversity` et `light-pollution`.
-- **Accumulation chronologique** (curseur d'année) : la rupture de 1969 est réelle (voir "Mesures" dans `data-model.md`), mais le biais à montrer est spatial, et l'accumulation est déjà la mécanique de `monument-layers` et `satellites-in-orbit`. La rupture est dite dans la présentation longue.
-- **Symboles proportionnels par emplacement** (un cercle par position, aire selon le nombre de météorites) : rendrait les empilements visibles, mais au prix d'un second encodage de taille, en concurrence avec la masse.
+- **Two world maps side by side** (seen falling / found small multiples): each map loses half the width, and the 1,096 falls become one-pixel dots. The toggle and the mirrored profile make the same comparison without this cost.
+- **Hexagonal density map**: hides falls, too rare for a grid, and repeats the form of `biodiversity` and `light-pollution`.
+- **Chronological accumulation** (year slider): the 1969 break is real (see "Measurements" in `data-model.md`), but the bias to show is spatial, and accumulation is already the mechanic of `monument-layers` and `satellites-in-orbit`. The break is mentioned in the long presentation.
+- **Proportional symbols per location** (one circle per position, area by number of meteorites): would make stacks visible, but at the cost of a second size encoding, competing with mass.
 
-## Techno carte
+## Map technology
 
-Même stack que `earthquakes` et `volcanic-eruptions`, D3 v7.
+Same stack as `earthquakes` and `volcanic-eruptions`, D3 v7.
 
-- **Fond de carte, cours d'eau, relief : copiés (octets identiques) depuis `public/data/bird-migrations/`** (`basemap.json`, `rivers.json`, `relief.webp`) vers `public/data/meteorites/`, même convention que `monarch-migration`, `earthquakes` et `volcanic-eruptions`. Constantes d'alignement du relief (`RELIEF_REF_WIDTH/HEIGHT`, `RELIEF_ORIGIN_X/Y`) reprises à l'identique.
-- **Projection du planisphère :** `geoNaturalEarth1`, `fitExtent` sur l'étendue complète de la silhouette, comme `earthquakes`. La silhouette descend à 85,6° S : les champs de glace les plus méridionaux (LaPaz Icefield, Graves Nunataks, vers 86° S) tombent au bord de la silhouette ou juste en dessous, sans clip des points.
-- **Zoom :** `d3-zoom` sur le canvas de premier plan, `scaleExtent [1, 8]`, boutons zoomer / dézoomer / réinitialiser (pas de `× 1,5`), désactivés aux bornes, comme `earthquakes`.
+- **Basemap, rivers, relief: copied (identical bytes) from `public/data/bird-migrations/`** (`basemap.json`, `rivers.json`, `relief.webp`) to `public/data/meteorites/`, same convention as `monarch-migration`, `earthquakes` and `volcanic-eruptions`. Relief alignment constants (`RELIEF_REF_WIDTH/HEIGHT`, `RELIEF_ORIGIN_X/Y`) reused identically.
+- **World map projection:** `geoNaturalEarth1`, `fitExtent` on the full extent of the silhouette, like `earthquakes`. The silhouette goes down to 85.6° S: the southernmost ice fields (LaPaz Icefield, Graves Nunataks, around 86° S) fall at the edge of the silhouette or just below it, with no clipping of points.
+- **Zoom:** `d3-zoom` on the foreground canvas, `scaleExtent [1, 8]`, zoom in / zoom out / reset buttons (no `× 1,5`), disabled at the bounds, like `earthquakes`.
 
-## Rendu
+## Rendering
 
-**Canvas 2D**, trois canvas superposés :
+**Canvas 2D**, three stacked canvases:
 
-1. **Fond** : silhouette, relief, cours d'eau, redessiné au redimensionnement et au zoom.
-2. **Trouvailles** : 30 867 points.
-3. **Chutes observées** : 1 096 points, au-dessus.
+1. **Background**: silhouette, relief, rivers, redrawn on resize and on zoom.
+2. **Finds**: 30,867 points.
+3. **Observed falls**: 1,096 points, on top.
 
-Un canvas par population permet la bascule par simple fondu d'opacité CSS (`transition: opacity`), sans redessin, ce qui reste compatible avec le mouvement réduit (voir "Mouvement réduit" dans `functional-specifications.md`).
+One canvas per population allows the toggle through a simple CSS opacity fade (`transition: opacity`), without redrawing, which remains compatible with reduced motion (see "Reduced motion" in `functional-specifications.md`).
 
-- **Ordre de dessin :** dans chaque population, des plus massives aux plus légères (ordre du fichier, voir "Prétraitement" dans `data-model.md`), masses inconnues en dernier : les petits points restent visibles sur les gros.
-- **Classes de taille** (rayon en pixels écran, constant quel que soit le zoom) :
+- **Drawing order:** within each population, from most massive to lightest (file order, see "Preprocessing" in `data-model.md`), unknown masses last: small points remain visible over large ones.
+- **Size classes** (radius in screen pixels, constant whatever the zoom):
 
-  | Masse | Rayon |
+  | Mass | Radius |
   |---|---|
-  | Inconnue | 1,25 px |
-  | Moins de 100 g | 1,25 px |
-  | 100 g à 10 kg | 2 px |
-  | 10 kg à 1 t | 3,5 px |
-  | 1 t et plus | 6 px |
+  | Unknown | 1.25 px |
+  | Less than 100 g | 1.25 px |
+  | 100 g to 10 kg | 2 px |
+  | 10 kg to 1 t | 3.5 px |
+  | 1 t and more | 6 px |
 
-  Des classes plutôt qu'une échelle continue : les masses s'étendent sur près de neuf ordres de grandeur (0,1 g à 60 t). Une échelle en racine carrée ferait de Hoba un disque géant et des 21 000 fragments de moins de 100 g des points invisibles ; une échelle logarithmique continue serait illisible en légende.
-- **Trouvailles :** disques pleins, opacité 0,5, pour que la densité se lise par accumulation.
-- **Chutes observées :** disques pleins opaques, liseré `--dv-surface` (blanc) de 0,75 px pour les détacher des trouvailles qu'ils recouvrent.
-- **Redessin au zoom :** les deux canvas de points sont redessinés à chaque événement `zoom` (32 000 disques au plus), dans un `requestAnimationFrame`. À mesurer sur mobile ; si le rendu saccade, reprendre la transformation CSS pendant le geste et le redessin en fin de geste, comme `medical-deserts` (voir "Points à valider" ci-dessous).
+  Classes rather than a continuous scale: masses span nearly nine orders of magnitude (0.1 g to 60 t). A square-root scale would make Hoba a giant disc and the 21,000 fragments under 100 g invisible dots; a continuous logarithmic scale would be unreadable in a legend.
+- **Finds:** filled discs, opacity 0.5, so that density reads through accumulation.
+- **Observed falls:** opaque filled discs, 0.75 px `--dv-surface` (white) outline to set them apart from the finds they cover.
+- **Redraw on zoom:** both point canvases are redrawn on each `zoom` event (32,000 discs at most), in a `requestAnimationFrame`. To be measured on mobile; if rendering stutters, switch to a CSS transform during the gesture and a redraw at the end of the gesture, like `medical-deserts` (see "Points to validate" below).
 
-## Profil latitudinal
+## Latitudinal profile
 
-- **Bandes :** 18 bandes de 10°, de 90° N à 90° S.
-- **Alignement :** `geoNaturalEarth1` est pseudo-cylindrique, l'ordonnée d'un point ne dépend que de sa latitude. Les bords de chaque bande sont donc placés à `projection([0, latitude])[1]`, puis passés par la transformation de zoom (`transform.applyY`). Le profil suit ainsi le zoom et le déplacement verticaux de la carte, rogné à la hauteur de la zone de carte.
-- **Barres :** axe vertical central, chutes observées vers la gauche, trouvailles vers la droite, longueur proportionnelle à la part de la population positionnée dans la bande (échelle linéaire commune aux deux côtés, domaine `[0, 50 %]`, la plus forte part mesurée étant 48 %). Une bande non vide mais minuscule garde au moins 1 px, pour rester distincte d'une bande vide.
-- **Bascule :** la série masquée sur la carte est atténuée (opacité 0,25), pas retirée.
-- **Rendu :** SVG, une vingtaine d'éléments, à droite du canvas, largeur 120 px (48 px sous 640 px). Survol et tap par bande.
+- **Bands:** 18 bands of 10°, from 90° N to 90° S.
+- **Alignment:** `geoNaturalEarth1` is pseudo-cylindrical, a point's y-coordinate depends only on its latitude. The edges of each band are therefore placed at `projection([0, latitude])[1]`, then passed through the zoom transform (`transform.applyY`). The profile thus follows the map's vertical zoom and panning, clipped to the height of the map area.
+- **Bars:** central vertical axis, observed falls to the left, finds to the right, length proportional to the share of the positioned population in the band (linear scale shared by both sides, domain `[0, 50 %]`, the highest measured share being 48%). A non-empty but tiny band keeps at least 1 px, to stay distinct from an empty band.
+- **Toggle:** the series hidden on the map is dimmed (opacity 0.25), not removed.
+- **Rendering:** SVG, about twenty elements, to the right of the canvas, 120 px wide (48 px below 640 px). Hover and tap per band.
 
-## Encart antarctique
+## Antarctic inset
 
-- **Projection :** `geoAzimuthalEqualArea().rotate([0, 90])`, `clipAngle` limité aux latitudes inférieures à 60° S, `fitExtent` sur ce disque. Même silhouette (`basemap.json`), sans relief ni cours d'eau : `relief.webp` est rasterisé dans la projection du planisphère et ne se reprojette pas.
-- **Points :** mêmes points, mêmes couleurs, mêmes classes de taille, mêmes canvas logiques (un dessin de plus par population sur un canvas propre à l'encart, soumis au même fondu d'opacité).
-- **Taille et place :** environ 18 % de la largeur du planisphère, posé dans le Pacifique Sud, entre la Nouvelle-Zélande et l'Amérique du Sud, au-dessus de la bande antarctique : une zone vide de terres comme de météorites, alors qu'un coin bas recouvrirait les champs de glace de LaPaz et de Graves Nunataks. Cadre fin `--dv-gridline`, libellé "Antarctique" / "Antarctica". Sous 640 px, sous le planisphère, pleine largeur, 160 px de haut.
-- Ni zoom ni déplacement.
+- **Projection:** `geoAzimuthalEqualArea().rotate([0, 90])`, `clipAngle` limited to latitudes below 60° S, `fitExtent` on this disc. Same silhouette (`basemap.json`), without relief or rivers: `relief.webp` is rasterized in the world map projection and cannot be reprojected.
+- **Points:** same points, same colors, same size classes, same logical canvases (one more drawing per population on a canvas specific to the inset, subject to the same opacity fade).
+- **Size and placement:** about 18% of the world map's width, placed in the South Pacific, between New Zealand and South America, above the Antarctic band: an area empty of land as well as of meteorites, whereas a bottom corner would cover the LaPaz and Graves Nunataks ice fields. Thin `--dv-gridline` frame, label "Antarctique" / "Antarctica". Below 640 px, below the world map, full width, 160 px high.
+- No zoom or panning.
 
-## Survol
+## Hover
 
-- **Index spatial maison** sur une grille uniforme en pixels écran (cellules de 16 px), reconstruit après chaque redessin des points : les positions écran sont déjà calculées pour le dessin. Recherche dans la cellule du pointeur et ses huit voisines, point le plus proche dans un rayon de 8 px (rayon de tap de 16 px sur tactile), dans la population affichée.
-- Le point trouvé regroupe toutes les météorites de même position (positions arrondies à quatre décimales, voir "Prétraitement" dans `data-model.md`), pour la fiche "N météorites à cet emplacement" (voir "Interactions" dans `functional-specifications.md`). Les regroupements sont calculés une fois au chargement (table position → indices).
-- Encart : même index, propre à l'encart.
-- Fiche de détail en élément DOM superposé, comme `earthquakes`. Masquée pendant un geste de zoom.
+- **Custom spatial index** on a uniform grid in screen pixels (16 px cells), rebuilt after each redraw of the points: screen positions are already computed for drawing. Search in the pointer's cell and its eight neighbors, nearest point within an 8 px radius (16 px tap radius on touch), in the displayed population.
+- The point found groups all meteorites at the same position (positions rounded to four decimal places, see "Preprocessing" in `data-model.md`), for the "N météorites à cet emplacement" card (see "Interactions" in `functional-specifications.md`). Groupings are computed once at load time (position → indices table).
+- Inset: same index, specific to the inset.
+- Detail card as an overlaid DOM element, like `earthquakes`. Hidden during a zoom gesture.
 
 ## Palette
 
-Palette catégorielle du `style-guide.md`, deux premiers slots, sans exception à documenter : sur un nuage de points, les trois premiers slots sont garantis distinguables deux à deux.
+Categorical palette from `style-guide.md`, first two slots, with no exception to document: on a scatter of points, the first three slots are guaranteed to be pairwise distinguishable.
 
-| Slot | Teinte | Population |
+| Slot | Hue | Population |
 |---|---|---|
-| 1 | Bleu `#2a78d6` | Trouvées |
-| 2 | Orange `#eb6834` | Vues tomber |
+| 1 | Blue `#2a78d6` | Found |
+| 2 | Orange `#eb6834` | Seen falling |
 
-L'orange, plus chaud et plus saillant, va à la population rare et au sujet du titre (la chute) ; le bleu, au fond massif des trouvailles. Le bleu d'accent du site est le même que le slot 1 : il n'est pas ici l'identité seule d'une série, puisque la légende nomme chaque population à côté de sa pastille. Couleurs d'illustration du fond (silhouette `#e4e2da`, hydrographie `#a8c5da`) reprises de "Fond de carte (illustration)" dans `style-guide.md`, aucune nouvelle valeur. Les mêmes couleurs servent au profil latitudinal et à l'encart.
+Orange, warmer and more salient, goes to the rare population and to the subject of the title (the fall); blue, to the massive background of finds. The site's accent blue is the same as slot 1: here it is not the sole identity of a series, since the legend names each population next to its swatch. Background illustration colors (silhouette `#e4e2da`, hydrography `#a8c5da`) taken from "Basemap (illustration)" in `style-guide.md`, no new value. The same colors are used for the latitudinal profile and the inset.
 
-## Nouvelles dépendances
+## New dependencies
 
-Aucune. `d3-geo` (y compris `geoAzimuthalEqualArea`), `d3-zoom`, `d3-selection`, `d3-transition`, `d3-scale` et `topojson-client` sont déjà dans `package.json`. `d3-quadtree` aurait pu servir d'index spatial pour le survol : non retenu, la grille uniforme ci-dessus suffit. Son ajout serait à discuter (voir "Points à valider" ci-dessous).
+None. `d3-geo` (including `geoAzimuthalEqualArea`), `d3-zoom`, `d3-selection`, `d3-transition`, `d3-scale` and `topojson-client` are already in `package.json`. `d3-quadtree` could have served as the spatial index for hover: not chosen, the uniform grid above is enough. Adding it would need to be discussed (see "Points to validate" below).
 
-## Hydratation
+## Hydration
 
-Zone de montage hydratée via un `<script>` classique posant un `IntersectionObserver` (`rootMargin: 200px`) qui ne monte le rendu qu'au premier passage dans le viewport, même mécanisme que `earthquakes` et `volcanic-eruptions`.
+Mount area hydrated via a classic `<script>` setting up an `IntersectionObserver` (`rootMargin: 200px`) that only mounts the rendering the first time it enters the viewport, same mechanism as `earthquakes` and `volcanic-eruptions`.
 
-Hauteur de la zone de montage : calcul commun (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général), sur la largeur totale. Le planisphère est cadré dans la largeur restante une fois le profil retiré.
+Mount area height: common calculation (see "Rules common to all visualizations" in the general `technical-specifications.md`), on the total width. The world map is framed in the remaining width once the profile is removed.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-Voir "Accessibilité (limite connue)" dans `functional-specifications.md` de cette visualisation. Bascule d'affichage en `<fieldset>` de trois `<input type="radio">` natifs avec `<legend>`, boutons de zoom en `<button>` avec `aria-label` : accessibles au clavier par construction. Le profil latitudinal porte un `aria-hidden="true"` : ses chiffres sont repris dans la vue tableau.
+See "Accessibility (known limitation)" in this visualization's `functional-specifications.md`. Display toggle as a `<fieldset>` of three native `<input type="radio">` with a `<legend>`, zoom buttons as `<button>` with `aria-label`: keyboard accessible by construction. The latitudinal profile carries `aria-hidden="true"`: its figures are repeated in the table view.
 
 ## Responsive
 
-Voir "Responsive" dans `functional-specifications.md` de cette visualisation. Pan / zoom tactile via `d3-zoom`, fiche déclenchée par `pointerdown` / `click` plutôt que `pointermove` sur tactile, comme `earthquakes`.
+See "Responsive" in this visualization's `functional-specifications.md`. Touch pan / zoom via `d3-zoom`, card triggered by `pointerdown` / `click` rather than `pointermove` on touch, like `earthquakes`.
 
-## État dans l'URL
+## State in the URL
 
-Voir "État dans l'URL" dans le `technical-specifications.md` général pour le mécanisme commun.
+See "State in the URL" in the general `technical-specifications.md` for the common mechanism.
 
-| Paramètre | Valeurs | Défaut (absent de l'URL) |
+| Parameter | Values | Default (absent from the URL) |
 |---|---|---|
-| `show` | `fell` (vues tomber seules), `found` (trouvées seules) | Les deux populations |
-| `zoom` | `<k>,<lon>,<lat>` (format commun) | Planisphère entier |
+| `show` | `fell` (seen falling only), `found` (found only) | Both populations |
+| `zoom` | `<k>,<lon>,<lat>` (common format) | Whole world map |
 
-- `show` est écrit à chaque changement de la bascule, retiré au retour sur "Toutes". Toute autre valeur est ignorée.
-- `show` est appliqué avant le premier dessin, par l'opacité des canvas sans transition : la carte s'ouvre directement sur la population demandée, sans jouer le fondu au chargement (même précaution que `view` de `medical-deserts`).
-- `zoom` est écrit à l'événement `end` de `d3-zoom`. L'encart et le profil n'ont pas d'état propre.
-- Pas de position temporelle : la visualisation n'est pas animée.
+- `show` is written on each toggle change, removed on returning to "Toutes". Any other value is ignored.
+- `show` is applied before the first draw, through the canvases' opacity without transition: the map opens directly on the requested population, without playing the fade on load (same precaution as `view` in `medical-deserts`).
+- `zoom` is written on the `end` event of `d3-zoom`. The inset and the profile have no state of their own.
+- No time position: the visualization is not animated.
 
-## Points à valider
+## Points to validate
 
-Décisions de conception à confirmer par l'utilisateur avant implémentation :
+Design decisions to be confirmed by the user before implementation:
 
-1. **Source :** copie NASA du catalogue, figée au printemps 2013 (45 716 météorites), plutôt que le Meteoritical Bulletin Database à jour (78 667 noms valides selon re3data), inaccessible aux requêtes automatisées (Cloudflare) et sans licence publiée. Alternative : extraction manuelle depuis un navigateur, non reproductible et pas mieux licenciée. La présentation dit "dans l'état du catalogue en 2013".
-2. **Licence et téléchargement :** "License not specified" côté NASA, copyright revendiqué côté Meteoritical Society, aucun texte n'autorisant la redistribution. Proposition : pas de `downloads`. Alternative : déclarer `meteorites.json`, en considérant la publication "public" sur un portail gouvernemental comme une autorisation suffisante, ce que la règle générale ne prévoit pas en l'état.
-3. **Forme :** planisphère de points + profil latitudinal + encart antarctique (voir "Forme retenue"). Les deux ajouts au cadrage sont à confirmer séparément.
-4. **Bascule par défaut sur "Toutes"** (les deux populations superposées) plutôt que sur "Vues tomber" puis "Trouvées" en deux temps.
-5. **Masse en quatre classes de taille** plutôt qu'en échelle continue ; seuils (100 g, 10 kg, 1 t) et rayons à confirmer sur un premier rendu.
-6. **Empilements laissés tels quels** (pas de dispersion, pas de symbole proportionnel par emplacement), compensés par la fiche de détail et le profil.
-7. **Profil en parts** de chaque population (et non en effectifs), par bandes de 10°, aligné sur la carte et suivant le zoom vertical.
-8. **Positions inconnues** (13 752, dont 4 300 Northwest Africa) : absentes de la carte, comptées dans la légende et le tableau. Règle propre aux 223 "Yamato" à latitude nulle, passés en position inconnue.
-9. **Meridiani Planum** (trouvée sur Mars) exclue du fichier. Elle pourrait faire l'objet d'une phrase dans la présentation longue.
-10. **Reliques** (75, `nametype` = `Relict`) conservées et non distinguées.
-11. **Thèmes `space` et `earth`.** Effet à connaître : toutes les candidates ne partageant qu'un thème, les visualisations liées sont départagées par date de publication. Avec les publications actuelles, ce seraient `forest-fires`, `volcanic-eruptions` et `earthquakes`, et `satellites-in-orbit`, plus ancienne, n'apparaîtrait pas. En retour, cette visualisation, la plus récente, entrerait dans les visualisations liées des quatre visualisations `earth` et des visualisations `space` (dont `exoplanets` si elle est publiée). Alternative : `space` seul.
-12. **Palette :** orange (slot 2) pour les chutes observées, bleu (slot 1) pour les trouvailles.
-13. **Pas de dimension temporelle** dans l'interface (ni curseur ni filtre de période), malgré la rupture de 1969 : l'année n'apparaît qu'en fiche de détail et dans la présentation.
-14. **Responsive :** seuil de 640 px, encart sous la carte et profil réduit à 48 px en dessous.
-15. **Performance du redessin au zoom** (32 000 disques par image) : à mesurer sur mobile, repli prévu sur la technique de `medical-deserts`.
-16. **Index spatial maison** plutôt que l'ajout de `d3-quadtree` (nouvelle dépendance, à discuter si la grille ne suffit pas).
-17. **Titre, résumé et présentations** (voir "Angle éditorial" dans `functional-specifications.md`).
+1. **Source:** NASA copy of the catalog, frozen in spring 2013 (45,716 meteorites), rather than the up-to-date Meteoritical Bulletin Database (78,667 valid names according to re3data), inaccessible to automated requests (Cloudflare) and without a published license. Alternative: manual extraction from a browser, not reproducible and no better licensed. The presentation says "dans l'état du catalogue en 2013".
+2. **License and download:** "License not specified" on the NASA side, copyright claimed on the Meteoritical Society side, no text allowing redistribution. Proposal: no `downloads`. Alternative: declare `meteorites.json`, considering the "public" publication on a government portal as sufficient authorization, which the general rule does not currently provide for.
+3. **Form:** world map of points + latitudinal profile + Antarctic inset (see "Chosen form"). The two additions to the initial framing are to be confirmed separately.
+4. **Toggle defaulting to "Toutes"** (both populations overlaid) rather than "Vues tomber" then "Trouvées" in two steps.
+5. **Mass in four size classes** rather than a continuous scale; thresholds (100 g, 10 kg, 1 t) and radii to be confirmed on a first rendering.
+6. **Stacks left as is** (no scattering, no proportional symbol per location), compensated by the detail card and the profile.
+7. **Profile in shares** of each population (not counts), in 10° bands, aligned with the map and following the vertical zoom.
+8. **Unknown locations** (13,752, including 4,300 Northwest Africa): absent from the map, counted in the legend and the table. Specific rule for the 223 "Yamato" with zero latitude, set to unknown location.
+9. **Meridiani Planum** (found on Mars) excluded from the file. It could be the subject of a sentence in the long presentation.
+10. **Relicts** (75, `nametype` = `Relict`) kept and not distinguished.
+11. **Themes `space` and `earth`.** Effect to be aware of: since all candidates share only one theme, related visualizations are tie-broken by publication date. With current publications, these would be `forest-fires`, `volcanic-eruptions` and `earthquakes`, and `satellites-in-orbit`, older, would not appear. In return, this visualization, the most recent, would enter the related visualizations of the four `earth` visualizations and of the `space` visualizations (including `exoplanets` if it is published). Alternative: `space` alone.
+12. **Palette:** orange (slot 2) for observed falls, blue (slot 1) for finds.
+13. **No time dimension** in the interface (neither slider nor period filter), despite the 1969 break: the year only appears in the detail card and in the presentation.
+14. **Responsive:** 640 px threshold, inset below the map and profile reduced to 48 px below it.
+15. **Redraw performance on zoom** (32,000 discs per frame): to be measured on mobile, fallback planned on the `medical-deserts` technique.
+16. **Custom spatial index** rather than adding `d3-quadtree` (new dependency, to be discussed if the grid is not enough).
+17. **Title, summary and presentations** (see "Editorial angle" in `functional-specifications.md`).

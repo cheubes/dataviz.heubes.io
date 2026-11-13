@@ -1,121 +1,121 @@
-# Spécifications fonctionnelles générales
+# General functional specifications
 
-## Contexte et objectifs
+## Context and goals
 
-Le site présente un catalogue de visualisations de données interactives et originales, chacune explorant un dataset open data avec une mise en forme qui lui est propre : il n'y a pas de gabarit générique rejoué dataset après dataset, chaque visualisation est une pièce à part entière.
+The site presents a catalog of interactive, original data visualizations, each exploring an open data dataset with a presentation of its own: there is no generic template replayed dataset after dataset, each visualization is a piece in its own right.
 
-L'objectif est de donner à un visiteur curieux un point d'entrée vers ce catalogue, puis de lui permettre d'explorer chaque visualisation de façon interactive : comprendre le dataset qui la nourrit et manipuler la représentation choisie pour lui.
+The goal is to give a curious visitor an entry point to this catalog, then let them explore each visualization interactively: understand the dataset that feeds it and manipulate the representation chosen for it.
 
-## Périmètre du projet
+## Project scope
 
-Dans le périmètre :
+In scope:
 
-- Consultation du catalogue de visualisations, depuis la page d'accueil.
-- Filtrage du catalogue par thème, depuis la page d'accueil (voir `home-page.md`).
-- Consultation, pour chaque visualisation, de sa page dédiée : présentation du dataset source, du contexte de la mise en forme choisie, et interaction avec la visualisation elle-même.
-- Accès, depuis la page d'une visualisation, aux autres visualisations qui partagent un thème avec elle (voir "Visualisations liées" ci-dessous).
-- Téléchargement, depuis la page d'une visualisation, des données préparées qu'elle consomme, quand l'auteur les déclare téléchargeables (voir "Téléchargement des données préparées" ci-dessous).
-- Page "À propos" : démarche, données, fabrication et licence du site (voir `about-page.md`).
-- Site multilingue (français, anglais).
+- Browsing the catalog of visualizations, from the home page.
+- Filtering the catalog by theme, from the home page (see `home-page.md`).
+- Viewing, for each visualization, its dedicated page: presentation of the source dataset, of the context of the chosen presentation, and interaction with the visualization itself.
+- Access, from a visualization's page, to the other visualizations that share a theme with it (see "Related visualizations" below).
+- Downloading, from a visualization's page, the prepared data it consumes, when the author declares it downloadable (see "Prepared data download" below).
+- "About" page: approach, data, making and license of the site (see `about-page.md`).
+- Multilingual site (French, English).
 
-Voir aussi "Hors périmètre" ci-dessous.
+See also "Out of scope" below.
 
-## Utilisateurs cibles
+## Target users
 
-Le site s'adresse à des visiteurs curieux de dataviz et d'open data. Il n'y a pas de distinction de rôle côté visiteur : pas de compte, pas d'espace personnel, pas de contenu personnalisé.
+The site is aimed at visitors curious about dataviz and open data. There is no role distinction on the visitor side: no account, no personal space, no personalized content.
 
-Le contenu (catalogue, visualisations) est produit par l'auteur du site directement dans le code et les données sources (voir `data-model.md`), pas via une interface d'administration.
+The content (catalog, visualizations) is produced by the site's author directly in the code and the source data (see `data-model.md`), not through an administration interface.
 
-## Parcours utilisateurs principaux
+## Main user journeys
 
-1. Un visiteur arrive sur la page d'accueil, parcourt le catalogue de visualisations (voir `home-page.md`).
-2. Il choisit une visualisation qui l'intéresse et accède à sa page dédiée.
-3. Il découvre le contexte du dataset (source, licence, angle choisi) puis interagit avec la visualisation.
-4. Il revient au catalogue, ou poursuit directement vers l'une des visualisations liées proposées en bas de page (voir "Visualisations liées" ci-dessous), pour explorer une autre visualisation.
-5. Un visiteur peut aussi arriver directement sur la page d'une visualisation via un lien partagé, sans passer par l'accueil.
+1. A visitor arrives on the home page and browses the catalog of visualizations (see `home-page.md`).
+2. They choose a visualization that interests them and go to its dedicated page.
+3. They discover the context of the dataset (source, license, chosen angle) then interact with the visualization.
+4. They return to the catalog, or continue directly to one of the related visualizations suggested at the bottom of the page (see "Related visualizations" below), to explore another visualization.
+5. A visitor can also arrive directly on a visualization's page via a shared link, without going through the home page.
 
-## Règles transverses
+## Cross-cutting rules
 
-### Multilingue
+### Multilingual
 
-- Le site est disponible en français et en anglais.
-- Au premier accès à une URL sans préfixe de langue (anglais par défaut), la langue affichée est déterminée par celle du navigateur ; si le navigateur indique une autre langue que le français ou l'anglais, le site reste en anglais. Une URL explicitement préfixée par `/fr/` affiche toujours le français dès ce premier accès : la détection du navigateur ne s'applique qu'à l'entrée par défaut (non préfixée), jamais pour écarter un choix de langue explicite dans l'URL, y compris une page de visualisation ouverte directement via un lien partagé (voir parcours 5 ci-dessus). Un changement manuel de langue via le sélecteur est mémorisé pour les visites suivantes et prime alors sur l'URL visitée (voir "Architecture" dans `technical-specifications.md` pour le mécanisme de stockage). Si l'équivalent de la page visitée n'existe pas dans la langue déterminée ou mémorisée, le visiteur atterrit sur le message d'indisponibilité plutôt que sur le contenu partagé.
-- Un sélecteur de langue, accessible depuis toutes les pages, permet de basculer d'une langue à l'autre. Il conserve le contexte de navigation quand le contenu existe dans l'autre langue ; sinon, la page affiche un message indiquant que ce contenu n'est pas encore disponible dans cette langue (voir "Contenu non traduit" dans `technical-specifications.md`).
-- Une visualisation non traduite dans la langue courante n'apparaît pas dans le catalogue de cette langue.
-- Le texte de présentation d'une visualisation (titre, résumé, légendes, textes d'interaction) est disponible dans les deux langues. Les données elles-mêmes ne sont pas systématiquement traduites quand leur nature ne s'y prête pas (ex : noms de communes, catégories officielles d'un dataset) ; chaque `<viz-slug>/functional-specifications.md` précise, le cas échéant, ce qui reste non traduit et pourquoi.
+- The site is available in French and English.
+- On the first visit to a URL without a language prefix (English by default), the displayed language is determined by the browser's language; if the browser indicates a language other than French or English, the site stays in English. A URL explicitly prefixed with `/fr/` always displays French from that first visit: browser detection only applies to the default (unprefixed) entry, never to override an explicit language choice in the URL, including a visualization page opened directly via a shared link (see journey 5 above). A manual language change via the selector is remembered for subsequent visits and then takes precedence over the visited URL (see "Architecture" in `technical-specifications.md` for the storage mechanism). If the equivalent of the visited page does not exist in the determined or remembered language, the visitor lands on the unavailability message rather than on the shared content.
+- A language selector, accessible from every page, lets the visitor switch from one language to the other. It preserves the navigation context when the content exists in the other language; otherwise, the page displays a message indicating that this content is not yet available in that language (see "Untranslated content" in `technical-specifications.md`).
+- A visualization that is not translated into the current language does not appear in that language's catalog.
+- A visualization's presentation text (title, summary, legends, interaction copy) is available in both languages. The data itself is not systematically translated when its nature does not lend itself to it (e.g. municipality names, official categories of a dataset); each `<viz-slug>/functional-specifications.md` specifies, where applicable, what remains untranslated and why.
 
 ### Navigation
 
-- Chaque page permet de revenir à la page d'accueil du site.
-- Chaque page donne accès à la page "À propos", depuis le pied de page (voir `about-page.md`).
+- Every page lets the visitor return to the site's home page.
+- Every page gives access to the "About" page, from the footer (see `about-page.md`).
 
-### Visualisations liées
+### Related visualizations
 
-En bas de la page d'une visualisation, une section propose jusqu'à trois autres visualisations qui partagent au moins un thème avec elle (voir "Thème" dans `data-model.md`). Elle sert notamment le visiteur arrivé par un lien partagé (parcours 5), qui n'est pas passé par le catalogue.
+At the bottom of a visualization's page, a section suggests up to three other visualizations that share at least one theme with it (see "Theme" in `data-model.md`). It serves in particular the visitor who arrived via a shared link (journey 5), who did not go through the catalog.
 
-- Candidates : les visualisations disponibles dans la langue courante, hors visualisation courante, partageant au moins un thème avec elle. Une visualisation non traduite dans la langue courante n'est jamais proposée : une tuile liée ne mène jamais au message d'indisponibilité.
-- Ordre : nombre de thèmes partagés décroissant, puis date de publication (`publication-date`) décroissante, puis `slug` alphabétique pour départager de façon stable. Les trois premières sont retenues.
-- Aucune candidate (ex : seule visualisation de son thème) : la section est entièrement absente, titre compris. On ne la complète pas avec des visualisations sans rapport thématique.
-- La sélection est déterminée à la génération du site : identique pour tous les visiteurs, ni aléatoire ni personnalisée.
+- Candidates: the visualizations available in the current language, excluding the current visualization, sharing at least one theme with it. A visualization not translated into the current language is never suggested: a related tile never leads to the unavailability message.
+- Order: number of shared themes descending, then publication date (`publication-date`) descending, then `slug` alphabetically as a stable tie-breaker. The first three are kept.
+- No candidate (e.g. only visualization in its theme): the section is entirely absent, title included. It is not filled with thematically unrelated visualizations.
+- The selection is determined at site generation: identical for all visitors, neither random nor personalized.
 
-Affichage : voir "Page de visualisation" dans `style-guide.md`.
+Display: see "Visualization page" in `style-guide.md`.
 
-### Téléchargement des données préparées
+### Prepared data download
 
-La page d'une visualisation peut proposer au téléchargement les fichiers de données préparées qu'elle consomme (sous `public/data/<viz-slug>/`, voir `data-model.md`), pour prolonger l'exploration hors du site.
+A visualization's page can offer for download the prepared data files it consumes (under `public/data/<viz-slug>/`, see `data-model.md`), to extend the exploration beyond the site.
 
-- Opt-in explicite : seuls les fichiers listés dans l'attribut `downloads` de la visualisation sont proposés (voir "Visualisation" dans `data-model.md`). Une visualisation sans `downloads` n'affiche aucun lien.
-- Ce qui est proposé : les fichiers de données principaux, pas les couches de contexte (fond de carte, cours d'eau, routes, relief, illustrations), qui relèvent du décor et ne sont pas toujours créditées dans `datasets`.
-- Licences : avant de déclarer un fichier, l'auteur vérifie que les licences des sources dont il dérive autorisent sa redistribution. Une source sous droits réservés exclut la visualisation (ex : `endangered-species`). Une source non commerciale ou sans licence formalisée mais autorisant la redistribution avec citation reste acceptable : le site est lui-même non commercial, et les licences sont affichées juste au-dessus, dans le bloc de crédit des sources. Une mention rappelle que la réutilisation reste soumise à ces licences.
-- Format : les fichiers sont proposés tels que la visualisation les consomme, sans conversion (pas d'export CSV dédié) ni documentation de leur format côté site. Leur structure est pensée pour le rendu, pas pour la réutilisation.
-- Chaque fichier est présenté avec son nom et sa taille, pour que le visiteur sache ce qu'il télécharge avant de cliquer (certains fichiers dépassent 10 Mo).
+- Explicit opt-in: only the files listed in the visualization's `downloads` attribute are offered (see "Visualization" in `data-model.md`). A visualization without `downloads` displays no link.
+- What is offered: the main data files, not the context layers (basemap, rivers, roads, relief, illustrations), which are part of the backdrop and are not always credited in `datasets`.
+- Licenses: before declaring a file, the author checks that the licenses of the sources it derives from allow its redistribution. A source under all rights reserved excludes the visualization (e.g. `endangered-species`). A non-commercial source, or one without a formal license but allowing redistribution with citation, remains acceptable: the site is itself non-commercial, and the licenses are displayed just above, in the source credit block. A notice reminds visitors that reuse remains subject to these licenses.
+- Format: the files are offered as the visualization consumes them, without conversion (no dedicated CSV export) nor documentation of their format on the site. Their structure is designed for rendering, not for reuse.
+- Each file is presented with its name and size, so that the visitor knows what they are downloading before clicking (some files exceed 10 MB).
 
-Affichage : voir "Page de visualisation" dans `style-guide.md`.
+Display: see "Visualization page" in `style-guide.md`.
 
-### État partageable dans l'URL
+### Shareable state in the URL
 
-L'URL de la page d'une visualisation reflète en continu l'état choisi par le visiteur. Copier l'adresse du navigateur suffit pour partager exactement ce qu'il voit, et ouvrir ce lien restaure cet état (parcours 5). Il n'y a pas de bouton de partage dédié.
+The URL of a visualization's page continuously reflects the state chosen by the visitor. Copying the browser's address is enough to share exactly what they see, and opening that link restores that state (journey 5). There is no dedicated share button.
 
-- État capturé :
-  - les filtres et bascules (régions, espèces, groupes, saison, mode d'affichage, recherche…) ;
-  - la position temporelle (année, mois) des visualisations animées ;
-  - le cadrage (niveau de zoom et centre) des cartes zoomables.
-- État non capturé :
-  - la vitesse de lecture ;
-  - les survols et infobulles ;
-  - toute bascule qui déclenche des appels à un service tiers : un lien partagé ne doit pas provoquer de requête externe sans action du visiteur.
-- URL minimale : seuls les éléments qui diffèrent de l'état par défaut apparaissent dans l'URL. Une visualisation dans son état initial garde une URL nue.
-- Position temporelle : elle n'apparaît dans l'URL que quand la lecture est en pause, que ce soit par le bouton ou par une manipulation du curseur. La reprise de la lecture la retire. Un lien qui porte une position temporelle ouvre la visualisation en pause sur ce moment. Une visualisation dont l'image en pause n'a pas de sens peut s'en écarter (ex : des impulsions éphémères qui s'effacent aussitôt la lecture arrêtée) : elle documente et justifie alors son propre comportement.
-- Valeurs invalides ou inconnues (lien tronqué, identifiant disparu, année hors bornes) : chaque paramètre invalide est ignoré silencieusement et remplacé par sa valeur par défaut, et les paramètres valides restent appliqués. Pas de message d'erreur.
-- Historique : ces mises à jour ne créent pas d'entrée dans l'historique du navigateur. Le bouton "précédent" quitte la page au lieu de rejouer chaque clic sur un filtre.
-- Changement de langue : l'état est conservé. Les paramètres sont les mêmes dans les deux langues (voir "Multilingue" ci-dessus).
+- Captured state:
+  - filters and toggles (regions, species, groups, season, display mode, search…);
+  - the temporal position (year, month) of animated visualizations;
+  - the framing (zoom level and center) of zoomable maps.
+- Uncaptured state:
+  - playback speed;
+  - hovers and tooltips;
+  - any toggle that triggers calls to a third-party service: a shared link must not cause an external request without an action from the visitor.
+- Minimal URL: only the elements that differ from the default state appear in the URL. A visualization in its initial state keeps a bare URL.
+- Temporal position: it appears in the URL only when playback is paused, whether by the button or by manipulating the slider. Resuming playback removes it. A link carrying a temporal position opens the visualization paused at that moment. A visualization whose paused frame makes no sense can depart from this (e.g. ephemeral pulses that fade as soon as playback stops): it then documents and justifies its own behavior.
+- Invalid or unknown values (truncated link, vanished identifier, out-of-range year): each invalid parameter is silently ignored and replaced by its default value, and valid parameters remain applied. No error message.
+- History: these updates do not create entries in the browser history. The "back" button leaves the page instead of replaying each click on a filter.
+- Language change: the state is preserved. The parameters are the same in both languages (see "Multilingual" above).
 
-Chaque visualisation liste ses propres paramètres dans son `technical-specifications.md` (section "État dans l'URL"). Mécanisme commun : voir "État dans l'URL" dans `technical-specifications.md`.
+Each visualization lists its own parameters in its `technical-specifications.md` ("State in the URL" section). Common mechanism: see "State in the URL" in `technical-specifications.md`.
 
-### Mouvement réduit
+### Reduced motion
 
-Quand le visiteur a demandé à son système de réduire les animations (préférence `prefers-reduced-motion`), le site ne lance aucun mouvement de lui-même :
+When the visitor has asked their system to reduce animations (`prefers-reduced-motion` preference), the site starts no motion on its own:
 
-- **Lecture automatique :** une visualisation animée s'ouvre en pause, sur son état final, le plus informatif sans mouvement (dernière année, accumulation complète). Le bouton Lecture reste disponible : lancer la lecture est alors un choix explicite du visiteur, et l'animation se déroule normalement. Chaque visualisation animée précise son état d'ouverture dans son `functional-specifications.md`, en particulier quand elle n'a pas d'état final (cycle sans fin, impulsions éphémères).
-- **Transitions qui déplacent des éléments** (arcs qui glissent, zoom animé par un bouton) : immédiates. Les fondus de couleur ou d'opacité (survol, bascule entre deux cartes) sont conservés, car ils ne déplacent rien.
-- **Lien partagé :** une position temporelle portée par l'URL (voir "État partageable dans l'URL" ci-dessus) prime sur l'état final, et la visualisation reste en pause sur cette position, y compris quand elle relancerait sinon la lecture. L'état d'ouverture choisi pour le mouvement réduit n'est jamais écrit dans l'URL : ce n'est pas une action du visiteur.
-- La préférence est lue une fois, au chargement de la visualisation. La modifier pendant la visite ne change rien avant le rechargement de la page.
+- **Autoplay:** an animated visualization opens paused, on its final state, the most informative one without motion (last year, complete accumulation). The Play button remains available: starting playback is then an explicit choice of the visitor, and the animation runs normally. Each animated visualization specifies its opening state in its `functional-specifications.md`, in particular when it has no final state (endless cycle, ephemeral pulses).
+- **Transitions that move elements** (sliding arcs, zoom animated by a button): immediate. Color or opacity fades (hover, switching between two maps) are kept, because they move nothing.
+- **Shared link:** a temporal position carried by the URL (see "Shareable state in the URL" above) takes precedence over the final state, and the visualization stays paused at that position, including when it would otherwise restart playback. The opening state chosen for reduced motion is never written into the URL: it is not an action of the visitor.
+- The preference is read once, when the visualization loads. Changing it during the visit has no effect until the page is reloaded.
 
-### Vue tableau des données
+### Data table view
 
-Sous la zone de montage, une visualisation peut proposer un tableau de synthèse des données qu'elle représente. C'est un repli pour les visiteurs qui ne peuvent pas lire la visualisation (lecteur d'écran, navigation au clavier), et un accès aux chiffres exacts pour tous les autres.
+Below the mount area, a visualization can offer a summary table of the data it represents. It is a fallback for visitors who cannot read the visualization (screen reader, keyboard navigation), and an access to the exact figures for everyone else.
 
-- **Synthèse, pas données brutes :** une centaine de lignes au plus, agrégées selon ce que la visualisation donne à voir (par décennie, par année, par département…). Les données complètes restent disponibles par le téléchargement (voir "Téléchargement des données préparées" ci-dessus).
-- **Statique :** le tableau ne suit ni les filtres, ni l'année en cours, ni le cadrage. Il décrit l'ensemble des données, identique pour tous les visiteurs, et reste lisible sans JavaScript.
-- **Replié par défaut :** un bloc "Voir les données sous forme de tableau" / "Show the data as a table", que le visiteur déplie. La règle "contrôles toujours visibles" (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md`) vise les filtres et la légende, pas ce tableau.
-- **Au cas par cas :** chaque visualisation qui en propose un le définit dans son `functional-specifications.md` (section "Vue tableau") : lignes, colonnes, agrégation, ordre, légende du tableau. Une visualisation sans cette section n'affiche pas de tableau.
-- **Bilingue :** légende, en-têtes, unités et formats de nombres et de dates suivent la langue de la page. Les noms propres (communes, départements, noms scientifiques) restent non traduits, comme dans la visualisation.
+- **Summary, not raw data:** about a hundred rows at most, aggregated according to what the visualization shows (by decade, by year, by department…). The complete data remains available through the download (see "Prepared data download" above).
+- **Static:** the table follows neither the filters, nor the current year, nor the framing. It describes the whole dataset, identical for all visitors, and remains readable without JavaScript.
+- **Collapsed by default:** a "Voir les données sous forme de tableau" / "Show the data as a table" block, which the visitor expands. The "controls always visible" rule (see "Rules common to all visualizations" in `technical-specifications.md`) targets the filters and the legend, not this table.
+- **Case by case:** each visualization that offers one defines it in its `functional-specifications.md` ("Table view" section): rows, columns, aggregation, order, table caption. A visualization without this section displays no table.
+- **Bilingual:** caption, headers, units and number and date formats follow the page's language. Proper nouns (municipalities, departments, scientific names) remain untranslated, as in the visualization.
 
-Affichage : voir "Tableau de données" dans `style-guide.md`.
+Display: see "Data table" in `style-guide.md`.
 
-## Hors périmètre
+## Out of scope
 
-- Comptes utilisateurs, authentification.
-- Édition de contenu via une interface web : le contenu est créé et modifié directement dans les fichiers sources (voir `data-model.md`).
-- Contenu généré par les visiteurs (commentaires, contributions).
-- Recherche texte libre transverse du catalogue : à réévaluer quand le nombre de visualisations le justifiera davantage ; le filtrage par thème (voir `home-page.md`) couvre le besoin de navigation par sujet pour l'instant.
+- User accounts, authentication.
+- Content editing via a web interface: content is created and modified directly in the source files (see `data-model.md`).
+- Visitor-generated content (comments, contributions).
+- Cross-catalog free-text search: to be reassessed when the number of visualizations justifies it more; filtering by theme (see `home-page.md`) covers the need for browsing by subject for now.

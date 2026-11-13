@@ -1,29 +1,29 @@
-# Modèle de données
+# Data model
 
-## Entités
+## Entities
 
-### Visualisation
+### Visualization
 
-Une visualisation correspond à une pièce interactive dédiée à un dataset open data. Elle correspond à une URL propre du site (`/<viz-slug>/`).
+A visualization is an interactive piece dedicated to an open data dataset. It corresponds to a dedicated URL of the site (`/<viz-slug>/`).
 
-| Attribut | Localisé | Description |
+| Attribute | Localized | Description |
 |---|---|---|
-| `slug` | Non | Identifiant unique, construit à partir du titre anglais, utilisé dans l'URL et comme nom du dossier `specs/<viz-slug>/` (ex : `air-pollution`) |
-| `lang` | Non | Langue de ce document (`fr` ou `en`) ; permet d'associer les deux documents d'une même visualisation |
-| `title` | Oui | Titre affiché |
-| `summary` | Oui | Texte court affiché sur la tuile du catalogue (voir "Tuiles (catalogue)" dans `style-guide.md`) et en tête de la page de la visualisation |
-| `datasets` | — | Liste des jeux de données open data utilisés (voir "Dataset source" ci-dessous) |
-| `themes` | Non | Un ou plusieurs identifiants de thème, utilisés pour le filtrage du catalogue et la sélection des visualisations liées (voir "Thème" ci-dessous, "Filtre thématique" dans `home-page.md` et "Visualisations liées" dans `functional-specifications.md`) |
-| `publication-date` | Non | Date de première publication de la visualisation, utilisée pour ordonner les visualisations liées (voir "Visualisations liées" dans `functional-specifications.md`) |
-| `downloads` | Non | Optionnel. Noms des fichiers de `public/data/<viz-slug>/` proposés au téléchargement sur la page de la visualisation (ex : `[trees.json, national-gardens.json]`). Absent : aucun lien de téléchargement (voir "Téléchargement des données préparées" dans `functional-specifications.md`) |
+| `slug` | No | Unique identifier, built from the English title, used in the URL and as the name of the `specs/<viz-slug>/` folder (e.g. `air-pollution`) |
+| `lang` | No | Language of this document (`fr` or `en`); used to associate the two documents of the same visualization |
+| `title` | Yes | Displayed title |
+| `summary` | Yes | Short text displayed on the catalog tile (see "Tiles (catalog)" in `style-guide.md`) and at the top of the visualization's page |
+| `datasets` | — | List of open data datasets used (see "Source dataset" below) |
+| `themes` | No | One or more theme identifiers, used for filtering the catalog and selecting related visualizations (see "Theme" below, "Theme filter" in `home-page.md` and "Related visualizations" in `functional-specifications.md`) |
+| `publication-date` | No | Date of the visualization's first publication, used to order related visualizations (see "Related visualizations" in `functional-specifications.md`) |
+| `downloads` | No | Optional. Names of the files of `public/data/<viz-slug>/` offered for download on the visualization's page (e.g. `[trees.json, national-gardens.json]`). Absent: no download link (see "Prepared data download" in `functional-specifications.md`) |
 
-L'image de couverture n'est pas un attribut : elle est associée à la visualisation par convention de nommage (voir "Images" ci-dessous).
+The cover image is not an attribute: it is associated with the visualization by naming convention (see "Images" below).
 
-### Thème
+### Theme
 
-Catégorie thématique associée à une visualisation, utilisée pour le filtrage du catalogue (voir "Filtre thématique" dans `home-page.md`) et pour la sélection des visualisations liées sur la page d'une visualisation (voir "Visualisations liées" dans `functional-specifications.md`). Liste fermée, pas de vocabulaire libre : toute nouvelle valeur est ajoutée ici avant d'être utilisée dans le frontmatter d'une visualisation.
+Thematic category associated with a visualization, used for filtering the catalog (see "Theme filter" in `home-page.md`) and for selecting related visualizations on a visualization's page (see "Related visualizations" in `functional-specifications.md`). Closed list, no free vocabulary: any new value is added here before being used in a visualization's frontmatter.
 
-| `id` | Français | English |
+| `id` | French | English |
 |---|---|---|
 | `living` | Vivant | Life |
 | `climate` | Climat | Climate |
@@ -31,65 +31,65 @@ Catégorie thématique associée à une visualisation, utilisée pour le filtrag
 | `territory` | Territoire et société | Territory & society |
 | `space` | Espace | Space |
 
-Une visualisation associe un ou plusieurs de ces identifiants via son attribut `themes` (voir "Visualisation" ci-dessus). Le libellé affiché est porté par le dictionnaire i18n (`i18n/fr.ts`, `i18n/en.ts`, voir "Textes d'interface" dans `technical-specifications.md`), pas par le frontmatter : seuls les identifiants y figurent.
+A visualization associates one or more of these identifiers via its `themes` attribute (see "Visualization" above). The displayed label is carried by the i18n dictionary (`i18n/fr.ts`, `i18n/en.ts`, see "Interface copy" in `technical-specifications.md`), not by the frontmatter: only the identifiers appear there.
 
-### Dataset source
+### Source dataset
 
-Un jeu de données open data utilisé par une visualisation. Une visualisation peut en croiser plusieurs.
+An open data dataset used by a visualization. A visualization can combine several.
 
-| Attribut | Localisé | Description |
+| Attribute | Localized | Description |
 |---|---|---|
-| `name` | Non | Nom affiché du jeu de données |
-| `publisher` | Non | Organisme producteur (ex : INSEE, data.gouv.fr, Eurostat) |
-| `url` | Non | URL de la page source du jeu de données, vérifiée chaque semaine (voir "Surveillance des sources" dans `technical-specifications.md`) |
-| `license` | Non | Licence du jeu de données telle que publiée par la source (ex : Licence Ouverte 2.0, ODbL) |
-| `retrieved` | Non | Date à laquelle le jeu de données a été récupéré : les open data évoluent, cette date documente la version réellement utilisée |
+| `name` | No | Displayed name of the dataset |
+| `publisher` | No | Producing organization (e.g. INSEE, data.gouv.fr, Eurostat) |
+| `url` | No | URL of the dataset's source page, checked every week (see "Source monitoring" in `technical-specifications.md`) |
+| `license` | No | License of the dataset as published by the source (e.g. Licence Ouverte 2.0, ODbL) |
+| `retrieved` | No | Date on which the dataset was retrieved: open data evolves, this date documents the version actually used |
 
-Le schéma détaillé des données réellement consommées par une visualisation (colonnes, format, transformations appliquées) n'est pas porté ici : il est propre à chaque visualisation et documenté dans `specs/<viz-slug>/data-model.md`.
+The detailed schema of the data actually consumed by a visualization (columns, format, applied transformations) is not carried here: it is specific to each visualization and documented in `specs/<viz-slug>/data-model.md`.
 
-## Formats et conventions des fichiers de données
+## Data file formats and conventions
 
-### Conventions générales
+### General conventions
 
-- Les noms d'attributs (clés de frontmatter et de fichiers de données) sont en anglais, en kebab-case.
-- Le slug d'une visualisation est construit à partir du titre anglais de l'entité : minuscules ASCII, sans accents ni espaces, mots séparés par des tirets (ex : `air-pollution`, pas `Air_Pollution` ni `air pollution`).
-- Le site est multilingue (français et anglais). Le `slug` d'une visualisation est partagé entre les langues : seule sa traduction varie, pas son URL.
+- Attribute names (frontmatter keys and data file keys) are in English, in kebab-case.
+- A visualization's slug is built from the entity's English title: lowercase ASCII, without accents or spaces, words separated by hyphens (e.g. `air-pollution`, not `Air_Pollution` nor `air pollution`).
+- The site is multilingual (French and English). A visualization's `slug` is shared between languages: only its translation varies, not its URL.
 
 ### Images
 
-- Image de couverture d'une visualisation : `src/assets/covers/<viz-slug>.jpg` ou `.png` selon sa nature (photo ou illustration/capture, voir "Images" dans `style-guide.md`). Elle vit dans `src/` et non dans `public/` : c'est le fichier source dont le build dérive les images réellement servies (voir "Performance" dans `technical-specifications.md`).
-- Un seul fichier de couverture par visualisation, partagé par les deux langues (pas de déclinaison par locale).
+- Cover image of a visualization: `src/assets/covers/<viz-slug>.jpg` or `.png` depending on its nature (photo or illustration/screenshot, see "Images" in `style-guide.md`). It lives in `src/` and not in `public/`: it is the source file from which the build derives the images actually served (see "Performance" in `technical-specifications.md`).
+- A single cover file per visualization, shared by both languages (no per-locale variant).
 
-Format, dimensions et ratio recommandés : voir "Images" dans `style-guide.md`.
+Recommended format, dimensions and ratio: see "Images" in `style-guide.md`.
 
-### Organisation des fichiers
+### File organization
 
-Le site est généré avec Astro, en content collections (voir "Structure des fichiers" dans `technical-specifications.md` pour la configuration et le schéma exact). Chaque visualisation a ses attributs de présentation (localisés et non localisés) portés par deux fichiers de contenu, un par langue ; les données qui alimentent la visualisation elle-même vivent à part, propres à chaque visualisation et documentées dans `specs/<viz-slug>/data-model.md`.
+The site is generated with Astro, in content collections (see "File structure" in `technical-specifications.md` for the configuration and exact schema). Each visualization has its presentation attributes (localized and non-localized) carried by two content files, one per language; the data that feeds the visualization itself lives separately, specific to each visualization and documented in `specs/<viz-slug>/data-model.md`.
 
-- `src/content/visualizations/<viz-slug>.fr.md`, `<viz-slug>.en.md` : présentation de la visualisation, un fichier par langue. Frontmatter : `lang`, `title`, `summary`, `datasets`, `themes`, `publication-date`, `downloads` (optionnel). Corps de texte : présentation longue (contexte du dataset, angle choisi).
-- `src/assets/covers/<viz-slug>.jpg` / `.png` : image de couverture (voir "Images" ci-dessus).
+- `src/content/visualizations/<viz-slug>.fr.md`, `<viz-slug>.en.md`: presentation of the visualization, one file per language. Frontmatter: `lang`, `title`, `summary`, `datasets`, `themes`, `publication-date`, `downloads` (optional). Body text: long presentation (context of the dataset, chosen angle).
+- `src/assets/covers/<viz-slug>.jpg` / `.png`: cover image (see "Images" above).
 
-Les attributs non localisés (`datasets`, `themes`, `publication-date`, `downloads`) sont répétés à l'identique dans le frontmatter des deux fichiers de langue plutôt que centralisés à part : le nombre de champs concernés reste faible, la duplication reste donc limitée.
+The non-localized attributes (`datasets`, `themes`, `publication-date`, `downloads`) are repeated identically in the frontmatter of both language files rather than centralized separately: the number of fields concerned remains small, so the duplication remains limited.
 
-### Workflow d'ajout d'une visualisation
+### Workflow for adding a visualization
 
-1. Choisir le `slug` de la visualisation (construit à partir de son titre anglais) et créer `specs/<viz-slug>/` avec ses trois fichiers (voir `CLAUDE.md` pour le contenu attendu de chacun).
-2. Créer `src/content/visualizations/<viz-slug>.fr.md` et `<viz-slug>.en.md`, avec leur frontmatter complet.
-3. Ajouter l'image de couverture (`src/assets/covers/<viz-slug>.jpg` ou `.png`).
-4. Implémenter la visualisation elle-même selon `specs/<viz-slug>/functional-specifications.md`, `data-model.md` et `technical-specifications.md`.
-5. Le cas échéant, déclarer les fichiers de données principaux dans `downloads`, après vérification des licences des sources (voir "Téléchargement des données préparées" dans `functional-specifications.md`).
-6. Valider en lançant `npm run build`, qui échoue sur toute règle non respectée (voir "Contraintes et règles de validation" ci-dessous et "Validation des données" dans `technical-specifications.md`).
-7. Publier.
+1. Choose the visualization's `slug` (built from its English title) and create `specs/<viz-slug>/` with its three files (see `CLAUDE.md` for the expected content of each).
+2. Create `src/content/visualizations/<viz-slug>.fr.md` and `<viz-slug>.en.md`, with their complete frontmatter.
+3. Add the cover image (`src/assets/covers/<viz-slug>.jpg` or `.png`).
+4. Implement the visualization itself according to `specs/<viz-slug>/functional-specifications.md`, `data-model.md` and `technical-specifications.md`.
+5. Where applicable, declare the main data files in `downloads`, after checking the licenses of the sources (see "Prepared data download" in `functional-specifications.md`).
+6. Validate by running `npm run build`, which fails on any rule not respected (see "Validation constraints and rules" below and "Data validation" in `technical-specifications.md`).
+7. Publish.
 
-## Contraintes et règles de validation
+## Validation constraints and rules
 
-Toutes ces règles sont vérifiées au build, sauf celles que les noms de fichiers garantissent d'eux-mêmes (slug identique entre les deux traductions, unicité du slug) : le schéma Zod couvre chaque fichier isolément, et `validateVisualizations` les règles entre fichiers (voir "Validation des données" dans `technical-specifications.md`).
+All these rules are checked at build time, except those that the file names guarantee by themselves (identical slug between the two translations, slug uniqueness): the Zod schema covers each file in isolation, and `validateVisualizations` the cross-file rules (see "Data validation" in `technical-specifications.md`).
 
-- Le `slug` d'une visualisation est identique pour ses deux traductions.
-- Un `slug` de visualisation est unique globalement, et ne peut pas être `about`, réservé à la page "À propos" (voir "Structure des URLs" dans `technical-specifications.md`).
-- L'attribut `lang` d'un fichier de visualisation doit correspondre au suffixe de langue de son nom de fichier (`.fr.md` → `fr`, `.en.md` → `en`).
-- Pour une langue donnée, `<viz-slug>.<lang>.md` n'existe que si la visualisation est disponible dans cette langue ; son absence retire la visualisation du catalogue de cette langue (voir "Multilingue" dans `functional-specifications.md`).
-- Chaque entrée de `datasets` d'une visualisation déclare au minimum `name`, `publisher` et `url`.
-- Une visualisation déclare au moins un thème, choisi dans la liste fermée définie dans "Thème" ci-dessus.
-- Chaque entrée de `downloads` correspond à un fichier existant de `public/data/<viz-slug>/` : le build échoue sinon.
-- Les valeurs des attributs non localisés (`datasets`, `themes`, `publication-date`, `downloads`) sont identiques entre `<viz-slug>.fr.md` et `<viz-slug>.en.md` d'une même visualisation.
+- A visualization's `slug` is identical for its two translations.
+- A visualization `slug` is globally unique, and cannot be `about`, reserved for the "About" page (see "URL structure" in `technical-specifications.md`).
+- The `lang` attribute of a visualization file must match the language suffix of its file name (`.fr.md` → `fr`, `.en.md` → `en`).
+- For a given language, `<viz-slug>.<lang>.md` exists only if the visualization is available in that language; its absence removes the visualization from that language's catalog (see "Multilingual" in `functional-specifications.md`).
+- Each `datasets` entry of a visualization declares at least `name`, `publisher` and `url`.
+- A visualization declares at least one theme, chosen from the closed list defined in "Theme" above.
+- Each `downloads` entry corresponds to an existing file of `public/data/<viz-slug>/`: the build fails otherwise.
+- The values of the non-localized attributes (`datasets`, `themes`, `publication-date`, `downloads`) are identical between `<viz-slug>.fr.md` and `<viz-slug>.en.md` of the same visualization.

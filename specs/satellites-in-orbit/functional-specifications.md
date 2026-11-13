@@ -1,77 +1,77 @@
-# Spécification fonctionnelle : La ruée vers l'orbite
+# Functional specification: The Orbital Rush
 
-Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
+Supplements the general `functional-specifications.md`: screen of this visualization (goal, content, interactions, states, responsive).
 
-**Statut : implémenté.**
+**Status: implemented.**
 
-## Angle éditorial
+## Editorial angle
 
-| Langue | Titre | Résumé |
+| Language | Title | Summary |
 |---|---|---|
 | FR | La ruée vers l'orbite | Une nuée qui grandit depuis 1957 : l'accélération du nombre de satellites en orbite autour de la Terre, et qui les a lancés. |
 | EN | The Orbital Rush | A swarm growing since 1957: the accelerating number of satellites in orbit around Earth, and who launched them. |
 
-**Présentation longue FR :**
+**Long FR presentation:**
 > Depuis Spoutnik en 1957, des milliers de satellites ont rejoint l'orbite terrestre : stations de navigation, satellites météo, télescopes, engins scientifiques, constellations de télécommunication. Cette visualisation anime, année par année, l'accumulation réelle des satellites toujours en orbite aujourd'hui (actifs ou non), à partir du catalogue tenu par le réseau de surveillance spatiale de l'US Space Force.
 >
 > Chaque point représente un satellite réel, positionné au moment de son lancement plutôt que sur sa véritable orbite (voir `technical-specifications.md`), coloré selon la zone qui l'a mis en orbite : États-Unis, Russie/URSS, Chine, Europe ou reste du monde. La nuée reste clairsemée pendant les premières décennies de l'ère spatiale, avant de s'épaissir nettement à partir des années deux mille.
 
-**Présentation longue EN :**
+**Long EN presentation:**
 > Since Sputnik in 1957, thousands of satellites have reached Earth orbit: navigation systems, weather satellites, telescopes, scientific probes, telecommunication constellations. This visualization animates, year by year, the real accumulation of satellites still in orbit today (active or not), drawn from the catalog maintained by the US Space Force's space surveillance network.
 >
 > Each point represents a real satellite, positioned at the moment of its launch rather than on its actual orbit (see `technical-specifications.md`), colored by the launching region: United States, Russia/USSR, China, Europe, or the rest of the world. The swarm stays sparse through the early decades of the space age, then thickens sharply from the two-thousands onward.
 
-## Objectif
+## Goal
 
-Faire voir, par l'accumulation progressive de points autour d'un globe habillé de continents et d'océans, l'accélération du nombre de satellites en orbite depuis 1957, et la part de chaque grande zone de lancement dans cette croissance.
+Show, through the progressive accumulation of points around a globe dressed with continents and oceans, the acceleration in the number of satellites in orbit since 1957, and the share of each major launching region in that growth.
 
-## Contenu (zone de montage)
+## Content (mount area)
 
-- Globe habillé de continents et d'océans stylisés (silhouette terrestre réelle, sans frontières par pays, voir "Rendu" dans `technical-specifications.md`), en rotation lente et continue, centré dans la zone de montage.
-- Nuée de points en halo autour du globe, chaque point apparaissant au moment du lancement du satellite qu'il représente ; le halo ne tourne pas avec le globe (voir "Positionnement des points" dans `technical-specifications.md`).
-- Légende des cinq zones (couleur + nom localisé), doublée d'un filtre interactif (voir "Filtre zone" ci-dessous).
-- Compteur du nombre total de satellites en orbite à l'instant simulé courant (voir "Champs dérivés côté client" dans `data-model.md`), recalculé selon les zones actives.
-- Indicateur de l'année simulée en cours.
-- Contrôles de lecture : bouton Play/Pause ; sélecteur de vitesse (Lent / Normal / Rapide, Normal par défaut) ; curseur d'année (`<input type="range">`), de la première à la dernière année du dataset.
+- Globe dressed with stylized continents and oceans (real Earth silhouette, no country borders, see "Rendering" in `technical-specifications.md`), slowly and continuously rotating, centered in the mount area.
+- Swarm of points forming a halo around the globe, each point appearing at the launch time of the satellite it represents; the halo does not rotate with the globe (see "Point positioning" in `technical-specifications.md`).
+- Legend of the five regions (color + localized name), doubling as an interactive filter (see "Region filter" below).
+- Counter of the total number of satellites in orbit at the current simulated instant (see "Client-side derived fields" in `data-model.md`), recomputed according to the active regions.
+- Indicator of the current simulated year.
+- Playback controls: Play/Pause button; speed selector (Slow / Normal / Fast, Normal by default); year slider (`<input type="range">`), from the first to the last year of the dataset.
 
 ## Interactions
 
-- **Lecture automatique :** démarre dès le chargement de la page, sans action du visiteur, en boucle continue (comme `bird-migrations`, à la différence du choix initial retenu pour cette visualisation) : chaque passage va de 1958 (premier satellite du dataset encore en orbite, Vanguard 1 : Spoutnik 1, lancé en 1957, est retombé depuis, voir `data-model.md`) à la date la plus récente du dataset, marque un temps d'arrêt sur cet état final complet (quelques secondes, pour laisser voir "aujourd'hui, X satellites en orbite" comme un aboutissement plutôt que comme une frame parmi d'autres) puis reprend depuis 1958.
-- **Play/Pause :** interrompt ou reprend l'ensemble de l'animation à l'instant simulé courant, y compris la rotation du globe et le temps d'arrêt en fin de passage (voir "Accessibilité" ci-dessous : nécessaire pour un contenu qui bouge en continu sans intervention).
-- **Vitesse de lecture :** Lent / Normal / Rapide, modifie la durée d'un passage complet (Normal : environ 25 secondes) sans affecter la rotation du globe, purement décorative et cadencée indépendamment (voir "Animation" dans `technical-specifications.md`).
-- **Curseur d'année :** un pas par année, sur la plage animée (première à dernière année du dataset). Le déplacer manuellement (glisser ou clavier) met la lecture automatique en pause et reconstruit immédiatement la nuée jusqu'à l'année choisie, y compris en arrière (même convention que le curseur de `light-pollution` et `monument-layers`, voir leurs `technical-specifications.md` respectifs). Le déplacer jusqu'à sa valeur maximale déclenche la même pause finale que l'arrivée naturelle de l'animation à son terme.
-- **Filtre zone :** légende cliquable, toggle multi-sélection, une entrée par zone (couleur + nom localisé), les cinq actives par défaut. Désactiver une zone retire ses points de la nuée affichée et du compteur total, sans redémarrer l'animation en cours.
-- **Pas de fiche par satellite individuel :** ni survol, ni tap sur un point isolé (décision explicite, voir échanges de cadrage) — l'angle de cette visualisation est la densité et l'accélération d'ensemble, pas l'exploration satellite par satellite ; une telle interaction resterait par ailleurs peu fiable sur une nuée aussi dense (points très proches les uns des autres vers la fin de l'animation).
-- **Vue initiale :** les cinq zones actives, année simulée à 1958, compteur à zéro, vitesse Normal, lecture automatique déjà en cours.
-- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : les zones actives et l'année choisie (pause ou curseur) sont restaurées, la visualisation s'ouvrant alors en pause sur cette année. La rotation du globe, purement décorative, n'est pas conservée.
-- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la visualisation s'ouvre en pause sur la dernière année, nuée complète et globe immobile.
+- **Autoplay:** starts as soon as the page loads, with no visitor action, in a continuous loop (like `bird-migrations`, unlike the initial choice made for this visualization): each pass runs from 1958 (first satellite in the dataset still in orbit, Vanguard 1: Sputnik 1, launched in 1957, has since fallen back, see `data-model.md`) to the most recent date in the dataset, pauses on that complete final state (a few seconds, to let "today, X satellites in orbit" read as a culmination rather than as one frame among others) then restarts from 1958.
+- **Play/Pause:** stops or resumes the whole animation at the current simulated instant, including the globe's rotation and the end-of-pass pause (see "Accessibility" below: required for content that moves continuously without intervention).
+- **Playback speed:** Slow / Normal / Fast, changes the duration of a full pass (Normal: about 25 seconds) without affecting the globe's rotation, which is purely decorative and paced independently (see "Animation" in `technical-specifications.md`).
+- **Year slider:** one step per year, over the animated range (first to last year of the dataset). Moving it manually (drag or keyboard) pauses autoplay and immediately rebuilds the swarm up to the chosen year, including backward (same convention as the `light-pollution` and `monument-layers` sliders, see their respective `technical-specifications.md`). Moving it to its maximum value triggers the same final pause as the animation naturally reaching its end.
+- **Region filter:** clickable legend, multi-select toggle, one entry per region (color + localized name), all five active by default. Disabling a region removes its points from the displayed swarm and from the total counter, without restarting the current animation.
+- **No card per individual satellite:** neither hover nor tap on an isolated point (explicit decision, see scoping discussions): the angle of this visualization is overall density and acceleration, not satellite-by-satellite exploration; such an interaction would also be unreliable on such a dense swarm (points very close to each other toward the end of the animation).
+- **Initial view:** all five regions active, simulated year at 1958, counter at zero, Normal speed, autoplay already running.
+- **Shared link** (see "Shareable state in the URL" in the general `functional-specifications.md`): the active regions and the chosen year (pause or slider) are restored, the visualization then opening paused on that year. The globe's rotation, purely decorative, is not preserved.
+- **Reduced motion** (see "Reduced motion" in the general `functional-specifications.md`): the visualization opens paused on the last year, with the complete swarm and a still globe.
 
-## Vue tableau
+## Table view
 
-Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+See "Data table view" in the general `functional-specifications.md`.
 
-- **Légende :** "Satellites encore en orbite, par décennie de lancement et par zone" / "Satellites still in orbit, by launch decade and region".
-- **Lignes :** une par décennie de lancement (1950-1959 à la décennie en cours).
-- **Colonnes :** les cinq zones de lancement, dans l'ordre des filtres, puis Total.
-- **Ligne de total :** toutes décennies confondues.
+- **Caption:** "Satellites encore en orbite, par décennie de lancement et par zone" / "Satellites still in orbit, by launch decade and region".
+- **Rows:** one per launch decade (1950-1959 to the current decade).
+- **Columns:** the five launching regions, in filter order, then Total.
+- **Total row:** all decades combined.
 
-## États
+## States
 
-- **Chargement :** le temps que `satellites.json` soit récupéré et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
-- **Erreur :** échec de récupération du JSON → message d'erreur, pas de globe vide silencieux.
-- **Vide :** toutes les zones désactivées via le filtre → globe sans nuée et compteur à zéro, avec un message neutre rappelant qu'aucune zone n'est sélectionnée (état voulu par l'interaction du visiteur, à distinguer de l'état d'erreur ci-dessus).
+- **Loading:** while `satellites.json` is retrieved and the animation initializes; mount area reserved with no layout shift.
+- **Error:** failure to retrieve the JSON → error message, no silent empty globe.
+- **Empty:** all regions disabled via the filter → globe with no swarm and counter at zero, with a neutral message noting that no region is selected (a state intended by the visitor's interaction, to be distinguished from the error state above).
 
 ## Responsive
 
-- Contrôles de lecture (Play/Pause, sélecteur de vitesse) et légende/filtre repositionnés sous le globe plutôt qu'en surimpression, avec des cibles tactiles suffisamment grandes.
-- Le globe et son halo de points redimensionnent avec la largeur de la zone de montage, sans changement de comportement entre tactile et souris au-delà du ciblage des contrôles (pas d'interaction de survol à adapter, voir "Pas de fiche par satellite individuel" ci-dessus).
+- Playback controls (Play/Pause, speed selector) and legend/filter repositioned below the globe rather than overlaid, with sufficiently large touch targets.
+- The globe and its halo of points resize with the width of the mount area, with no change in behavior between touch and mouse beyond control targeting (no hover interaction to adapt, see "No card per individual satellite" above).
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-L'interaction principale (globe animé en rotation continue, accumulation de points) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général). Les boutons Play/Pause, les entrées de la légende/filtre et le curseur d'année restent accessibles au clavier (éléments `<button>`/`<input type="range">` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention (rotation du globe comprise, voir "Play/Pause" dans "Interactions" ci-dessus), de filtrer et de parcourir la chronologie sans dépendre du globe animé lui-même.
+The main interaction (animated globe in continuous rotation, accumulation of points) is not natively accessible by keyboard or screen reader. Documented as a known limitation, with no fallback, in line with the project's default rule (see "Rules common to all visualizations" in the general `technical-specifications.md`). The Play/Pause buttons, the legend/filter entries and the year slider remain keyboard accessible (standard `<button>`/`<input type="range">` elements), to make it possible to stop content that moves continuously without intervention (globe rotation included, see "Play/Pause" in "Interactions" above), to filter and to browse the timeline without depending on the animated globe itself.
 
-Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
+Fallback: the table view (see "Table view" above) gives access to the same data, as a summary, by keyboard and screen reader.
 
-## Contenu non traduit
+## Untranslated content
 
-Les noms de zone (`nameFr` / `nameEn`, voir `data-model.md`) sont fournis dans les deux langues ; pas de contenu non traduit à signaler au-delà des règles générales.
+Region names (`nameFr` / `nameEn`, see `data-model.md`) are provided in both languages; no untranslated content to report beyond the general rules.

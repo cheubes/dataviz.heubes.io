@@ -1,79 +1,79 @@
-# Spécification fonctionnelle : Le ciel, d'année en année
+# Functional specification: The Sky, Year by Year
 
-Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
+Supplements the general `functional-specifications.md`: screen of this visualization (goal, content, interactions, states, responsive).
 
-**Statut : implémenté.**
+**Status: implemented.**
 
-## Angle éditorial
+## Editorial angle
 
-Angle neutre, délibérément non directionnel (voir échanges de cadrage) : les données réelles (voir "Couverture géographique et temporelle" dans `data-model.md`) montrent un recul de l'intensité lumineuse depuis 2013, particulièrement marqué depuis 2022-2023 (plausiblement lié aux mesures de sobriété énergétique), pas une hausse. Le titre et le résumé de travail initiaux ("La nuit qui recule" / "The Retreating Night", supposant une pollution lumineuse croissante) présupposaient l'inverse de ce que montre le dataset : révisés en conséquence, sans affirmer de direction, pour laisser le curseur d'année la révéler.
+Neutral angle, deliberately non-directional (see scoping discussions): the actual data (see "Geographic and temporal coverage" in `data-model.md`) shows a decline in light intensity since 2013, particularly marked since 2022-2023 (plausibly linked to energy-saving measures), not an increase. The initial working title and summary ("La nuit qui recule" / "The Retreating Night", assuming growing light pollution) presupposed the opposite of what the dataset shows: revised accordingly, without asserting a direction, to let the year slider reveal it.
 
-| Langue | Titre | Résumé |
+| Language | Title | Summary |
 |---|---|---|
 | FR | Le ciel, d'année en année | Depuis 2013, des satellites mesurent chaque année la lumière artificielle émise depuis le sol en France : ce qu'on peut encore espérer voir dans le ciel nocturne, région par région. |
 | EN | The Sky, Year by Year | Since 2013, satellites have measured the artificial light emitted from the ground across France each year: what you can still hope to see in the night sky, region by region. |
 
-**Présentation longue FR :**
+**Long FR presentation:**
 > Chaque nuit, des satellites américains mesurent la lumière artificielle émise depuis le sol. Ces données, collectées par le programme VIIRS de la NOAA, permettent de suivre année après année l'intensité de l'éclairage nocturne partout sur Terre.
 >
 > Cette carte agrège ces mesures sur la France métropolitaine, année par année depuis 2013, et les traduit en une échelle de visibilité du ciel plutôt qu'en unités physiques : ce qu'on peut encore espérer y voir, d'un ciel de campagne où la Voie lactée reste visible à un ciel urbain où seules quelques dizaines d'étoiles percent encore le halo. Déplacez le curseur d'année pour voir comment cette intensité a varié, région par région, depuis 2013.
 
-**Présentation longue EN :**
+**Long EN presentation:**
 > Every night, American satellites measure the artificial light emitted from the ground. This data, collected by NOAA's VIIRS program, tracks the intensity of nighttime lighting everywhere on Earth, year after year.
 >
 > This map aggregates these measurements across mainland France, year by year since 2013, translating them into a sky-visibility scale rather than physical units: what you might still hope to see, from a countryside sky where the Milky Way remains visible to an urban sky where only a few dozen stars still pierce through the glow. Move the year slider to see how that intensity has varied, region by region, since 2013.
 
-## Objectif
+## Goal
 
-Faire voir, sur une grille de la France métropolitaine, l'évolution de l'intensité lumineuse depuis 2013, traduite en ce qu'elle signifie concrètement pour l'observation du ciel nocturne, sans présupposer le sens de cette évolution (voir "Angle éditorial" ci-dessus).
+Show, on a grid of mainland France, the change in light intensity since 2013, translated into what it concretely means for observing the night sky, without presupposing the direction of that change (see "Editorial angle" above).
 
-## Contenu (zone de montage)
+## Content (mount area)
 
-- Légende de l'échelle de visibilité et contrôles (lecture/pause, vitesse, curseur d'année) **au-dessus de la carte**, jamais en surimpression : décision explicite (voir échanges de cadrage), revenant sur le choix initial d'une légende/curseur flottant en bas de carte (qui, entre autres, empiétait sur la Corse en petit écran).
-- Grille hexagonale de la France métropolitaine (même silhouette et même grille que `biodiversity`), chaque cellule colorée selon son palier de l'échelle de visibilité à l'année sélectionnée (voir "Palette" dans `technical-specifications.md`), dans une carte volontairement plus compacte que les autres visualisations du site (voir "Rendu" dans `technical-specifications.md`).
-- Fiche de détail au survol/tap d'une cellule.
+- Legend of the visibility scale and controls (play/pause, speed, year slider) **above the map**, never overlaid: explicit decision (see scoping discussions), reversing the initial choice of a legend/slider floating at the bottom of the map (which, among other things, encroached on Corsica on small screens).
+- Hexagonal grid of mainland France (same silhouette and same grid as `biodiversity`), each cell colored according to its level on the visibility scale for the selected year (see "Palette" in `technical-specifications.md`), in a map deliberately more compact than the site's other visualizations (see "Rendering" in `technical-specifications.md`).
+- Detail card on hover/tap of a cell.
 
 ## Interactions
 
-- **Lecture automatique en boucle :** démarre dès le chargement de la page, sans action du visiteur (même convention que `satellites-in-orbit`, voir "Lecture automatique" ci-dessous) : revient sur le choix initial "pas d'animation automatique" retenu avant cette relecture.
-- **Play/Pause :** interrompt ou reprend l'avancée automatique du curseur à l'année courante (voir "Accessibilité" ci-dessous : nécessaire pour un contenu qui bouge en continu sans intervention).
-- **Vitesse de lecture :** Lent / Normal / Rapide, modifie la durée passée sur chaque année (voir "Lecture automatique" dans `technical-specifications.md`).
-- **Curseur d'année :** un pas par année disponible (élément `<input type="range">` natif). Le déplacer manuellement recolore immédiatement la grille selon l'année choisie et met la lecture automatique en pause (évite que le curseur ne reparte tout seul sous le doigt/curseur du visiteur).
-- **Survol/tap d'une cellule :** fiche de détail donnant le palier de visibilité en toutes lettres (ex. « Vous pourriez y voir la Voie lactée à l'œil nu »), l'année affichée, et la valeur de radiance mesurée pour les visiteurs qui veulent la donnée brute.
-- **Pas de zoom ni de panoramique**, même décision que `biodiversity` (voir "Interactions" dans son `functional-specifications.md`) : la carte reste fixe, toujours cadrée sur la totalité de la silhouette de la France.
-- **Pas de filtre supplémentaire :** contrairement aux autres visualisations du site, il n'y a ici qu'une seule dimension à explorer (le temps, via le curseur d'année), pas de catégorie à filtrer.
-- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : une année choisie (pause ou curseur) est restaurée, la carte s'ouvrant alors en pause sur cette année.
-- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause sur la dernière année disponible.
+- **Looping autoplay:** starts as soon as the page loads, with no visitor action (same convention as `satellites-in-orbit`, see "Autoplay" below): reverses the initial "no automatic animation" choice made before this review.
+- **Play/Pause:** stops or resumes the slider's automatic progression at the current year (see "Accessibility" below: required for content that moves continuously without intervention).
+- **Playback speed:** Slow / Normal / Fast, changes the time spent on each year (see "Autoplay" in `technical-specifications.md`).
+- **Year slider:** one step per available year (native `<input type="range">` element). Moving it manually immediately recolors the grid for the chosen year and pauses autoplay (prevents the slider from moving on its own under the visitor's finger/cursor).
+- **Cell hover/tap:** detail card giving the visibility level in plain words (e.g. "Vous pourriez y voir la Voie lactée à l'œil nu"), the displayed year, and the measured radiance value for visitors who want the raw data.
+- **No zoom or pan**, same decision as `biodiversity` (see "Interactions" in its `functional-specifications.md`): the map stays fixed, always framed on the whole silhouette of France.
+- **No additional filter:** unlike the site's other visualizations, there is only one dimension to explore here (time, via the year slider), no category to filter.
+- **Shared link** (see "Shareable state in the URL" in the general `functional-specifications.md`): a chosen year (pause or slider) is restored, the map then opening paused on that year.
+- **Reduced motion** (see "Reduced motion" in the general `functional-specifications.md`): the map opens paused on the last available year.
 
-## Lecture automatique
+## Autoplay
 
-Chaque passage part de 2013 (année la plus ancienne) et avance d'une année à la fois jusqu'à 2025 (aujourd'hui), marque un temps d'arrêt de quelques secondes sur cet état final (même logique que `satellites-in-orbit` : laisser voir l'année la plus récente comme un aboutissement plutôt que comme une frame parmi d'autres) puis reprend depuis 2013. Revient ainsi sur la précédente décision "vue initiale = année la plus récente" : avec une lecture automatique en boucle, il n'y a plus d'" état initial" figé à privilégier, la boucle montre systématiquement les deux bornes (départ et aboutissement).
+Each pass starts from 2013 (the oldest year) and advances one year at a time up to 2025 (today), pauses for a few seconds on that final state (same logic as `satellites-in-orbit`: let the most recent year read as a culmination rather than as one frame among others) then restarts from 2013. This reverses the previous "initial view = most recent year" decision: with looping autoplay, there is no longer a frozen "initial state" to favor, the loop systematically shows both bounds (start and culmination).
 
-## Vue tableau
+## Table view
 
-Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+See "Data table view" in the general `functional-specifications.md`.
 
-- **Légende :** "Part du territoire par niveau de visibilité du ciel, par année" / "Share of the territory by sky visibility level, by year".
-- **Lignes :** une par année (2013 à 2025).
-- **Colonnes :** les six niveaux de l'échelle de visibilité, du ciel remarquable au ciel urbain, avec les libellés de la légende de la carte. Cellule : part des cellules de la grille dans ce niveau (%), les cellules ayant toutes la même surface.
-- **Pas de ligne de total :** chaque ligne fait 100 %.
+- **Caption:** "Part du territoire par niveau de visibilité du ciel, par année" / "Share of the territory by sky visibility level, by year".
+- **Rows:** one per year (2013 to 2025).
+- **Columns:** the six levels of the visibility scale, from pristine sky to urban sky, with the labels of the map legend. Cell: share of grid cells in that level (%), the cells all having the same area.
+- **No total row:** each row adds up to 100%.
 
-## États
+## States
 
-- **Chargement :** le temps que `skybins.json` soit récupéré et que la grille s'initialise ; zone de montage réservée sans saut de mise en page.
-- **Erreur :** échec de récupération du JSON → message d'erreur, pas de grille vide silencieuse.
-- **Vide :** sans objet ici (les 395 cellules de la grille portent toujours une valeur pour chaque année disponible, voir "Contraintes de validation" dans `data-model.md` ; pas de filtre pouvant réduire l'affichage à rien).
+- **Loading:** while `skybins.json` is retrieved and the grid initializes; mount area reserved with no layout shift.
+- **Error:** failure to retrieve the JSON → error message, no silent empty grid.
+- **Empty:** not applicable here (the 395 grid cells always carry a value for each available year, see "Validation constraints" in `data-model.md`; no filter can reduce the display to nothing).
 
 ## Responsive
 
-Légende et contrôles étant toujours au-dessus de la carte (jamais en surimpression, voir "Contenu" ci-dessus), leur repositionnement n'est plus une préoccupation propre au responsive : ils s'enchaînent normalement dans le flux de la page à toutes les tailles d'écran, la ligne de lecture (bouton, vitesse, curseur) passant simplement à la ligne sur les écrans étroits. Fiche de détail au tap sur une cellule plutôt qu'au survol.
+Since the legend and controls are always above the map (never overlaid, see "Content" above), their repositioning is no longer a responsive-specific concern: they flow normally in the page at all screen sizes, the playback row (button, speed, slider) simply wrapping onto a new line on narrow screens. Detail card on tap of a cell rather than on hover.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-La fiche de détail par cellule (survol/tap) n'est pas nativement accessible au clavier ni au lecteur d'écran, même limite que les grilles hexagonales de `biodiversity`. Documentée comme limite connue, sans repli, conformément à la règle par défaut du projet. Le curseur d'année reste accessible au clavier (élément `<input type="range">` standard) : la recoloration de la grille selon l'année reste donc pilotable sans souris, seule la fiche de détail par cellule ne l'est pas. Le bouton Play/Pause est requis dès lors que le contenu s'anime en continu sans action du visiteur (même rationale que `satellites-in-orbit`).
+The per-cell detail card (hover/tap) is not natively accessible by keyboard or screen reader, the same limitation as the `biodiversity` hexagonal grids. Documented as a known limitation, with no fallback, in line with the project's default rule. The year slider remains keyboard accessible (standard `<input type="range">` element): recoloring the grid by year can therefore be driven without a mouse, only the per-cell detail card cannot. The Play/Pause button is required as soon as the content animates continuously without visitor action (same rationale as `satellites-in-orbit`).
 
-Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
+Fallback: the table view (see "Table view" above) gives access to the same data, as a summary, by keyboard and screen reader.
 
-## Contenu non traduit
+## Untranslated content
 
-Les libellés de l'échelle de visibilité (`scale` dans `data-model.md`) sont fournis dans les deux langues ; pas de contenu non traduit à signaler au-delà des règles générales.
+The visibility scale labels (`scale` in `data-model.md`) are provided in both languages; no untranslated content to report beyond the general rules.

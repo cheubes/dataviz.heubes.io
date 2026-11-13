@@ -1,5 +1,5 @@
 // Checks every dataset source URL declared in the visualizations' frontmatter.
-// See "Surveillance des sources" in specs/technical-specifications.md.
+// See "Source monitoring" in specs/technical-specifications.md.
 // Exits with code 1 only when a link is broken: blocked or unverifiable links
 // are reported but never fail the run, since anti-bot walls and incomplete
 // certificate chains are not dead sources.

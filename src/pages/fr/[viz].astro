@@ -193,9 +193,9 @@ const retrievedDateFormatter = new Intl.DateTimeFormat(LANG, {
     font-size: 1.125rem;
   }
 
-  /* :global() est nécessaire ici : <Content /> rend le corps markdown de la
-     visualisation sans l'attribut de scope Astro de ce composant, donc une
-     règle .dv-viz-page__body > :first-child non globale ne matche jamais. */
+  /* :global() is required here: <Content /> renders the visualization's
+     markdown body without this component's Astro scope attribute, so an
+     unscoped .dv-viz-page__body > :first-child rule silently never matches. */
   .dv-viz-page__body > :global(:first-child) {
     margin-top: 0;
   }

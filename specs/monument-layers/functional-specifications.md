@@ -1,77 +1,77 @@
-# Spécification fonctionnelle : Les strates du patrimoine
+# Functional specification: Layers of Heritage
 
-Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
+Supplements the general `functional-specifications.md`: screen of this visualization (goal, content, interactions, states, responsive).
 
-## Angle éditorial
+## Editorial angle
 
-| Langue | Titre | Résumé |
+| Language | Title | Summary |
 |---|---|---|
 | FR | Les strates du patrimoine | Quarante-cinq mille monuments historiques français, de leur plus ancienne pierre connue à aujourd'hui : une carte qui se construit sous vos yeux, siècle après siècle. |
 | EN | Layers of Heritage | Forty-five thousand French historic monuments, from their oldest known stone to today: a map that builds itself before your eyes, century after century. |
 
-**Présentation longue FR :**
+**Long FR presentation:**
 > Depuis 1840, l'État protège des monuments jugés dignes de conservation : châteaux, églises, ponts, lavoirs, gares... La base Mérimée du ministère de la Culture recense aujourd'hui près de quarante-cinq mille édifices protégés en France métropolitaine, chacun daté de sa plus ancienne campagne de construction connue.
 >
 > Cette carte les fait apparaître dans l'ordre chronologique de leur construction plutôt que de leur protection : des vestiges antiques épars jusqu'à la densité du bâti du dix-neuvième siècle, en passant par les grandes vagues romane, gothique et classique. Une teinte de plus en plus sombre marque la profondeur du temps : chaque point ajouté est une strate de plus dans la construction du pays.
 
-**Présentation longue EN :**
+**Long EN presentation:**
 > Since 1840, the French state has protected buildings deemed worth preserving: castles, churches, bridges, wash houses, railway stations... The Ministry of Culture's Mérimée database now lists nearly forty-five thousand protected buildings in mainland France, each dated to its oldest known construction phase.
 >
 > This map reveals them in the chronological order of their construction rather than their protection: from scattered antique remains to the density of nineteenth-century building, passing through the great Romanesque, Gothic, and Classical waves. A progressively darker shade marks the depth of time: each point added is one more layer in the construction of the country.
 
-## Objectif
+## Goal
 
-Faire voir, par l'accumulation chronologique de points sur une carte réelle de la France métropolitaine, les grandes strates de construction du patrimoine protégé, du plus ancien au plus récent.
+To show, through the chronological accumulation of points on a real map of metropolitan France, the major construction layers of protected heritage, from the oldest to the most recent.
 
-## Contenu (zone de montage)
+## Content (mount area)
 
-- Carte illustrée de la France métropolitaine (silhouette, pas de fond de tuiles, voir "Rendu" dans `technical-specifications.md`), enrichie des principaux cours d'eau et axes routiers pour donner des repères géographiques (ajouté après la première implémentation, retour utilisateur, voir "Prétraitement" dans `data-model.md` pour les critères de sélection).
-- Points représentant chaque monument, apparaissant à sa position réelle au moment simulé correspondant à son siècle de construction, teinte de plus en plus sombre à mesure que le temps simulé avance (voir "Palette" dans `technical-specifications.md`).
-- Indicateur de la période simulée en cours (siècle, ou ère archéologique pour le socle antique, voir "Champs dérivés côté client" dans `data-model.md`).
-- Compteur du nombre de monuments visibles à l'instant simulé courant (voir "Champs dérivés côté client" dans `data-model.md`).
-- Filtre simple par nature de protection (Classé / Inscrit / Les deux).
-- Contrôles de lecture : bouton Play/Pause ; sélecteur de vitesse (Lent / Normal / Rapide) ; curseur d'année (`<input type="range">`), de l'an 0 à l'année de construction la plus récente retenue.
-- Fiche de détail au survol/tap d'un monument, avec lien vers sa notice de référence.
+- Illustrated map of metropolitan France (silhouette, no tile basemap, see "Rendering" in `technical-specifications.md`), enriched with the main rivers and roads to provide geographic landmarks (added after the first implementation, user feedback, see "Preprocessing" in `data-model.md` for the selection criteria).
+- Points representing each monument, appearing at its real position at the simulated moment corresponding to its construction century, with an increasingly dark shade as simulated time advances (see "Palette" in `technical-specifications.md`).
+- Indicator of the current simulated period (century, or archaeological era for the ancient base, see "Client-side derived fields" in `data-model.md`).
+- Counter of the number of monuments visible at the current simulated instant (see "Client-side derived fields" in `data-model.md`).
+- Simple filter by nature of protection (Classified / Registered / Both).
+- Playback controls: Play/Pause button; speed selector (Slow / Normal / Fast); year slider (`<input type="range">`), from year 0 to the most recent construction year kept.
+- Detail card on hover/tap of a monument, with a link to its reference record.
 
 ## Interactions
 
-- **Lecture automatique :** démarre dès le chargement de la page, en boucle continue (même convention que `satellites-in-orbit` et `light-pollution`, voir leurs `functional-specifications.md`). Les monuments antérieurs à l'an 0 (Préhistoire à fin de l'âge du fer, 4,75 % du jeu de données, voir "Interprétation du siècle de construction" dans `data-model.md`) apparaissent déjà présents sur la carte dès le premier instant de chaque passage, comme un socle immobile : avec une échelle temporelle strictement linéaire sur une plage aussi large (de -20 000 à aujourd'hui), leur très faible densité aurait autrement compressé les vagues romane, gothique et classique dans une fraction de seconde de l'animation (décision validée avec l'utilisateur, voir "Animation" dans `technical-specifications.md`). Le temps simulé animé parcourt ensuite la chronologie de l'an 0 à l'année de construction la plus récente retenue ; une fois la carte entièrement construite, une pause brève (même mécanisme que `satellites-in-orbit`) précède le retour au socle et un nouveau passage.
-- **Play/Pause :** interrompt ou reprend l'accumulation à l'instant simulé courant (y compris pendant la pause finale d'un passage).
-- **Vitesse de lecture :** Lent / Normal / Rapide, "Normal" par défaut (même trois vitesses que `satellites-in-orbit` et `light-pollution`). Change le rythme de l'accumulation, pas la durée de la pause finale.
-- **Filtre protection :** Classé / Inscrit / Les deux, "Les deux" par défaut. Change les points affichés et le compteur, sans redémarrer l'animation en cours.
-- **Curseur d'année :** un pas par année, sur la plage animée (an 0 à l'année de construction la plus récente retenue, voir "Lecture automatique" ci-dessus ; le socle antique n'en fait pas partie, toujours affiché quelle que soit sa position). Le déplacer manuellement (glisser ou clavier) met la lecture automatique en pause et reconstruit immédiatement la carte jusqu'à l'année choisie, y compris en arrière (même convention que le curseur de `light-pollution`, voir son `functional-specifications.md`, à ceci près qu'ici il rejoue une accumulation plutôt que de recolorer un état figé). Le déplacer jusqu'à sa valeur maximale déclenche la même pause finale que l'arrivée naturelle de l'animation à son terme.
-- **Zoom/pan :** libre sur la carte (souris/molette, tactile), pour observer une concentration régionale (ex. les châteaux de la Loire, la densité parisienne) une fois qu'elle est apparue. Doublé de boutons zoomer/dézoomer/réinitialiser en surimpression sur la carte (même contrôles que `paris-trees`, voir son `functional-specifications.md`), désactivés aux bornes de l'échelle de zoom.
-- **Survol/tap d'un monument :** fiche de détail (nom, commune/département, siècle de construction, nature de la protection, catégorie de l'édifice, lien vers la notice de référence sur la Plateforme Ouverte du Patrimoine du ministère de la Culture — ajouté après la première implémentation, retour utilisateur). Fonctionne à tout moment, y compris pendant la lecture, sur les monuments déjà apparus. Le lien n'est cliquable qu'une fois la fiche épinglée (clic/tap sur le monument) : en simple survol, la fiche suit le pointeur et resterait impossible à atteindre sans se refermer avant qu'on puisse cliquer le lien.
-- **Vue initiale :** filtre "Les deux", carte de France entière visible avec le socle antique déjà affiché (voir "Lecture automatique" ci-dessus), lecture automatique déjà en cours, compteur reflétant ce socle plutôt que zéro (1 790 monuments au filtre "Les deux", moins avec un filtre de protection isolé).
-- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : le filtre protection, l'année et le cadrage sont restaurés. Une année partagée ouvre la carte en pause sur l'accumulation atteinte à cette année (voir "État dans l'URL" dans `technical-specifications.md`).
-- **Mouvement réduit** (voir "Mouvement réduit" dans le `functional-specifications.md` général) : la carte s'ouvre en pause sur l'accumulation complète, à la dernière année de construction du jeu de données.
+- **Autoplay:** starts as soon as the page loads, in a continuous loop (same convention as `satellites-in-orbit` and `light-pollution`, see their `functional-specifications.md`). Monuments predating year 0 (Prehistory to the end of the Iron Age, 4.75% of the dataset, see "Interpreting the construction century" in `data-model.md`) appear already present on the map from the very first instant of each pass, as a motionless base: with a strictly linear time scale over such a wide range (from -20,000 to today), their very low density would otherwise have compressed the Romanesque, Gothic and Classical waves into a fraction of a second of the animation (decision validated with the user, see "Animation" in `technical-specifications.md`). The animated simulated time then runs through the timeline from year 0 to the most recent construction year kept; once the map is fully built, a short pause (same mechanism as `satellites-in-orbit`) precedes the return to the base and a new pass.
+- **Play/Pause:** stops or resumes the accumulation at the current simulated instant (including during the final pause of a pass).
+- **Playback speed:** Slow / Normal / Fast, "Normal" by default (same three speeds as `satellites-in-orbit` and `light-pollution`). Changes the pace of the accumulation, not the duration of the final pause.
+- **Protection filter:** Classified / Registered / Both, "Both" by default. Changes the displayed points and the counter, without restarting the running animation.
+- **Year slider:** one step per year, over the animated range (year 0 to the most recent construction year kept, see "Autoplay" above; the ancient base is not part of it, always displayed whatever the slider position). Moving it manually (drag or keyboard) pauses autoplay and immediately rebuilds the map up to the chosen year, including backwards (same convention as the `light-pollution` slider, see its `functional-specifications.md`, except that here it replays an accumulation rather than recoloring a frozen state). Moving it to its maximum value triggers the same final pause as the animation naturally reaching its end.
+- **Zoom/pan:** free on the map (mouse/wheel, touch), to observe a regional concentration (e.g. the Loire châteaux, the Parisian density) once it has appeared. Backed by zoom in/zoom out/reset buttons overlaid on the map (same controls as `paris-trees`, see its `functional-specifications.md`), disabled at the bounds of the zoom scale.
+- **Hover/tap on a monument:** detail card (name, commune/department, construction century, nature of the protection, building category, link to the reference record on the Plateforme Ouverte du Patrimoine of the Ministry of Culture, added after the first implementation, user feedback). Works at any time, including during playback, on monuments that have already appeared. The link is only clickable once the card is pinned (click/tap on the monument): on simple hover, the card follows the pointer and would be impossible to reach without closing before the link could be clicked.
+- **Initial view:** "Both" filter, whole map of France visible with the ancient base already displayed (see "Autoplay" above), autoplay already running, counter reflecting this base rather than zero (1,790 monuments with the "Both" filter, fewer with a single protection filter).
+- **Shared link** (see "Shareable state in the URL" in the general `functional-specifications.md`): the protection filter, the year and the framing are restored. A shared year opens the map paused on the accumulation reached at that year (see "State in the URL" in `technical-specifications.md`).
+- **Reduced motion** (see "Reduced motion" in the general `functional-specifications.md`): the map opens paused on the complete accumulation, at the last construction year of the dataset.
 
-## Vue tableau
+## Table view
 
-Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+See "Data table view" in the general `functional-specifications.md`.
 
-- **Légende :** "Monuments historiques par période de construction et par protection" / "Historic monuments by construction period and protection".
-- **Lignes :** dans l'ordre chronologique, une par période pour les monuments qui en ont une (paléolithique à époque gallo-romaine), puis une par siècle pour les monuments datés par siècle, avec les mêmes libellés que la visualisation.
-- **Colonnes :** Classés ; Inscrits ; Total.
-- **Ligne de total :** tous les monuments.
+- **Caption:** "Monuments historiques par période de construction et par protection" / "Historic monuments by construction period and protection".
+- **Rows:** in chronological order, one per period for monuments that have one (Paleolithic to the Gallo-Roman era), then one per century for monuments dated by century, with the same labels as the visualization.
+- **Columns:** Classified; Registered; Total.
+- **Total row:** all monuments.
 
-## États
+## States
 
-- **Chargement :** le temps que `monuments.json` et le fond de carte soient récupérés et que l'animation s'initialise ; zone de montage réservée sans saut de mise en page.
-- **Erreur :** échec de récupération d'un des deux fichiers → message d'erreur, pas de carte vide silencieuse.
-- **Vide :** filtre "Classé" ou "Inscrit" isolé qui ne laisse aucun monument à un instant donné (situation attendue seulement en tout début de lecture, avant l'apparition du premier monument du filtre actif) → pas de message d'erreur, la carte reste simplement vide jusqu'au premier point du filtre choisi.
+- **Loading:** while `monuments.json` and the basemap are fetched and the animation initializes; mount area reserved without layout shift.
+- **Error:** failure to fetch either of the two files → error message, no silent empty map.
+- **Empty:** a single "Classified" or "Registered" filter that leaves no monument at a given instant (a situation expected only at the very beginning of playback, before the first monument of the active filter appears) → no error message, the map simply remains empty until the first point of the chosen filter.
 
 ## Responsive
 
-- Contrôles de lecture, filtre protection et indicateur de siècle repositionnés sous la carte plutôt qu'en surimpression, avec des cibles tactiles suffisamment grandes.
-- Pan/zoom au geste tactile ; fiche de détail au tap sur un monument plutôt qu'au survol.
+- Playback controls, protection filter and century indicator repositioned below the map rather than overlaid, with sufficiently large touch targets.
+- Pan/zoom by touch gesture; detail card on tap on a monument rather than on hover.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-L'interaction principale (carte animée, zoom/pan, survol des monuments) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général). Le bouton Play/Pause, le sélecteur de vitesse, le filtre protection, le curseur d'année et les boutons de zoom restent accessibles au clavier (éléments `<button>`/`<select>`/`<input type="range">` standard), pour permettre d'arrêter un contenu qui bouge en continu sans intervention (nécessaire dès lors que la lecture boucle indéfiniment, même rationale que `satellites-in-orbit`), de parcourir la chronologie et de zoomer sans dépendre de la carte animée elle-même.
+The main interaction (animated map, zoom/pan, hover on monuments) is not natively accessible by keyboard or screen reader. Documented as a known limitation, without fallback, in accordance with the project's default rule (see "Rules common to all visualizations" in the general `technical-specifications.md`). The Play/Pause button, the speed selector, the protection filter, the year slider and the zoom buttons remain keyboard-accessible (standard `<button>`/`<select>`/`<input type="range">` elements), to make it possible to stop content that moves continuously without intervention (necessary since playback loops indefinitely, same rationale as `satellites-in-orbit`), to browse the timeline and to zoom without depending on the animated map itself.
 
-Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
+Fallback: the table view (see "Table view" above) gives access to the same data, in summary form, by keyboard and screen reader.
 
-## Contenu non traduit
+## Untranslated content
 
-Les noms de monuments (`name`), leurs communes (`commune`) et leurs catégories (`category`) ne sont disponibles qu'en français dans la source ; affichés tels quels dans la version anglaise de la page, sans traduction (comparable aux noms d'espèces de `paris-trees`, voir son `functional-specifications.md`).
+Monument names (`name`), their communes (`commune`) and their categories (`category`) are only available in French in the source; displayed as is in the English version of the page, without translation (comparable to the species names of `paris-trees`, see its `functional-specifications.md`).

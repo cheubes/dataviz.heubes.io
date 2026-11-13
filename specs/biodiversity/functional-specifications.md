@@ -1,75 +1,75 @@
-# Spécification fonctionnelle : La biodiversité française
+# Functional specification: French Biodiversity
 
-Complète `functional-specifications.md` général : écran de cette visualisation (objectif, contenu, interactions, états, responsive).
+Complements the general `functional-specifications.md`: screen of this visualization (goal, content, interactions, states, responsive).
 
-## Angle éditorial
+## Editorial angle
 
-| Langue | Titre | Résumé |
+| Language | Title | Summary |
 |---|---|---|
 | FR | La biodiversité française | Des millions d'observations citoyennes dessinent la carte du vivant en France. |
 | EN | French Biodiversity | Millions of citizen observations map the living world across France. |
 
-**Présentation longue FR :**
+**Long FR presentation:**
 > Chaque année, des millions d'observations d'espèces sont consignées en France par des naturalistes amateurs et professionnels, puis versées dans des bases de données mondiales. Visualisées ensemble, elles révèlent des concentrations, des absences, des corridors écologiques. Cette carte invite à filtrer par grand groupe taxonomique et par saison, pour voir comment le vivant occupe et traverse le territoire.
 
-**Présentation longue EN :**
+**Long EN presentation:**
 > Every year, millions of species observations are recorded across France by amateur and professional naturalists, then contributed to global databases. Visualised together, they reveal concentrations, absences, ecological corridors. This map invites you to filter by major taxonomic group and by season, to see how life occupies and crosses the territory.
 
-## Objectif
+## Goal
 
-Donner à voir la répartition géographique du vivant observé en France métropolitaine, et permettre d'en explorer les variations par grand groupe taxonomique et par saison.
+Show the geographic distribution of observed living organisms in metropolitan France, and allow exploring its variations by major taxonomic group and by season.
 
-## Contenu (zone de montage)
+## Content (mount area)
 
-- Carte de la France métropolitaine (silhouette illustrée, pas de fond de tuiles, voir `technical-specifications.md`), avec une grille de cellules hexagonales colorées selon le groupe taxonomique actif.
-- Légende des groupes taxonomiques (couleur + libellé), reprenant la palette catégorielle officielle (voir `technical-specifications.md`).
-- Filtre par groupe taxonomique (six groupes + "Tous les groupes").
-- Filtre par saison (quatre saisons + "Toutes saisons").
-- Bascule "Données en direct" (voir "Mode données en direct" ci-dessous).
-- Tooltip contextuel au survol/tap d'une cellule.
+- Map of metropolitan France (illustrated silhouette, no tile background, see `technical-specifications.md`), with a grid of hexagonal cells colored according to the active taxonomic group.
+- Legend of taxonomic groups (color + label), using the official categorical palette (see `technical-specifications.md`).
+- Filter by taxonomic group (six groups + "Tous les groupes").
+- Filter by season (four seasons + "Toutes saisons").
+- "Données en direct" toggle (see "Live data" mode below).
+- Contextual tooltip on hover/tap of a cell.
 
 ## Interactions
 
-- **Filtre groupe taxonomique :** sélection unique (radio), "Tous les groupes" par défaut. Un groupe actif recolore la grille selon l'intensité du groupe sélectionné (au lieu d'un mélange de couleurs par cellule).
-- **Filtre saison :** sélection unique, "Toutes saisons" par défaut. Se combine avec le filtre groupe (ex : "Oiseaux" + "Hiver").
-- **Bascule "Données en direct" :** interroge l'API de recherche GBIF pour la combinaison de filtres courante (voir `data-model.md`) et affiche les occurrences individuelles en points bruts par-dessus (ou à la place de) la grille hexagonale. Un changement de filtre pendant que ce mode est actif relance automatiquement la requête. Revenir au mode par défaut réaffiche instantanément l'instantané précalculé (pas de rechargement de page).
-- **Survol / tap d'une cellule :** tooltip avec le nombre d'observations (pour le filtre courant), le groupe dominant si "Tous les groupes" est actif, un exemple d'espèce.
-- **Pas de zoom ni de panoramique** (écart à l'intention initiale, demande explicite à l'implémentation) : la carte reste fixe, toujours cadrée sur la totalité de la silhouette de la France (voir "Vue initiale" ci-dessous, qui décrit donc l'unique vue plutôt qu'un simple état de départ). Simplifie l'interaction au profit des seuls filtres et du tooltip ; voir "Accessibilité" ci-dessous pour l'effet sur la limite déjà documentée.
-- **Vue initiale (et unique) :** France métropolitaine entière visible, aucun filtre actif au-delà des valeurs par défaut ("Tous les groupes", "Toutes saisons"), mode par défaut (pas "données en direct").
-- **Lien partagé** (voir "État partageable dans l'URL" dans le `functional-specifications.md` général) : le groupe et la saison sont restaurés. La bascule "Données en direct" ne l'est jamais, puisqu'elle interroge GBIF : un lien ouvre toujours la grille précalculée, et le destinataire active le mode lui-même s'il le souhaite (voir "État dans l'URL" dans `technical-specifications.md`).
+- **Taxonomic group filter:** single selection (radio), "Tous les groupes" by default. An active group recolors the grid according to the intensity of the selected group (instead of a mix of colors per cell).
+- **Season filter:** single selection, "Toutes saisons" by default. Combines with the group filter (e.g. "Oiseaux" + "Hiver").
+- **"Données en direct" toggle:** queries the GBIF search API for the current filter combination (see `data-model.md`) and displays individual occurrences as raw points on top of (or instead of) the hexagonal grid. A filter change while this mode is active automatically reruns the request. Returning to the default mode instantly redisplays the precomputed snapshot (no page reload).
+- **Hover / tap on a cell:** tooltip with the number of observations (for the current filter), the dominant group if "Tous les groupes" is active, an example species.
+- **No zoom or panning** (departure from the initial intent, explicit request during implementation): the map stays fixed, always framed on the whole silhouette of France (see "Initial view" below, which therefore describes the only view rather than a mere starting state). Simplifies interaction in favor of the filters and the tooltip alone; see "Accessibility" below for the effect on the already documented limitation.
+- **Initial (and only) view:** whole metropolitan France visible, no active filter beyond the defaults ("Tous les groupes", "Toutes saisons"), default mode (not "live data").
+- **Shared link** (see "Shareable state in the URL" in the general `functional-specifications.md`): the group and the season are restored. The "Données en direct" toggle never is, since it queries GBIF: a link always opens the precomputed grid, and the recipient enables the mode themselves if they wish (see "State in the URL" in `technical-specifications.md`).
 
-## Vue tableau
+## Table view
 
-Voir "Vue tableau des données" dans le `functional-specifications.md` général.
+See "Data table view" in the general `functional-specifications.md`.
 
-- **Légende :** "Observations recensées par GBIF, par groupe taxonomique et par saison" / "Occurrences recorded by GBIF, by taxonomic group and season".
-- **Lignes :** les six groupes taxonomiques, dans l'ordre des filtres.
-- **Colonnes :** Hiver ; Printemps ; Été ; Automne ; Total. Nombre d'observations, sommé sur toutes les cellules de la carte.
-- **Ligne de total :** "Tous les groupes".
-- Les données en direct (bascule GBIF) ne sont pas reprises : le tableau décrit l'instantané précalculé, comme la carte par défaut.
+- **Caption:** "Observations recensées par GBIF, par groupe taxonomique et par saison" / "Occurrences recorded by GBIF, by taxonomic group and season".
+- **Rows:** the six taxonomic groups, in filter order.
+- **Columns:** Winter; Spring; Summer; Autumn; Total. Number of observations, summed over all cells of the map.
+- **Total row:** "Tous les groupes".
+- Live data (GBIF toggle) is not included: the table describes the precomputed snapshot, like the default map.
 
-## États
+## States
 
-- **Chargement :** le temps que le JSON précalculé (`public/data/biodiversity/hexbins.json`) et la silhouette de fond soient récupérés et que la grille s'initialise ; zone de montage réservée sans saut de mise en page (voir "Page de visualisation" dans `style-guide.md`).
-- **Erreur :** échec de récupération du JSON précalculé → message d'erreur, pas de carte vide silencieuse.
-- **Vide :** une combinaison groupe + saison sans aucune observation (cellules toutes à zéro) → message l'indiquant plutôt qu'une carte visuellement vide sans explication.
-- **Chargement (mode données en direct) :** requête GBIF en cours → indicateur dédié à la bascule, distinct de l'état de chargement initial.
-- **Erreur (mode données en direct) :** échec ou lenteur excessive de l'API GBIF → message explicite, proposition de revenir au mode par défaut plutôt que de bloquer sur un état d'échec.
-- **Vide (mode données en direct) :** zéro résultat GBIF pour la combinaison de filtres → message dédié.
+- **Loading:** while the precomputed JSON (`public/data/biodiversity/hexbins.json`) and the background silhouette are retrieved and the grid initializes; mount area reserved without layout shift (see "Visualization page" in `style-guide.md`).
+- **Error:** failure to retrieve the precomputed JSON → error message, no silent empty map.
+- **Empty:** a group + season combination with no observation at all (all cells at zero) → message saying so rather than a visually empty map with no explanation.
+- **Loading (live data mode):** GBIF request in progress → indicator dedicated to the toggle, distinct from the initial loading state.
+- **Error (live data mode):** failure or excessive slowness of the GBIF API → explicit message, offer to return to the default mode rather than getting stuck on a failure state.
+- **Empty (live data mode):** zero GBIF results for the filter combination → dedicated message.
 
 ## Responsive
 
-Version tactile adaptée (voir "Responsive" dans `technical-specifications.md` général, appliquée ici) :
+Adapted touch version (see "Responsive" in the general `technical-specifications.md`, applied here):
 
-- Tooltip au tap plutôt qu'au survol ; un second tap ailleurs sur la carte le referme.
-- Filtres (groupe, saison) en boutons empilés/à la ligne selon la largeur disponible, plutôt qu'une rangée horizontale unique forcée.
+- Tooltip on tap rather than on hover; a second tap elsewhere on the map closes it.
+- Filters (group, season) as buttons stacked/wrapping according to the available width, rather than a single forced horizontal row.
 
-## Accessibilité (limite connue)
+## Accessibility (known limitation)
 
-L'interaction principale (carte, survol des cellules) n'est pas nativement accessible au clavier ni au lecteur d'écran. Documenté comme limite connue, sans repli, conformément à la règle par défaut du projet (voir "Règles communes à toutes les visualisations" dans `technical-specifications.md` général).
+The main interaction (map, hovering cells) is not natively accessible by keyboard or screen reader. Documented as a known limitation, without fallback, in line with the project's default rule (see "Rules common to all visualizations" in the general `technical-specifications.md`).
 
-Repli : la vue tableau (voir "Vue tableau" ci-dessus) donne accès aux mêmes données, sous forme de synthèse, au clavier et au lecteur d'écran.
+Fallback: the table view (see "Table view" above) gives access to the same data, as a summary, by keyboard and screen reader.
 
-## Contenu non traduit
+## Untranslated content
 
-Les noms scientifiques d'espèces (`topSpecies`, ex : *Turdus merula*) restent en latin, non traduits, dans les deux langues : convention taxonomique standard, pas une donnée à localiser.
+Scientific species names (`topSpecies`, e.g. *Turdus merula*) stay in Latin, untranslated, in both languages: standard taxonomic convention, not data to localize.
