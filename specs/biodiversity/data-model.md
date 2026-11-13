@@ -18,7 +18,7 @@ Two formal SQL exports (with DOI, see "Preprocessing" below) were used during im
 
 **Temporal coverage:** occurrences with a complete date (day/month/year), 2010 to the preprocessing year. The actual upper bound is that of `retrieved`, never "present" in the literal sense since the data is frozen at build time (see "Rules common to all visualizations" in the general `technical-specifications.md`).
 
-**Attribution:** GBIF aggregates occurrences whose licenses vary per contributing dataset (mostly CC0 and CC BY). The generic credit line (see "Dataset credit" below) is enough for an aggregated use of this kind; it does not replace a dedicated DOI citation if a formal GBIF export (with DOI) is used at implementation time.
+**Attribution:** GBIF aggregates occurrences whose licenses vary per contributing dataset (mostly CC0 and CC BY). The generic credit line (see "Source dataset" above) is enough for an aggregated use of this kind; it does not replace a dedicated DOI citation if a formal GBIF export (with DOI) is used at implementation time.
 
 ## Two data modes
 

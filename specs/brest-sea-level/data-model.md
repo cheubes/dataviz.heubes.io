@@ -109,7 +109,7 @@ Computed on the 187 years with values of the annual file, by the author of these
 | Whole series 1807-2023 (reference) | 187 | 1.1 ± 0.05 |
 | 1900-2023 (reference) | 111 | 1.6 ± 0.1 |
 
-Split chosen for the visualization (see "Trends by period" in `technical-specifications.md`): the first three rows. 1900 separates a flat nineteenth century from a rising twentieth century; 1993 is the start of satellite altimetry (TOPEX/Poseidon), a conventional break in sea-level budgets, chosen for this reason rather than fitted to the Brest series. Since 1993, the sea has been rising in Brest about two and a half times faster than in the twentieth century.
+Split chosen for the visualization (see "Engraved trends" under "Rendering" in `technical-specifications.md`): the first three rows. 1900 separates a flat nineteenth century from a rising twentieth century; 1993 is the start of satellite altimetry (TOPEX/Poseidon), a conventional break in sea-level budgets, chosen for this reason rather than fitted to the Brest series. Since 1993, the sea has been rising in Brest about two and a half times faster than in the twentieth century.
 
 **What the series does not allow us to claim (to be respected in the copy):**
 - A single station carries strong variability from one decade to the next: slopes computed over sliding 30-year windows already reach about 3 mm/yr around 1915-1920 and around 1950, before coming back down. The acceleration is read by comparing long periods, not from an "instantaneous" rate. Ruled out for this reason: a sliding rate curve, which would suggest past accelerations as strong as the current one.
